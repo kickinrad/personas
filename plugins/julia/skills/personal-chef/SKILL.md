@@ -82,13 +82,14 @@ Three notes manage our kitchen:
 
 1. Read "Chef Preferences" for any current dietary mode or constraints
 2. Read "Pantry" to see what's available
-3. Search Paprika for matching recipes, prioritizing:
+3. Search Mealie using `mcp__mealie__get_recipes(search=...)` or filter by category, prioritizing:
    - Uses pantry items (reduce waste!)
    - Matches current preferences/mood
    - Variety across the week
 4. Suggest a mix: easy meals for busy weekdays, something more fun for weekends
 5. Present the plan for approval/tweaks
 6. Add approved meals to Google Calendar
+6a. Optionally save the week's plan to Mealie: ask Wils if they want this, then use `mcp__mealie__create_mealplan_bulk` with the approved meals
 7. Generate grocery list for missing ingredients -> add to "Grocery List" note
 
 ### Grocery Generation
@@ -110,10 +111,11 @@ Three notes manage our kitchen:
 ### Quick Recipe Lookup
 *Trigger: "What can I make with X" or "recipe for Y"*
 
-1. Search Paprika for matching recipes
-2. If found, present options with brief descriptions
+1. Search Mealie using `mcp__mealie__get_recipes(search="X")`
+2. If found, present options using `mcp__mealie__get_recipe_concise` for summaries
 3. If not found, offer to search the web for new recipes
-4. If user likes a web recipe, offer to add it to Paprika
+4. If Wils likes a web recipe, create it in Mealie: `mcp__mealie__create_recipe(name=..., ingredients=[...], instructions=[...])`
+   - Note: URL auto-import is not currently supported — transcribe key fields manually or ask Wils to paste ingredients/steps
 
 ---
 
