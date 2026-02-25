@@ -28,40 +28,28 @@ Auto-load when conversation mentions: recipes, meal planning, cooking, groceries
 
 ## Tools & Data Sources
 
-### Paprika Recipe Database (via MCP)
-- **Access**: `paprika` MCP server (SQLite)
-- **Note**: If database is locked (Paprika running on Windows), close it first
-
-**Database Schema (key tables):**
-- `recipes` - name, ingredients, directions, description, notes, prep_time, cook_time, rating, source_url
-- `recipe_categories` - category names
-- `recipes_to_categories` - recipe-to-category mapping
+### Mealie Recipe Database (via MCP)
+- **Access**: `mealie` MCP server (REST API, Hetzner)
+- **Note**: Requires Tailscale connection to reach Hetzner. If unreachable, tell Wils clearly — don't attempt workarounds.
 
 **MCP Tools:**
-- `mcp__paprika__read_query` - Run SELECT queries
-- `mcp__paprika__list_tables` - List all tables
-- `mcp__paprika__describe_table` - Get table schema
+- `mcp__mealie__get_recipes` - Search/list recipes (params: `search`, `categories`, `tags`; supports pagination)
+- `mcp__mealie__get_recipe_detailed` - Full recipe by slug
+- `mcp__mealie__get_recipe_concise` - Recipe summary by slug (prefer for meal planning)
+- `mcp__mealie__create_recipe` - Create new recipe (`name`, `ingredients[]`, `instructions[]`)
+- `mcp__mealie__update_recipe` - Update recipe ingredients/instructions by slug
+- `mcp__mealie__get_all_mealplans` - Get all meal plans (optional: `start_date`, `end_date`)
+- `mcp__mealie__get_todays_mealplan` - Get today's meal plan entries
+- `mcp__mealie__create_mealplan` - Create entry (`date`, `entry_type`; optional: `recipe_id`, `title`)
+- `mcp__mealie__create_mealplan_bulk` - Create multiple entries at once (array of create_mealplan objects)
 
-**Common queries:**
-```sql
--- List all recipes
-SELECT name, rating FROM recipes WHERE in_trash = 0 ORDER BY name
-
--- Search by ingredient
-SELECT name, ingredients FROM recipes
-WHERE ingredients LIKE '%chicken%' AND in_trash = 0
-
--- Get full recipe details
-SELECT name, ingredients, directions, prep_time, cook_time
-FROM recipes WHERE name LIKE '%recipe_name%'
-
--- Recipes by category
-SELECT r.name, c.name as category
-FROM recipes r
-JOIN recipes_to_categories rtc ON r.uid = rtc.recipe_uid
-JOIN recipe_categories c ON rtc.category_uid = c.uid
-WHERE r.in_trash = 0
-```
+**Common patterns:**
+- Search: `get_recipes(search="chicken")` or `get_recipes(categories=["quick"])`
+- Get details: `get_recipe_detailed(slug="lemon-herb-chicken")`
+- Concise (for planning): `get_recipe_concise(slug="lemon-herb-chicken")`
+- Create: `create_recipe(name="...", ingredients=["..."], instructions=["..."])`
+- Add to meal plan: `create_mealplan(date="2026-02-25", entry_type="dinner", recipe_id="...")`
+- Non-recipe entry: `create_mealplan(date="2026-02-25", entry_type="dinner", title="Dinner out")`
 
 ### Google Keep Notes (via MCP)
 Three notes manage our kitchen:
