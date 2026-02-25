@@ -11,7 +11,7 @@
       "name": "persona-manager",
       "source": "./plugins/persona-manager",
       "description": "Bootstraps and manages ~/.personas/{name}/ project directories",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "category": "management"
     },
     {

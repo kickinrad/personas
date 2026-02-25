@@ -1,0 +1,20 @@
+{
+  "description": "Activation rules for persona development skill",
+  "rules": {
+    "persona-dev": {
+      "kind": "skill",
+      "type": "process",
+      "enforcement": "must",
+      "priority": "high",
+      "activationHint": "Skill('persona-manager:persona-dev')",
+      "promptTriggers": {
+        "keywords": ["persona", "new persona", "create a persona", "add a persona", "build a persona", "design a persona", "persona for"],
+        "intentPatterns": ["(create|build|design|add|make|new).*?persona", "persona.*?(for|that|who|to)", "i want a persona", "help me.*?persona"]
+      },
+      "fileTriggers": {
+        "pathPatterns": ["**/personas/plugins/**"],
+        "contentPatterns": []
+      }
+    }
+  }
+}
