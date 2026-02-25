@@ -1,6 +1,6 @@
 {
   "name": "persona-manager",
   "description": "Bootstraps ~/.personas/{name}/ directories for installed personas and provides persona development guidance",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": { "name": "wils" }
 }
