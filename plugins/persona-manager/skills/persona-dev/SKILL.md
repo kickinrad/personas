@@ -33,14 +33,41 @@ Use `Skill('plugin-dev:create-plugin')` to scaffold, then:
 
 ## Runtime Model
 
-- `~/.personas/{name}/CLAUDE.md` → symlink to plugin cache (auto-updates on version bump)
-- `~/.personas/{name}/.mcp.json` → local only, fill in once, never committed
-- `~/.personas/{name}/.claude/settings.json` → auto-managed by persona-manager
+Skills activate via **local-scope plugin install** — no `--plugin-dir` needed:
+
+```bash
+# One-time setup per persona workspace
+mkdir -p ~/.personas/luna
+cd ~/.personas/luna
+claude plugin install luna@kickinrad/personas --scope local
+# Writes: ~/.personas/luna/.claude/settings.local.json
+```
+
+Skills only activate when CWD is `~/.personas/{name}/` — native isolation, no bleed.
+
+Workspace layout (auto-bootstrapped by .zshrc on shell reload after plugin install/update):
+- `~/.personas/{name}/CLAUDE.md` → symlink → plugin cache (auto-updates on `/plugin update`)
+- `~/.personas/{name}/skills/` → symlink → plugin cache skills/
+- `~/.personas/{name}/.mcp.json` → local only, fill in credentials, never committed
+- `~/.personas/{name}/.claude/settings.local.json` → written by `plugin install --scope local`
+
+If previously installed at user scope: `claude plugin uninstall {name}@kickinrad/personas` first.
 
 ## CLI Aliases
 
-Auto-discovered from `~/.personas/*/` via `.zshrc` loop. No manual alias management.
-`luna` → interactive session. `luna "good morning"` → one-shot.
+Auto-discovered from plugin cache via `.zshrc` loop. Shell function per persona:
+
+```bash
+luna() {
+  (cd "$HOME/.personas/luna" && claude \
+    --mcp-config "$HOME/.personas/luna/.mcp.json" \
+    --strict-mcp-config \
+    "$@")
+}
+```
+
+`luna` → interactive session with Luna's MCP only. `luna "good morning"` → one-shot.
+`--strict-mcp-config` blocks global MCP servers from leaking into persona sessions.
 
 ## Version Bumping
 
