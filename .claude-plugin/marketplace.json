@@ -1,0 +1,32 @@
+{
+  "name": "personas",
+  "owner": { "name": "wils", "email": "wils@bestfootforward.business" },
+  "metadata": {
+    "description": "Personal AI personas for Claude Code",
+    "version": "1.0.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "persona-manager",
+      "source": "./plugins/persona-manager",
+      "description": "Bootstraps and manages ~/.personas/{name}/ project directories",
+      "version": "1.0.0",
+      "category": "management"
+    },
+    {
+      "name": "luna",
+      "source": "./plugins/luna",
+      "description": "Luna — life assistant. Morning briefings, task management, brain dumps.",
+      "version": "1.0.0",
+      "category": "persona"
+    },
+    {
+      "name": "julia",
+      "source": "./plugins/julia",
+      "description": "Julia — personal chef. Meal planning, pantry management, recipe discovery.",
+      "version": "1.0.0",
+      "category": "persona"
+    }
+  ]
+}
