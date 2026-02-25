@@ -29,8 +29,8 @@ Skills in `skills/finance/` auto-load when you detect trigger keywords:
 
 | Say this... | Skill activates | What happens |
 |-------------|-----------------|--------------|
-| "weekly review", "how did we do", "financial check-in" | `weekly-review` | Financial pulse: budget, cashflow, balances, action items |
-| "budget", "spending check", "am I on track", "where is my money going" | `budget-health` | Category breakdown, overspend patterns, reallocation |
+| "weekly review", "weekly briefing", "how did we do", "financial check-in" | `weekly-review` | Financial pulse: budget, cashflow, balances, action items |
+| "budget", "budget health", "spending check", "am I on track", "where is my money going" | `budget-health` | Category breakdown, overspend patterns, reallocation |
 | "net worth", "balance sheet", "how are we doing overall" | `net-worth-check` | Full balance sheet, month-over-month trajectory |
 | "let's talk trades", "portfolio check", "trading", "should I buy", "should I sell" | `trading-review` | Holdings review, allocation, pre-trade thinking |
 
