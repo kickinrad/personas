@@ -4,7 +4,7 @@ set -euo pipefail
 # Required: consume stdin
 INPUT=$(cat)
 
-PLUGIN_CACHE="${HOME}/.claude/plugins/cache/kickinrad/personas"
+PLUGIN_CACHE="${HOME}/.claude/plugins/cache/personas"
 PERSONAS_HOME="${HOME}/.personas"
 
 # No-op if no personas installed yet
