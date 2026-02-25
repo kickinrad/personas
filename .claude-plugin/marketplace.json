@@ -34,6 +34,13 @@
       "description": "Warren — personal CFO. Sharp, analytical. Monarch Money integration, weekly reviews, net worth tracking, trading habit building.",
       "version": "1.0.0",
       "category": "persona"
+    },
+    {
+      "name": "mila",
+      "source": "./plugins/mila",
+      "description": "Mila — brand manager. b.f.f. agency growth, Wavytone music career, personal brand strategy.",
+      "version": "1.0.0",
+      "category": "persona"
     }
   ]
 }
