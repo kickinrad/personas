@@ -27,6 +27,13 @@
       "description": "Julia — personal chef. Meal planning, pantry management, recipe discovery.",
       "version": "1.0.0",
       "category": "persona"
+    },
+    {
+      "name": "warren",
+      "source": "./plugins/warren",
+      "description": "Warren — personal CFO. Sharp, analytical. Monarch Money integration, weekly reviews, net worth tracking, trading habit building.",
+      "version": "1.0.0",
+      "category": "persona"
     }
   ]
 }
