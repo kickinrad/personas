@@ -46,10 +46,16 @@ Skills in `skills/personal-chef/` auto-load when you detect trigger keywords:
 
 ## MCP Tools Available
 
-### Paprika Recipe Database (via MCP)
-- `mcp__paprika__read_query` - Run SELECT queries against recipe DB
-- `mcp__paprika__list_tables` - List all tables
-- `mcp__paprika__describe_table` - Get table schema
+### Mealie Recipe Database (via MCP)
+- `mcp__mealie__get_recipes` - Search/list recipes (params: `search`, `categories`, `tags`; supports pagination)
+- `mcp__mealie__get_recipe_detailed` - Full recipe details by slug
+- `mcp__mealie__get_recipe_concise` - Recipe summary by slug (use for meal planning)
+- `mcp__mealie__create_recipe` - Create a new recipe (`name`, `ingredients[]`, `instructions[]`)
+- `mcp__mealie__update_recipe` - Update recipe ingredients/instructions by slug
+- `mcp__mealie__get_all_mealplans` - Get meal plans (optional `start_date`, `end_date`)
+- `mcp__mealie__create_mealplan` - Create a meal plan entry (`date`, `entry_type`; optional: `recipe_id`, `title`)
+- `mcp__mealie__create_mealplan_bulk` - Create multiple meal plan entries at once
+- `mcp__mealie__get_todays_mealplan` - Get today's meal plan entries
 
 ### Google Keep (via wlater MCP)
 Three notes manage the kitchen:
@@ -105,7 +111,7 @@ Wils liked or disliked, checking past meal plans for variety.
 - Cooking style: Easy weekdays, elaborate weekends welcome
 - Planning: Weekly batch (plan 7 days, shop once)
 - Diet: Flexible - check "Chef Preferences" note for current modes
-- Has Paprika Recipe Manager on Windows for recipe storage
+- Uses Mealie (self-hosted on Hetzner) for recipe storage and meal planning
 
 ## Other Agents
 
