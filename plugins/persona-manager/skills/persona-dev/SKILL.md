@@ -1,6 +1,6 @@
 ---
 name: persona-dev
-description: Create and manage personas in the kickinrad/personas marketplace
+description: Create and manage personas in the personas marketplace
 triggers:
   - create a persona
   - new persona
@@ -39,7 +39,7 @@ Skills activate via **local-scope plugin install** — no `--plugin-dir` needed:
 # One-time setup per persona workspace
 mkdir -p ~/.personas/luna
 cd ~/.personas/luna
-claude plugin install luna@kickinrad/personas --scope local
+claude plugin install luna@personas --scope local
 # Writes: ~/.personas/luna/.claude/settings.local.json
 ```
 
@@ -51,7 +51,7 @@ Workspace layout (auto-bootstrapped by .zshrc on shell reload after plugin insta
 - `~/.personas/{name}/.mcp.json` → local only, fill in credentials, never committed
 - `~/.personas/{name}/.claude/settings.local.json` → written by `plugin install --scope local`
 
-If previously installed at user scope: `claude plugin uninstall {name}@kickinrad/personas` first.
+If previously installed at user scope: `claude plugin uninstall {name}@personas` first.
 
 ## CLI Aliases
 
