@@ -1,0 +1,17 @@
+{
+  "description": "Bootstrap installed personas on session start",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/bootstrap.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
