@@ -2,5 +2,5 @@
   "name": "persona-manager",
   "description": "Bootstraps ~/.personas/{name}/ directories for installed personas and provides persona development guidance",
   "version": "1.0.3",
-  "author": { "name": "wils" }
+  "author": { "name": "kickinrad", "url": "https://github.com/kickinrad" }
 }

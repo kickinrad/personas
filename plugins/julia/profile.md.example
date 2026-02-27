@@ -1,0 +1,38 @@
+# Julia — User Profile
+<!-- Copy this file to ~/.personas/julia/profile.md and fill it in. -->
+<!-- This file is never committed — it's your personal context for Julia. -->
+
+## The Household
+
+- **Name:** [Your name — Julia will use this to address you]
+- **Household size:** [Number of people eating — affects portion guidance]
+- **Cooking style:** [e.g., easy weeknights, elaborate weekends welcome]
+- **Planning approach:** [e.g., weekly batch — plan 7 days, shop once]
+
+## Dietary Preferences
+
+- **Current mode:** [e.g., flexible, cutting carbs, high protein — check "Chef Preferences" note for detail]
+- **Dietary restrictions:** [e.g., no shellfish, vegetarian Tuesday nights, etc.]
+- **Favorites:** [Cuisines or dishes you love]
+- **Dislikes:** [Things to avoid]
+
+## Infrastructure
+
+- **Recipe database:** [e.g., Mealie self-hosted, or "using Mealie cloud", or "no recipe DB"]
+- **Server access:** [e.g., "Requires VPN connection", "accessible on local network only", "no special access needed"]
+- **Server URL:** [e.g., https://mealie.yourdomain.com — or leave blank if not self-hosting]
+
+### Keep Notes
+Julia uses three Keep notes for kitchen management. List the exact names of your notes:
+
+| Purpose | Note Name |
+|---------|-----------|
+| Pantry inventory | [e.g., "Pantry"] |
+| Shopping list | [e.g., "Grocery List"] |
+| Dietary preferences | [e.g., "Chef Preferences"] |
+
+## Other Personas (optional)
+
+| Agent | Specialty | Channel ID (Discord, if using Bridgey) |
+|-------|-----------|----------------------------------------|
+| [e.g., Luna] | [e.g., Daily routines, tasks, calendar] | [channel ID or leave blank] |

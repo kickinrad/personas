@@ -16,11 +16,11 @@ triggers:
 
 CORE System: **C**apture -> **O**rganize -> **R**eview -> **E**xecute
 
-This skill handles the first two phases. Get everything OUT of Wils' head, then organize it.
+This skill handles the first two phases. Get everything OUT of the user's head, then organize it.
 
 ## Step 1: Capture Mode
 
-If Wils is dumping thoughts verbally or in text:
+If the user is dumping thoughts verbally or in text:
 
 1. **Listen without filtering** - Don't organize yet, just capture
 2. **Create Keep notes** for each distinct item:
@@ -39,7 +39,7 @@ The inbox has two sources:
 
 ### 2a: Brain Dump Note
 
-Read the **🧠 Brain Dump** note (pinned, orange). This is where Wils drops random thoughts from his phone throughout the day.
+Read the Brain Dump note (check profile.md for exact name — usually pinned). This is where the user drops random thoughts from their phone throughout the day.
 
 ```
 mcp__wlater__search_notes(query="Brain Dump", pinned=True)
@@ -117,7 +117,7 @@ Some notes work together as a system. When triaging, consider routing items to t
 | Group | Notes | How they relate |
 |-------|-------|-----------------|
 | **Home** | 🔨 Home Repair To-Do (active repairs), Future Home Projects (someday ideas), 🔨 Hardware Store List (supplies to buy) |
-| **Business** | Individual to-do lists per project (BFF, VKB, RVA Boombox, Moms in Motion, etc.) |
+| **Business** | Individual to-do lists per project — see profile.md for current projects |
 | **Shopping** | Grocery List, Shopping List, Clothing Shopping List, 🔨 Hardware Store List |
 
 When an item clearly belongs in an existing list, add it there instead of creating a new note. For example, "buy wood filler" goes on the Hardware Store List, not a new note.

@@ -19,23 +19,20 @@ triggers:
 
 # Writing Practice
 
-Building Wils as a writer and thought leader — developer, creative, and maker perspective.
+Building you as a writer and thought leader.
 
 ## Before Starting
 
-```
-mcp__openmemory__openmemory_query("writing topics")
-mcp__openmemory__openmemory_query("personal brand writing")
-mcp__openmemory__openmemory_query("published articles")
-```
+Read `~/.personas/mila/profile.md` for writing status (platforms set up, published pieces, Substack/blog URLs).
 
-## Current Writing State
-
-Wils has writing ambitions but hasn't launched yet. Platforms to set up: blog (personal site?), Substack, Medium. Distribution via Twitter/Bluesky + LinkedIn after publish.
+Query memory for relevant past context:
+```
+[built-in memory: search "writing topics", "personal brand writing", "published articles"]
+```
 
 ## Agenda — Pick the Focus
 
-Ask Wils which mode:
+Ask which mode:
 
 1. **Topic ideation** — finding something worth writing about
 2. **Outline a piece** — take a topic from idea to structure
@@ -47,31 +44,31 @@ Ask Wils which mode:
 
 ## 1. Topic Ideation
 
-Wils' perspective is legitimately unique — developer + creative + agency owner + musician. That combination creates takes nobody else has.
+Your perspective is legitimately unique — the combination of your focus areas (from profile.md) creates takes nobody else has.
 
 **Content pillars to explore:**
 
-### Developer/Tools Lens
-- "How I use AI agents to run my creative life" (ez-claude — without revealing everything)
+### Developer/Technical Lens (if applicable)
+- "How I use AI agents to run my [creative/business/personal] life"
 - "Building tools for yourself vs. building products"
-- "The Claude Code ecosystem is underrated — here's what I've built"
-- "Why I made a personal chef AI" (Julia — interesting human story)
+- "The [tool/ecosystem] is underrated — here's what I've built"
+- "Why I made a [personal tool]" — human story behind the tech
 
-### Agency/Business Lens
-- "Running a boutique agency in a world of templates"
-- "What nonprofits actually need from a web designer"
+### Agency/Business Lens (if applicable)
+- "Running a boutique [specialty] in a world of templates"
+- "What [your client sector] actually needs from a [your specialty]"
 - "How I think about pricing custom work"
-- "Lessons from building WordPress sites that clients can actually edit"
+- "Lessons from [your work] that clients can actually use"
 
-### Music/Creative Lens
-- "Making music in the margins of a full-time creative career"
-- "What jazz and software development have in common"
-- "Building Wavytone Orchestra — an experimental project from Richmond"
-- "The Richmond creative scene: underrated and growing"
+### Creative Project Lens (if applicable)
+- "Making [your art form] in the margins of a full-time creative career"
+- "What [art form] and [other discipline] have in common"
+- "Building [your project] — an [description] project from [your city]"
+- "The [your local] creative scene: underrated and growing"
 
 ### Intersection (most interesting to readers)
-- "Running an agency, making music, and building AI tools — here's how I manage it"
-- "The creative professional's stack in 2025"
+- "Running [business], making [creative work], and building [tech] — here's how I manage it"
+- "The creative professional's stack in [current year]"
 - "Why I stopped separating my identities and let them collide"
 
 **Ideation process:**
@@ -79,8 +76,8 @@ Ask: "What's something you've learned recently that you wish someone had told yo
 Ask: "What do people ask you about that you always have a good answer to?"
 Ask: "What's an opinion you have that most people in your field would disagree with?"
 
-Research trending topics: `WebSearch("developer personal brand topics 2025")`
-Research: `WebSearch("Substack topics growing 2025")`
+Research trending topics: `WebSearch("[your field] personal brand topics [current year]")`
+Research: `WebSearch("Substack topics growing [current year]")`
 
 ---
 
@@ -108,14 +105,14 @@ Target length: [800-1200 words for Substack/blog; 400-600 for LinkedIn]
 
 Good writing advice to pass on:
 - One idea per piece — ruthlessly cut anything that doesn't serve the thesis
-- Specifics > generalities (Richmond, Wavytone, bff.llc > "I run a business")
+- Specifics > generalities (real names, places, projects > "I run a business")
 - First draft is always garbage — the goal is to get it done, not get it right
 
 ---
 
 ## 3. Platform Strategy
 
-Research current recommendations: `WebSearch("Substack vs Medium vs personal blog 2025")`
+Research current recommendations: `WebSearch("Substack vs Medium vs personal blog [current year]")`
 
 **Working framework (to validate with research):**
 
@@ -123,16 +120,16 @@ Research current recommendations: `WebSearch("Substack vs Medium vs personal blo
 |----------|------|-----|
 | **Substack** | Primary — owned audience | Email list = owned channel, discovery through Substack Notes |
 | **Medium** | Secondary — discoverability | SEO power, built-in audience for developer/creative topics |
-| **wilstierney.com** | Portfolio anchor | Links to Substack, showcases best work |
+| **Personal site** | Portfolio anchor | Links to Substack, showcases best work |
 | **LinkedIn** | Distribution | Excerpt + link drives professional traffic |
 | **Twitter/Bluesky** | Distribution | Thread or link post |
 
 **Write once, distribute everywhere** — Substack is the source of truth, syndicate elsewhere.
 
 Setup checklist (if not done):
-- [ ] Substack: Create account, choose name (wilstierney? wavytone? bff?)
+- [ ] Substack: Create account, choose name
 - [ ] Medium: Claim profile, link to main site
-- [ ] wilstierney.com: Add writing/blog section or link to Substack
+- [ ] Personal site: Add writing/blog section or link to Substack
 
 ---
 
@@ -152,7 +149,7 @@ After publishing:
 **Day 7+:**
 - Re-share on LinkedIn if it performed well
 - Repurpose: Instagram carousel summarizing key points
-- Add to wilstierney.com featured writing section
+- Add to personal site featured writing section
 
 **Calendar it:**
 ```
@@ -168,7 +165,7 @@ Building consistency:
 
 **Minimum viable writing habit:**
 - One piece per month to start — achievable without burning out
-- Dedicated writing block: when does Wils have time and mental energy?
+- Dedicated writing block: when do you have time and mental energy?
 - Draft in Notion/Obsidian → Edit → Publish (don't draft in Substack)
 
 **Schedule a monthly writing block:**
@@ -184,14 +181,14 @@ mcp__scheduler__scheduler_add_reminder(
 ## Store Insights
 
 ```
-mcp__openmemory__openmemory_store("Writing topics list: [topics from this session]")
-mcp__openmemory__openmemory_store("Writing platforms decision: [whatever is decided]")
-mcp__openmemory__openmemory_store("Published: [title] on [date] — [performance notes]")
+[built-in memory: save "Writing topics list: [topics from this session]"]
+[built-in memory: save "Writing platforms decision: [whatever is decided]"]
+[built-in memory: save "Published: [title] on [date] — [performance notes]"]
 ```
 
 ## Tips
 
-- The developer + musician + agency owner combination is genuinely rare — lean into the intersection
+- The combination of your focus areas is your unique writing angle — lean into the intersection
 - Don't wait until the writing is "good enough" to publish — ship it, improve next time
 - Substack's discovery (Notes, recommendations) is actively growing — early mover advantage
 - One published piece is worth 10 drafted ones

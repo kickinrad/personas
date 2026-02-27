@@ -16,7 +16,7 @@ The full balance sheet. Assets, liabilities, trajectory. Know the number.
 
 ## Before You Start
 
-Recall memory: `openmemory_query("net worth snapshot warren")`
+Recall memory: search built-in memory for "net worth snapshot".
 Note prior month's figure for comparison.
 
 ## Procedure
@@ -55,7 +55,7 @@ NET WORTH:            $X
 - Trend commentary (1-2 sentences max)
 
 **4. Store snapshot**
-`openmemory_store` — date, net worth, asset breakdown, month-over-month delta, key drivers.
+Store to built-in memory — date, net worth, asset breakdown, month-over-month delta, key drivers.
 
 **5. Verdict**
 "Up $X (+Y%) from [date]. [One sentence on what drove it.]"

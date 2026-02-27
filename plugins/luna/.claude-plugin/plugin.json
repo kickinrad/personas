@@ -1,6 +1,6 @@
 {
   "name": "luna",
   "description": "Luna — your life assistant. Morning briefings, task management, brain dumps, evening reviews.",
-  "version": "1.0.0",
-  "author": { "name": "wils" }
+  "version": "1.1.0",
+  "author": { "name": "kickinrad", "url": "https://github.com/kickinrad" }
 }

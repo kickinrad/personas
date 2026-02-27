@@ -11,11 +11,13 @@ triggers:
 
 # Morning Briefing
 
-Present the day so Wils wakes up ready to execute, not make decisions. Be friendly, upbeat, and use emojis for this skill.
+Present the day so the user wakes up ready to execute, not make decisions. Be friendly, upbeat, and use emojis for this skill.
 
 ## Data to Gather
 
-### 1. Weather (WebSearch: "Richmond VA weather today")
+Read the user's location from `~/.personas/luna/profile.md` before searching.
+
+### 1. Weather (WebSearch: "[user's location from profile.md] weather today")
 - Current conditions, high/low temps
 - What to wear recommendation based on conditions
 
@@ -64,7 +66,7 @@ Present as a sectioned briefing with these headers:
 
 ## Execution Steps
 
-1. Run WebSearch for Richmond VA weather
+1. Read location from profile.md, then run WebSearch for [location] weather
 2. Run WebSearch for market futures and premarket movers
 3. Call mcp__google_workspace__get_events for today and tomorrow
 4. Call mcp__google_workspace__list_tasks for current tasks

@@ -1,0 +1,59 @@
+# Luna — User Profile
+<!-- Copy this file to ~/.personas/luna/profile.md and fill it in. -->
+<!-- This file is never committed — it's your personal context for Luna. -->
+
+## The Person
+
+- **Name:** [Your name — Luna will use this to address you]
+- **Location:** [Your city/area — used for weather, local context]
+- **Work style:** [e.g., works from home, hybrid, in-office]
+- **Values:** [What matters most to you? e.g., health, relationships, sustainable systems]
+- **Pet(s):** [Optional — any pets worth knowing about?]
+
+## Daily Rhythm
+
+- **Typical start time:** [e.g., 9 AM]
+- **Peak focus hours:** [When are you sharpest? e.g., 10 AM–12 PM]
+- **Routine blocks to protect:** [e.g., power hour 3–4 PM — don't schedule over this]
+- **Wind-down time:** [e.g., 6 PM wrap-up]
+- **Habits worth noting:** [e.g., daily walk, trading window, meditation]
+
+## Keep Setup
+
+### Labels in Use
+Customize the label list Luna uses. Default suggestions:
+- `Ideas` — thoughts, concepts, someday/maybes
+- `Reference` — external info to keep
+- `Projects` — multi-step initiatives
+- `Business` — work and business
+- `Financial` — money, investments, bills
+- `Home` — house, maintenance
+- `Family` — family-related
+- `Shopping` — things to buy
+- `Inspiration` — quotes, motivation
+
+Add or remove labels to match what's actually in your Keep.
+
+### Brain Dump Note
+- **Note name:** [Name of your pinned brain dump note, e.g., "🧠 Brain Dump"]
+- **Color/pin status:** [e.g., pinned, orange]
+
+### Note Groups
+Some notes work together as a system. List your recurring note groups here so Luna routes items correctly:
+
+| Group | Notes in this group | How they relate |
+|-------|---------------------|-----------------|
+| **Home** | [e.g., Home Repair To-Do, Future Home Projects, Hardware Store List] | Active repairs, someday, supplies |
+| **Business** | [e.g., per-project to-do lists] | One list per active project |
+| **Shopping** | [e.g., Grocery List, Shopping List] | Different types of shopping |
+
+Add rows for any other note groups you use.
+
+## Other Personas (optional)
+
+If you're running other personas from this marketplace, list them here so Luna can route questions to the right agent.
+
+| Agent | Specialty | Channel ID (Discord, if using Bridgey) |
+|-------|-----------|----------------------------------------|
+| [e.g., Julia] | [e.g., Meals, recipes, groceries] | [channel ID or leave blank] |
+| [e.g., Warren] | [e.g., Finance, budgeting] | [channel ID or leave blank] |

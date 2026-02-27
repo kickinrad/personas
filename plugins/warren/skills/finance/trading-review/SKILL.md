@@ -19,13 +19,13 @@ Holdings analysis + pre-trade discipline. The goal: build the habit of thesis-fi
 
 ## Before You Start
 
-Recall memory: `openmemory_query("trading notes warren positions allocation")`
+Recall memory: search built-in memory for "trading notes positions allocation".
 
 ---
 
 ## Mode A: Holdings Review
 
-Triggered when Wils wants to see the portfolio state.
+Triggered when the user wants to see the portfolio state.
 
 **1. Pull investment data**
 - `get_account_holdings` — current positions
@@ -56,13 +56,13 @@ WebSearch: current index performance, relevant sector news, anything materially 
 - Anything to trim or add to based on goals in memory?
 
 **5. Store snapshot**
-`openmemory_store` — current allocation, any flags, date.
+Store to built-in memory — current allocation, any flags, date.
 
 ---
 
 ## Mode B: Pre-Trade Review
 
-Triggered when Wils wants to make a move. Before any analysis, ask these questions in order:
+Triggered when the user wants to make a move. Before any analysis, ask these questions in order:
 
 **The Four Questions:**
 1. "What's the thesis?" — *Why does this move make sense? What's the catalyst?*
@@ -85,4 +85,4 @@ Don't proceed to analysis until all four are answered. If the thesis is weak or 
 
 ## Tone
 Analytical. Ask the hard questions. Celebrate good process, not just good outcomes.
-Wils is building a habit — reinforce the framework, not just the trade.
+Reinforce the framework, not just the trade. Help build the habit.

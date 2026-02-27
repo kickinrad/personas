@@ -1,8 +1,7 @@
 ---
 name: music-career
-description: Wavytone Orchestra career development - release strategy, streaming distribution, TikTok launch, collabs.
+description: Music project career development - release strategy, streaming distribution, TikTok launch, collabs.
 triggers:
-  - wavytone
   - music
   - release
   - tiktok
@@ -18,37 +17,38 @@ triggers:
   - ep
 ---
 
-# Music Career — Wavytone Orchestra
+# Music Career — Your Creative Project
 
-Strategic development of Wavytone Orchestra as an experimental jazz/hip-hop project.
+Strategic development of your music project.
 
 ## Before Starting
 
+Read `~/.personas/mila/profile.md` for your music project details (name, genre, releases, collaborators, handles, streaming status).
+
+Query memory for relevant past context:
 ```
-mcp__openmemory__openmemory_query("Wavytone strategy")
-mcp__openmemory__openmemory_query("music career")
-mcp__openmemory__openmemory_query("TikTok music")
+[built-in memory: search "music strategy", "music career", "TikTok music"]
 ```
 
-## Where Wavytone Is Now
+## Your Music Project — Current Status
 
-- **Genre:** Experimental jazz/hip-hop fusion with UK grime influences (distinctive niche — not many doing this exactly)
-- **Releases:** One single — "skepta bounce" (Bandcamp, June 2024, $1 USD, 3:12)
-- **Credits:** Wils Tierney (production/instrumentation), Chet Frierson (saxophone)
-- **Distribution:** Bandcamp only — NOT on Spotify, Apple Music, SoundCloud, YouTube
-- **Instagram:** @wavytone (dedicated) + @wilsxt (personal, linked)
-- **TikTok:** Not started
-- **Press:** None
+Use profile.md to populate context for this session:
+- Project name and genre
+- Current releases (platform, date, status)
+- Key collaborators
+- Distribution status (streaming platforms vs. Bandcamp/SoundCloud only)
+- Social handles (dedicated music account, personal account)
+- TikTok status
 
 ## Agenda — Pick the Focus
 
-Ask Wils which area to dive into:
+Ask which area to dive into:
 
-1. **Release strategy** — what's next after "skepta bounce"?
+1. **Release strategy** — what's next?
 2. **Streaming distribution** — getting on Spotify, Apple Music, etc.
 3. **TikTok launch** — building the first content batch
-4. **Instagram growth** — growing @wavytone / @wilsxt for music
-5. **Collaborations** — expanding beyond Chet, Richmond scene opportunities
+4. **Instagram growth** — growing the music account
+5. **Collaborations** — expanding your network
 6. **Genre positioning** — how to describe and market this sound
 
 ---
@@ -57,36 +57,36 @@ Ask Wils which area to dive into:
 
 Key question: What's the next release plan?
 
-Framework for growing from one single:
+Framework for growing from early releases:
 - **EP (3-5 tracks):** More credibility than singles, easier to playlist, gives press something to cover
 - **Single cadence:** Monthly or bi-monthly singles build algorithmic momentum on streaming
-- **Album:** Too early — build catalog and audience first
+- **Album:** Too early for most projects — build catalog and audience first
 
 Questions:
 - Any tracks in progress or recorded?
-- Is Chet Frierson involved in future work?
+- Are current collaborators involved in future work?
 - Is there a target release date or is it open?
 - What's the production bottleneck — time, gear, collaboration?
 
-Research: `WebSearch("independent jazz artist release strategy 2025")`
-Research: `WebSearch("experimental jazz hip hop artists to follow 2025")`
+Research: `WebSearch("independent [your genre] artist release strategy [current year]")`
+Research: `WebSearch("[your genre] artists to follow [current year]")`
 
 ---
 
 ## 2. Streaming Distribution
 
-**Priority action:** Get "skepta bounce" on Spotify/Apple Music/Amazon Music NOW.
+**Priority action:** Get existing releases on Spotify/Apple Music/Amazon Music if not already there.
 
-This is low-hanging fruit. Bandcamp is great for credibility but streaming is where discovery happens.
+This is often low-hanging fruit. Bandcamp is great for credibility but streaming is where discovery happens.
 
 ### Distributor Options (research current pricing/features)
 ```
-WebSearch("best music distributor independent artist 2025 DistroKid TuneCore")
+WebSearch("best music distributor independent artist [current year] DistroKid TuneCore")
 ```
 
 Common options:
 - **DistroKid** (~$22/year, unlimited releases, keeps 100% royalties)
-- **TuneCore** (per-release pricing, good for jazz/niche)
+- **TuneCore** (per-release pricing, good for niche/jazz genres)
 - **CD Baby** (one-time fee, 9% commission, good for long-tail)
 - **Amuse** (free tier available)
 
@@ -95,31 +95,31 @@ Common options:
 ### After Distribution Setup
 - Claim Spotify for Artists profile
 - Claim Apple Music for Artists profile
-- Pitch "skepta bounce" to Spotify editorial playlists (jazz, hip-hop fusion, experimental)
-  - Research: `WebSearch("Spotify playlist pitching independent artist jazz hip hop 2025")`
-- Submit to jazz/hip-hop blogs and playlist curators
+- Pitch to Spotify editorial playlists (use profile.md genre tags)
+  - Research: `WebSearch("Spotify playlist pitching independent artist [your genre] [current year]")`
+- Submit to genre-specific blogs and playlist curators
 
 ---
 
 ## 3. TikTok Launch Strategy
 
-TikTok is a major music discovery platform. The niche (jazz/hip-hop fusion) is underrepresented — early mover advantage.
+TikTok is a major music discovery platform. Niche genres are often underrepresented — early mover advantage.
 
 ### Pre-Launch Checklist
-- [ ] Claim handle (@wavytone or @wavytoneorchestra) — check availability
+- [ ] Claim handle — check availability (dedicated music handle or personal)
 - [ ] Create 3-5 videos BEFORE posting (content buffer)
-- [ ] Set up profile with bio, links to Bandcamp/streaming
+- [ ] Set up profile with bio, links to streaming/Bandcamp
 
-### Content Angles for Wavytone TikTok
-1. **The "what is this genre" hook** — "this is what jazz sounds like when raised on grime"
-2. **Behind the scenes studio** — saxophone recording sessions with Chet
-3. **"skepta bounce" making of** — how the track came together
+### Content Angles for Music TikTok
+1. **The "what is this genre" hook** — "this is what [genre] sounds like when raised on [influence]"
+2. **Behind the scenes studio** — recording sessions, instrument work, production process
+3. **Making of [your track]** — how the track came together
 4. **Instrument showcase** — let the sound speak (no words needed for 15 sec clips)
-5. **Collab clips** — Chet playing over the beat, live-ish feel
-6. **Trend participation** — use Wavytone tracks as background for trends (gets music exposure)
+5. **Collab clips** — collaborators playing over your beat, live-ish feel
+6. **Trend participation** — use your tracks as background for trends (gets music exposure)
 
-Research: `WebSearch("jazz TikTok creators strategy 2025")`
-Research: `WebSearch("music TikTok how to blow up 2025")`
+Research: `WebSearch("[your genre] TikTok creators strategy [current year]")`
+Research: `WebSearch("music TikTok how to grow [current year]")`
 
 ### Posting Cadence
 - Start: 3-5x/week until the algorithm catches on
@@ -127,62 +127,58 @@ Research: `WebSearch("music TikTok how to blow up 2025")`
 
 ---
 
-## 4. Instagram Growth (@wavytone)
-
-Current state: exists, linked to @wilsxt, but unclear activity level.
+## 4. Instagram Growth
 
 Content strategy for music Instagram:
 - Reels over static posts (algorithm reality)
-- Audio: Use Wavytone tracks as Reel audio — builds streaming exposure
-- Behind the scenes: studio, Chet collaborations, Richmond jazz scene
-- Community: engage with Richmond music scene, jazz/hip-hop fusion creators
+- Audio: Use your tracks as Reel audio — builds streaming exposure
+- Behind the scenes: studio, collaborator sessions, local scene
+- Community: engage with your local music scene and genre-adjacent creators
 
 Cross-promotion opportunities:
-- Chet Frierson has Richmond scene credibility — cross-tag on collab content
-- Weekend Plans (Chet's main band) has Richmond fanbase — potential audience overlap
+- Collaborators with their own following = collab content ready to go
+- Tag and cross-post with permission — builds both audiences
 
 ---
 
 ## 5. Collaboration Strategy
 
-Current collaborators: Chet Frierson (sax, Weekend Plans, Richmond jazz scene)
+Review current collaborators (from profile.md).
 
 Expanding the network:
-- **Richmond scene:** VCU jazz department (students/alums), RVA music venues, Richmond Jazz Society
-- **Online collaborators:** Other jazz/hip-hop producers in the online jazz community
-- **Vocalists:** The genre opens naturally to vocal features (jazz vocals, rap, spoken word)
-- **Press:** Style Weekly RVA music coverage — pitch Wavytone for a feature (Chet was featured)
+- **Local scene:** Music schools, venues, jazz/hip-hop communities in your city
+- **Online collaborators:** Other producers in the online community for your genre
+- **Vocalists/instrumentalists:** The genre may open naturally to vocal features or new instruments
+- **Press:** Local music coverage — pitch your project for a feature
 
-Research: `WebSearch("Richmond VA jazz hip hop musicians 2025")`
-Research: `WebSearch("jazz hip hop fusion artists collabs 2025")`
+Research: `WebSearch("[your city] [your genre] musicians [current year]")`
+Research: `WebSearch("[your genre] artists collabs [current year]")`
 
 ---
 
 ## 6. Genre Positioning
 
-How to describe Wavytone in a way that's discoverable and memorable:
-
-Working description: "Experimental jazz/hip-hop fusion from Richmond, VA — where saxophone meets grime"
+How to describe your project in a way that's discoverable and memorable:
 
 Questions to refine:
-- What artists would Wavytone listeners also follow? (Kendrick + jazz? Thundercat? BadBadNotGood? Kamasi Washington?)
-- What's the Richmond angle — is local identity a strength to lean into?
-- Does "orchestra" in the name signal something? (scale? ambition? classical crossover?)
+- What artists would your listeners also follow? (Name 3-5 comps — use profile.md if already mapped)
+- What's the local angle — is location identity a strength to lean into?
+- Does your project name signal something? What does it suggest?
 
-Research: `WebSearch("experimental jazz hip hop artists 2025 like BadBadNotGood")`
+Research: `WebSearch("[your genre] artists [current year] like [your comps]")`
 
 ---
 
 ## Store Insights
 
 ```
-mcp__openmemory__openmemory_store("Wavytone session [date]: [key decisions/strategy]")
-mcp__openmemory__openmemory_store("[Any artist/playlist/distributor insight worth keeping]")
+[built-in memory: save "Music session [date]: [key decisions/strategy]"]
+[built-in memory: save "[Any artist/playlist/distributor insight worth keeping]"]
 ```
 
 ## Tips
 
-- The genre niche is genuinely distinctive — lean into the specificity, not "jazz" alone
-- Distribution is the #1 unblocked action item — it's a 30-minute setup with huge upside
-- Chet Frierson is an asset — the Richmond scene credibility + his own following = collab content ready to go
-- TikTok music discovery is real — artists in similar niches have blown up on 1-3 videos
+- A distinctive genre niche is a strength — lean into the specificity, not just the broad genre
+- Distribution to streaming platforms is often the #1 unblocked action item — 30-minute setup with huge upside
+- TikTok music discovery is real — artists in niche genres have broken through on 1-3 videos
+- Collaborators with their own audiences are among the fastest growth levers

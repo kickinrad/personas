@@ -14,7 +14,7 @@ triggers:
 
 # Evening Shutdown
 
-Guide Wils through shutting down so he can truly disconnect. Be warm and supportive. The goal is mental closure - everything captured, tomorrow planned, mind at rest.
+Guide the user through shutting down so they can truly disconnect. Be warm and supportive. The goal is mental closure - everything captured, tomorrow planned, mind at rest.
 
 ## Phase 1: Review Today
 
@@ -120,7 +120,7 @@ Wrap up with:
 
 ## Tips
 
-- If Wils seems tired, keep it brief
+- If the user seems tired, keep it brief
 - If inbox is huge, process top 5 and defer rest
 - Big 3 should be achievable, not aspirational
 - End on a positive note always

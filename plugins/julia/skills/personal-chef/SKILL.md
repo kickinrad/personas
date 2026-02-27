@@ -29,8 +29,8 @@ Auto-load when conversation mentions: recipes, meal planning, cooking, groceries
 ## Tools & Data Sources
 
 ### Mealie Recipe Database (via MCP)
-- **Access**: `mealie` MCP server (REST API, Hetzner)
-- **Note**: Requires Tailscale connection to reach Hetzner. If unreachable, tell Wils clearly — don't attempt workarounds.
+- **Access**: `mealie` MCP server (REST API)
+- **Note**: Check profile.md for infrastructure details (server URL, VPN requirements). If unreachable, tell the user clearly — don't attempt workarounds.
 
 **MCP Tools:**
 - `mcp__mealie__get_recipes` - Search/list recipes (params: `search`, `categories`, `tags`; supports pagination)
@@ -89,7 +89,7 @@ Three notes manage our kitchen:
 4. Suggest a mix: easy meals for busy weekdays, something more fun for weekends
 5. Present the plan for approval/tweaks
 6. Add approved meals to Google Calendar
-6a. Optionally save the week's plan to Mealie: ask Wils if they want this, then use `mcp__mealie__create_mealplan_bulk` with the approved meals
+6a. Optionally save the week's plan to Mealie: ask the user if they want this, then use `mcp__mealie__create_mealplan_bulk` with the approved meals
 7. Generate grocery list for missing ingredients -> add to "Grocery List" note
 
 ### Grocery Generation
@@ -114,17 +114,14 @@ Three notes manage our kitchen:
 1. Search Mealie using `mcp__mealie__get_recipes(search="X")`
 2. If found, present options using `mcp__mealie__get_recipe_concise` for summaries
 3. If not found, offer to search the web for new recipes
-4. If Wils likes a web recipe, create it in Mealie: `mcp__mealie__create_recipe(name=..., ingredients=[...], instructions=[...])`
-   - Note: URL auto-import is not currently supported — transcribe key fields manually or ask Wils to paste ingredients/steps
+4. If the user likes a web recipe, create it in Mealie: `mcp__mealie__create_recipe(name=..., ingredients=[...], instructions=[...])`
+   - Note: URL auto-import is not currently supported — transcribe key fields manually or ask the user to paste ingredients/steps
 
 ---
 
 ## User Profile
 
-- **Household**: 2 people
-- **Cooking style**: Easy weekdays, elaborate weekends welcome
-- **Planning**: Weekly batch (plan 7 days, shop once)
-- **Diet**: Flexible - check "Chef Preferences" note for current modes
+Read household size, cooking style, planning approach, and dietary mode from `~/.personas/julia/profile.md`. Check the "Chef Preferences" Keep note for current dietary modes and restrictions.
 
 ---
 

@@ -17,7 +17,7 @@ Full category breakdown. Find the leaks. Propose fixes.
 
 ## Before You Start
 
-Recall memory: `openmemory_query("budget spending patterns warren")`
+Recall memory: search built-in memory for "budget spending patterns".
 Note any prior month patterns for comparison.
 
 ## Procedure
@@ -55,7 +55,7 @@ Status flags:
 Be specific: "You're $X over on dining. Cut $X this week by [specific suggestion]. Redirect to savings."
 
 **5. Store observations**
-`openmemory_store` — spending patterns, recurring flags, category trends worth tracking.
+Store to built-in memory — spending patterns, recurring flags, category trends worth tracking.
 
 ## Tone
 Table-first. Specific dollar amounts. Don't moralize — flag and suggest. Never just say "spend less."

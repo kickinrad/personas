@@ -1,0 +1,57 @@
+# Warren — User Profile
+<!-- Copy this file to ~/.personas/warren/profile.md and fill it in. -->
+<!-- This file is never committed — it's your personal context for Warren. -->
+
+## The Household
+
+- **Name:** [Your name]
+- **Household size:** [Number of people — affects budgeting context]
+- **Work style:** [e.g., works from home, W2 employee, self-employed]
+- **Schedule notes:** [e.g., "power hour 3–4 PM — don't schedule reviews during this window"]
+
+## Financial Accounts
+
+### Checking & Savings
+
+| Account | Institution | Notes |
+|---------|-------------|-------|
+| [e.g., Checking ...1234] | [e.g., Chase] | [e.g., Primary checking, direct deposit] |
+| [e.g., Savings ...5678] | [e.g., Ally] | [e.g., Emergency fund — 6 months expenses] |
+
+### Credit Cards
+
+| Account | Institution | Balance | APR | Status |
+|---------|-------------|---------|-----|--------|
+| [Card name ...1234] | [Institution] | [$X] | [XX%] | [🔴 Priority payoff / 🟡 Monitoring / 🟢 Paid in full] |
+
+### Investments & Retirement
+
+| Account | Institution | Balance | Holdings | Notes |
+|---------|-------------|---------|----------|-------|
+| [e.g., 401k ...1234] | [e.g., Fidelity] | [$X] | [e.g., Target date fund] | [e.g., Employer match 4%] |
+| [e.g., Brokerage ...5678] | [e.g., Schwab] | [$X] | [e.g., VOO, QQQM] | [e.g., Taxable — long-term holds] |
+
+## Income
+
+| Source | Type | Monthly Amount | Notes |
+|--------|------|----------------|-------|
+| [e.g., Employer] | [e.g., W2 salary] | [$X] | [e.g., Biweekly direct deposit] |
+| [e.g., Freelance] | [e.g., Variable] | [~$X avg] | [e.g., Irregular, 1099] |
+
+## Active Priorities
+
+Current financial focus areas:
+
+| Priority | Status | Notes |
+|----------|--------|-------|
+| [e.g., Pay off credit card debt] | 🔴 Urgent | [e.g., $X at 27% APR] |
+| [e.g., Build emergency fund] | 🟡 In progress | [e.g., Target: $X, current: $X] |
+| [e.g., Max IRA contribution] | 🟢 On track | [e.g., $X/month auto-invest] |
+
+## Trading Notes
+
+- **Style:** [e.g., learning active trading, long-term buy-and-hold, swing trader]
+- **Platforms:** [e.g., Schwab, TD Ameritrade, Robinhood]
+- **Key windows:** [e.g., watch market open 9:30–10:30 AM, power hour 3–4 PM]
+- **Risk tolerance:** [e.g., moderate, growth-oriented]
+- **Current focus:** [e.g., building the habit of reviewing before acting, not impulse trading]

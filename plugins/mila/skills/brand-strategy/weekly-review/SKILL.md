@@ -1,6 +1,6 @@
 ---
 name: weekly-review
-description: Monday check-in across all three tracks. Review wins, momentum, set Top 3 priorities per track for the week.
+description: Monday check-in across all focus areas. Review wins, momentum, set Top 3 priorities per area for the week.
 triggers:
   - weekly review
   - this week
@@ -19,64 +19,67 @@ A Monday ritual that sets the tone for the whole week. Look back to look forward
 
 ## Before Starting
 
-Query OpenMemory for last week's intentions:
+Read `~/.personas/mila/profile.md` for focus areas and current priorities.
+
+Query memory for last week's intentions:
 ```
-mcp__openmemory__openmemory_query("weekly priorities [current week]")
-mcp__openmemory__openmemory_query("brand strategy decisions")
+[built-in memory: search "weekly priorities [current week]", "brand strategy decisions"]
 ```
 
 ## Phase 1: Look Back (Last Week)
 
-Ask Wils: "How did last week go? Walk me through each track — what moved, what stalled, what surprised you?"
+Ask: "How did last week go? Walk me through each focus area — what moved, what stalled, what surprised you?"
 
-Listen, ask follow-up questions, then synthesize:
+Listen, ask follow-up questions, then synthesize. Use profile.md to know the focus areas — structure the review around them.
 
-### 🏢 Agency (b.f.f.)
+### For a business/agency:
 - Any new leads or client conversations?
 - Deliverables completed or delayed?
-- LinkedIn activity — anything posted?
+- Marketing activity — anything posted?
 - Revenue or pipeline movement?
 
-### 🎵 Music (Wavytone)
+### For a creative project:
 - Any production sessions?
-- Platform activity (Bandcamp streams, IG engagement)?
-- TikTok progress (if applicable)?
+- Platform activity (streams, engagement)?
+- New platform progress (TikTok, etc.)?
 - Collaboration conversations?
 
-### 🧑‍💻 Personal Brand
+### For personal brand:
 - Any writing done (even drafts)?
 - Social posts or engagement?
-- Developer work worth sharing someday?
+- Technical or developer work worth sharing someday?
 
 ## Phase 2: Momentum Check
 
-Look at what's actually working across all tracks:
+Look at what's actually working across all focus areas:
 - What had energy last week?
 - What felt like pushing a boulder uphill?
 - Is there anything to stop doing?
 
-## Phase 3: Set Top 3 Per Track
+## Phase 3: Set Top 3 Per Focus Area
 
-Facilitate setting exactly THREE priorities per track for the coming week. Not five. Not ten. Three.
+Facilitate setting exactly THREE priorities per focus area for the coming week. Not five. Not ten. Three.
+
+Use profile.md to fill in the actual focus area names:
 
 ```
-🏢 b.f.f. Agency — Top 3:
+[🏢 Business/Agency] — Top 3:
 1.
 2.
 3.
 
-🎵 Wavytone Orchestra — Top 3:
+[🎵 Creative Project] — Top 3:
 1.
 2.
 3.
 
-🧑‍💻 Personal Brand — Top 3:
+[🧑‍💻 Personal Brand] — Top 3:
 1.
 2.
 3.
 ```
 
-Push back if something is vague ("post more" → "post 2 Wavytone Reels with specific content angle").
+Push back if something is vague ("post more" → "post 2 [platform] [format] with specific content angle").
 
 ## Phase 4: Check Calendar
 
@@ -88,11 +91,11 @@ Are there any deadlines, meetings, or milestones this week that affect the prior
 
 ## Phase 5: Update + Store
 
-1. **Suggest profile.md update** — if Current Priorities are stale, propose new text for Wils to confirm
-2. **Store to OpenMemory:**
+1. **Suggest profile.md update** — if Current Priorities are stale, propose new text to confirm
+2. **Store to memory:**
 ```
-mcp__openmemory__openmemory_store("Week of [date] priorities: Agency: [1,2,3]. Music: [1,2,3]. Brand: [1,2,3].")
-mcp__openmemory__openmemory_store("[Any notable insight or decision from this review]")
+[built-in memory: save "Week of [date] priorities: [Area 1]: [1,2,3]. [Area 2]: [1,2,3]. [Area 3]: [1,2,3]."]
+[built-in memory: save "[Any notable insight or decision from this review]"]
 ```
 3. **Add to Google Tasks** — any action items with due dates:
 ```
@@ -104,19 +107,19 @@ mcp__google_workspace__create_task(title, due_date)
 End the session with:
 
 ```
-✨ Week of [date] — Top 3 Per Track
+✨ Week of [date] — Top 3 Per Focus Area
 
-🏢 b.f.f. Agency
+[Area 1 emoji + name]
 1. [Priority]
 2. [Priority]
 3. [Priority]
 
-🎵 Wavytone Orchestra
+[Area 2 emoji + name]
 1. [Priority]
 2. [Priority]
 3. [Priority]
 
-🧑‍💻 Personal Brand
+[Area 3 emoji + name]
 1. [Priority]
 2. [Priority]
 3. [Priority]
@@ -128,6 +131,6 @@ Let's make it happen.
 
 ## Tips
 
-- If Wils hasn't done much on a track, that's useful data — is it intentional deprioritization or drift?
-- If all three tracks feel chaotic, help identify the ONE thing that would create the most relief
+- If not much happened on a focus area, that's useful data — is it intentional deprioritization or drift?
+- If all focus areas feel chaotic, help identify the ONE thing that would create the most relief
 - Monday energy is often low — be warm, not intense

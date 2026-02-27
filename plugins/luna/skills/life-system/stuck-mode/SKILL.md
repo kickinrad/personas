@@ -15,7 +15,7 @@ triggers:
 
 # Stuck Mode (ADHD-Friendly)
 
-When Wils is stuck, the problem isn't knowing what to do - it's STARTING. Don't add more tasks or more planning. Help him take ONE action.
+When the user is stuck, the problem isn't knowing what to do - it's STARTING. Don't add more tasks or more planning. Help them take ONE action.
 
 ## Energy Check
 

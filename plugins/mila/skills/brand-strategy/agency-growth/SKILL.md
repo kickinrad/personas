@@ -1,9 +1,8 @@
 ---
 name: agency-growth
-description: b.f.f. agency strategy - client pipeline, LinkedIn positioning, portfolio, and service evolution.
+description: Agency/business strategy - client pipeline, LinkedIn positioning, portfolio, and service evolution.
 triggers:
   - agency
-  - bff
   - clients
   - client pipeline
   - linkedin
@@ -15,29 +14,32 @@ triggers:
   - new clients
 ---
 
-# Agency Growth — b.f.f.
+# Agency Growth
 
-Strategic deep-dive on growing the b.f.f. digital design agency.
+Strategic deep-dive on growing your digital agency or service business.
 
 ## Before Starting
 
+Read `~/.personas/mila/profile.md` for your agency details (name, positioning, client sectors, current clients, handles).
+
+Query memory for relevant past context:
 ```
-mcp__openmemory__openmemory_query("agency strategy")
-mcp__openmemory__openmemory_query("bff clients")
-mcp__openmemory__openmemory_query("LinkedIn strategy")
+[built-in memory: search "agency strategy", "client pipeline", "LinkedIn strategy"]
 ```
 
-## What We Know About b.f.f.
+## About Your Agency
 
-- **What they do:** Custom WordPress design, branding, online advertising (GA/Pixel, Mailchimp, WooCommerce, Stripe)
-- **Market:** Richmond, VA base + remote clients worldwide
-- **Positioning:** Boutique, no-template, custom work — "trusted best friend" energy
-- **Current clients:** Healthcare, nonprofits, architecture, media (PBS Richmond, Virginia Association of Health Plans, etc.)
-- **Differentiator:** Non-templated, built for client self-management. Personal service.
+Use profile.md to populate context for this session:
+- Agency name and positioning
+- Current client sectors and any named clients
+- Primary service offerings
+- Key differentiators
+- Geographic market (local + remote, or remote-only)
+- LinkedIn and website URLs
 
 ## Agenda — Pick the Focus
 
-Ask Wils which area to dive into:
+Ask which area to dive into:
 
 1. **Client pipeline** — who's in the funnel, what needs follow-up
 2. **LinkedIn strategy** — building the agency's professional presence
@@ -53,7 +55,7 @@ Walk through the current pipeline:
 - **Active clients:** What are they working on? Any at risk?
 - **Prospective leads:** Who's been contacted but hasn't converted?
 - **Referral opportunities:** Who could refer new clients?
-- **Lapsed clients:** Who has worked with b.f.f. before and might need new work?
+- **Lapsed clients:** Who has worked with you before and might need new work?
 
 Key question: "Is the pipeline full, thin, or empty right now?"
 
@@ -61,7 +63,7 @@ If thin: What's one action this week to generate a lead?
 - Reach out to a past client
 - Post a portfolio piece on LinkedIn
 - Ask a current client for a referral
-- Pitch a local Richmond organization you admire
+- Pitch a local or niche organization you admire
 
 Action items → Google Tasks:
 ```
@@ -72,62 +74,56 @@ mcp__google_workspace__create_task(title="Follow up: [client name]", due_date)
 
 ## 2. LinkedIn Strategy
 
-LinkedIn is the highest-ROI platform for b.f.f. and is currently underdeveloped.
+LinkedIn is often the highest-ROI platform for boutique agencies and is commonly underdeveloped.
 
-**Current state:** Profile exists ("UX + WordPress Designer") but low activity and no strategic content.
-
-**Goal:** Establish Wils as the go-to Richmond-area (and remote) expert for boutique WordPress design + digital marketing for nonprofits and healthcare orgs.
+**Goal:** Establish the user as the go-to expert in their niche (use profile.md for specialty and target market).
 
 ### Profile Optimization Checklist
-- [ ] Headline: More specific than "UX + WordPress Designer" — e.g., "WordPress Design for Nonprofits & Healthcare | b.f.f. | Richmond, VA"
-- [ ] About section: Tell the b.f.f. story, who you help, why
-- [ ] Featured section: Link to bestfootforward.business, showcase 2-3 client results
-- [ ] Experience: bff.llc properly listed with description
+- [ ] Headline: More specific than just a job title — e.g., "[Your specialty] | [Agency name] | [Location or Remote]"
+- [ ] About section: Tell the agency story, who you help, why
+- [ ] Featured section: Link to agency site, showcase 2-3 client results
+- [ ] Experience: Agency properly listed with description
 - [ ] Portfolio link: Add in contact info
 
 ### Content Strategy (2-3x/week)
 
 Content pillars for LinkedIn:
-1. **Client wins** — anonymized results ("Helped a Richmond nonprofit 3x their donation conversions")
-2. **Process insights** — "Why we never use templates" / "What happens in a WordPress handoff"
-3. **Education** — "Before running Facebook ads, fix your website first"
-4. **Local Richmond angle** — RVA business community, nonprofit spotlight
-5. **Wils the person** — authenticity builds trust ("running an agency AND a jazz band")
+1. **Client wins** — anonymized results ("Helped a [sector] client 3x their [metric]")
+2. **Process insights** — "Why we never use templates" / "What a real client handoff looks like"
+3. **Education** — "Before running ads, fix your website first"
+4. **Niche angle** — your client sectors, community spotlight
+5. **You as a person** — authenticity builds trust ("running an agency AND [your creative work]")
 
 Avoid: self-promotional posts with no value, irregular bursts.
 
-Research: `WebSearch("LinkedIn content strategy web design agency 2025")`
+Research: `WebSearch("LinkedIn content strategy [your specialty] agency [current year]")`
 
 ---
 
 ## 3. Portfolio + Positioning
 
-Review bestfootforward.business:
+Review your agency website:
 - Is the portfolio current? Any recent clients missing?
 - Does the homepage clearly communicate who you serve and what you do?
 - Is there a clear call to action?
 
-Positioning question: "Who is b.f.f.'s ideal client in 2025?"
-- By sector: healthcare, nonprofits, architecture, media — is this still right?
-- By size: small local businesses? regional orgs? national nonprofits?
-- By need: fresh build, redesign, ongoing maintenance, + ads?
+Positioning question: "Who is your ideal client right now?"
+- By sector: Is your current niche still right? (use profile.md for current sectors)
+- By size: Small local businesses? Regional orgs? National clients?
+- By need: Fresh build, redesign, ongoing maintenance, ads management?
 
-Research competitors: `WebSearch("boutique WordPress agency Richmond VA")`
+Research competitors: `WebSearch("boutique [your specialty] agency [your market]")`
 
 ---
 
 ## 4. Service Evolution
 
-Walk through the current service offering:
-- Custom WordPress design ✓
-- Online advertising setup ✓
-- Integrations (Google Suite, Mailchimp, WooCommerce, Stripe) ✓
-- Branding + logo design ✓
+Walk through the current service offering (read from profile.md):
 
 Questions to explore:
 - Is there a service that's not profitable to offer at the current price?
-- Is there a service clients keep asking for that b.f.f. doesn't offer?
-- Could an ongoing retainer (maintenance + ads management) create recurring revenue?
+- Is there a service clients keep asking for that you don't offer?
+- Could an ongoing retainer (maintenance + management) create recurring revenue?
 - Is there a higher-ticket "strategic" tier above execution work?
 
 ---
@@ -138,17 +134,17 @@ Where are the next clients coming from?
 
 **Channel analysis:**
 - Referrals (historically most reliable for boutique agencies)
-- LinkedIn (currently underutilized — high potential)
-- Instagram @bff.llc (brand awareness, local RVA)
-- Local networking (Richmond business community, nonprofits, BNI-type groups)
+- LinkedIn (often underutilized — high potential)
+- Instagram/agency handle (brand awareness, local community)
+- Local networking (business community, sector-specific groups)
 - Cold outreach (targeted, research-backed)
 
 For each channel: Is it active? What's the barrier to using it better?
 
 **Research:**
 ```
-WebSearch("how to get clients web design agency 2025")
-WebSearch("nonprofit web design market Richmond VA")
+WebSearch("how to get clients [your specialty] agency [current year]")
+WebSearch("[your client sector] web design market [your city or remote]")
 ```
 
 ---
@@ -156,13 +152,13 @@ WebSearch("nonprofit web design market Richmond VA")
 ## Store Insights
 
 ```
-mcp__openmemory__openmemory_store("Agency session [date]: [key decisions/insights]")
-mcp__openmemory__openmemory_store("[Any specific strategy insight about clients, LinkedIn, or positioning]")
+[built-in memory: save "Agency session [date]: [key decisions/insights]"]
+[built-in memory: save "[Any specific strategy insight about clients, LinkedIn, or positioning]"]
 ```
 
 ## Tips
 
-- b.f.f.'s strongest growth lever is probably LinkedIn — it's completely untapped
-- The nonprofit/healthcare niche is defensible and underserved by boutique shops
-- Recurring revenue (maintenance retainers) would stabilize the business significantly
-- Personal brand (Wils) and agency brand (b.f.f.) reinforce each other on LinkedIn
+- LinkedIn is commonly the most untapped growth lever for boutique agencies
+- A niche client sector (e.g., nonprofits, healthcare, architecture) is defensible and underserved by generic shops
+- Recurring revenue (maintenance retainers) stabilizes income significantly
+- Personal brand and agency brand reinforce each other on LinkedIn

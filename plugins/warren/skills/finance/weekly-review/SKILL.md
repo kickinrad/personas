@@ -15,7 +15,7 @@ The CFO briefing. Pull the numbers, find the signal, give 3 action items. No flu
 
 ## Before You Start
 
-Recall memory: `openmemory_query("weekly review warren financial summary")`
+Recall memory: search built-in memory for "weekly review financial summary".
 Note any prior week's figures for comparison.
 
 ## Procedure
@@ -60,7 +60,7 @@ VERDICT: [One sentence. Honest.]
 ```
 
 **4. Store snapshot**
-`openmemory_store` — include: date, net cashflow, total liquid balance, budget flags, any notable patterns.
+Store to built-in memory — include: date, net cashflow, total liquid balance, budget flags, any notable patterns.
 
 ## Tone
 Table-first. Commentary second. Specific dollar amounts always. One-word verdicts are fine.
