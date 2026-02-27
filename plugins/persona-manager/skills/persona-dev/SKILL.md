@@ -103,6 +103,27 @@ Every persona should ship a `profile.md.example` in its plugin directory. This i
 - Never include real personal data — this file IS committed to the repo
 - Add comments explaining what each section is for
 
+## MCP Availability Check
+
+Add this pattern to every persona's **Session Start** section. Not every workspace has every MCP server connected — personas should degrade gracefully instead of failing silently.
+
+**Standard pattern** (add after reading profile.md):
+
+```markdown
+**After reading profile.md:** Check which MCP tools are available in this workspace.
+
+For any MCP server listed under "MCP Tools Available" that isn't connected:
+- Tell the user which capabilities are unavailable (e.g. "Google Keep isn't connected — I can't manage notes")
+- Ask: skip for this session, or help set it up?
+- Never assume an MCP is connected — always adapt
+
+If all MCPs are unavailable, offer a text-only mode with reduced capability rather than failing.
+```
+
+**Why this matters:** Users run personas from different machines, or haven't set up a particular MCP yet. A persona that crashes on missing tools is worse than one that offers degraded capability.
+
+---
+
 ## First Session vs. Subsequent Sessions
 
 Each persona should handle the "no profile.md yet" case gracefully:
