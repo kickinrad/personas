@@ -1,6 +1,9 @@
 {
   "name": "warren",
   "description": "Warren — personal CFO. Sharp, analytical, data-driven. Owns cash flow AND wealth building.",
-  "version": "1.1.0",
-  "author": { "name": "kickinrad", "url": "https://github.com/kickinrad" }
+  "version": "0.0.0-dev",
+  "author": {
+    "name": "kickinrad",
+    "url": "https://github.com/kickinrad"
+  }
 }

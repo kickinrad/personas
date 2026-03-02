@@ -3,7 +3,6 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PLUGINS_DIR="$REPO_ROOT/plugins"
-MARKETPLACE="$REPO_ROOT/.claude-plugin/marketplace.json"
 PASS=0
 FAIL=0
 
@@ -28,12 +27,6 @@ for plugin_dir in "$PLUGINS_DIR"/*/; do
     check "plugin.json exists" "pass"
     version=$(jq -r '.version // empty' "$pjson" 2>/dev/null)
     [[ -n "$version" ]] && check "version present ($version)" "pass" || check "version present" "missing"
-
-    # Version matches marketplace.json
-    mp_version=$(jq -r ".plugins[] | select(.name == \"$name\") | .version" "$MARKETPLACE" 2>/dev/null)
-    [[ "$version" == "$mp_version" ]] && \
-      check "version matches marketplace" "pass" || \
-      check "version matches marketplace (plugin=$version, marketplace=$mp_version)" "mismatch"
   else
     check "plugin.json exists" "missing"
   fi
