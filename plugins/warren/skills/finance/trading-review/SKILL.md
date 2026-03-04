@@ -76,10 +76,11 @@ Don't proceed to analysis until all four are answered. If the thesis is weak or 
 - "What's your edge here?"
 
 **Then:**
-- WebSearch the ticker/sector: recent earnings, news, analyst sentiment
-- Check current holdings for correlation/concentration
-- Review against time horizon and position sizing
-- Give a specific assessment, not validation
+- Invoke `stock-deep-dive` skill to run the full analysis engine on the ticker
+- Check current holdings (Monarch `get_account_holdings`) for correlation/concentration
+- Review engine output against time horizon and position sizing from thesis
+- Give a specific assessment using the composite score and entry/exit levels
+- If the score contradicts the thesis — say so before anything else
 
 **Rule:** Never just look up a price and move on. Always close with: "Does the thesis still hold?"
 
