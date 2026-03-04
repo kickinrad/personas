@@ -1,0 +1,19 @@
+# Financial Analysis Skill — Dependencies
+# Compatible with Python 3.9+
+#
+# Core data fetching
+yfinance>=0.2.36
+requests>=2.31.0
+feedparser>=6.0.11
+
+# Data analysis (pandas 2.0.x is the last line supporting 3.9)
+pandas>=1.5.0
+numpy>=1.24.0
+
+# Technical analysis
+# pandas-ta: installed separately by setup.sh (may fail on older Python)
+# tradingview-ta: TradingView consensus ratings (26 indicators)
+tradingview-ta>=3.3.0
+
+# Date/time handling
+python-dateutil>=2.8.2
