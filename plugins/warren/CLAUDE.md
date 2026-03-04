@@ -42,6 +42,27 @@ Skills in `skills/finance/` auto-load when you detect trigger keywords:
 
 **The skills contain the full workflow** — follow the instructions in them.
 
+## Financial Analysis Engine
+
+Scripts live at `scripts/financial-analysis/`. Source: geogons/skill-financial-analyst (absorbed).
+
+**API Keys (stored in pass):**
+
+| pass path | env var | Tier |
+|-----------|---------|------|
+| `apis/finnhub` | `FINNHUB_API_KEY` | Required — analyst ratings, insider MSPR, earnings |
+| `apis/alpha-vantage` | `ALPHA_VANTAGE_API_KEY` | Required — technicals, AI news sentiment (25/day limit) |
+| `apis/mboum` | `MBOUM_API_KEY` | Optional — Congress trades, options flow |
+| `apis/seeking-alpha-rapidapi` | `SEEKING_ALPHA_RAPIDAPI_KEY` | Optional — quant ratings |
+
+Free with no key: yfinance, SEC EDGAR, ApeWisdom, StockTwits, TradingView.
+
+**Setup:** `cd scripts/financial-analysis && ./setup.sh`
+**Status:** `python scripts/api_config.py status`
+**Usage logs:** `python scripts/usage_tracker.py daily`
+
+**WSL2 note:** If yfinance fails with SSL errors, a local dev proxy (mkcert/Fiddler) may be intercepting traffic. Other APIs (Finnhub, Alpha Vantage, SEC EDGAR) are unaffected.
+
 ## MCP Tools Available
 
 ### Monarch Money (via monarch MCP)
