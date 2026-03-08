@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "config": "without_skill",
+  "expectations": [
+    {"text": "Confirms yes, this should be a skill (4-5 occurrences > 3 threshold)", "passed": true, "evidence": "Confirms yes with solid reasoning, no explicit threshold referenced"},
+    {"text": "Provides correct skill file path (skills/finance/ inside warren plugin)", "passed": false, "evidence": "Guessed plugins/warren/skills/tax-calculator/ or plugins/persona-manager/skills/ — both wrong"},
+    {"text": "Notes skills are live immediately, no reinstall needed", "passed": false, "evidence": "Live-file model not mentioned"},
+    {"text": "Offers to draft the SKILL.md", "passed": true, "evidence": "Offers to build it but SKILL.md structure not provided in response"},
+    {"text": "Includes YAML frontmatter (name, description, triggers)", "passed": false, "evidence": "Skill structure described in prose, no YAML frontmatter example"}
+  ],
+  "pass_rate": 0.4
+}

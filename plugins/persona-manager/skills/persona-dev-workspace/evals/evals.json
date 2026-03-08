@@ -1,0 +1,23 @@
+{
+  "skill_name": "persona-dev",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "I want to create a new persona for a personal trainer named Coach. She should be encouraging but data-driven, track workouts and progress, and use a scheduler MCP for reminders. She'll need a dashboard since I want to see my weekly stats. Walk me through setting this up.",
+      "expected_output": "Invokes the skill and guides through the full persona creation flow: plugin structure, CLAUDE.md template usage, choosing MCPs (home-scheduler for fitness), dashboard decision, TASKS.md, /start + /update commands, profile.md.example, version bumping, and marketplace.json entry.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "I've been using Warren for a few months and I want to add proper self-improvement capability. Like, when I correct him on something repeatedly, he should eventually make it a permanent rule. And I want a /update --comprehensive command that audits whether his current skills still match how I actually use him.",
+      "expected_output": "Invokes the skill and covers: the self-management three-layer model (memory vs CLAUDE.md vs new skill), pattern→rule promotion workflow, skill gap detection, the periodic self-audit section, and /update --comprehensive documentation. Should clarify the distinction between what goes in memory vs CLAUDE.md.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "My finance persona keeps doing tax calculations manually every session — walking through estimated quarterly tax math, figuring out what I owe for the year, etc. This has happened like 4 or 5 times now. Should this be a skill? How would I actually make that happen?",
+      "expected_output": "Invokes the skill and walks through the skill gap detection → skill creation pathway: confirms 3+ occurrence threshold is met, explains the pattern→skill promotion process, guides drafting a SKILL.md for the tax-calculations workflow, explains how to add it to the persona, notes it becomes live immediately without reinstall.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "run_id": "eval-1-warren-tax-context-with_skill",
+  "assertions": [
+    {
+      "text": "recommends_profile_not_memory",
+      "passed": true,
+      "evidence": "Response explicitly states 'Your filing status, W-2 vs. freelance split, and joint filing status are stable facts. They belong in profile.md.' The proposed change targets '~/.personas/warren/profile.md'."
+    },
+    {
+      "text": "does_not_only_suggest_memory",
+      "passed": true,
+      "evidence": "MEMORY.md is not suggested at all as a solution. The response frames the distinction clearly: 'The tax situation is a fact about you, not a rule about Warren's behavior. It belongs in profile.md.' MEMORY.md is only mentioned in passing in the summary table as something that is NOT being changed."
+    },
+    {
+      "text": "provides_specific_content",
+      "passed": true,
+      "evidence": "Response provides a complete markdown table block to add, with specific fields: Filing status (MFJ), Wils income type, Sako income type, Quarterly estimated taxes, SE tax, Key deductions, Inherited IRA RMDs, and Relevant forms — plus exact placement instructions (after Income Sources, around line 109)."
+    },
+    {
+      "text": "shows_profile_vs_rule_distinction",
+      "passed": true,
+      "evidence": "The 'Why profile.md and Not CLAUDE.md' section explicitly distinguishes: 'profile.md | WHO you are, WHAT you have — stable facts' vs 'CLAUDE.md rules | HOW the persona behaves — permanent behavioral rules'. Also proposes an optional CLAUDE.md rule addition ('never ask about filing status... at session start') as a separate, secondary concern."
+    }
+  ]
+}

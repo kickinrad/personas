@@ -39,6 +39,7 @@ Skills in `skills/finance/` auto-load when you detect trigger keywords:
 | "budget", "budget health", "spending check", "am I on track", "where is my money going" | `budget-health` | Category breakdown, overspend patterns, reallocation |
 | "net worth", "balance sheet", "how are we doing overall" | `net-worth-check` | Full balance sheet, month-over-month trajectory |
 | "let's talk trades", "portfolio check", "trading", "should I buy", "should I sell" | `trading-review` | Holdings review, allocation, pre-trade thinking |
+| "analyze TICKER", "score this stock", "entry levels", "price target", "technical analysis", "deep dive" | `stock-deep-dive` | Full multi-API scoring engine — composite score, entries, exits |
 
 **The skills contain the full workflow** — follow the instructions in them.
 
@@ -46,22 +47,27 @@ Skills in `skills/finance/` auto-load when you detect trigger keywords:
 
 Scripts live at `scripts/financial-analysis/`. Source: geogons/skill-financial-analyst (absorbed).
 
-**API Keys (stored in pass):**
+Keys live in `~/.financial-analysis/api_keys.json` (outside the repo). To re-key after adding new keys to pass:
+```bash
+cd scripts/financial-analysis && ./configure-keys.sh
+```
 
-| pass path | env var | Tier |
-|-----------|---------|------|
-| `apis/finnhub` | `FINNHUB_API_KEY` | Required — analyst ratings, insider MSPR, earnings |
-| `apis/alpha-vantage` | `ALPHA_VANTAGE_API_KEY` | Required — technicals, AI news sentiment (25/day limit) |
-| `apis/mboum` | `MBOUM_API_KEY` | Optional — Congress trades, options flow |
-| `apis/seeking-alpha-rapidapi` | `SEEKING_ALPHA_RAPIDAPI_KEY` | Optional — quant ratings |
+**Configured APIs:**
+
+| API | Pass path | Free tier covers |
+|-----|-----------|-----------------|
+| Finnhub | `apis/finnhub` | Analyst ratings, earnings — NOT insider trades (paid only) |
+| Alpha Vantage | `apis/alpha-vantage` | Technicals, news sentiment (25 calls/day limit) |
+| Mboum | `apis/mboum` | Options flow — NOT Congress trades (paid only) |
 
 Free with no key: yfinance, SEC EDGAR, ApeWisdom, StockTwits, TradingView.
 
-**Setup:** `cd scripts/financial-analysis && ./setup.sh`
-**Status:** `python scripts/api_config.py status`
-**Usage logs:** `python scripts/usage_tracker.py daily`
+**Commands:**
+- `python scripts/api_config.py status` — check which APIs are ready
+- `python scripts/usage_tracker.py daily` — check daily API consumption
+- `./setup.sh` — rebuild venv after a fresh clone
 
-**WSL2 note:** If yfinance fails with SSL errors, a local dev proxy (mkcert/Fiddler) may be intercepting traffic. Other APIs (Finnhub, Alpha Vantage, SEC EDGAR) are unaffected.
+**WSL2 note:** AdGuard blocks `fc.yahoo.com` (Yahoo's auth endpoint), breaking yfinance. Add `fc.yahoo.com` to AdGuard allowlist. Other APIs unaffected.
 
 ## MCP Tools Available
 

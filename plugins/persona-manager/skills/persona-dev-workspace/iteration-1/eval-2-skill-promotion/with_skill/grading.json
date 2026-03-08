@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "config": "with_skill",
+  "expectations": [
+    {"text": "Confirms yes, this should be a skill (4-5 occurrences > 3 threshold)", "passed": true, "evidence": "Explicitly confirms qualification, cites 3+ rule from skill guidance"},
+    {"text": "Provides correct skill file path (skills/finance/ inside warren plugin)", "passed": true, "evidence": "plugins/warren/skills/finance/quarterly-tax-estimate/ — correct path"},
+    {"text": "Notes skills are live immediately, no reinstall needed", "passed": true, "evidence": "Live-file model explicitly mentioned"},
+    {"text": "Offers to draft the SKILL.md", "passed": true, "evidence": "Full SKILL.md draft provided with complete content"},
+    {"text": "Includes YAML frontmatter (name, description, triggers)", "passed": true, "evidence": "Proper YAML frontmatter with name, description, triggers in draft"}
+  ],
+  "pass_rate": 1.0
+}
