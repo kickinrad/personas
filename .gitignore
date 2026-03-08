@@ -6,7 +6,9 @@
 # Private persona data — never commit
 plugins/*/profile.md
 plugins/*/.mcp.json
-plugins/*/.claude/
+# Per-persona local state (never commit)
+plugins/*/.claude/memory/
+plugins/*/.claude/settings.local.json
 plugins/*/*.db
 plugins/*/*.db-shm
 plugins/*/*.db-wal
