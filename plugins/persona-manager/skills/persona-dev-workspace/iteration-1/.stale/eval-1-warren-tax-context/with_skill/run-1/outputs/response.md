@@ -1,6 +1,6 @@
 # Warren Tax Context — Persona Dev Response
 
-Hey Wils! Good call — if Warren keeps asking the same question every session, that's a clear signal the answer belongs in `profile.md`, not in your head.
+Hey the user! Good call — if Warren keeps asking the same question every session, that's a clear signal the answer belongs in `profile.md`, not in your head.
 
 Per the persona-dev skill's canonical definitions:
 
@@ -29,14 +29,14 @@ Add this section immediately after the `## Income Sources` section (before `## 2
 
 | Key | Detail |
 |-----|--------|
-| **Filing status** | Married filing jointly (MFJ) — Wils + Sako |
-| **Wils income type** | Mixed: self-employed (b.f.f. Schedule C) + investment distributions (1099-R, inherited IRA) |
-| **Sako income type** | W-2 (Upspring) |
-| **Quarterly estimated taxes** | Required for Wils — self-employment income is not withheld |
-| **SE tax** | Applies to b.f.f. net profit (Schedule C) |
+| **Filing status** | Married filing jointly (MFJ) — the user + [spouse] |
+| **the user income type** | Mixed: self-employed ([business name] Schedule C) + investment distributions (1099-R, inherited IRA) |
+| **[spouse] income type** | W-2 ([employer]) |
+| **Quarterly estimated taxes** | Required for the user — self-employment income is not withheld |
+| **SE tax** | Applies to [business name] net profit (Schedule C) |
 | **Key deductions** | SEP-IRA contributions, home office (simplified method), ACA premiums |
 | **Inherited IRA RMDs** | Required annually through 2035 — plan distributions to minimize tax impact |
-| **Relevant forms** | Schedule C (b.f.f.), 1099-R (inherited IRA), Form 8962 (ACA reconciliation) |
+| **Relevant forms** | Schedule C ([business name]), 1099-R (inherited IRA), Form 8962 (ACA reconciliation) |
 
 **Standing rule for Warren:** Do NOT ask about filing status or income type at the start of a weekly review. This context is permanent unless `profile.md` is updated.
 ```

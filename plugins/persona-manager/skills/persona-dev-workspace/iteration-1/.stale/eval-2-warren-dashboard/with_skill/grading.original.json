@@ -4,7 +4,7 @@
     {
       "text": "mentions_tasks_md",
       "passed": true,
-      "evidence": "Section '4. What TASKS.md should look like' explicitly recommends creating TASKS.md at '/home/wilst/projects/personal/personas/plugins/warren/TASKS.md' as a dedicated file for action items, separate from MEMORY.md. The summary table also lists TASKS.md as a new file."
+      "evidence": "Section '4. What TASKS.md should look like' explicitly recommends creating TASKS.md at '/home/user/projects/personal/personas/plugins/warren/TASKS.md' as a dedicated file for action items, separate from MEMORY.md. The summary table also lists TASKS.md as a new file."
     },
     {
       "text": "mentions_commands",

@@ -1,6 +1,6 @@
 # Creating Coach — Your Personal Trainer Persona
 
-Hey Wils! Love this idea — a data-driven trainer persona is a great fit for the persona system. Let me walk you through exactly what we're building and how it all fits together.
+Hey! Love this idea — a data-driven trainer persona is a great fit for the persona system. Let me walk you through exactly what we're building and how it all fits together.
 
 ---
 
@@ -159,7 +159,7 @@ Monthly (or triggered by `/update --comprehensive`):
 
 ## Step 3 — profile.md.example
 
-This is the template Wils copies and fills in:
+This is the template the user copies and fills in:
 
 ```markdown
 # My Fitness Profile
@@ -241,7 +241,7 @@ The scheduler is the key MCP here. On first session, after reading profile.md, C
 2. If yes, bootstrap two default schedules from profile.md data:
    - **Workout reminder** — desktop popup at the user's preferred time on training days
    - **Weekly review** — Sunday at 6pm (or user's preferred time), triggers "weekly review"
-3. If no, tell Wils what's unavailable and offer to skip or set up
+3. If no, tell the user what's unavailable and offer to skip or set up
 
 The `google-workspace` MCP is listed in the domain reference for Health/Fitness — but since you specifically mentioned `home-scheduler` for reminders, we'll lead with that and add Google Workspace only if calendar sync becomes useful.
 
@@ -279,7 +279,7 @@ Coach is a great dashboard candidate — you want weekly stats at a glance. Here
   "name": "coach",
   "version": "1.0.0",
   "description": "An encouraging, data-driven personal trainer. Tracks workouts, progress, and goals. Weekly reviews, scheduler reminders, and a stats dashboard.",
-  "author": "kickinrad",
+  "author": "your-github-handle",
   "tags": ["health", "fitness", "tracking", "productivity"]
 }
 ```

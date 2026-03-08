@@ -473,7 +473,7 @@ Data first, commentary second. Honest without being demoralizing. Always end for
 {
   "name": "coach",
   "version": "1.0.0",
-  "author": "kickinrad",
+  "author": "your-github-handle",
   "description": "Personal fitness trainer — workout tracking, weekly planning, and accountability.",
   "source": "personas",
   "requires_profile": true,
@@ -492,7 +492,7 @@ Add to `plugins/persona-manager/.claude-plugin/marketplace.json` plugins array:
   "name": "coach",
   "version": "1.0.0",
   "description": "Personal fitness trainer — workout tracking, weekly planning, and accountability.",
-  "author": "kickinrad",
+  "author": "your-github-handle",
   "mcps": ["google-workspace", "home-scheduler"],
   "tags": ["fitness", "health", "accountability", "calendar"]
 }

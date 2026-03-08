@@ -15,3 +15,4 @@ plugins/*/*.db-wal
 *.log
 plugins/*/*.log
 plugins/warren/dashboard.html
+plugins/warren/investments.md

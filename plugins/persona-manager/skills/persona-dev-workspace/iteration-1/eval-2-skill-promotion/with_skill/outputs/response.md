@@ -1,6 +1,6 @@
 # Response: Promoting Tax Calculations to a Skill
 
-Yes, Wils — this is a textbook skill promotion case. The persona-dev skill is explicit on this: when a 3+ step ad-hoc workflow recurs 3+ times without an existing skill, it's time to draft a SKILL.md and propose it.
+Yes, the user — this is a textbook skill promotion case. The persona-dev skill is explicit on this: when a 3+ step ad-hoc workflow recurs 3+ times without an existing skill, it's time to draft a SKILL.md and propose it.
 
 Quarterly tax math hits both bars comfortably (multi-step workflow, recurring 4-5 times). Here's how to actually make it happen:
 

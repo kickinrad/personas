@@ -1,4 +1,4 @@
-Hey Wils! Yeah, this is a textbook case for skill promotion. Four or five times doing the same math-heavy workflow manually? That's the skill creation signal right there.
+Hey the user! Yeah, this is a textbook case for skill promotion. Four or five times doing the same math-heavy workflow manually? That's the skill creation signal right there.
 
 **Should this be a skill? Yes, absolutely.**
 

@@ -77,7 +77,7 @@ The structure mirrors exactly what the weekly-review skill already produces in c
 
 ### 2. Update the weekly-review skill
 
-File: `/home/wilst/projects/personal/personas/plugins/warren/skills/finance/weekly-review/SKILL.md`
+File: `/home/user/projects/personal/personas/plugins/warren/skills/finance/weekly-review/SKILL.md`
 
 Add a **Step 5** after the existing Step 4 ("Store snapshot"):
 
@@ -119,7 +119,7 @@ Prior reviews are preserved in MEMORY.md.
 
 ### 3. Add "Weekly Review" tab to `dashboard.html`
 
-File: `/home/wilst/projects/personal/personas/plugins/warren/dashboard.html`
+File: `/home/user/projects/personal/personas/plugins/warren/dashboard.html`
 
 #### 3a. Add the tab button
 
@@ -244,7 +244,7 @@ showLoading(weeklyEl, 'Loading weekly review...');
 
 Warren already has a dashboard and priorities tab. The `TASKS.md` format (per the persona-dev skill spec) is the right place for action items surfaced during the weekly review. After a weekly review, Warren should also write the 3 action items into `TASKS.md` under `## Active`. This means the Priorities tab (which already parses `MEMORY.md`'s checklist) should optionally also pull from `TASKS.md`, or Warren should copy action items there explicitly.
 
-Recommended `TASKS.md` at `/home/wilst/projects/personal/personas/plugins/warren/TASKS.md`:
+Recommended `TASKS.md` at `/home/user/projects/personal/personas/plugins/warren/TASKS.md`:
 
 ```markdown
 # Tasks
@@ -287,7 +287,7 @@ No changes to `CLAUDE.md`, `open.sh`, or `profile.md` are needed. Version bump: 
 3. Warren writes `WEEKLY_REVIEW.md` (overwriting previous)
 4. Warren appends the 3 action items to `TASKS.md`
 5. Warren stores snapshot to memory (unchanged)
-6. You open the dashboard: `bash /home/wilst/projects/personal/personas/plugins/warren/open.sh`
+6. You open the dashboard: `bash /home/user/projects/personal/personas/plugins/warren/open.sh`
 7. Click the "Weekly Review" tab — full breakdown, color-coded budget rows, verdict highlighted
 8. Priorities tab already shows the new action items from `TASKS.md`
 

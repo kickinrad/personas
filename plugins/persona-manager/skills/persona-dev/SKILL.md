@@ -1,6 +1,6 @@
 ---
 name: persona-dev
-description: Create, update, and evolve personas in the kickinrad/personas marketplace. Use this when the user asks to create a new persona, add a skill to an existing persona, update a persona's CLAUDE.md or profile, add self-improvement capability to a persona, set up a dashboard for a persona, document a new MCP tool in a persona, or improve how a persona works over time. Also triggers when the user says things like "my persona should remember this" or "this keeps happening in sessions, make it a skill".
+description: Create, update, and evolve personas in the personas marketplace. Use this when the user asks to create a new persona, add a skill to an existing persona, update a persona's CLAUDE.md or profile, add self-improvement capability to a persona, set up a dashboard for a persona, document a new MCP tool in a persona, or improve how a persona works over time. Also triggers when the user says things like "my persona should remember this" or "this keeps happening in sessions, make it a skill".
 triggers:
   - create a persona
   - new persona

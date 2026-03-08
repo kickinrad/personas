@@ -1,6 +1,6 @@
 # Warren Self-Improvement Capability
 
-Hey Wils! A few months of Warren usage and you want him to actually *learn* — love it. This is exactly what the self-management system in the persona architecture is designed for. Let me walk through what we're adding and what already exists vs. what needs to be built.
+Hey the user! A few months of Warren usage and you want him to actually *learn* — love it. This is exactly what the self-management system in the persona architecture is designed for. Let me walk through what we're adding and what already exists vs. what needs to be built.
 
 ---
 
