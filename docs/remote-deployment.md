@@ -24,12 +24,12 @@ Local Machine                    Remote Server
 │   .claude/memory │ ←────────  │       memory/    │
 └──────────────────┘            └──────────────────┘
                                       ↑
-                                   cron runs
-                                   scheduled
+                                   scheduler MCP
+                                   runs scheduled
                                    prompts
 ```
 
-The remote server runs personas on a schedule via cron. Memory syncs back to your local machine so you can see what the persona learned.
+The remote server runs personas on a schedule via the home-scheduler MCP server (SQLite-backed, with execution history and concurrency control). Memory syncs back to your local machine so you can see what the persona learned.
 
 ## Using persona-manager:deploy
 
@@ -43,7 +43,7 @@ This interactive skill will:
 1. Ask which persona and which host
 2. Sync the workspace via rsync
 3. Verify Claude Code works on the remote
-4. Set up cron jobs for scheduled skills
+4. Set up scheduled tasks via scheduler MCP (or crontab fallback)
 5. Optionally configure memory sync back to local
 
 ## Manual Setup
@@ -79,13 +79,39 @@ ssh remote-host 'cd ~/.personas/warren && claude \
 
 ### Step 3: Set Up Scheduled Tasks
 
-Add cron entries on the remote server for each scheduled skill:
+#### Option A: Scheduler MCP (Recommended)
+
+The home-scheduler MCP server provides SQLite-backed execution history, concurrency control (max 3 parallel), and conversational schedule management. Ensure it's running on the remote server (`~/projects/personal/home-base/services/home-scheduler`).
+
+Use `scheduler_add_claude_trigger` to create scheduled tasks:
+
+```
+Tool: scheduler_add_claude_trigger
+Arguments:
+  name: "warren-weekly-review"
+  prompt: "weekly review"
+  schedule: "0 9 * * 1"
+  runtime_dir: "~/.personas/warren"
+```
+
+Manage schedules conversationally:
+
+```
+scheduler_list_triggers          # See all scheduled tasks
+scheduler_get_executions         # View execution history
+scheduler_update_trigger         # Modify schedule or prompt
+scheduler_disable_trigger        # Pause without deleting
+```
+
+#### Option B: Raw Crontab (Fallback)
+
+If the scheduler is not available, use crontab directly:
 
 ```bash
 ssh remote-host 'crontab -l 2>/dev/null; echo "0 9 * * 1 cd ~/.personas/warren && claude --mcp-config .mcp.json --strict-mcp-config -p \"weekly review\""' | ssh remote-host 'crontab -'
 ```
 
-Common schedules:
+#### Common Schedules
 
 | Schedule | Cron Expression | Use Case |
 |----------|----------------|----------|
@@ -118,7 +144,7 @@ The `.claude/settings.json` file (committed to git, synced to remote) restricts:
 
 ### Autonomy Flags
 
-Remote cron jobs run with:
+Remote scheduled tasks run with:
 - `--mcp-config .mcp.json` — only the persona's configured MCP servers
 - `--strict-mcp-config` — blocks any global MCP servers
 
@@ -138,7 +164,22 @@ The persona operates within its sandbox even when running unattended. It can wri
 
 ## Monitoring
 
-### Check Cron Logs
+### Check Execution History (Scheduler)
+
+If using the scheduler MCP, check execution history directly:
+
+```
+Tool: scheduler_get_executions
+Arguments:
+  trigger_name: "warren-weekly-review"
+  limit: 10
+```
+
+This shows status, duration, and output for recent runs — no log scraping needed.
+
+### Check Cron Logs (Fallback)
+
+If using raw crontab:
 
 ```bash
 ssh remote-host 'grep -i "personas\|claude" /var/log/syslog | tail -20'
