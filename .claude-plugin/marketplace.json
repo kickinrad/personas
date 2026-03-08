@@ -14,14 +14,7 @@
       "version": "1.0.4",
       "category": "management"
     },
-    {
-      "name": "luna",
-      "source": "./plugins/luna",
-      "description": "Luna — life assistant. Morning briefings, task management, brain dumps.",
-      "version": "1.1.0",
-      "category": "persona"
-    },
-    {
+{
       "name": "julia",
       "source": "./plugins/julia",
       "description": "Julia — personal chef. Meal planning, pantry management, recipe discovery.",
