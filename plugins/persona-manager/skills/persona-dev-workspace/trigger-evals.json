@@ -1,0 +1,20 @@
+[
+  {"query": "i want to build a new persona for my nutritionist — she should track macros, pull from cronometer, and do weekly check-ins. how do i set that up?", "should_trigger": true},
+  {"query": "warren keeps reminding me to set up my SEP-IRA every single session. can we make that a permanent reminder in his config so i don't have to hear about it if i'm not ready?", "should_trigger": true},
+  {"query": "i've done 3 sessions now where mila manually walks me through posting cadence for instagram. this should be a skill. help me build it", "should_trigger": true},
+  {"query": "add a self-improvement loop to luna — when i correct her on something 3 times she should ask if she should make it a rule", "should_trigger": true},
+  {"query": "my persona should track my sleep scores and surface patterns — what MCP would handle that and how do i wire it up?", "should_trigger": true},
+  {"query": "create a new persona for my accountant use case. needs to connect to monarch, do quarterly tax estimates, and have a dashboard", "should_trigger": true},
+  {"query": "julia keeps forgetting that i'm allergic to shellfish. how do i make that permanent in her setup?", "should_trigger": true},
+  {"query": "i want to add a dashboard to coach so i can see my weekly workout stats at a glance", "should_trigger": true},
+  {"query": "what's the difference between profile.md and MEMORY.md in a persona? when do i use each one?", "should_trigger": true},
+  {"query": "bump the version on warren and push it — i made some skill changes", "should_trigger": false},
+  {"query": "how do i install a plugin in claude code from a github repo?", "should_trigger": false},
+  {"query": "can you review this CLAUDE.md i wrote and tell me if it's good?", "should_trigger": false},
+  {"query": "write me a python script that pulls my bank transactions from monarch and exports them to csv", "should_trigger": false},
+  {"query": "set up MCP servers in my .mcp.json for google workspace — i need calendar and gmail access", "should_trigger": false},
+  {"query": "how does claude code plugin discovery work? like when does it load a SKILL.md into context?", "should_trigger": false},
+  {"query": "warren isn't picking up my skill — the trigger phrases aren't working. how do i debug this?", "should_trigger": false},
+  {"query": "create a new claude code skill for reviewing pull requests — not a persona, just a skill", "should_trigger": false},
+  {"query": "what's the best way to store sensitive financial data like account numbers in a claude code project?", "should_trigger": false}
+]

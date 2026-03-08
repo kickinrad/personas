@@ -1,0 +1,2895 @@
+{
+  "price_history": {
+    "ticker": "OUST",
+    "period": "1y",
+    "interval": "1d",
+    "data": {
+      "_type": "DataFrame_summary",
+      "rows": 252,
+      "columns": [
+        "Open",
+        "High",
+        "Low",
+        "Close",
+        "Volume",
+        "Dividends",
+        "Stock Splits"
+      ],
+      "last_5": {
+        "Open": [
+          18.950000762939453,
+          17.90999984741211,
+          22.959999084472656,
+          22.809999465942383,
+          21.87179946899414
+        ],
+        "High": [
+          19.34000015258789,
+          20.510000228881836,
+          23.649999618530273,
+          23.760000228881836,
+          22.43000030517578
+        ],
+        "Low": [
+          18.40999984741211,
+          17.860000610351562,
+          20.530000686645508,
+          21.760000228881836,
+          20.1299991607666
+        ],
+        "Close": [
+          18.950000762939453,
+          20.25,
+          21.719999313354492,
+          22.3799991607666,
+          20.883499145507812
+        ],
+        "Volume": [
+          1291700,
+          3680100,
+          5444900,
+          2689600,
+          2196683
+        ],
+        "Dividends": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Stock Splits": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "latest": {
+        "Open": 21.87179946899414,
+        "High": 22.43000030517578,
+        "Low": 20.1299991607666,
+        "Close": 20.883499145507812,
+        "Volume": 2196683,
+        "Dividends": 0.0,
+        "Stock Splits": 0.0
+      }
+    },
+    "latest_close": 20.883499145507812,
+    "latest_volume": 2196683,
+    "records": 252
+  },
+  "fundamentals": {
+    "ticker": "OUST",
+    "cik": "0001816581",
+    "company_name": "Ouster, Inc.",
+    "recent_filings": [
+      {
+        "form": "S-8",
+        "date": "2026-03-02",
+        "accession": "0001193125-26-085786"
+      },
+      {
+        "form": "10-K",
+        "date": "2026-03-02",
+        "accession": "0001628280-26-013313"
+      },
+      {
+        "form": "8-K",
+        "date": "2026-03-02",
+        "accession": "0001193125-26-085444"
+      },
+      {
+        "form": "8-K",
+        "date": "2026-02-09",
+        "accession": "0001193125-26-041917"
+      },
+      {
+        "form": "4",
+        "date": "2026-01-21",
+        "accession": "0001193125-26-018340"
+      },
+      {
+        "form": "SCHEDULE 13G/A",
+        "date": "2026-01-21",
+        "accession": "0002012383-26-000703"
+      },
+      {
+        "form": "144",
+        "date": "2026-01-16",
+        "accession": "0001950047-26-000504"
+      },
+      {
+        "form": "4",
+        "date": "2026-01-06",
+        "accession": "0001193125-26-004399"
+      },
+      {
+        "form": "4",
+        "date": "2025-12-23",
+        "accession": "0001193125-25-331041"
+      },
+      {
+        "form": "8-K",
+        "date": "2025-12-19",
+        "accession": "0001193125-25-326944"
+      },
+      {
+        "form": "144",
+        "date": "2025-12-19",
+        "accession": "0001950047-25-010538"
+      },
+      {
+        "form": "4",
+        "date": "2025-12-16",
+        "accession": "0001193125-25-320857"
+      },
+      {
+        "form": "4",
+        "date": "2025-12-16",
+        "accession": "0001193125-25-320847"
+      },
+      {
+        "form": "4",
+        "date": "2025-12-16",
+        "accession": "0001193125-25-320844"
+      },
+      {
+        "form": "4",
+        "date": "2025-12-16",
+        "accession": "0001193125-25-320843"
+      },
+      {
+        "form": "4",
+        "date": "2025-12-16",
+        "accession": "0001193125-25-320842"
+      },
+      {
+        "form": "144",
+        "date": "2025-12-12",
+        "accession": "0001950047-25-010194"
+      },
+      {
+        "form": "144",
+        "date": "2025-12-11",
+        "accession": "0001193125-25-316240"
+      },
+      {
+        "form": "144",
+        "date": "2025-12-11",
+        "accession": "0001193125-25-316237"
+      },
+      {
+        "form": "144",
+        "date": "2025-12-11",
+        "accession": "0001193125-25-316236"
+      }
+    ]
+  },
+  "analyst_ratings": {
+    "ticker": "OUST",
+    "buy": 8,
+    "hold": 1,
+    "sell": 0,
+    "strong_buy": 3,
+    "strong_sell": 0,
+    "period": "2026-03-01",
+    "history": [
+      {
+        "buy": 8,
+        "hold": 1,
+        "period": "2026-03-01",
+        "sell": 0,
+        "strongBuy": 3,
+        "strongSell": 0,
+        "symbol": "OUST"
+      },
+      {
+        "buy": 8,
+        "hold": 1,
+        "period": "2026-02-01",
+        "sell": 0,
+        "strongBuy": 3,
+        "strongSell": 0,
+        "symbol": "OUST"
+      },
+      {
+        "buy": 8,
+        "hold": 1,
+        "period": "2026-01-01",
+        "sell": 0,
+        "strongBuy": 3,
+        "strongSell": 0,
+        "symbol": "OUST"
+      },
+      {
+        "buy": 8,
+        "hold": 1,
+        "period": "2025-12-01",
+        "sell": 0,
+        "strongBuy": 3,
+        "strongSell": 0,
+        "symbol": "OUST"
+      }
+    ]
+  },
+  "technicals": {
+    "ticker": "OUST",
+    "latest_close": 20.883499145507812,
+    "data_points": 252,
+    "sma_20": 19.4442,
+    "sma_50": 22.2555,
+    "sma_200": 24.5804,
+    "ema_12": 20.2748,
+    "ema_26": 20.5994,
+    "ema_50": 21.7237,
+    "above_sma50": false,
+    "above_sma200": false,
+    "golden_cross": false,
+    "death_cross": true,
+    "rsi_14": 51.017,
+    "macd_line": -0.3246,
+    "macd_signal": 0.5172,
+    "macd_histogram": -0.8417,
+    "macd_bullish": false,
+    "bb_lower": 16.8609,
+    "bb_mid": 19.4442,
+    "bb_upper": 22.0275,
+    "bb_position": 0.7785776227127729,
+    "atr_14": 1.8239,
+    "adx": 16.8888,
+    "stoch_k": 66.8806,
+    "stoch_d": 63.8166,
+    "volume_avg_20": 1880269.15,
+    "volume_latest": 2196683,
+    "volume_ratio": 1.1682811474091357,
+    "support_resistance": {
+      "supports": [
+        18.52,
+        6.34
+      ],
+      "resistances": [
+        30.2,
+        36.25,
+        41.65
+      ]
+    },
+    "fibonacci": {
+      "swing_high": 41.650001525878906,
+      "swing_low": 17.280000686645508,
+      "retracements": {
+        "0.0% (High)": 41.65,
+        "23.6%": 35.9,
+        "38.2%": 32.34,
+        "50.0%": 29.47,
+        "61.8%": 26.59,
+        "78.6%": 22.5,
+        "100.0% (Low)": 17.28
+      },
+      "extensions": {
+        "127.2%": 48.28,
+        "161.8%": 56.71,
+        "200.0%": 66.02,
+        "261.8%": 81.08
+      }
+    },
+    "pivot_points": {
+      "pivot": 22.63,
+      "r1": 23.51,
+      "r2": 24.63,
+      "r3": 25.51,
+      "s1": 21.51,
+      "s2": 20.63,
+      "s3": 19.51
+    },
+    "technical_score": 4.0,
+    "tech_score": 4.0
+  },
+  "tradingview": {
+    "ticker": "OUST",
+    "interval": "1d",
+    "recommendation": "NEUTRAL",
+    "buy_count": 8,
+    "sell_count": 10,
+    "neutral_count": 8,
+    "oscillators": {
+      "recommendation": "SELL",
+      "buy": 1,
+      "sell": 3,
+      "neutral": 7
+    },
+    "moving_averages": {
+      "recommendation": "NEUTRAL",
+      "buy": 7,
+      "sell": 7,
+      "neutral": 1
+    },
+    "rsi": 51.826877660724875,
+    "macd": -0.30890700972985385,
+    "macd_signal": -0.8386025834923532,
+    "ema_20": 20.368353537547975,
+    "sma_50": 22.2594,
+    "sma_200": 24.581400000000002,
+    "adx": 16.888792666221004,
+    "atr": null,
+    "bbands_upper": 21.995703365855842,
+    "bbands_lower": 16.912296634144116,
+    "volume": 2118371
+  },
+  "insider_trades": {
+    "ticker": "OUST",
+    "recent_transactions": [
+      {
+        "change": -5837,
+        "currency": "",
+        "filingDate": "2026-01-21",
+        "id": "0001193125-26-018340",
+        "isDerivative": false,
+        "name": "Chung Megan",
+        "share": 183141,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2026-01-16",
+        "transactionPrice": 27.24
+      },
+      {
+        "change": 1327,
+        "currency": "",
+        "filingDate": "2026-01-06",
+        "id": "0001193125-26-004399",
+        "isDerivative": false,
+        "name": "Heystee Susan",
+        "share": 42952,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "A",
+        "transactionDate": "2026-01-05",
+        "transactionPrice": 24.8
+      },
+      {
+        "change": -1695,
+        "currency": "",
+        "filingDate": "2025-12-23",
+        "id": "0001193125-25-331041",
+        "isDerivative": false,
+        "name": "Tewksbury Ted L III",
+        "share": 123664,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2025-12-19",
+        "transactionPrice": 21.47
+      },
+      {
+        "change": -15661,
+        "currency": "",
+        "filingDate": "2025-12-16",
+        "id": "0001193125-25-320847",
+        "isDerivative": false,
+        "name": "Frichtl Mark",
+        "share": 652571,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2025-12-12",
+        "transactionPrice": 24.9797
+      },
+      {
+        "change": -24610,
+        "currency": "",
+        "filingDate": "2025-12-16",
+        "id": "0001193125-25-320843",
+        "isDerivative": false,
+        "name": "Pacala Charles Angus",
+        "share": 985317,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2025-12-12",
+        "transactionPrice": 24.9772
+      },
+      {
+        "change": -10696,
+        "currency": "",
+        "filingDate": "2025-12-16",
+        "id": "0001193125-25-320842",
+        "isDerivative": false,
+        "name": "Chung Megan",
+        "share": 188978,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2025-12-12",
+        "transactionPrice": 24.9781
+      },
+      {
+        "change": -11650,
+        "currency": "",
+        "filingDate": "2025-12-16",
+        "id": "0001193125-25-320857",
+        "isDerivative": false,
+        "name": "Heystee Susan",
+        "share": 41625,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2025-12-12",
+        "transactionPrice": 25.0292
+      },
+      {
+        "change": -10919,
+        "currency": "",
+        "filingDate": "2025-12-16",
+        "id": "0001193125-25-320844",
+        "isDerivative": false,
+        "name": "SPENCER DARIEN",
+        "share": 336188,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2025-12-12",
+        "transactionPrice": 24.978
+      },
+      {
+        "change": 3975,
+        "currency": "",
+        "filingDate": "2025-12-10",
+        "id": "0001193125-25-314312",
+        "isDerivative": false,
+        "name": "Eyler Phillip",
+        "share": 15658,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "A",
+        "transactionDate": "2025-12-08",
+        "transactionPrice": 0
+      },
+      {
+        "change": 11683,
+        "currency": "",
+        "filingDate": "2025-12-10",
+        "id": "0001193125-25-314312",
+        "isDerivative": false,
+        "name": "Eyler Phillip",
+        "share": 11683,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "A",
+        "transactionDate": "2025-12-08",
+        "transactionPrice": 0
+      },
+      {
+        "change": -1695,
+        "currency": "",
+        "filingDate": "2025-11-12",
+        "id": "0001193125-25-278302",
+        "isDerivative": false,
+        "name": "Tewksbury Ted L III",
+        "share": 125359,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2025-11-11",
+        "transactionPrice": 25.38
+      },
+      {
+        "change": -5837,
+        "currency": "",
+        "filingDate": "2025-10-20",
+        "id": "0001193125-25-243555",
+        "isDerivative": false,
+        "name": "Chung Megan",
+        "share": 197199,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2025-10-17",
+        "transactionPrice": 31.02
+      },
+      {
+        "change": 1010,
+        "currency": "",
+        "filingDate": "2025-10-06",
+        "id": "0001193125-25-232275",
+        "isDerivative": false,
+        "name": "Heystee Susan",
+        "share": 53275,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "A",
+        "transactionDate": "2025-10-06",
+        "transactionPrice": 32.43
+      },
+      {
+        "change": -25329,
+        "currency": "",
+        "filingDate": "2025-09-16",
+        "id": "0001193125-25-205174",
+        "isDerivative": false,
+        "name": "Frichtl Mark",
+        "share": 665403,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2025-09-12",
+        "transactionPrice": 28.4581
+      },
+      {
+        "change": -37992,
+        "currency": "",
+        "filingDate": "2025-09-16",
+        "id": "0001193125-25-205170",
+        "isDerivative": false,
+        "name": "Pacala Charles Angus",
+        "share": 1009927,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2025-09-12",
+        "transactionPrice": 28.4581
+      },
+      {
+        "change": -17183,
+        "currency": "",
+        "filingDate": "2025-09-16",
+        "id": "0001193125-25-205161",
+        "isDerivative": false,
+        "name": "Chung Megan",
+        "share": 203036,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2025-09-12",
+        "transactionPrice": 28.4581
+      },
+      {
+        "change": -18274,
+        "currency": "",
+        "filingDate": "2025-09-16",
+        "id": "0001193125-25-205182",
+        "isDerivative": false,
+        "name": "SPENCER DARIEN",
+        "share": 346132,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2025-09-12",
+        "transactionPrice": 28.4581
+      },
+      {
+        "change": -40390,
+        "currency": "",
+        "filingDate": "2025-08-15",
+        "id": "0000950170-25-109386",
+        "isDerivative": false,
+        "name": "Heystee Susan",
+        "share": 52265,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "S",
+        "transactionDate": "2025-08-13",
+        "transactionPrice": 30
+      },
+      {
+        "change": 1712,
+        "currency": "",
+        "filingDate": "2025-07-09",
+        "id": "0000950170-25-094769",
+        "isDerivative": false,
+        "name": "Heystee Susan",
+        "share": 92654,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "A",
+        "transactionDate": "2025-07-07",
+        "transactionPrice": 22.42
+      },
+      {
+        "change": 13558,
+        "currency": "",
+        "filingDate": "2025-06-20",
+        "id": "0000950170-25-088513",
+        "isDerivative": false,
+        "name": "Correia Christina",
+        "share": 71690,
+        "source": "sec",
+        "symbol": "OUST",
+        "transactionCode": "A",
+        "transactionDate": "2025-06-18",
+        "transactionPrice": 0
+      }
+    ],
+    "buys_last_50": 0,
+    "sells_last_50": 0,
+    "net_insider_signal": "neutral"
+  },
+  "news_sentiment": {
+    "ticker": "OUST",
+    "articles": [
+      {
+        "category": "company",
+        "datetime": 1772630578,
+        "headline": "Ouster: Great Tech, Stock Fairly Priced (Downgrade)",
+        "id": 139300456,
+        "image": "",
+        "related": "OUST",
+        "source": "SeekingAlpha",
+        "summary": "",
+        "url": "https://finnhub.io/api/news?id=10dfa4e21336419e3f5a4e125366ab6e99dac0ee323d14af39646842c165fe61"
+      },
+      {
+        "category": "company",
+        "datetime": 1772543132,
+        "headline": "12 Information Technology Stocks Moving In Tuesday's Intraday Session",
+        "id": 139295512,
+        "image": "https://cdn.benzinga.com/files/images/story/2025/11/06/movers_3.jpg?width=2048&height=1536",
+        "related": "OUST",
+        "source": "Benzinga",
+        "summary": " ",
+        "url": "https://finnhub.io/api/news?id=e87c588a533ea433b6954fe0a6fdb111f9d3f0ce7e871ec34ce2885cca00daff"
+      },
+      {
+        "category": "company",
+        "datetime": 1772537752,
+        "headline": "Ouster Climbs Following Fourth-Quarter Results",
+        "id": 139296793,
+        "image": "https://cdn.benzinga.com/files/images/story/2026/03/03/Munich--Bavaria--Germany---March-31-2023_0.jpeg?width=2048&height=1536",
+        "related": "OUST",
+        "source": "Benzinga",
+        "summary": "Ouster, Inc. (NASDAQ:OUST) are trading higher Tuesday after the company reported fourth-quarter financial-results on Monday after the bell.",
+        "url": "https://finnhub.io/api/news?id=8d5082b52e8e0a22cb1c9640a9657d98e79c525252958f9f5b81ef0baeb52038"
+      },
+      {
+        "category": "company",
+        "datetime": 1772531474,
+        "headline": "Ouster shares are trading higher after the company reported better-than-expected Q4 adjusted EPS results and issued Q1 sales guidance above estimates.",
+        "id": 139286787,
+        "image": "",
+        "related": "OUST",
+        "source": "Benzinga",
+        "summary": "",
+        "url": "https://finnhub.io/api/news?id=dd59624d76a30324cbb573175ce1cbbda01cae04db274642eb8880694be4f8ab"
+      },
+      {
+        "category": "company",
+        "datetime": 1772525138,
+        "headline": "11 Information Technology Stocks Moving In Tuesday's Pre-Market Session",
+        "id": 139285979,
+        "image": "https://cdn.benzinga.com/files/images/story/2025/11/06/movers_1.jpg?width=2048&height=1536",
+        "related": "OUST",
+        "source": "Benzinga",
+        "summary": " ",
+        "url": "https://finnhub.io/api/news?id=10975cd1790345e7ede483feefe81e29199f65c085e53d91f89b1d4fa9fc6bb5"
+      },
+      {
+        "category": "company",
+        "datetime": 1772520550,
+        "headline": "CORRECTION: Ouster Q4 Adj. EPS $(0.24) Beats $(0.35) Estimate, Adj. Sales $40.971M Miss $41.100M Estimate",
+        "id": 139286789,
+        "image": "",
+        "related": "OUST",
+        "source": "Benzinga",
+        "summary": "",
+        "url": "https://finnhub.io/api/news?id=3f5494fc409491bd021dbb99b6c12c491105c1eaf19232e9de3e698eb706dbd9"
+      },
+      {
+        "category": "company",
+        "datetime": 1772519245,
+        "headline": "Why Ouster Shares Are Trading Higher By Around 14%; Here Are 20 Stocks Moving Premarket",
+        "id": 139285671,
+        "image": "https://cdn.benzinga.com/files/images/story/2026/03/03/Munich--Bavaria--Germany---March-31-2023.jpeg?width=2048&height=1536",
+        "related": "OUST",
+        "source": "Benzinga",
+        "summary": "Shares of Ouster Inc (NASDAQ:OUST) rose sharply in pre-market trading after the company reported better-than-expected fourth-quarter financial results and issued first-quar",
+        "url": "https://finnhub.io/api/news?id=d0b249381fbe5c314d92cb914768e744fbb68a10c097817e394d42fd14f08cb9"
+      },
+      {
+        "category": "company",
+        "datetime": 1772502022,
+        "headline": "Ouster, Inc. 2025 Q4 - Results - Earnings Call Presentation",
+        "id": 139283405,
+        "image": "",
+        "related": "OUST",
+        "source": "SeekingAlpha",
+        "summary": "",
+        "url": "https://finnhub.io/api/news?id=53e36f4729d542f67915682708feb9f4308bd726f4bdbc0a0062b03f7ce4ce9e"
+      },
+      {
+        "category": "company",
+        "datetime": 1772492538,
+        "headline": "Ouster Inc (NASDAQ:OUST) Soars on Massive Q4 Earnings Beat and Path to Profitability",
+        "id": 139281040,
+        "image": "https://www.chartmill.com/images/uploads/earnings_article_1_defce97180.webp",
+        "related": "OUST",
+        "source": "ChartMill",
+        "summary": "Ouster stock surges after Q4 earnings crush estimates, posting a surprise profit on record sensor sales and strong revenue growth.",
+        "url": "https://finnhub.io/api/news?id=4ea50088a69b4f29a03d1ab484705d1d87c1e57e78918154ee58b7007010405a"
+      },
+      {
+        "category": "company",
+        "datetime": 1772488800,
+        "headline": "These stocks are moving in today's after hours session",
+        "id": 139280827,
+        "image": "https://www.chartmill.com/images/uploads/CM_Aftermarket_Movers_Small_free_e077945a19.webp",
+        "related": "OUST",
+        "source": "ChartMill",
+        "summary": "As the regular session of the US market on Monday comes to an end, let's delve into the after-hours session and discover the top gainers and losers shaping the post-market sentiment.",
+        "url": "https://finnhub.io/api/news?id=3a0c227433945a664bbc9a4cd9d9623e2700666af0846d49ef58ddcc2c5a3588"
+      },
+      {
+        "category": "company",
+        "datetime": 1772483267,
+        "headline": "Ouster, Inc. (OUST) Q4 2025 Earnings Call Transcript",
+        "id": 139281762,
+        "image": "https://static.seekingalpha.com/assets/og_image_1200-29b2bfe1a595477db6826bd2126c63ac2091efb7ec76347a8e7f81ba17e3de6c.png",
+        "related": "OUST",
+        "source": "SeekingAlpha",
+        "summary": "Ouster, Inc. (OUST) Q4 2025 Earnings Call March 2, 2026 5:00 PM ESTCompany ParticipantsChen Geng - Senior VP of Strategic Finance & TreasurerCharles...",
+        "url": "https://finnhub.io/api/news?id=688572917cb6b1f18503584563ff99aeb20e183884d902f360eb1d917d57509f"
+      },
+      {
+        "category": "company",
+        "datetime": 1772474863,
+        "headline": "Ouster Stock Soars 18% On Q4 Earnings Beat, Strong Guidance",
+        "id": 139286791,
+        "image": "https://cdn.benzinga.com/files/images/story/2026/03/02/OusterPRPagePhoto.png?width=2048&height=1536",
+        "related": "OUST",
+        "source": "Benzinga",
+        "summary": "Ouster reported financial results for the fourth quarter after the closing bell on Monday. Here&#39;s a look at the key details from the report.",
+        "url": "https://finnhub.io/api/news?id=a760819d185972fbd3ffbedcd6642b9f3dbba5d8f3384f6459bb59c6509946f3"
+      },
+      {
+        "category": "company",
+        "datetime": 1772471954,
+        "headline": "Ouster shares are trading higher after the company reported better-than-expected Q4 financial results and issued Q1 sales guidance above estimates.",
+        "id": 139286792,
+        "image": "",
+        "related": "OUST",
+        "source": "Benzinga",
+        "summary": "",
+        "url": "https://finnhub.io/api/news?id=7a864bb9625535a2707aaaeffd4fa20fa2cf74549a8c5d98961c214e2e20d390"
+      },
+      {
+        "category": "company",
+        "datetime": 1772471534,
+        "headline": "Ouster Q4 Earnings Summary & Key Takeaways",
+        "id": 139286793,
+        "image": "https://cdn.benzinga.com/files/images/story/2025/11/06/analyst_ratings_2.jpg?width=2048&height=1536",
+        "related": "OUST",
+        "source": "Benzinga",
+        "summary": " ",
+        "url": "https://finnhub.io/api/news?id=4bb9eeab2bea077b609fc39ae9f687aaaa52c81538d4d6282e2b2eddf04df990"
+      },
+      {
+        "category": "company",
+        "datetime": 1772471531,
+        "headline": "Ouster Sees Q1 Sales $45.000M-$48.000M vs $42.933M Est",
+        "id": 139286794,
+        "image": "",
+        "related": "OUST",
+        "source": "Benzinga",
+        "summary": "",
+        "url": "https://finnhub.io/api/news?id=477bfef08114184d203f3ed5d67344ea8b6b0b2d19e44c1c719cc7ff4c270e61"
+      },
+      {
+        "category": "company",
+        "datetime": 1772457659,
+        "headline": "Archer, Riot, Rigetti and More Stocks With Earnings This Week",
+        "id": 139285692,
+        "image": "https://cdn.benzinga.com/files/images/story/2026/03/02/Earnings-Season.jpeg?width=2048&height=1536",
+        "related": "OUST",
+        "source": "Benzinga",
+        "summary": "Here&#39;s a look at the most-closely watched earnings reports this week from Archer, Riot, Broadcom, Target, Rigetti and more.",
+        "url": "https://finnhub.io/api/news?id=73ee104be442f64974356b3647f6f8a5486057a110d8e7da306aaff927af2b2a"
+      },
+      {
+        "category": "company",
+        "datetime": 1772435474,
+        "headline": "Earnings Scheduled For March 2, 2026",
+        "id": 139275975,
+        "image": "https://cdn.benzinga.com/files/images/story/2025/11/06/earnings_scheduled_1.jpg?width=2048&height=1536",
+        "related": "OUST",
+        "source": "Benzinga",
+        "summary": " ",
+        "url": "https://finnhub.io/api/news?id=1e9e227ec914ec1ca74f81a8a5649314626750a486a84af55fd8f64464311ce0"
+      },
+      {
+        "category": "company",
+        "datetime": 1772193761,
+        "headline": "Preview: Ouster's Earnings",
+        "id": 139262565,
+        "image": "https://cdn.benzinga.com/files/images/story/2025/11/06/earnings_preview_4.jpg?width=2048&height=1536",
+        "related": "OUST",
+        "source": "Benzinga",
+        "summary": " ",
+        "url": "https://finnhub.io/api/news?id=4971c9f0df20f8fffee8a64fea2b5ced6affcd2ef97e8dfdf7747dce2a2c4fb7"
+      },
+      {
+        "category": "company",
+        "datetime": 1772170980,
+        "headline": "Ouster (OUST) Establishes Physical AI Platform Through Strategic StereoLabs Acquisition",
+        "id": 139259498,
+        "image": "https://s.yimg.com/rz/stage/p/yahoo_finance_en-US_h_p_finance_2.png",
+        "related": "OUST",
+        "source": "Yahoo",
+        "summary": "Ouster Inc. (NASDAQ:OUST) is one of the best small cap tech stocks with high upside potential. On February 9, Ouster officially closed the acquisition of StereoLabs SAS to establish a unified sensing and perception platform for Physical AI. By integrating StereoLabs\u2019 AI vision and 3D camera technology with Ouster\u2019s high-performance digital lidar, the company now [\u2026]",
+        "url": "https://finnhub.io/api/news?id=c506512d312d46efd4dc02e8fb62c5abd41e3a9463493b007b8da5265a18ed35"
+      }
+    ],
+    "article_count": 19,
+    "sources": [
+      "SeekingAlpha",
+      "Benzinga",
+      "ChartMill",
+      "Yahoo"
+    ],
+    "source": "finnhub"
+  },
+  "reddit_sentiment": {
+    "ticker": "OUST",
+    "rank": null,
+    "mentions": 0,
+    "mentions_24h_ago": 0,
+    "upvotes": 0
+  },
+  "earnings": {
+    "ticker": "OUST",
+    "earnings": [
+      {
+        "actual": 0.06,
+        "estimate": -0.3529,
+        "period": "2025-12-31",
+        "quarter": 4,
+        "surprise": 0.4129,
+        "surprisePercent": 117.002,
+        "symbol": "OUST",
+        "year": 2025
+      },
+      {
+        "actual": -0.37,
+        "estimate": -0.3825,
+        "period": "2025-09-30",
+        "quarter": 3,
+        "surprise": 0.0125,
+        "surprisePercent": 3.268,
+        "symbol": "OUST",
+        "year": 2025
+      },
+      {
+        "actual": -0.38,
+        "estimate": -0.3927,
+        "period": "2025-06-30",
+        "quarter": 2,
+        "surprise": 0.0127,
+        "surprisePercent": 3.234,
+        "symbol": "OUST",
+        "year": 2025
+      },
+      {
+        "actual": -0.42,
+        "estimate": -0.2601,
+        "period": "2025-03-31",
+        "quarter": 1,
+        "surprise": -0.1599,
+        "surprisePercent": -61.4764,
+        "symbol": "OUST",
+        "year": 2025
+      }
+    ],
+    "surprise_avg": 15.5069,
+    "beat_count": 3,
+    "miss_count": 1
+  },
+  "dividends": {
+    "ticker": "OUST",
+    "dividend_yield": null,
+    "dividend_rate": null,
+    "payout_ratio": 0.0,
+    "ex_dividend_date": null,
+    "recent_dividends": {}
+  },
+  "articles": [
+    {
+      "source": "Seeking Alpha",
+      "title": "Ouster Q4 2025 Earnings Preview",
+      "summary": "",
+      "link": "https://seekingalpha.com/symbol/OUST/news?source=feed_symbol_OUST",
+      "published": "2026-02-27T22:35:39",
+      "sentiment": null,
+      "sentiment_flag": "\ud83d\udfe1"
+    },
+    {
+      "source": "Seeking Alpha",
+      "title": "Ouster GAAP EPS of $0.06 beats by $0.46, revenue of $62.18M beats by $21.06M",
+      "summary": "",
+      "link": "https://seekingalpha.com/symbol/OUST/news?source=feed_symbol_OUST",
+      "published": "2026-03-02T21:12:38",
+      "sentiment": 0.4,
+      "sentiment_method": "title_keywords",
+      "sentiment_flag": "\ud83d\udfe2"
+    },
+    {
+      "source": "Seeking Alpha",
+      "title": "Ouster, Inc. (OUST) Q4 2025 Earnings Call Transcript",
+      "summary": "",
+      "link": "https://seekingalpha.com/article/4877349-ouster-inc-oust-q4-2025-earnings-call-transcript?source=feed_symbol_OUST",
+      "published": "2026-03-03T01:27:47",
+      "sentiment": null,
+      "sentiment_flag": "\ud83d\udfe1"
+    },
+    {
+      "source": "Seeking Alpha",
+      "title": "Ouster outlines 30% to 50% annual revenue growth target for 2026 following StereoLabs acquisition",
+      "summary": "",
+      "link": "https://seekingalpha.com/symbol/OUST/news?source=feed_symbol_OUST",
+      "published": "2026-03-03T01:28:22",
+      "sentiment": 0.2,
+      "sentiment_method": "title_keywords",
+      "sentiment_flag": "\ud83d\udfe2"
+    },
+    {
+      "source": "Seeking Alpha",
+      "title": "Ouster, Inc. 2025 Q4 - Results - Earnings Call Presentation",
+      "summary": "",
+      "link": "https://seekingalpha.com/article/4877440-ouster-inc-2025-q4-results-earnings-call-presentation?source=feed_symbol_OUST",
+      "published": "2026-03-03T06:40:22",
+      "sentiment": null,
+      "sentiment_flag": "\ud83d\udfe1"
+    },
+    {
+      "source": "Seeking Alpha",
+      "title": "Ouster: Great Tech, Stock Fairly Priced (Downgrade)",
+      "summary": "",
+      "link": "https://seekingalpha.com/article/4878405-ouster-great-tech-stock-fairly-priced-downgrade?source=feed_symbol_OUST",
+      "published": "2026-03-04T18:22:58",
+      "sentiment": -0.2,
+      "sentiment_method": "title_keywords",
+      "sentiment_flag": "\ud83d\udd34"
+    },
+    {
+      "source": "Benzinga",
+      "title": "12 Information Technology Stocks Moving In Tuesday's Intraday Session",
+      "summary": " ",
+      "link": "https://finnhub.io/api/news?id=e87c588a533ea433b6954fe0a6fdb111f9d3f0ce7e871ec34ce2885cca00daff",
+      "published": 1772543132,
+      "sentiment": null,
+      "sentiment_flag": "\ud83d\udfe1"
+    },
+    {
+      "source": "Benzinga",
+      "title": "Ouster Climbs Following Fourth-Quarter Results",
+      "summary": "Ouster, Inc. (NASDAQ:OUST) are trading higher Tuesday after the company reported fourth-quarter financial-results on Monday after the bell.",
+      "link": "https://finnhub.io/api/news?id=8d5082b52e8e0a22cb1c9640a9657d98e79c525252958f9f5b81ef0baeb52038",
+      "published": 1772537752,
+      "sentiment": null,
+      "sentiment_flag": "\ud83d\udfe1"
+    },
+    {
+      "source": "Benzinga",
+      "title": "Ouster shares are trading higher after the company reported better-than-expected Q4 adjusted EPS results and issued Q1 sales guidance above estimates.",
+      "summary": "",
+      "link": "https://finnhub.io/api/news?id=dd59624d76a30324cbb573175ce1cbbda01cae04db274642eb8880694be4f8ab",
+      "published": 1772531474,
+      "sentiment": null,
+      "sentiment_flag": "\ud83d\udfe1"
+    },
+    {
+      "source": "Benzinga",
+      "title": "11 Information Technology Stocks Moving In Tuesday's Pre-Market Session",
+      "summary": " ",
+      "link": "https://finnhub.io/api/news?id=10975cd1790345e7ede483feefe81e29199f65c085e53d91f89b1d4fa9fc6bb5",
+      "published": 1772525138,
+      "sentiment": null,
+      "sentiment_flag": "\ud83d\udfe1"
+    },
+    {
+      "source": "Benzinga",
+      "title": "CORRECTION: Ouster Q4 Adj. EPS $(0.24) Beats $(0.35) Estimate, Adj. Sales $40.971M Miss $41.100M Estimate",
+      "summary": "",
+      "link": "https://finnhub.io/api/news?id=3f5494fc409491bd021dbb99b6c12c491105c1eaf19232e9de3e698eb706dbd9",
+      "published": 1772520550,
+      "sentiment": 0.2,
+      "sentiment_method": "title_keywords",
+      "sentiment_flag": "\ud83d\udfe2"
+    },
+    {
+      "source": "Benzinga",
+      "title": "Why Ouster Shares Are Trading Higher By Around 14%; Here Are 20 Stocks Moving Premarket",
+      "summary": "Shares of Ouster Inc (NASDAQ:OUST) rose sharply in pre-market trading after the company reported better-than-expected fourth-quarter financial results and issued first-quar",
+      "link": "https://finnhub.io/api/news?id=d0b249381fbe5c314d92cb914768e744fbb68a10c097817e394d42fd14f08cb9",
+      "published": 1772519245,
+      "sentiment": null,
+      "sentiment_flag": "\ud83d\udfe1"
+    },
+    {
+      "source": "ChartMill",
+      "title": "Ouster Inc (NASDAQ:OUST) Soars on Massive Q4 Earnings Beat and Path to Profitability",
+      "summary": "Ouster stock surges after Q4 earnings crush estimates, posting a surprise profit on record sensor sales and strong revenue growth.",
+      "link": "https://finnhub.io/api/news?id=4ea50088a69b4f29a03d1ab484705d1d87c1e57e78918154ee58b7007010405a",
+      "published": 1772492538,
+      "sentiment": 0.5,
+      "sentiment_method": "title_keywords",
+      "sentiment_flag": "\ud83d\udfe2"
+    },
+    {
+      "source": "ChartMill",
+      "title": "These stocks are moving in today's after hours session",
+      "summary": "As the regular session of the US market on Monday comes to an end, let's delve into the after-hours session and discover the top gainers and losers shaping the post-market sentiment.",
+      "link": "https://finnhub.io/api/news?id=3a0c227433945a664bbc9a4cd9d9623e2700666af0846d49ef58ddcc2c5a3588",
+      "published": 1772488800,
+      "sentiment": null,
+      "sentiment_flag": "\ud83d\udfe1"
+    },
+    {
+      "source": "Benzinga",
+      "title": "Ouster Stock Soars 18% On Q4 Earnings Beat, Strong Guidance",
+      "summary": "Ouster reported financial results for the fourth quarter after the closing bell on Monday. Here&#39;s a look at the key details from the report.",
+      "link": "https://finnhub.io/api/news?id=a760819d185972fbd3ffbedcd6642b9f3dbba5d8f3384f6459bb59c6509946f3",
+      "published": 1772474863,
+      "sentiment": 0.5,
+      "sentiment_method": "title_keywords",
+      "sentiment_flag": "\ud83d\udfe2"
+    },
+    {
+      "source": "Benzinga",
+      "title": "Ouster shares are trading higher after the company reported better-than-expected Q4 financial results and issued Q1 sales guidance above estimates.",
+      "summary": "",
+      "link": "https://finnhub.io/api/news?id=7a864bb9625535a2707aaaeffd4fa20fa2cf74549a8c5d98961c214e2e20d390",
+      "published": 1772471954,
+      "sentiment": null,
+      "sentiment_flag": "\ud83d\udfe1"
+    },
+    {
+      "source": "Benzinga",
+      "title": "Ouster Q4 Earnings Summary & Key Takeaways",
+      "summary": " ",
+      "link": "https://finnhub.io/api/news?id=4bb9eeab2bea077b609fc39ae9f687aaaa52c81538d4d6282e2b2eddf04df990",
+      "published": 1772471534,
+      "sentiment": null,
+      "sentiment_flag": "\ud83d\udfe1"
+    },
+    {
+      "source": "Benzinga",
+      "title": "Ouster Sees Q1 Sales $45.000M-$48.000M vs $42.933M Est",
+      "summary": "",
+      "link": "https://finnhub.io/api/news?id=477bfef08114184d203f3ed5d67344ea8b6b0b2d19e44c1c719cc7ff4c270e61",
+      "published": 1772471531,
+      "sentiment": null,
+      "sentiment_flag": "\ud83d\udfe1"
+    }
+  ],
+  "composite_score": {
+    "composite_score": 5.02,
+    "rating": "WATCH\u00b7HOLD",
+    "confidence": "LOW",
+    "sector_modifier": 0.0,
+    "weights": {
+      "fundamental": 0.4,
+      "technical": 0.3,
+      "sentiment": 0.3
+    },
+    "sub_scores": {
+      "fundamental": {
+        "score": 5.6,
+        "weight": 0.4,
+        "weighted": 2.24,
+        "confidence": "LOW",
+        "factors": {
+          "pe_ratio": {
+            "value": null,
+            "score": 5,
+            "note": "No data (neutral)",
+            "rating_note": "No data available"
+          },
+          "pb_ratio": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "revenue_growth": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "eps_growth": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "profit_margin": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "debt_to_equity": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "free_cash_flow": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "roe": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "analyst_consensus": {
+            "buy": 11,
+            "hold": 1,
+            "sell": 0,
+            "buy_pct": 91.7,
+            "score": 9,
+            "rating_note": "Strong buy consensus \u2014 70%+ analysts bullish"
+          },
+          "earnings_surprises": {
+            "beat_count": 3,
+            "miss_count": 1,
+            "surprise_avg_pct": 15.51,
+            "score": 7,
+            "rating_note": "Usually beats estimates \u2014 reliable execution"
+          }
+        }
+      },
+      "technical": {
+        "score": 4.0,
+        "weight": 0.3,
+        "weighted": 1.2,
+        "confidence": "HIGH",
+        "factors": {
+          "tech_score": 4.0,
+          "rsi": 51.017,
+          "macd_bullish": false,
+          "above_sma50": false,
+          "above_sma200": false,
+          "bb_position": 0.7785776227127729,
+          "volume_ratio": 1.1682811474091357,
+          "adx": 16.8888
+        }
+      },
+      "sentiment": {
+        "score": 5.27,
+        "weight": 0.3,
+        "weighted": 1.58,
+        "confidence": "LOW",
+        "factors": {
+          "reddit_sentiment": {
+            "value": null,
+            "score": 5,
+            "note": "Not trending on Reddit",
+            "source": "ApeWisdom",
+            "rating_note": "Not trending on Reddit"
+          },
+          "stocktwits_sentiment": {
+            "value": null,
+            "score": 5,
+            "note": "No StockTwits data",
+            "source": "StockTwits",
+            "rating_note": "No data \u2014 possibly rate limited"
+          },
+          "news_sentiment": {
+            "articles": 19,
+            "score": 6.9,
+            "source": "finnhub",
+            "rating_note": "19 articles found \u2014 no AI sentiment available",
+            "note": "No AI sentiment, using article count"
+          },
+          "tradingview_consensus": {
+            "recommendation": "NEUTRAL",
+            "buy_count": 8,
+            "sell_count": 10,
+            "neutral_count": 8,
+            "score": 5,
+            "source": "TradingView (tradingview-ta)",
+            "rating_note": "Neutral \u2014 indicators mixed (8B/8N/10S)"
+          },
+          "rss_buzz": {
+            "value": null,
+            "score": 5,
+            "source": "Seeking Alpha / RSS feeds",
+            "rating_note": "No RSS mentions found",
+            "note": "No RSS mentions"
+          },
+          "insider_activity": {
+            "value": null,
+            "score": 5,
+            "source": "Finnhub",
+            "rating_note": "No insider trade data available",
+            "note": "No insider data"
+          },
+          "congress_trades": {
+            "value": null,
+            "score": 5,
+            "source": "Mboum Finance",
+            "rating_note": "No Congress trade data available",
+            "note": "No Congress data"
+          }
+        }
+      }
+    }
+  },
+  "entry_exit": {
+    "current_price": 20.883499145507812,
+    "atr": 1.82,
+    "entries": {
+      "aggressive": 20.63,
+      "moderate": 18.61,
+      "conservative": 16.86
+    },
+    "targets": {
+      "target_1": 22.71,
+      "target_2": 24.63,
+      "target_3": 28.19
+    },
+    "stop_loss": 15.04,
+    "risk_reward": {
+      "aggressive\u2192target_1": {
+        "entry": 20.63,
+        "target": 22.71,
+        "stop": 15.04,
+        "risk": 5.59,
+        "reward": 2.08,
+        "rr_ratio": 0.37,
+        "favorable": false
+      },
+      "aggressive\u2192target_2": {
+        "entry": 20.63,
+        "target": 24.63,
+        "stop": 15.04,
+        "risk": 5.59,
+        "reward": 4.0,
+        "rr_ratio": 0.72,
+        "favorable": false
+      },
+      "aggressive\u2192target_3": {
+        "entry": 20.63,
+        "target": 28.19,
+        "stop": 15.04,
+        "risk": 5.59,
+        "reward": 7.56,
+        "rr_ratio": 1.35,
+        "favorable": false
+      },
+      "moderate\u2192target_1": {
+        "entry": 18.61,
+        "target": 22.71,
+        "stop": 15.04,
+        "risk": 3.57,
+        "reward": 4.1,
+        "rr_ratio": 1.15,
+        "favorable": false
+      },
+      "moderate\u2192target_2": {
+        "entry": 18.61,
+        "target": 24.63,
+        "stop": 15.04,
+        "risk": 3.57,
+        "reward": 6.02,
+        "rr_ratio": 1.69,
+        "favorable": false
+      },
+      "moderate\u2192target_3": {
+        "entry": 18.61,
+        "target": 28.19,
+        "stop": 15.04,
+        "risk": 3.57,
+        "reward": 9.58,
+        "rr_ratio": 2.68,
+        "favorable": true
+      },
+      "conservative\u2192target_1": {
+        "entry": 16.86,
+        "target": 22.71,
+        "stop": 15.04,
+        "risk": 1.82,
+        "reward": 5.85,
+        "rr_ratio": 3.21,
+        "favorable": true
+      },
+      "conservative\u2192target_2": {
+        "entry": 16.86,
+        "target": 24.63,
+        "stop": 15.04,
+        "risk": 1.82,
+        "reward": 7.77,
+        "rr_ratio": 4.26,
+        "favorable": true
+      },
+      "conservative\u2192target_3": {
+        "entry": 16.86,
+        "target": 28.19,
+        "stop": 15.04,
+        "risk": 1.82,
+        "reward": 11.33,
+        "rr_ratio": 6.21,
+        "favorable": true
+      }
+    },
+    "position_sizes": {
+      "aggressive": {
+        "$10,000": {
+          "shares": 35,
+          "cost": "$722.05",
+          "pct_of_portfolio": "7.2%"
+        },
+        "$50,000": {
+          "shares": 178,
+          "cost": "$3,672.14",
+          "pct_of_portfolio": "7.3%"
+        },
+        "$100,000": {
+          "shares": 357,
+          "cost": "$7,364.91",
+          "pct_of_portfolio": "7.4%"
+        }
+      },
+      "moderate": {
+        "$10,000": {
+          "shares": 56,
+          "cost": "$1,041.97",
+          "pct_of_portfolio": "10.4%"
+        },
+        "$50,000": {
+          "shares": 280,
+          "cost": "$5,209.83",
+          "pct_of_portfolio": "10.4%"
+        },
+        "$100,000": {
+          "shares": 560,
+          "cost": "$10,419.66",
+          "pct_of_portfolio": "10.4%"
+        }
+      },
+      "conservative": {
+        "$10,000": {
+          "shares": 109,
+          "cost": "$1,837.84",
+          "pct_of_portfolio": "18.4%"
+        },
+        "$50,000": {
+          "shares": 548,
+          "cost": "$9,239.77",
+          "pct_of_portfolio": "18.5%"
+        },
+        "$100,000": {
+          "shares": 1096,
+          "cost": "$18,479.55",
+          "pct_of_portfolio": "18.5%"
+        }
+      }
+    },
+    "context": {
+      "supports_used": [
+        20.63,
+        19.51,
+        18.52,
+        17.28,
+        6.34
+      ],
+      "resistances_used": [
+        21.72,
+        22.26,
+        23.51,
+        24.58,
+        24.63
+      ],
+      "fibonacci": {
+        "0.0% (High)": 41.65,
+        "23.6%": 35.9,
+        "38.2%": 32.34,
+        "50.0%": 29.47,
+        "61.8%": 26.59,
+        "78.6%": 22.5,
+        "100.0% (Low)": 17.28
+      },
+      "pivot": 22.63
+    }
+  },
+  "api_status": {
+    "price_history": {
+      "success": true,
+      "api_used": "yfinance",
+      "attempts": [
+        {
+          "api_id": "yfinance",
+          "success": true,
+          "error": null
+        }
+      ]
+    },
+    "fundamentals": {
+      "success": true,
+      "api_used": "sec_edgar",
+      "attempts": [
+        {
+          "api_id": "yfinance",
+          "success": false,
+          "error": "Rate limited: 5/5 calls in last minute"
+        },
+        {
+          "api_id": "sec_edgar",
+          "success": true,
+          "error": null
+        }
+      ]
+    },
+    "analyst_ratings": {
+      "success": true,
+      "api_used": "finnhub",
+      "all_sources": {
+        "finnhub": {
+          "success": true,
+          "data": {
+            "ticker": "OUST",
+            "buy": 8,
+            "hold": 1,
+            "sell": 0,
+            "strong_buy": 3,
+            "strong_sell": 0,
+            "period": "2026-03-01",
+            "history": [
+              {
+                "buy": 8,
+                "hold": 1,
+                "period": "2026-03-01",
+                "sell": 0,
+                "strongBuy": 3,
+                "strongSell": 0,
+                "symbol": "OUST"
+              },
+              {
+                "buy": 8,
+                "hold": 1,
+                "period": "2026-02-01",
+                "sell": 0,
+                "strongBuy": 3,
+                "strongSell": 0,
+                "symbol": "OUST"
+              },
+              {
+                "buy": 8,
+                "hold": 1,
+                "period": "2026-01-01",
+                "sell": 0,
+                "strongBuy": 3,
+                "strongSell": 0,
+                "symbol": "OUST"
+              },
+              {
+                "buy": 8,
+                "hold": 1,
+                "period": "2025-12-01",
+                "sell": 0,
+                "strongBuy": 3,
+                "strongSell": 0,
+                "symbol": "OUST"
+              }
+            ]
+          },
+          "error": null
+        },
+        "yfinance": {
+          "success": false,
+          "data": null,
+          "error": "Rate limited: 5/5 calls in last minute"
+        },
+        "seeking_alpha_rapidapi": {
+          "success": false,
+          "data": null,
+          "error": "ValueError: Seeking Alpha RapidAPI key not configured"
+        }
+      }
+    },
+    "tradingview": {
+      "success": true,
+      "api_used": "tradingview"
+    },
+    "insider_trades": {
+      "success": true,
+      "api_used": "finnhub"
+    },
+    "news_sentiment": {
+      "success": true,
+      "api_used": "finnhub"
+    },
+    "reddit_sentiment": {
+      "success": true,
+      "api_used": "apewisdom"
+    },
+    "social_sentiment": {
+      "success": false,
+      "api_used": null
+    },
+    "earnings": {
+      "success": true,
+      "api_used": "finnhub"
+    },
+    "congress_trades": {
+      "success": false,
+      "api_used": null
+    }
+  },
+  "result": {
+    "ticker": "OUST",
+    "analysis_date": "2026-03-05T14:29:43.628540",
+    "current_price": 20.883499145507812,
+    "composite_score": 5.02,
+    "rating": "WATCH\u00b7HOLD",
+    "confidence": "LOW",
+    "action": "WATCH",
+    "sub_scores": {
+      "fundamental": {
+        "score": 5.6,
+        "weight": 0.4,
+        "weighted": 2.24,
+        "confidence": "LOW",
+        "factors": {
+          "pe_ratio": {
+            "value": null,
+            "score": 5,
+            "note": "No data (neutral)",
+            "rating_note": "No data available"
+          },
+          "pb_ratio": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "revenue_growth": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "eps_growth": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "profit_margin": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "debt_to_equity": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "free_cash_flow": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "roe": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "analyst_consensus": {
+            "buy": 11,
+            "hold": 1,
+            "sell": 0,
+            "buy_pct": 91.7,
+            "score": 9,
+            "rating_note": "Strong buy consensus \u2014 70%+ analysts bullish"
+          },
+          "earnings_surprises": {
+            "beat_count": 3,
+            "miss_count": 1,
+            "surprise_avg_pct": 15.51,
+            "score": 7,
+            "rating_note": "Usually beats estimates \u2014 reliable execution"
+          }
+        }
+      },
+      "technical": {
+        "score": 4.0,
+        "weight": 0.3,
+        "weighted": 1.2,
+        "confidence": "HIGH",
+        "factors": {
+          "tech_score": 4.0,
+          "rsi": 51.017,
+          "macd_bullish": false,
+          "above_sma50": false,
+          "above_sma200": false,
+          "bb_position": 0.7785776227127729,
+          "volume_ratio": 1.1682811474091357,
+          "adx": 16.8888
+        }
+      },
+      "sentiment": {
+        "score": 5.27,
+        "weight": 0.3,
+        "weighted": 1.58,
+        "confidence": "LOW",
+        "factors": {
+          "reddit_sentiment": {
+            "value": null,
+            "score": 5,
+            "note": "Not trending on Reddit",
+            "source": "ApeWisdom",
+            "rating_note": "Not trending on Reddit"
+          },
+          "stocktwits_sentiment": {
+            "value": null,
+            "score": 5,
+            "note": "No StockTwits data",
+            "source": "StockTwits",
+            "rating_note": "No data \u2014 possibly rate limited"
+          },
+          "news_sentiment": {
+            "articles": 19,
+            "score": 6.9,
+            "source": "finnhub",
+            "rating_note": "19 articles found \u2014 no AI sentiment available",
+            "note": "No AI sentiment, using article count"
+          },
+          "tradingview_consensus": {
+            "recommendation": "NEUTRAL",
+            "buy_count": 8,
+            "sell_count": 10,
+            "neutral_count": 8,
+            "score": 5,
+            "source": "TradingView (tradingview-ta)",
+            "rating_note": "Neutral \u2014 indicators mixed (8B/8N/10S)"
+          },
+          "rss_buzz": {
+            "value": null,
+            "score": 5,
+            "source": "Seeking Alpha / RSS feeds",
+            "rating_note": "No RSS mentions found",
+            "note": "No RSS mentions"
+          },
+          "insider_activity": {
+            "value": null,
+            "score": 5,
+            "source": "Finnhub",
+            "rating_note": "No insider trade data available",
+            "note": "No insider data"
+          },
+          "congress_trades": {
+            "value": null,
+            "score": 5,
+            "source": "Mboum Finance",
+            "rating_note": "No Congress trade data available",
+            "note": "No Congress data"
+          }
+        }
+      }
+    },
+    "entry_exit": {
+      "current_price": 20.883499145507812,
+      "atr": 1.82,
+      "entries": {
+        "aggressive": 20.63,
+        "moderate": 18.61,
+        "conservative": 16.86
+      },
+      "targets": {
+        "target_1": 22.71,
+        "target_2": 24.63,
+        "target_3": 28.19
+      },
+      "stop_loss": 15.04,
+      "risk_reward": {
+        "aggressive\u2192target_1": {
+          "entry": 20.63,
+          "target": 22.71,
+          "stop": 15.04,
+          "risk": 5.59,
+          "reward": 2.08,
+          "rr_ratio": 0.37,
+          "favorable": false
+        },
+        "aggressive\u2192target_2": {
+          "entry": 20.63,
+          "target": 24.63,
+          "stop": 15.04,
+          "risk": 5.59,
+          "reward": 4.0,
+          "rr_ratio": 0.72,
+          "favorable": false
+        },
+        "aggressive\u2192target_3": {
+          "entry": 20.63,
+          "target": 28.19,
+          "stop": 15.04,
+          "risk": 5.59,
+          "reward": 7.56,
+          "rr_ratio": 1.35,
+          "favorable": false
+        },
+        "moderate\u2192target_1": {
+          "entry": 18.61,
+          "target": 22.71,
+          "stop": 15.04,
+          "risk": 3.57,
+          "reward": 4.1,
+          "rr_ratio": 1.15,
+          "favorable": false
+        },
+        "moderate\u2192target_2": {
+          "entry": 18.61,
+          "target": 24.63,
+          "stop": 15.04,
+          "risk": 3.57,
+          "reward": 6.02,
+          "rr_ratio": 1.69,
+          "favorable": false
+        },
+        "moderate\u2192target_3": {
+          "entry": 18.61,
+          "target": 28.19,
+          "stop": 15.04,
+          "risk": 3.57,
+          "reward": 9.58,
+          "rr_ratio": 2.68,
+          "favorable": true
+        },
+        "conservative\u2192target_1": {
+          "entry": 16.86,
+          "target": 22.71,
+          "stop": 15.04,
+          "risk": 1.82,
+          "reward": 5.85,
+          "rr_ratio": 3.21,
+          "favorable": true
+        },
+        "conservative\u2192target_2": {
+          "entry": 16.86,
+          "target": 24.63,
+          "stop": 15.04,
+          "risk": 1.82,
+          "reward": 7.77,
+          "rr_ratio": 4.26,
+          "favorable": true
+        },
+        "conservative\u2192target_3": {
+          "entry": 16.86,
+          "target": 28.19,
+          "stop": 15.04,
+          "risk": 1.82,
+          "reward": 11.33,
+          "rr_ratio": 6.21,
+          "favorable": true
+        }
+      },
+      "position_sizes": {
+        "aggressive": {
+          "$10,000": {
+            "shares": 35,
+            "cost": "$722.05",
+            "pct_of_portfolio": "7.2%"
+          },
+          "$50,000": {
+            "shares": 178,
+            "cost": "$3,672.14",
+            "pct_of_portfolio": "7.3%"
+          },
+          "$100,000": {
+            "shares": 357,
+            "cost": "$7,364.91",
+            "pct_of_portfolio": "7.4%"
+          }
+        },
+        "moderate": {
+          "$10,000": {
+            "shares": 56,
+            "cost": "$1,041.97",
+            "pct_of_portfolio": "10.4%"
+          },
+          "$50,000": {
+            "shares": 280,
+            "cost": "$5,209.83",
+            "pct_of_portfolio": "10.4%"
+          },
+          "$100,000": {
+            "shares": 560,
+            "cost": "$10,419.66",
+            "pct_of_portfolio": "10.4%"
+          }
+        },
+        "conservative": {
+          "$10,000": {
+            "shares": 109,
+            "cost": "$1,837.84",
+            "pct_of_portfolio": "18.4%"
+          },
+          "$50,000": {
+            "shares": 548,
+            "cost": "$9,239.77",
+            "pct_of_portfolio": "18.5%"
+          },
+          "$100,000": {
+            "shares": 1096,
+            "cost": "$18,479.55",
+            "pct_of_portfolio": "18.5%"
+          }
+        }
+      },
+      "context": {
+        "supports_used": [
+          20.63,
+          19.51,
+          18.52,
+          17.28,
+          6.34
+        ],
+        "resistances_used": [
+          21.72,
+          22.26,
+          23.51,
+          24.58,
+          24.63
+        ],
+        "fibonacci": {
+          "0.0% (High)": 41.65,
+          "23.6%": 35.9,
+          "38.2%": 32.34,
+          "50.0%": 29.47,
+          "61.8%": 26.59,
+          "78.6%": 22.5,
+          "100.0% (Low)": 17.28
+        },
+        "pivot": 22.63
+      }
+    },
+    "tradingview": {
+      "ticker": "OUST",
+      "interval": "1d",
+      "recommendation": "NEUTRAL",
+      "buy_count": 8,
+      "sell_count": 10,
+      "neutral_count": 8,
+      "oscillators": {
+        "recommendation": "SELL",
+        "buy": 1,
+        "sell": 3,
+        "neutral": 7
+      },
+      "moving_averages": {
+        "recommendation": "NEUTRAL",
+        "buy": 7,
+        "sell": 7,
+        "neutral": 1
+      },
+      "rsi": 51.826877660724875,
+      "macd": -0.30890700972985385,
+      "macd_signal": -0.8386025834923532,
+      "ema_20": 20.368353537547975,
+      "sma_50": 22.2594,
+      "sma_200": 24.581400000000002,
+      "adx": 16.888792666221004,
+      "atr": null,
+      "bbands_upper": 21.995703365855842,
+      "bbands_lower": 16.912296634144116,
+      "volume": 2118371
+    },
+    "fundamentals_summary": {
+      "name": "",
+      "sector": "",
+      "market_cap": null,
+      "pe_ratio": null,
+      "forward_pe": null,
+      "pb_ratio": null,
+      "revenue_growth": null,
+      "earnings_growth": null,
+      "profit_margin": null,
+      "roe": null,
+      "debt_to_equity": null,
+      "free_cash_flow": null,
+      "analyst_target": null
+    },
+    "dividends": {
+      "yield": null,
+      "payout_ratio": 0.0
+    },
+    "key_articles": [
+      {
+        "source": "Seeking Alpha",
+        "title": "Ouster Q4 2025 Earnings Preview",
+        "summary": "",
+        "link": "https://seekingalpha.com/symbol/OUST/news?source=feed_symbol_OUST",
+        "published": "2026-02-27T22:35:39",
+        "sentiment": null,
+        "sentiment_flag": "\ud83d\udfe1"
+      },
+      {
+        "source": "Seeking Alpha",
+        "title": "Ouster GAAP EPS of $0.06 beats by $0.46, revenue of $62.18M beats by $21.06M",
+        "summary": "",
+        "link": "https://seekingalpha.com/symbol/OUST/news?source=feed_symbol_OUST",
+        "published": "2026-03-02T21:12:38",
+        "sentiment": 0.4,
+        "sentiment_method": "title_keywords",
+        "sentiment_flag": "\ud83d\udfe2"
+      },
+      {
+        "source": "Seeking Alpha",
+        "title": "Ouster, Inc. (OUST) Q4 2025 Earnings Call Transcript",
+        "summary": "",
+        "link": "https://seekingalpha.com/article/4877349-ouster-inc-oust-q4-2025-earnings-call-transcript?source=feed_symbol_OUST",
+        "published": "2026-03-03T01:27:47",
+        "sentiment": null,
+        "sentiment_flag": "\ud83d\udfe1"
+      },
+      {
+        "source": "Seeking Alpha",
+        "title": "Ouster outlines 30% to 50% annual revenue growth target for 2026 following StereoLabs acquisition",
+        "summary": "",
+        "link": "https://seekingalpha.com/symbol/OUST/news?source=feed_symbol_OUST",
+        "published": "2026-03-03T01:28:22",
+        "sentiment": 0.2,
+        "sentiment_method": "title_keywords",
+        "sentiment_flag": "\ud83d\udfe2"
+      },
+      {
+        "source": "Seeking Alpha",
+        "title": "Ouster, Inc. 2025 Q4 - Results - Earnings Call Presentation",
+        "summary": "",
+        "link": "https://seekingalpha.com/article/4877440-ouster-inc-2025-q4-results-earnings-call-presentation?source=feed_symbol_OUST",
+        "published": "2026-03-03T06:40:22",
+        "sentiment": null,
+        "sentiment_flag": "\ud83d\udfe1"
+      },
+      {
+        "source": "Seeking Alpha",
+        "title": "Ouster: Great Tech, Stock Fairly Priced (Downgrade)",
+        "summary": "",
+        "link": "https://seekingalpha.com/article/4878405-ouster-great-tech-stock-fairly-priced-downgrade?source=feed_symbol_OUST",
+        "published": "2026-03-04T18:22:58",
+        "sentiment": -0.2,
+        "sentiment_method": "title_keywords",
+        "sentiment_flag": "\ud83d\udd34"
+      },
+      {
+        "source": "Benzinga",
+        "title": "12 Information Technology Stocks Moving In Tuesday's Intraday Session",
+        "summary": " ",
+        "link": "https://finnhub.io/api/news?id=e87c588a533ea433b6954fe0a6fdb111f9d3f0ce7e871ec34ce2885cca00daff",
+        "published": 1772543132,
+        "sentiment": null,
+        "sentiment_flag": "\ud83d\udfe1"
+      },
+      {
+        "source": "Benzinga",
+        "title": "Ouster Climbs Following Fourth-Quarter Results",
+        "summary": "Ouster, Inc. (NASDAQ:OUST) are trading higher Tuesday after the company reported fourth-quarter financial-results on Monday after the bell.",
+        "link": "https://finnhub.io/api/news?id=8d5082b52e8e0a22cb1c9640a9657d98e79c525252958f9f5b81ef0baeb52038",
+        "published": 1772537752,
+        "sentiment": null,
+        "sentiment_flag": "\ud83d\udfe1"
+      },
+      {
+        "source": "Benzinga",
+        "title": "Ouster shares are trading higher after the company reported better-than-expected Q4 adjusted EPS results and issued Q1 sales guidance above estimates.",
+        "summary": "",
+        "link": "https://finnhub.io/api/news?id=dd59624d76a30324cbb573175ce1cbbda01cae04db274642eb8880694be4f8ab",
+        "published": 1772531474,
+        "sentiment": null,
+        "sentiment_flag": "\ud83d\udfe1"
+      },
+      {
+        "source": "Benzinga",
+        "title": "11 Information Technology Stocks Moving In Tuesday's Pre-Market Session",
+        "summary": " ",
+        "link": "https://finnhub.io/api/news?id=10975cd1790345e7ede483feefe81e29199f65c085e53d91f89b1d4fa9fc6bb5",
+        "published": 1772525138,
+        "sentiment": null,
+        "sentiment_flag": "\ud83d\udfe1"
+      }
+    ],
+    "api_status": {
+      "price_history": {
+        "success": true,
+        "api_used": "yfinance",
+        "attempts": [
+          {
+            "api_id": "yfinance",
+            "success": true,
+            "error": null
+          }
+        ]
+      },
+      "fundamentals": {
+        "success": true,
+        "api_used": "sec_edgar",
+        "attempts": [
+          {
+            "api_id": "yfinance",
+            "success": false,
+            "error": "Rate limited: 5/5 calls in last minute"
+          },
+          {
+            "api_id": "sec_edgar",
+            "success": true,
+            "error": null
+          }
+        ]
+      },
+      "analyst_ratings": {
+        "success": true,
+        "api_used": "finnhub",
+        "all_sources": {
+          "finnhub": {
+            "success": true,
+            "data": {
+              "ticker": "OUST",
+              "buy": 8,
+              "hold": 1,
+              "sell": 0,
+              "strong_buy": 3,
+              "strong_sell": 0,
+              "period": "2026-03-01",
+              "history": [
+                {
+                  "buy": 8,
+                  "hold": 1,
+                  "period": "2026-03-01",
+                  "sell": 0,
+                  "strongBuy": 3,
+                  "strongSell": 0,
+                  "symbol": "OUST"
+                },
+                {
+                  "buy": 8,
+                  "hold": 1,
+                  "period": "2026-02-01",
+                  "sell": 0,
+                  "strongBuy": 3,
+                  "strongSell": 0,
+                  "symbol": "OUST"
+                },
+                {
+                  "buy": 8,
+                  "hold": 1,
+                  "period": "2026-01-01",
+                  "sell": 0,
+                  "strongBuy": 3,
+                  "strongSell": 0,
+                  "symbol": "OUST"
+                },
+                {
+                  "buy": 8,
+                  "hold": 1,
+                  "period": "2025-12-01",
+                  "sell": 0,
+                  "strongBuy": 3,
+                  "strongSell": 0,
+                  "symbol": "OUST"
+                }
+              ]
+            },
+            "error": null
+          },
+          "yfinance": {
+            "success": false,
+            "data": null,
+            "error": "Rate limited: 5/5 calls in last minute"
+          },
+          "seeking_alpha_rapidapi": {
+            "success": false,
+            "data": null,
+            "error": "ValueError: Seeking Alpha RapidAPI key not configured"
+          }
+        }
+      },
+      "tradingview": {
+        "success": true,
+        "api_used": "tradingview"
+      },
+      "insider_trades": {
+        "success": true,
+        "api_used": "finnhub"
+      },
+      "news_sentiment": {
+        "success": true,
+        "api_used": "finnhub"
+      },
+      "reddit_sentiment": {
+        "success": true,
+        "api_used": "apewisdom"
+      },
+      "social_sentiment": {
+        "success": false,
+        "api_used": null
+      },
+      "earnings": {
+        "success": true,
+        "api_used": "finnhub"
+      },
+      "congress_trades": {
+        "success": false,
+        "api_used": null
+      }
+    },
+    "data_sources": {
+      "price_history": "yfinance",
+      "fundamentals": "sec_edgar",
+      "analyst_ratings": "finnhub",
+      "technicals": "local (pandas/ta)",
+      "tradingview": "tradingview-ta",
+      "insider_trades": "finnhub",
+      "news_sentiment": "finnhub",
+      "reddit_sentiment": "apewisdom",
+      "earnings": "finnhub",
+      "dividends": "yfinance"
+    },
+    "elapsed_seconds": 35.6,
+    "all_analyst_results": {
+      "finnhub": {
+        "success": true,
+        "data": {
+          "ticker": "OUST",
+          "buy": 8,
+          "hold": 1,
+          "sell": 0,
+          "strong_buy": 3,
+          "strong_sell": 0,
+          "period": "2026-03-01",
+          "history": [
+            {
+              "buy": 8,
+              "hold": 1,
+              "period": "2026-03-01",
+              "sell": 0,
+              "strongBuy": 3,
+              "strongSell": 0,
+              "symbol": "OUST"
+            },
+            {
+              "buy": 8,
+              "hold": 1,
+              "period": "2026-02-01",
+              "sell": 0,
+              "strongBuy": 3,
+              "strongSell": 0,
+              "symbol": "OUST"
+            },
+            {
+              "buy": 8,
+              "hold": 1,
+              "period": "2026-01-01",
+              "sell": 0,
+              "strongBuy": 3,
+              "strongSell": 0,
+              "symbol": "OUST"
+            },
+            {
+              "buy": 8,
+              "hold": 1,
+              "period": "2025-12-01",
+              "sell": 0,
+              "strongBuy": 3,
+              "strongSell": 0,
+              "symbol": "OUST"
+            }
+          ]
+        },
+        "error": null
+      },
+      "yfinance": {
+        "success": false,
+        "data": null,
+        "error": "Rate limited: 5/5 calls in last minute"
+      },
+      "seeking_alpha_rapidapi": {
+        "success": false,
+        "data": null,
+        "error": "ValueError: Seeking Alpha RapidAPI key not configured"
+      }
+    },
+    "fundamentals_detail": {
+      "ticker": "OUST",
+      "cik": "0001816581",
+      "company_name": "Ouster, Inc.",
+      "recent_filings": [
+        {
+          "form": "S-8",
+          "date": "2026-03-02",
+          "accession": "0001193125-26-085786"
+        },
+        {
+          "form": "10-K",
+          "date": "2026-03-02",
+          "accession": "0001628280-26-013313"
+        },
+        {
+          "form": "8-K",
+          "date": "2026-03-02",
+          "accession": "0001193125-26-085444"
+        },
+        {
+          "form": "8-K",
+          "date": "2026-02-09",
+          "accession": "0001193125-26-041917"
+        },
+        {
+          "form": "4",
+          "date": "2026-01-21",
+          "accession": "0001193125-26-018340"
+        },
+        {
+          "form": "SCHEDULE 13G/A",
+          "date": "2026-01-21",
+          "accession": "0002012383-26-000703"
+        },
+        {
+          "form": "144",
+          "date": "2026-01-16",
+          "accession": "0001950047-26-000504"
+        },
+        {
+          "form": "4",
+          "date": "2026-01-06",
+          "accession": "0001193125-26-004399"
+        },
+        {
+          "form": "4",
+          "date": "2025-12-23",
+          "accession": "0001193125-25-331041"
+        },
+        {
+          "form": "8-K",
+          "date": "2025-12-19",
+          "accession": "0001193125-25-326944"
+        },
+        {
+          "form": "144",
+          "date": "2025-12-19",
+          "accession": "0001950047-25-010538"
+        },
+        {
+          "form": "4",
+          "date": "2025-12-16",
+          "accession": "0001193125-25-320857"
+        },
+        {
+          "form": "4",
+          "date": "2025-12-16",
+          "accession": "0001193125-25-320847"
+        },
+        {
+          "form": "4",
+          "date": "2025-12-16",
+          "accession": "0001193125-25-320844"
+        },
+        {
+          "form": "4",
+          "date": "2025-12-16",
+          "accession": "0001193125-25-320843"
+        },
+        {
+          "form": "4",
+          "date": "2025-12-16",
+          "accession": "0001193125-25-320842"
+        },
+        {
+          "form": "144",
+          "date": "2025-12-12",
+          "accession": "0001950047-25-010194"
+        },
+        {
+          "form": "144",
+          "date": "2025-12-11",
+          "accession": "0001193125-25-316240"
+        },
+        {
+          "form": "144",
+          "date": "2025-12-11",
+          "accession": "0001193125-25-316237"
+        },
+        {
+          "form": "144",
+          "date": "2025-12-11",
+          "accession": "0001193125-25-316236"
+        }
+      ]
+    },
+    "earnings_detail": {
+      "ticker": "OUST",
+      "earnings": [
+        {
+          "actual": 0.06,
+          "estimate": -0.3529,
+          "period": "2025-12-31",
+          "quarter": 4,
+          "surprise": 0.4129,
+          "surprisePercent": 117.002,
+          "symbol": "OUST",
+          "year": 2025
+        },
+        {
+          "actual": -0.37,
+          "estimate": -0.3825,
+          "period": "2025-09-30",
+          "quarter": 3,
+          "surprise": 0.0125,
+          "surprisePercent": 3.268,
+          "symbol": "OUST",
+          "year": 2025
+        },
+        {
+          "actual": -0.38,
+          "estimate": -0.3927,
+          "period": "2025-06-30",
+          "quarter": 2,
+          "surprise": 0.0127,
+          "surprisePercent": 3.234,
+          "symbol": "OUST",
+          "year": 2025
+        },
+        {
+          "actual": -0.42,
+          "estimate": -0.2601,
+          "period": "2025-03-31",
+          "quarter": 1,
+          "surprise": -0.1599,
+          "surprisePercent": -61.4764,
+          "symbol": "OUST",
+          "year": 2025
+        }
+      ],
+      "surprise_avg": 15.5069,
+      "beat_count": 3,
+      "miss_count": 1
+    },
+    "insider_detail": {
+      "ticker": "OUST",
+      "recent_transactions": [
+        {
+          "change": -5837,
+          "currency": "",
+          "filingDate": "2026-01-21",
+          "id": "0001193125-26-018340",
+          "isDerivative": false,
+          "name": "Chung Megan",
+          "share": 183141,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2026-01-16",
+          "transactionPrice": 27.24
+        },
+        {
+          "change": 1327,
+          "currency": "",
+          "filingDate": "2026-01-06",
+          "id": "0001193125-26-004399",
+          "isDerivative": false,
+          "name": "Heystee Susan",
+          "share": 42952,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "A",
+          "transactionDate": "2026-01-05",
+          "transactionPrice": 24.8
+        },
+        {
+          "change": -1695,
+          "currency": "",
+          "filingDate": "2025-12-23",
+          "id": "0001193125-25-331041",
+          "isDerivative": false,
+          "name": "Tewksbury Ted L III",
+          "share": 123664,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2025-12-19",
+          "transactionPrice": 21.47
+        },
+        {
+          "change": -15661,
+          "currency": "",
+          "filingDate": "2025-12-16",
+          "id": "0001193125-25-320847",
+          "isDerivative": false,
+          "name": "Frichtl Mark",
+          "share": 652571,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2025-12-12",
+          "transactionPrice": 24.9797
+        },
+        {
+          "change": -24610,
+          "currency": "",
+          "filingDate": "2025-12-16",
+          "id": "0001193125-25-320843",
+          "isDerivative": false,
+          "name": "Pacala Charles Angus",
+          "share": 985317,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2025-12-12",
+          "transactionPrice": 24.9772
+        },
+        {
+          "change": -10696,
+          "currency": "",
+          "filingDate": "2025-12-16",
+          "id": "0001193125-25-320842",
+          "isDerivative": false,
+          "name": "Chung Megan",
+          "share": 188978,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2025-12-12",
+          "transactionPrice": 24.9781
+        },
+        {
+          "change": -11650,
+          "currency": "",
+          "filingDate": "2025-12-16",
+          "id": "0001193125-25-320857",
+          "isDerivative": false,
+          "name": "Heystee Susan",
+          "share": 41625,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2025-12-12",
+          "transactionPrice": 25.0292
+        },
+        {
+          "change": -10919,
+          "currency": "",
+          "filingDate": "2025-12-16",
+          "id": "0001193125-25-320844",
+          "isDerivative": false,
+          "name": "SPENCER DARIEN",
+          "share": 336188,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2025-12-12",
+          "transactionPrice": 24.978
+        },
+        {
+          "change": 3975,
+          "currency": "",
+          "filingDate": "2025-12-10",
+          "id": "0001193125-25-314312",
+          "isDerivative": false,
+          "name": "Eyler Phillip",
+          "share": 15658,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "A",
+          "transactionDate": "2025-12-08",
+          "transactionPrice": 0
+        },
+        {
+          "change": 11683,
+          "currency": "",
+          "filingDate": "2025-12-10",
+          "id": "0001193125-25-314312",
+          "isDerivative": false,
+          "name": "Eyler Phillip",
+          "share": 11683,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "A",
+          "transactionDate": "2025-12-08",
+          "transactionPrice": 0
+        },
+        {
+          "change": -1695,
+          "currency": "",
+          "filingDate": "2025-11-12",
+          "id": "0001193125-25-278302",
+          "isDerivative": false,
+          "name": "Tewksbury Ted L III",
+          "share": 125359,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2025-11-11",
+          "transactionPrice": 25.38
+        },
+        {
+          "change": -5837,
+          "currency": "",
+          "filingDate": "2025-10-20",
+          "id": "0001193125-25-243555",
+          "isDerivative": false,
+          "name": "Chung Megan",
+          "share": 197199,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2025-10-17",
+          "transactionPrice": 31.02
+        },
+        {
+          "change": 1010,
+          "currency": "",
+          "filingDate": "2025-10-06",
+          "id": "0001193125-25-232275",
+          "isDerivative": false,
+          "name": "Heystee Susan",
+          "share": 53275,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "A",
+          "transactionDate": "2025-10-06",
+          "transactionPrice": 32.43
+        },
+        {
+          "change": -25329,
+          "currency": "",
+          "filingDate": "2025-09-16",
+          "id": "0001193125-25-205174",
+          "isDerivative": false,
+          "name": "Frichtl Mark",
+          "share": 665403,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2025-09-12",
+          "transactionPrice": 28.4581
+        },
+        {
+          "change": -37992,
+          "currency": "",
+          "filingDate": "2025-09-16",
+          "id": "0001193125-25-205170",
+          "isDerivative": false,
+          "name": "Pacala Charles Angus",
+          "share": 1009927,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2025-09-12",
+          "transactionPrice": 28.4581
+        },
+        {
+          "change": -17183,
+          "currency": "",
+          "filingDate": "2025-09-16",
+          "id": "0001193125-25-205161",
+          "isDerivative": false,
+          "name": "Chung Megan",
+          "share": 203036,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2025-09-12",
+          "transactionPrice": 28.4581
+        },
+        {
+          "change": -18274,
+          "currency": "",
+          "filingDate": "2025-09-16",
+          "id": "0001193125-25-205182",
+          "isDerivative": false,
+          "name": "SPENCER DARIEN",
+          "share": 346132,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2025-09-12",
+          "transactionPrice": 28.4581
+        },
+        {
+          "change": -40390,
+          "currency": "",
+          "filingDate": "2025-08-15",
+          "id": "0000950170-25-109386",
+          "isDerivative": false,
+          "name": "Heystee Susan",
+          "share": 52265,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "S",
+          "transactionDate": "2025-08-13",
+          "transactionPrice": 30
+        },
+        {
+          "change": 1712,
+          "currency": "",
+          "filingDate": "2025-07-09",
+          "id": "0000950170-25-094769",
+          "isDerivative": false,
+          "name": "Heystee Susan",
+          "share": 92654,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "A",
+          "transactionDate": "2025-07-07",
+          "transactionPrice": 22.42
+        },
+        {
+          "change": 13558,
+          "currency": "",
+          "filingDate": "2025-06-20",
+          "id": "0000950170-25-088513",
+          "isDerivative": false,
+          "name": "Correia Christina",
+          "share": 71690,
+          "source": "sec",
+          "symbol": "OUST",
+          "transactionCode": "A",
+          "transactionDate": "2025-06-18",
+          "transactionPrice": 0
+        }
+      ],
+      "buys_last_50": 0,
+      "sells_last_50": 0,
+      "net_insider_signal": "neutral"
+    },
+    "reddit_detail": {
+      "ticker": "OUST",
+      "rank": null,
+      "mentions": 0,
+      "mentions_24h_ago": 0,
+      "upvotes": 0
+    },
+    "stocktwits_detail": null,
+    "news_detail": {
+      "ticker": "OUST",
+      "articles": [
+        {
+          "category": "company",
+          "datetime": 1772630578,
+          "headline": "Ouster: Great Tech, Stock Fairly Priced (Downgrade)",
+          "id": 139300456,
+          "image": "",
+          "related": "OUST",
+          "source": "SeekingAlpha",
+          "summary": "",
+          "url": "https://finnhub.io/api/news?id=10dfa4e21336419e3f5a4e125366ab6e99dac0ee323d14af39646842c165fe61"
+        },
+        {
+          "category": "company",
+          "datetime": 1772543132,
+          "headline": "12 Information Technology Stocks Moving In Tuesday's Intraday Session",
+          "id": 139295512,
+          "image": "https://cdn.benzinga.com/files/images/story/2025/11/06/movers_3.jpg?width=2048&height=1536",
+          "related": "OUST",
+          "source": "Benzinga",
+          "summary": " ",
+          "url": "https://finnhub.io/api/news?id=e87c588a533ea433b6954fe0a6fdb111f9d3f0ce7e871ec34ce2885cca00daff"
+        },
+        {
+          "category": "company",
+          "datetime": 1772537752,
+          "headline": "Ouster Climbs Following Fourth-Quarter Results",
+          "id": 139296793,
+          "image": "https://cdn.benzinga.com/files/images/story/2026/03/03/Munich--Bavaria--Germany---March-31-2023_0.jpeg?width=2048&height=1536",
+          "related": "OUST",
+          "source": "Benzinga",
+          "summary": "Ouster, Inc. (NASDAQ:OUST) are trading higher Tuesday after the company reported fourth-quarter financial-results on Monday after the bell.",
+          "url": "https://finnhub.io/api/news?id=8d5082b52e8e0a22cb1c9640a9657d98e79c525252958f9f5b81ef0baeb52038"
+        },
+        {
+          "category": "company",
+          "datetime": 1772531474,
+          "headline": "Ouster shares are trading higher after the company reported better-than-expected Q4 adjusted EPS results and issued Q1 sales guidance above estimates.",
+          "id": 139286787,
+          "image": "",
+          "related": "OUST",
+          "source": "Benzinga",
+          "summary": "",
+          "url": "https://finnhub.io/api/news?id=dd59624d76a30324cbb573175ce1cbbda01cae04db274642eb8880694be4f8ab"
+        },
+        {
+          "category": "company",
+          "datetime": 1772525138,
+          "headline": "11 Information Technology Stocks Moving In Tuesday's Pre-Market Session",
+          "id": 139285979,
+          "image": "https://cdn.benzinga.com/files/images/story/2025/11/06/movers_1.jpg?width=2048&height=1536",
+          "related": "OUST",
+          "source": "Benzinga",
+          "summary": " ",
+          "url": "https://finnhub.io/api/news?id=10975cd1790345e7ede483feefe81e29199f65c085e53d91f89b1d4fa9fc6bb5"
+        },
+        {
+          "category": "company",
+          "datetime": 1772520550,
+          "headline": "CORRECTION: Ouster Q4 Adj. EPS $(0.24) Beats $(0.35) Estimate, Adj. Sales $40.971M Miss $41.100M Estimate",
+          "id": 139286789,
+          "image": "",
+          "related": "OUST",
+          "source": "Benzinga",
+          "summary": "",
+          "url": "https://finnhub.io/api/news?id=3f5494fc409491bd021dbb99b6c12c491105c1eaf19232e9de3e698eb706dbd9"
+        },
+        {
+          "category": "company",
+          "datetime": 1772519245,
+          "headline": "Why Ouster Shares Are Trading Higher By Around 14%; Here Are 20 Stocks Moving Premarket",
+          "id": 139285671,
+          "image": "https://cdn.benzinga.com/files/images/story/2026/03/03/Munich--Bavaria--Germany---March-31-2023.jpeg?width=2048&height=1536",
+          "related": "OUST",
+          "source": "Benzinga",
+          "summary": "Shares of Ouster Inc (NASDAQ:OUST) rose sharply in pre-market trading after the company reported better-than-expected fourth-quarter financial results and issued first-quar",
+          "url": "https://finnhub.io/api/news?id=d0b249381fbe5c314d92cb914768e744fbb68a10c097817e394d42fd14f08cb9"
+        },
+        {
+          "category": "company",
+          "datetime": 1772502022,
+          "headline": "Ouster, Inc. 2025 Q4 - Results - Earnings Call Presentation",
+          "id": 139283405,
+          "image": "",
+          "related": "OUST",
+          "source": "SeekingAlpha",
+          "summary": "",
+          "url": "https://finnhub.io/api/news?id=53e36f4729d542f67915682708feb9f4308bd726f4bdbc0a0062b03f7ce4ce9e"
+        },
+        {
+          "category": "company",
+          "datetime": 1772492538,
+          "headline": "Ouster Inc (NASDAQ:OUST) Soars on Massive Q4 Earnings Beat and Path to Profitability",
+          "id": 139281040,
+          "image": "https://www.chartmill.com/images/uploads/earnings_article_1_defce97180.webp",
+          "related": "OUST",
+          "source": "ChartMill",
+          "summary": "Ouster stock surges after Q4 earnings crush estimates, posting a surprise profit on record sensor sales and strong revenue growth.",
+          "url": "https://finnhub.io/api/news?id=4ea50088a69b4f29a03d1ab484705d1d87c1e57e78918154ee58b7007010405a"
+        },
+        {
+          "category": "company",
+          "datetime": 1772488800,
+          "headline": "These stocks are moving in today's after hours session",
+          "id": 139280827,
+          "image": "https://www.chartmill.com/images/uploads/CM_Aftermarket_Movers_Small_free_e077945a19.webp",
+          "related": "OUST",
+          "source": "ChartMill",
+          "summary": "As the regular session of the US market on Monday comes to an end, let's delve into the after-hours session and discover the top gainers and losers shaping the post-market sentiment.",
+          "url": "https://finnhub.io/api/news?id=3a0c227433945a664bbc9a4cd9d9623e2700666af0846d49ef58ddcc2c5a3588"
+        },
+        {
+          "category": "company",
+          "datetime": 1772483267,
+          "headline": "Ouster, Inc. (OUST) Q4 2025 Earnings Call Transcript",
+          "id": 139281762,
+          "image": "https://static.seekingalpha.com/assets/og_image_1200-29b2bfe1a595477db6826bd2126c63ac2091efb7ec76347a8e7f81ba17e3de6c.png",
+          "related": "OUST",
+          "source": "SeekingAlpha",
+          "summary": "Ouster, Inc. (OUST) Q4 2025 Earnings Call March 2, 2026 5:00 PM ESTCompany ParticipantsChen Geng - Senior VP of Strategic Finance & TreasurerCharles...",
+          "url": "https://finnhub.io/api/news?id=688572917cb6b1f18503584563ff99aeb20e183884d902f360eb1d917d57509f"
+        },
+        {
+          "category": "company",
+          "datetime": 1772474863,
+          "headline": "Ouster Stock Soars 18% On Q4 Earnings Beat, Strong Guidance",
+          "id": 139286791,
+          "image": "https://cdn.benzinga.com/files/images/story/2026/03/02/OusterPRPagePhoto.png?width=2048&height=1536",
+          "related": "OUST",
+          "source": "Benzinga",
+          "summary": "Ouster reported financial results for the fourth quarter after the closing bell on Monday. Here&#39;s a look at the key details from the report.",
+          "url": "https://finnhub.io/api/news?id=a760819d185972fbd3ffbedcd6642b9f3dbba5d8f3384f6459bb59c6509946f3"
+        },
+        {
+          "category": "company",
+          "datetime": 1772471954,
+          "headline": "Ouster shares are trading higher after the company reported better-than-expected Q4 financial results and issued Q1 sales guidance above estimates.",
+          "id": 139286792,
+          "image": "",
+          "related": "OUST",
+          "source": "Benzinga",
+          "summary": "",
+          "url": "https://finnhub.io/api/news?id=7a864bb9625535a2707aaaeffd4fa20fa2cf74549a8c5d98961c214e2e20d390"
+        },
+        {
+          "category": "company",
+          "datetime": 1772471534,
+          "headline": "Ouster Q4 Earnings Summary & Key Takeaways",
+          "id": 139286793,
+          "image": "https://cdn.benzinga.com/files/images/story/2025/11/06/analyst_ratings_2.jpg?width=2048&height=1536",
+          "related": "OUST",
+          "source": "Benzinga",
+          "summary": " ",
+          "url": "https://finnhub.io/api/news?id=4bb9eeab2bea077b609fc39ae9f687aaaa52c81538d4d6282e2b2eddf04df990"
+        },
+        {
+          "category": "company",
+          "datetime": 1772471531,
+          "headline": "Ouster Sees Q1 Sales $45.000M-$48.000M vs $42.933M Est",
+          "id": 139286794,
+          "image": "",
+          "related": "OUST",
+          "source": "Benzinga",
+          "summary": "",
+          "url": "https://finnhub.io/api/news?id=477bfef08114184d203f3ed5d67344ea8b6b0b2d19e44c1c719cc7ff4c270e61"
+        },
+        {
+          "category": "company",
+          "datetime": 1772457659,
+          "headline": "Archer, Riot, Rigetti and More Stocks With Earnings This Week",
+          "id": 139285692,
+          "image": "https://cdn.benzinga.com/files/images/story/2026/03/02/Earnings-Season.jpeg?width=2048&height=1536",
+          "related": "OUST",
+          "source": "Benzinga",
+          "summary": "Here&#39;s a look at the most-closely watched earnings reports this week from Archer, Riot, Broadcom, Target, Rigetti and more.",
+          "url": "https://finnhub.io/api/news?id=73ee104be442f64974356b3647f6f8a5486057a110d8e7da306aaff927af2b2a"
+        },
+        {
+          "category": "company",
+          "datetime": 1772435474,
+          "headline": "Earnings Scheduled For March 2, 2026",
+          "id": 139275975,
+          "image": "https://cdn.benzinga.com/files/images/story/2025/11/06/earnings_scheduled_1.jpg?width=2048&height=1536",
+          "related": "OUST",
+          "source": "Benzinga",
+          "summary": " ",
+          "url": "https://finnhub.io/api/news?id=1e9e227ec914ec1ca74f81a8a5649314626750a486a84af55fd8f64464311ce0"
+        },
+        {
+          "category": "company",
+          "datetime": 1772193761,
+          "headline": "Preview: Ouster's Earnings",
+          "id": 139262565,
+          "image": "https://cdn.benzinga.com/files/images/story/2025/11/06/earnings_preview_4.jpg?width=2048&height=1536",
+          "related": "OUST",
+          "source": "Benzinga",
+          "summary": " ",
+          "url": "https://finnhub.io/api/news?id=4971c9f0df20f8fffee8a64fea2b5ced6affcd2ef97e8dfdf7747dce2a2c4fb7"
+        },
+        {
+          "category": "company",
+          "datetime": 1772170980,
+          "headline": "Ouster (OUST) Establishes Physical AI Platform Through Strategic StereoLabs Acquisition",
+          "id": 139259498,
+          "image": "https://s.yimg.com/rz/stage/p/yahoo_finance_en-US_h_p_finance_2.png",
+          "related": "OUST",
+          "source": "Yahoo",
+          "summary": "Ouster Inc. (NASDAQ:OUST) is one of the best small cap tech stocks with high upside potential. On February 9, Ouster officially closed the acquisition of StereoLabs SAS to establish a unified sensing and perception platform for Physical AI. By integrating StereoLabs\u2019 AI vision and 3D camera technology with Ouster\u2019s high-performance digital lidar, the company now [\u2026]",
+          "url": "https://finnhub.io/api/news?id=c506512d312d46efd4dc02e8fb62c5abd41e3a9463493b007b8da5265a18ed35"
+        }
+      ],
+      "article_count": 19,
+      "sources": [
+        "SeekingAlpha",
+        "Benzinga",
+        "ChartMill",
+        "Yahoo"
+      ],
+      "source": "finnhub"
+    }
+  }
+}

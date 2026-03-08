@@ -1,0 +1,313 @@
+{
+  "metadata": {
+    "skill_name": "persona-dev",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-03-04T19:18:25Z",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 164.6,
+        "tokens": 33067,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "has_self_management_section",
+          "passed": true,
+          "evidence": "CLAUDE.md output includes a '## Self-Management' section (lines 139-166) covering when to update profile.md, CLAUDE.md rules ('A training preference should always apply'), and when to create new skills ('A 3+ step workflow recurs with no existing skill')."
+        },
+        {
+          "text": "correct_mcp_for_domain",
+          "passed": true,
+          "evidence": "Recommends 'google-workspace' and 'home-scheduler' MCPs. Design Notes section explicitly states 'No monarch \u2014 finance domain.' Monarch Money is not mentioned anywhere in the output."
+        },
+        {
+          "text": "includes_skill_stub",
+          "passed": true,
+          "evidence": "Three full skill stubs are included under skills/fitness/: weekly-plan/SKILL.md, log-workout/SKILL.md, and progress-check/SKILL.md \u2014 all with YAML frontmatter including name, description, and triggers fields."
+        },
+        {
+          "text": "includes_profile_example",
+          "passed": true,
+          "evidence": "Section '3. profile.md.example' includes a complete profile.md.example with fitness-relevant fields: Training Goals, Current Program, Key Lifts / Benchmarks, Injuries / Limitations, What Accountability Looks Like for You, and Calendar Setup."
+        },
+        {
+          "text": "includes_mcp_availability_check",
+          "passed": true,
+          "evidence": "Session Start section explicitly includes: 'After reading profile.md: Check which MCP tools are available in this workspace. For any MCP server listed under \"MCP Tools Available\" that isn't connected: Tell the user which capabilities are unavailable... Never assume an MCP is connected \u2014 always adapt'."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 65.8,
+        "tokens": 28580,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "recommends_profile_not_memory",
+          "passed": true,
+          "evidence": "Response explicitly states 'Your filing status, W-2 vs. freelance split, and joint filing status are stable facts. They belong in profile.md.' The proposed change targets '~/.personas/warren/profile.md'."
+        },
+        {
+          "text": "does_not_only_suggest_memory",
+          "passed": true,
+          "evidence": "MEMORY.md is not suggested at all as a solution. The response frames the distinction clearly: 'The tax situation is a fact about you, not a rule about Warren's behavior. It belongs in profile.md.' MEMORY.md is only mentioned in passing in the summary table as something that is NOT being changed."
+        },
+        {
+          "text": "provides_specific_content",
+          "passed": true,
+          "evidence": "Response provides a complete markdown table block to add, with specific fields: Filing status (MFJ), Wils income type, Sako income type, Quarterly estimated taxes, SE tax, Key deductions, Inherited IRA RMDs, and Relevant forms \u2014 plus exact placement instructions (after Income Sources, around line 109)."
+        },
+        {
+          "text": "shows_profile_vs_rule_distinction",
+          "passed": true,
+          "evidence": "The 'Why profile.md and Not CLAUDE.md' section explicitly distinguishes: 'profile.md | WHO you are, WHAT you have \u2014 stable facts' vs 'CLAUDE.md rules | HOW the persona behaves \u2014 permanent behavioral rules'. Also proposes an optional CLAUDE.md rule addition ('never ask about filing status... at session start') as a separate, secondary concern."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 92.2,
+        "tokens": 38232,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "mentions_tasks_md",
+          "passed": true,
+          "evidence": "Section '4. What TASKS.md should look like' explicitly recommends creating TASKS.md at '/home/wilst/projects/personal/personas/plugins/warren/TASKS.md' as a dedicated file for action items, separate from MEMORY.md. The summary table also lists TASKS.md as a new file."
+        },
+        {
+          "text": "mentions_commands",
+          "passed": true,
+          "evidence": "The response mentions '/start and/or /update' indirectly via the 'How It Flows After This' section which describes running 'warren \"weekly review\"' and opening the dashboard, but more directly the SKILL.md update includes a Step 5 ('Write to dashboard') and Step 6 (append to TASKS.md). The skill auto-triggers on 'weekly review' \u2014 no explicit /start or /update slash command names appear, but the workflow command pattern is described."
+        },
+        {
+          "text": "references_warren_aesthetic",
+          "passed": true,
+          "evidence": "The renderWeeklyReview() function explicitly uses CSS variables like 'var(--red)', 'var(--amber)', 'var(--green)', 'var(--blue)', 'var(--text-bright)' and references \"'JetBrains Mono', monospace\" and \"'Cormorant Garamond', serif\" \u2014 fonts from Warren's existing dashboard. The tab HTML matches the existing tab structure with class='tab' and onclick='switchTab(...)' pattern, indicating it references dashboard.html as the style source."
+        },
+        {
+          "text": "explains_data_flow",
+          "passed": true,
+          "evidence": "'How It Flows After This' section explicitly maps the end-to-end flow: weekly review runs \u2192 Warren writes WEEKLY_REVIEW.md \u2192 dashboard fetches and renders it via the new tab. The dashboard's loadContent() fetch logic and renderWeeklyReview() function show exactly how the skill output connects to the dashboard."
+        },
+        {
+          "text": "identifies_recurring_pattern",
+          "passed": true,
+          "evidence": "The opening 'What You're Solving' section states: 'You've done this 4 sessions in a row. The fix is...' \u2014 explicitly recognizing the recurring pattern. The skill update (adding Step 5 to weekly-review/SKILL.md) is the structural solution, codifying the recurring workflow into the skill itself rather than leaving it ad hoc."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": 184.3,
+        "tokens": 37493,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "CLAUDE.md output includes a Self-Management section covering when to update profile.md, CLAUDE.md rules, and when to create new skills",
+          "passed": false,
+          "evidence": "The CLAUDE.md has a brief 'Self-management' note embedded within the Memory section ('Self-management: This persona lives at ~/projects/personal/personas/plugins/coach/...') covering profile.md updates and memory topic files. However, there is no dedicated Self-Management heading/section, no guidance on when to promote rules to CLAUDE.md itself, and no skill gap detection or guidance on when to create new skills."
+        },
+        {
+          "text": "Recommends google-workspace and home-scheduler \u2014 does NOT recommend Monarch Money",
+          "passed": true,
+          "evidence": "The MCP Tools Available section lists 'Google Calendar (via Google Workspace MCP)' and 'Google Tasks (via Google Workspace MCP)' and 'Scheduling (via home-scheduler MCP)'. Monarch Money is not mentioned anywhere in the response."
+        },
+        {
+          "text": "Response includes at least one skill stub under skills/fitness/ with YAML frontmatter",
+          "passed": true,
+          "evidence": "All four skill stubs (log-workout, weekly-plan, accountability-check, progress-review) under skills/fitness/ include proper YAML frontmatter with --- delimiters and name, description, and triggers fields. Example from log-workout: '---\\nname: log-workout\\ndescription: Record a completed workout...\\ntriggers:\\n  - log workout\\n  ...\\n---'"
+        },
+        {
+          "text": "Response includes a profile.md.example with fitness-relevant fields (fitness level, goals, schedule, equipment, etc.)",
+          "passed": true,
+          "evidence": "The profile.md.example includes: Primary goal / Secondary goal, Training Schedule (gym days, preferred gym time, session length), Current Program (program name, split, weekly frequency, current phase), Key Lifts table with working weights and estimated 1RMs for Squat/Bench/Deadlift/OHP, Health & Injury History, Recovery & Lifestyle (sleep, nutrition, protein target), and Accountability Preferences."
+        },
+        {
+          "text": "Session Start section includes the MCP availability check pattern (check which MCPs are connected, degrade gracefully)",
+          "passed": true,
+          "evidence": "'After reading profile.md: Check which MCP tools are available in this workspace. For any MCP server listed under \"MCP Tools Available\" that isn't connected, tell the user which capabilities are unavailable (e.g. \"Google Calendar isn't connected \u2014 I can't check or book your gym blocks this session\") and ask: skip for now, or help set it up? Never assume an MCP is connected \u2014 always adapt.'"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 77.2,
+        "tokens": 29153,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "recommends_profile_not_memory",
+          "passed": true,
+          "evidence": "Response clearly states 'add a dedicated Tax Filing Context section to profile.md' and explains 'Profile.md is read every session before anything else \u2014 Warren's CLAUDE.md says so explicitly under Session Start.' The fix targets profile.md as the primary destination."
+        },
+        {
+          "text": "does_not_only_suggest_memory",
+          "passed": true,
+          "evidence": "Response explicitly argues against MEMORY.md: 'This is not MEMORY.md material. MEMORY.md is for dynamic learnings \u2014 observations Warren picks up during sessions. The filing status (MFJ), income types (W2 + freelance), and SE tax obligations are stable structural facts, not session-learned insights.'"
+        },
+        {
+          "text": "provides_specific_content",
+          "passed": true,
+          "evidence": "Response provides a full markdown table with 11 specific rows (Filing status, Primary income types, Self-employment tax, Quarterly estimated taxes, Home office deduction, ACA/health insurance, Inherited IRA/RMDs, SEP-IRA, State, Dad's gift, Otherthings.jpg) plus exact file path and placement instructions with surrounding context for the edit."
+        },
+        {
+          "text": "shows_profile_vs_rule_distinction",
+          "passed": true,
+          "evidence": "Response addresses the distinction in the 'Why This Works' section: 'This is not MEMORY.md material' and explains profile.md is for stable structural facts. Under 'Nothing Else Needs Changing', explicitly states 'CLAUDE.md \u2014 no change needed. Warren's behavioral rules already say read profile.md every session.' The distinction between data (profile.md) and behavior (CLAUDE.md) is implicit but present. However, the response does not draw the distinction as a named comparison table the way the with_skill response does \u2014 it arrives at the right answer but the framing is less explicit about the profile vs rule conceptual layer."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.4,
+        "passed": 2,
+        "failed": 3,
+        "total": 5,
+        "time_seconds": 68.7,
+        "tokens": 16975,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "mentions_tasks_md",
+          "passed": false,
+          "evidence": "TASKS.md is never mentioned in the response. The solution uses a single warren-dashboard.md file with a History table for persistent records. No separate task/priorities file is proposed."
+        },
+        {
+          "text": "mentions_commands",
+          "passed": true,
+          "evidence": "Response explicitly defines '/review', '/dashboard', '/dashboard-history', and '/dashboard-reset' commands in the 'Commands to Add to Warren' section, with descriptions of what each does."
+        },
+        {
+          "text": "references_warren_aesthetic",
+          "passed": false,
+          "evidence": "The response proposes a plain Markdown file approach and never references Warren's existing dashboard.html, Tokyo Night theme, CSS variables, or any existing styling. It explicitly avoids a web app: 'You could build a React dashboard... Don't.' There is no reference to warren's existing dashboard as a style source."
+        },
+        {
+          "text": "explains_data_flow",
+          "passed": true,
+          "evidence": "'Data Flow: How Warren Populates the Dashboard' section explains the numbered flow: trigger review \u2192 gather data \u2192 produce breakdown in chat \u2192 Write tool updates warren-dashboard.md \u2192 confirm path. Dashboard write logic (overwrite snapshot block, append History row) is described in detail."
+        },
+        {
+          "text": "identifies_recurring_pattern",
+          "passed": false,
+          "evidence": "The response describes the problem as 'Four sessions in, this is friction that compounds' but does not explicitly call out that 4 recurring sessions = a skill gap requiring a new skill or command. The solution adds to Warren's system prompt rather than proposing a dedicated skill to codify the recurring workflow. No mention of skill gap detection or skill creation."
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 107.5333,
+        "stddev": 51.1536,
+        "min": 65.8,
+        "max": 164.6
+      },
+      "tokens": {
+        "mean": 33293.0,
+        "stddev": 4829.9672,
+        "min": 28580,
+        "max": 38232
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.7333,
+        "stddev": 0.3055,
+        "min": 0.4,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 110.0667,
+        "stddev": 64.4283,
+        "min": 68.7,
+        "max": 184.3
+      },
+      "tokens": {
+        "mean": 27873.6667,
+        "stddev": 10318.6531,
+        "min": 16975,
+        "max": 37493
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.27",
+      "time_seconds": "-2.5",
+      "tokens": "+5419"
+    }
+  },
+  "notes": []
+}

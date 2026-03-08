@@ -1,0 +1,2134 @@
+{
+  "price_history": {
+    "ticker": "LAC",
+    "period": "1y",
+    "interval": "1d",
+    "data": {
+      "_type": "DataFrame_summary",
+      "rows": 252,
+      "columns": [
+        "Open",
+        "High",
+        "Low",
+        "Close",
+        "Volume",
+        "Dividends",
+        "Stock Splits"
+      ],
+      "last_5": {
+        "Open": [
+          5.099999904632568,
+          4.809999942779541,
+          4.840000152587891,
+          4.800000190734863,
+          4.71999979019165
+        ],
+        "High": [
+          5.099999904632568,
+          5.130000114440918,
+          4.869999885559082,
+          4.869999885559082,
+          4.75
+        ],
+        "Low": [
+          4.860000133514404,
+          4.800000190734863,
+          4.579999923706055,
+          4.690000057220459,
+          4.46999979019165
+        ],
+        "Close": [
+          5.059999942779541,
+          5.119999885559082,
+          4.769999980926514,
+          4.809999942779541,
+          4.525000095367432
+        ],
+        "Volume": [
+          9583900,
+          7788700,
+          10471600,
+          5572100,
+          5985469
+        ],
+        "Dividends": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Stock Splits": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "latest": {
+        "Open": 4.71999979019165,
+        "High": 4.75,
+        "Low": 4.46999979019165,
+        "Close": 4.525000095367432,
+        "Volume": 5985469,
+        "Dividends": 0.0,
+        "Stock Splits": 0.0
+      }
+    },
+    "latest_close": 4.525000095367432,
+    "latest_volume": 5985469,
+    "records": 252
+  },
+  "fundamentals": {
+    "ticker": "LAC",
+    "name": "Lithium Americas Corp.",
+    "sector": "Basic Materials",
+    "industry": "Other Industrial Metals & Mining",
+    "market_cap": 1373284480,
+    "pe_ratio": null,
+    "forward_pe": -12.108644,
+    "pb_ratio": 2.3074963,
+    "ps_ratio": null,
+    "dividend_yield": null,
+    "beta": 3.036,
+    "eps": -1.08,
+    "revenue": null,
+    "revenue_growth": null,
+    "earnings_growth": null,
+    "profit_margin": 0.0,
+    "gross_margin": 0.0,
+    "operating_margin": 0.0,
+    "roe": -0.32026002,
+    "roa": -0.01988,
+    "debt_to_equity": 45.225,
+    "free_cash_flow": -528574624,
+    "target_mean_price": 6.53333,
+    "target_high_price": 8.0,
+    "target_low_price": 5.0,
+    "recommendation": "hold",
+    "num_analysts": 9,
+    "52w_high": 10.52,
+    "52w_low": 2.31,
+    "50d_avg": 5.1286,
+    "200d_avg": 4.36075
+  },
+  "analyst_ratings": {
+    "ticker": "LAC",
+    "buy": 0,
+    "hold": 5,
+    "sell": 3,
+    "strong_buy": 0,
+    "strong_sell": 1,
+    "period": "2026-03-01",
+    "history": [
+      {
+        "buy": 0,
+        "hold": 5,
+        "period": "2026-03-01",
+        "sell": 3,
+        "strongBuy": 0,
+        "strongSell": 1,
+        "symbol": "LAC.TO"
+      },
+      {
+        "buy": 0,
+        "hold": 5,
+        "period": "2026-02-01",
+        "sell": 3,
+        "strongBuy": 0,
+        "strongSell": 1,
+        "symbol": "LAC.TO"
+      },
+      {
+        "buy": 0,
+        "hold": 4,
+        "period": "2026-01-01",
+        "sell": 4,
+        "strongBuy": 0,
+        "strongSell": 1,
+        "symbol": "LAC.TO"
+      },
+      {
+        "buy": 0,
+        "hold": 4,
+        "period": "2025-12-01",
+        "sell": 4,
+        "strongBuy": 0,
+        "strongSell": 1,
+        "symbol": "LAC.TO"
+      }
+    ]
+  },
+  "technicals": {
+    "ticker": "LAC",
+    "latest_close": 4.525000095367432,
+    "data_points": 252,
+    "sma_20": 4.7468,
+    "sma_50": 5.1241,
+    "sma_200": 4.3693,
+    "ema_12": 4.8316,
+    "ema_26": 4.925,
+    "ema_50": 5.0356,
+    "above_sma50": false,
+    "above_sma200": true,
+    "golden_cross": true,
+    "death_cross": false,
+    "rsi_14": 41.2675,
+    "macd_line": -0.0934,
+    "macd_signal": 0.0145,
+    "macd_histogram": -0.1079,
+    "macd_bullish": false,
+    "bb_lower": 4.2767,
+    "bb_mid": 4.7468,
+    "bb_upper": 5.2168,
+    "bb_position": 0.26412093965262384,
+    "atr_14": 0.3476,
+    "adx": 15.372,
+    "stoch_k": 33.8284,
+    "stoch_d": 49.67,
+    "volume_avg_20": 8679228.45,
+    "volume_latest": 5985469,
+    "volume_ratio": 0.689631461423279,
+    "support_resistance": {
+      "supports": [
+        4.33,
+        2.47,
+        2.31
+      ],
+      "resistances": [
+        6.96,
+        10.52
+      ]
+    },
+    "fibonacci": {
+      "swing_high": 10.520000457763672,
+      "swing_low": 4.320000171661377,
+      "retracements": {
+        "0.0% (High)": 10.52,
+        "23.6%": 9.06,
+        "38.2%": 8.15,
+        "50.0%": 7.42,
+        "61.8%": 6.69,
+        "78.6%": 5.65,
+        "100.0% (Low)": 4.32
+      },
+      "extensions": {
+        "127.2%": 12.21,
+        "161.8%": 14.35,
+        "200.0%": 16.72,
+        "261.8%": 20.55
+      }
+    },
+    "pivot_points": {
+      "pivot": 4.79,
+      "r1": 4.89,
+      "r2": 4.97,
+      "r3": 5.07,
+      "s1": 4.71,
+      "s2": 4.61,
+      "s3": 4.53
+    },
+    "technical_score": 4.8,
+    "tech_score": 4.8
+  },
+  "tradingview": {
+    "ticker": "LAC",
+    "interval": "1d",
+    "recommendation": "SELL",
+    "buy_count": 2,
+    "sell_count": 14,
+    "neutral_count": 10,
+    "oscillators": {
+      "recommendation": "NEUTRAL",
+      "buy": 1,
+      "sell": 1,
+      "neutral": 9
+    },
+    "moving_averages": {
+      "recommendation": "STRONG_SELL",
+      "buy": 1,
+      "sell": 13,
+      "neutral": 1
+    },
+    "rsi": 41.76796122602483,
+    "macd": -0.09106366810213196,
+    "macd_signal": -0.10746660610767891,
+    "ema_20": 4.885799981757854,
+    "sma_50": 5.124799999999999,
+    "sma_200": 4.369449999999999,
+    "adx": 15.371677658886268,
+    "atr": null,
+    "bbands_upper": 5.203653941572841,
+    "bbands_lower": 4.292846058427153,
+    "volume": 5851823
+  },
+  "insider_trades": {
+    "ticker": "LAC",
+    "recent_transactions": [
+      {
+        "change": -7836,
+        "currency": "",
+        "filingDate": "2026-02-11",
+        "id": "0000912282-26-000295",
+        "isDerivative": true,
+        "name": "CROWLEY TIMOTHY AMBROSE",
+        "share": 0,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "M",
+        "transactionDate": "2026-02-09",
+        "transactionPrice": 0
+      },
+      {
+        "change": 7836,
+        "currency": "",
+        "filingDate": "2026-02-11",
+        "id": "0000912282-26-000295",
+        "isDerivative": false,
+        "name": "CROWLEY TIMOTHY AMBROSE",
+        "share": 168750,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "M",
+        "transactionDate": "2026-02-09",
+        "transactionPrice": 0
+      },
+      {
+        "change": -8707,
+        "currency": "",
+        "filingDate": "2026-02-11",
+        "id": "0000912282-26-000293",
+        "isDerivative": true,
+        "name": "GRANDY EDWARD",
+        "share": 0,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "M",
+        "transactionDate": "2026-02-09",
+        "transactionPrice": 0
+      },
+      {
+        "change": 8707,
+        "currency": "",
+        "filingDate": "2026-02-11",
+        "id": "0000912282-26-000293",
+        "isDerivative": false,
+        "name": "GRANDY EDWARD",
+        "share": 182079,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "M",
+        "transactionDate": "2026-02-09",
+        "transactionPrice": 0
+      },
+      {
+        "change": -28149,
+        "currency": "",
+        "filingDate": "2026-02-02",
+        "id": "0000912282-26-000238",
+        "isDerivative": true,
+        "name": "ZAWADZKI ALEXI ILLYA",
+        "share": 28149,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "M",
+        "transactionDate": "2026-01-29",
+        "transactionPrice": 0
+      },
+      {
+        "change": 31647,
+        "currency": "",
+        "filingDate": "2026-02-02",
+        "id": "0000912282-26-000238",
+        "isDerivative": false,
+        "name": "ZAWADZKI ALEXI ILLYA",
+        "share": 96986,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "A",
+        "transactionDate": "2026-01-29",
+        "transactionPrice": 0
+      },
+      {
+        "change": 32971,
+        "currency": "",
+        "filingDate": "2026-02-02",
+        "id": "0000912282-26-000235",
+        "isDerivative": true,
+        "name": "GRANDY EDWARD",
+        "share": 32971,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "A",
+        "transactionDate": "2026-01-29",
+        "transactionPrice": 0
+      },
+      {
+        "change": 33655,
+        "currency": "",
+        "filingDate": "2026-02-02",
+        "id": "0000912282-26-000235",
+        "isDerivative": false,
+        "name": "GRANDY EDWARD",
+        "share": 173372,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "A",
+        "transactionDate": "2026-01-29",
+        "transactionPrice": 0
+      },
+      {
+        "change": 55403,
+        "currency": "",
+        "filingDate": "2026-02-02",
+        "id": "0000912282-26-000234",
+        "isDerivative": true,
+        "name": "GERSPACHER RICHARD",
+        "share": 55403,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "A",
+        "transactionDate": "2026-01-29",
+        "transactionPrice": 0
+      },
+      {
+        "change": 44434,
+        "currency": "",
+        "filingDate": "2026-02-02",
+        "id": "0000912282-26-000234",
+        "isDerivative": false,
+        "name": "GERSPACHER RICHARD",
+        "share": 137862,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "A",
+        "transactionDate": "2026-01-29",
+        "transactionPrice": 0
+      },
+      {
+        "change": 26199,
+        "currency": "",
+        "filingDate": "2026-02-02",
+        "id": "0000912282-26-000233",
+        "isDerivative": true,
+        "name": "CROWLEY TIMOTHY AMBROSE",
+        "share": 26199,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "A",
+        "transactionDate": "2026-01-29",
+        "transactionPrice": 0
+      },
+      {
+        "change": 25490,
+        "currency": "",
+        "filingDate": "2026-02-02",
+        "id": "0000912282-26-000233",
+        "isDerivative": false,
+        "name": "CROWLEY TIMOTHY AMBROSE",
+        "share": 160914,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "A",
+        "transactionDate": "2026-01-29",
+        "transactionPrice": 0
+      },
+      {
+        "change": 46496,
+        "currency": "",
+        "filingDate": "2026-02-02",
+        "id": "0000912282-26-000232",
+        "isDerivative": true,
+        "name": "COLTON LUKE",
+        "share": 46496,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "A",
+        "transactionDate": "2026-01-29",
+        "transactionPrice": 0
+      },
+      {
+        "change": 37554,
+        "currency": "",
+        "filingDate": "2026-02-02",
+        "id": "0000912282-26-000232",
+        "isDerivative": false,
+        "name": "COLTON LUKE",
+        "share": 37554,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "A",
+        "transactionDate": "2026-01-29",
+        "transactionPrice": 0
+      },
+      {
+        "change": 26199,
+        "currency": "",
+        "filingDate": "2026-02-02",
+        "id": "0000912282-26-000231",
+        "isDerivative": true,
+        "name": "BARNUM AUBREE",
+        "share": 26199,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "A",
+        "transactionDate": "2026-01-29",
+        "transactionPrice": 0
+      },
+      {
+        "change": 25613,
+        "currency": "",
+        "filingDate": "2026-02-02",
+        "id": "0000912282-26-000231",
+        "isDerivative": false,
+        "name": "BARNUM AUBREE",
+        "share": 95886,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "A",
+        "transactionDate": "2026-01-29",
+        "transactionPrice": 0
+      },
+      {
+        "change": -12002,
+        "currency": "",
+        "filingDate": "2026-01-27",
+        "id": "0000912282-26-000154",
+        "isDerivative": true,
+        "name": "ZAWADZKI ALEXI ILLYA",
+        "share": 12002,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "M",
+        "transactionDate": "2026-01-23",
+        "transactionPrice": 0
+      },
+      {
+        "change": -6668,
+        "currency": "",
+        "filingDate": "2026-01-27",
+        "id": "0000912282-26-000154",
+        "isDerivative": false,
+        "name": "ZAWADZKI ALEXI ILLYA",
+        "share": 65339,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "F",
+        "transactionDate": "2026-01-23",
+        "transactionPrice": 6.45
+      },
+      {
+        "change": 12002,
+        "currency": "",
+        "filingDate": "2026-01-27",
+        "id": "0000912282-26-000154",
+        "isDerivative": false,
+        "name": "ZAWADZKI ALEXI ILLYA",
+        "share": 72007,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "M",
+        "transactionDate": "2026-01-23",
+        "transactionPrice": 0
+      },
+      {
+        "change": -8375,
+        "currency": "",
+        "filingDate": "2026-01-27",
+        "id": "0000912282-26-000150",
+        "isDerivative": true,
+        "name": "GRANDY EDWARD",
+        "share": 8374,
+        "source": "sec",
+        "symbol": "LAC",
+        "transactionCode": "M",
+        "transactionDate": "2026-01-23",
+        "transactionPrice": 0
+      }
+    ],
+    "buys_last_50": 0,
+    "sells_last_50": 0,
+    "net_insider_signal": "neutral"
+  },
+  "news_sentiment": {
+    "ticker": "LAC",
+    "articles": [
+      {
+        "category": "company",
+        "datetime": 1772697600,
+        "headline": "Lithium Americas: Where Is The Future Of U.S. Lithium Headed?",
+        "id": 139307489,
+        "image": "https://static.seekingalpha.com/cdn/s3/uploads/getty_images/2203824296/image_2203824296.jpg?io=getty-c-w1536",
+        "related": "LAC",
+        "source": "SeekingAlpha",
+        "summary": "Lithium Americas is a pre-revenue pure play on the Thacker Pass clay-based lithium project, with significant execution risk. Read why LAC stock is rated a hold.",
+        "url": "https://finnhub.io/api/news?id=6429a343759d94a271fe80602320c00381692ad77a961316fd0a6a158ea10f03"
+      },
+      {
+        "category": "company",
+        "datetime": 1772551627,
+        "headline": "Shares of lithium-related companies are trading lower amid a stronger dollar and a broader market pullback as the conflict in the Middle East persists.",
+        "id": 139295578,
+        "image": "",
+        "related": "LAC",
+        "source": "Benzinga",
+        "summary": "",
+        "url": "https://finnhub.io/api/news?id=842fd5e75ca803f44750edd69d379c6e7ddb0611adef1e4dda59d6605c763b55"
+      },
+      {
+        "category": "company",
+        "datetime": 1772116065,
+        "headline": "Shares of lithium-related companies are trading lower amid a possible selloff. The commodity rallied yesterday after Zimbabwe's government suspended exports of raw materials, including lithium concentrates.",
+        "id": 139246749,
+        "image": "",
+        "related": "LAC",
+        "source": "Benzinga",
+        "summary": "",
+        "url": "https://finnhub.io/api/news?id=2d4db8d8b344612dea94fb35999c9ef2f6a79b196d007d4ee8483e9b62fa09ef"
+      }
+    ],
+    "article_count": 3,
+    "sources": [
+      "SeekingAlpha",
+      "Benzinga"
+    ],
+    "source": "finnhub"
+  },
+  "reddit_sentiment": {
+    "ticker": "LAC",
+    "rank": null,
+    "mentions": 0,
+    "mentions_24h_ago": 0,
+    "upvotes": 0
+  },
+  "earnings": {
+    "ticker": "LAC",
+    "earnings": [
+      {
+        "period": "2024-12-31 00:00:00",
+        "actual": -0.03537,
+        "estimate": -0.03,
+        "surprisePercent": -0.17899999
+      },
+      {
+        "period": "2025-03-31 00:00:00",
+        "actual": -0.0203,
+        "estimate": -0.04,
+        "surprisePercent": 0.4925
+      },
+      {
+        "period": "2025-06-30 00:00:00",
+        "actual": -0.06,
+        "estimate": -0.05,
+        "surprisePercent": -0.2
+      },
+      {
+        "period": "2025-09-30 00:00:00",
+        "actual": -0.0339,
+        "estimate": -0.0513,
+        "surprisePercent": 0.3392
+      }
+    ],
+    "surprise_avg": 0.1131750025,
+    "beat_count": 2,
+    "miss_count": 2
+  },
+  "dividends": {
+    "ticker": "LAC",
+    "dividend_yield": null,
+    "dividend_rate": null,
+    "payout_ratio": 0.0,
+    "ex_dividend_date": null,
+    "recent_dividends": {}
+  },
+  "articles": [
+    {
+      "source": "Seeking Alpha",
+      "title": "Lithium Americas: Where Is The Future Of U.S. Lithium Headed?",
+      "summary": "",
+      "link": "https://seekingalpha.com/article/4878759-lithium-americas-where-is-the-future-of-us-lithium-headed?source=feed_symbol_LAC",
+      "published": "2026-03-05T13:00:00",
+      "sentiment": null,
+      "sentiment_flag": "\ud83d\udfe1"
+    },
+    {
+      "source": "Benzinga",
+      "title": "Shares of lithium-related companies are trading lower amid a stronger dollar and a broader market pullback as the conflict in the Middle East persists.",
+      "summary": "",
+      "link": "https://finnhub.io/api/news?id=842fd5e75ca803f44750edd69d379c6e7ddb0611adef1e4dda59d6605c763b55",
+      "published": 1772551627,
+      "sentiment": 0.2,
+      "sentiment_method": "title_keywords",
+      "sentiment_flag": "\ud83d\udfe2"
+    },
+    {
+      "source": "Benzinga",
+      "title": "Shares of lithium-related companies are trading lower amid a possible selloff. The commodity rallied yesterday after Zimbabwe's government suspended exports of raw materials, including lithium concentrates.",
+      "summary": "",
+      "link": "https://finnhub.io/api/news?id=2d4db8d8b344612dea94fb35999c9ef2f6a79b196d007d4ee8483e9b62fa09ef",
+      "published": 1772116065,
+      "sentiment": -0.2,
+      "sentiment_method": "title_keywords",
+      "sentiment_flag": "\ud83d\udd34"
+    }
+  ],
+  "composite_score": {
+    "composite_score": 5.05,
+    "rating": "WATCH\u00b7HOLD",
+    "confidence": "MEDIUM",
+    "sector_modifier": 0.5,
+    "weights": {
+      "fundamental": 0.4,
+      "technical": 0.3,
+      "sentiment": 0.3
+    },
+    "sub_scores": {
+      "fundamental": {
+        "score": 4.2,
+        "weight": 0.4,
+        "weighted": 1.68,
+        "confidence": "HIGH",
+        "factors": {
+          "pe_ratio": {
+            "value": -12.11,
+            "score": 3,
+            "rating_note": "Negative earnings \u2014 company is unprofitable"
+          },
+          "pb_ratio": {
+            "value": 2.31,
+            "score": 6,
+            "rating_note": "Fair \u2014 modest premium to book"
+          },
+          "revenue_growth": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "eps_growth": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "profit_margin": {
+            "value": 0.0,
+            "score": 3,
+            "rating_note": "Negative margins \u2014 losing money"
+          },
+          "debt_to_equity": {
+            "value": 0.45,
+            "score": 8,
+            "rating_note": "Low debt \u2014 strong financial position"
+          },
+          "free_cash_flow": {
+            "value": "$-0.53B",
+            "score": 2,
+            "rating_note": "Negative FCF \u2014 burning cash"
+          },
+          "roe": {
+            "value": -32.0,
+            "score": 2,
+            "rating_note": "Negative ROE \u2014 destroying shareholder value"
+          },
+          "analyst_consensus": {
+            "buy": 0,
+            "hold": 5,
+            "sell": 4,
+            "buy_pct": 0.0,
+            "score": 3,
+            "rating_note": "Bearish consensus \u2014 majority hold/sell"
+          },
+          "earnings_surprises": {
+            "beat_count": 2,
+            "miss_count": 2,
+            "surprise_avg_pct": 0.11,
+            "score": 5,
+            "rating_note": "Mixed track record \u2014 hits and misses"
+          }
+        }
+      },
+      "technical": {
+        "score": 4.8,
+        "weight": 0.3,
+        "weighted": 1.44,
+        "confidence": "HIGH",
+        "factors": {
+          "tech_score": 4.8,
+          "rsi": 41.2675,
+          "macd_bullish": false,
+          "above_sma50": false,
+          "above_sma200": true,
+          "bb_position": 0.26412093965262384,
+          "volume_ratio": 0.689631461423279,
+          "adx": 15.372
+        }
+      },
+      "sentiment": {
+        "score": 4.76,
+        "weight": 0.3,
+        "weighted": 1.43,
+        "confidence": "LOW",
+        "factors": {
+          "reddit_sentiment": {
+            "value": null,
+            "score": 5,
+            "note": "Not trending on Reddit",
+            "source": "ApeWisdom",
+            "rating_note": "Not trending on Reddit"
+          },
+          "stocktwits_sentiment": {
+            "value": null,
+            "score": 5,
+            "note": "No StockTwits data",
+            "source": "StockTwits",
+            "rating_note": "No data \u2014 possibly rate limited"
+          },
+          "news_sentiment": {
+            "articles": 3,
+            "score": 5.3,
+            "source": "finnhub",
+            "rating_note": "3 articles found \u2014 no AI sentiment available",
+            "note": "No AI sentiment, using article count"
+          },
+          "tradingview_consensus": {
+            "recommendation": "SELL",
+            "buy_count": 2,
+            "sell_count": 14,
+            "neutral_count": 10,
+            "score": 3,
+            "source": "TradingView (tradingview-ta)",
+            "rating_note": "Sell \u2014 majority of indicators bearish (2B/10N/14S)"
+          },
+          "rss_buzz": {
+            "value": null,
+            "score": 5,
+            "source": "Seeking Alpha / RSS feeds",
+            "rating_note": "No RSS mentions found",
+            "note": "No RSS mentions"
+          },
+          "insider_activity": {
+            "value": null,
+            "score": 5,
+            "source": "Finnhub",
+            "rating_note": "No insider trade data available",
+            "note": "No insider data"
+          },
+          "congress_trades": {
+            "value": null,
+            "score": 5,
+            "source": "Mboum Finance",
+            "rating_note": "No Congress trade data available",
+            "note": "No Congress data"
+          }
+        }
+      }
+    }
+  },
+  "entry_exit": {
+    "current_price": 4.525000095367432,
+    "atr": 0.35,
+    "entries": {
+      "aggressive": 4.37,
+      "moderate": 4.09,
+      "conservative": 2.47
+    },
+    "targets": {
+      "target_1": 4.89,
+      "target_2": 5.4,
+      "target_3": 5.92
+    },
+    "stop_loss": 2.12,
+    "risk_reward": {
+      "aggressive\u2192target_1": {
+        "entry": 4.37,
+        "target": 4.89,
+        "stop": 2.12,
+        "risk": 2.25,
+        "reward": 0.52,
+        "rr_ratio": 0.23,
+        "favorable": false
+      },
+      "aggressive\u2192target_2": {
+        "entry": 4.37,
+        "target": 5.4,
+        "stop": 2.12,
+        "risk": 2.25,
+        "reward": 1.03,
+        "rr_ratio": 0.46,
+        "favorable": false
+      },
+      "aggressive\u2192target_3": {
+        "entry": 4.37,
+        "target": 5.92,
+        "stop": 2.12,
+        "risk": 2.25,
+        "reward": 1.55,
+        "rr_ratio": 0.69,
+        "favorable": false
+      },
+      "moderate\u2192target_1": {
+        "entry": 4.09,
+        "target": 4.89,
+        "stop": 2.12,
+        "risk": 1.97,
+        "reward": 0.8,
+        "rr_ratio": 0.41,
+        "favorable": false
+      },
+      "moderate\u2192target_2": {
+        "entry": 4.09,
+        "target": 5.4,
+        "stop": 2.12,
+        "risk": 1.97,
+        "reward": 1.3,
+        "rr_ratio": 0.66,
+        "favorable": false
+      },
+      "moderate\u2192target_3": {
+        "entry": 4.09,
+        "target": 5.92,
+        "stop": 2.12,
+        "risk": 1.97,
+        "reward": 1.83,
+        "rr_ratio": 0.93,
+        "favorable": false
+      },
+      "conservative\u2192target_1": {
+        "entry": 2.47,
+        "target": 4.89,
+        "stop": 2.12,
+        "risk": 0.35,
+        "reward": 2.42,
+        "rr_ratio": 6.96,
+        "favorable": true
+      },
+      "conservative\u2192target_2": {
+        "entry": 2.47,
+        "target": 5.4,
+        "stop": 2.12,
+        "risk": 0.35,
+        "reward": 2.93,
+        "rr_ratio": 8.42,
+        "favorable": true
+      },
+      "conservative\u2192target_3": {
+        "entry": 2.47,
+        "target": 5.92,
+        "stop": 2.12,
+        "risk": 0.35,
+        "reward": 3.45,
+        "rr_ratio": 9.92,
+        "favorable": true
+      }
+    },
+    "position_sizes": {
+      "aggressive": {
+        "$10,000": {
+          "shares": 89,
+          "cost": "$388.87",
+          "pct_of_portfolio": "3.9%"
+        },
+        "$50,000": {
+          "shares": 445,
+          "cost": "$1,944.34",
+          "pct_of_portfolio": "3.9%"
+        },
+        "$100,000": {
+          "shares": 890,
+          "cost": "$3,888.68",
+          "pct_of_portfolio": "3.9%"
+        }
+      },
+      "moderate": {
+        "$10,000": {
+          "shares": 101,
+          "cost": "$413.28",
+          "pct_of_portfolio": "4.1%"
+        },
+        "$50,000": {
+          "shares": 507,
+          "cost": "$2,074.59",
+          "pct_of_portfolio": "4.1%"
+        },
+        "$100,000": {
+          "shares": 1015,
+          "cost": "$4,153.27",
+          "pct_of_portfolio": "4.2%"
+        }
+      },
+      "conservative": {
+        "$10,000": {
+          "shares": 575,
+          "cost": "$1,420.25",
+          "pct_of_portfolio": "14.2%"
+        },
+        "$50,000": {
+          "shares": 2876,
+          "cost": "$7,103.72",
+          "pct_of_portfolio": "14.2%"
+        },
+        "$100,000": {
+          "shares": 5753,
+          "cost": "$14,209.91",
+          "pct_of_portfolio": "14.2%"
+        }
+      }
+    },
+    "context": {
+      "supports_used": [
+        4.37,
+        4.33,
+        4.32,
+        2.47,
+        2.31
+      ],
+      "resistances_used": [
+        4.89,
+        4.97,
+        5.04,
+        5.07,
+        5.12
+      ],
+      "fibonacci": {
+        "0.0% (High)": 10.52,
+        "23.6%": 9.06,
+        "38.2%": 8.15,
+        "50.0%": 7.42,
+        "61.8%": 6.69,
+        "78.6%": 5.65,
+        "100.0% (Low)": 4.32
+      },
+      "pivot": 4.79
+    }
+  },
+  "api_status": {
+    "price_history": {
+      "success": true,
+      "api_used": "yfinance",
+      "attempts": [
+        {
+          "api_id": "yfinance",
+          "success": true,
+          "error": null
+        }
+      ]
+    },
+    "fundamentals": {
+      "success": true,
+      "api_used": "yfinance",
+      "attempts": [
+        {
+          "api_id": "yfinance",
+          "success": true,
+          "error": null
+        }
+      ]
+    },
+    "analyst_ratings": {
+      "success": true,
+      "api_used": "finnhub",
+      "all_sources": {
+        "finnhub": {
+          "success": true,
+          "data": {
+            "ticker": "LAC",
+            "buy": 0,
+            "hold": 5,
+            "sell": 3,
+            "strong_buy": 0,
+            "strong_sell": 1,
+            "period": "2026-03-01",
+            "history": [
+              {
+                "buy": 0,
+                "hold": 5,
+                "period": "2026-03-01",
+                "sell": 3,
+                "strongBuy": 0,
+                "strongSell": 1,
+                "symbol": "LAC.TO"
+              },
+              {
+                "buy": 0,
+                "hold": 5,
+                "period": "2026-02-01",
+                "sell": 3,
+                "strongBuy": 0,
+                "strongSell": 1,
+                "symbol": "LAC.TO"
+              },
+              {
+                "buy": 0,
+                "hold": 4,
+                "period": "2026-01-01",
+                "sell": 4,
+                "strongBuy": 0,
+                "strongSell": 1,
+                "symbol": "LAC.TO"
+              },
+              {
+                "buy": 0,
+                "hold": 4,
+                "period": "2025-12-01",
+                "sell": 4,
+                "strongBuy": 0,
+                "strongSell": 1,
+                "symbol": "LAC.TO"
+              }
+            ]
+          },
+          "error": null
+        },
+        "yfinance": {
+          "success": false,
+          "data": null,
+          "error": "Rate limited: 5/5 calls in last minute"
+        },
+        "seeking_alpha_rapidapi": {
+          "success": false,
+          "data": null,
+          "error": "ValueError: Seeking Alpha RapidAPI key not configured"
+        }
+      }
+    },
+    "tradingview": {
+      "success": true,
+      "api_used": "tradingview"
+    },
+    "insider_trades": {
+      "success": true,
+      "api_used": "finnhub"
+    },
+    "news_sentiment": {
+      "success": true,
+      "api_used": "finnhub"
+    },
+    "reddit_sentiment": {
+      "success": true,
+      "api_used": "apewisdom"
+    },
+    "social_sentiment": {
+      "success": false,
+      "api_used": null
+    },
+    "earnings": {
+      "success": true,
+      "api_used": "yfinance"
+    },
+    "congress_trades": {
+      "success": false,
+      "api_used": null
+    }
+  },
+  "result": {
+    "ticker": "LAC",
+    "analysis_date": "2026-03-05T14:30:23.269467",
+    "current_price": 4.525000095367432,
+    "composite_score": 5.05,
+    "rating": "WATCH\u00b7HOLD",
+    "confidence": "MEDIUM",
+    "action": "WATCH",
+    "sub_scores": {
+      "fundamental": {
+        "score": 4.2,
+        "weight": 0.4,
+        "weighted": 1.68,
+        "confidence": "HIGH",
+        "factors": {
+          "pe_ratio": {
+            "value": -12.11,
+            "score": 3,
+            "rating_note": "Negative earnings \u2014 company is unprofitable"
+          },
+          "pb_ratio": {
+            "value": 2.31,
+            "score": 6,
+            "rating_note": "Fair \u2014 modest premium to book"
+          },
+          "revenue_growth": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "eps_growth": {
+            "value": null,
+            "score": 5,
+            "note": "No data",
+            "rating_note": "No data available"
+          },
+          "profit_margin": {
+            "value": 0.0,
+            "score": 3,
+            "rating_note": "Negative margins \u2014 losing money"
+          },
+          "debt_to_equity": {
+            "value": 0.45,
+            "score": 8,
+            "rating_note": "Low debt \u2014 strong financial position"
+          },
+          "free_cash_flow": {
+            "value": "$-0.53B",
+            "score": 2,
+            "rating_note": "Negative FCF \u2014 burning cash"
+          },
+          "roe": {
+            "value": -32.0,
+            "score": 2,
+            "rating_note": "Negative ROE \u2014 destroying shareholder value"
+          },
+          "analyst_consensus": {
+            "buy": 0,
+            "hold": 5,
+            "sell": 4,
+            "buy_pct": 0.0,
+            "score": 3,
+            "rating_note": "Bearish consensus \u2014 majority hold/sell"
+          },
+          "earnings_surprises": {
+            "beat_count": 2,
+            "miss_count": 2,
+            "surprise_avg_pct": 0.11,
+            "score": 5,
+            "rating_note": "Mixed track record \u2014 hits and misses"
+          }
+        }
+      },
+      "technical": {
+        "score": 4.8,
+        "weight": 0.3,
+        "weighted": 1.44,
+        "confidence": "HIGH",
+        "factors": {
+          "tech_score": 4.8,
+          "rsi": 41.2675,
+          "macd_bullish": false,
+          "above_sma50": false,
+          "above_sma200": true,
+          "bb_position": 0.26412093965262384,
+          "volume_ratio": 0.689631461423279,
+          "adx": 15.372
+        }
+      },
+      "sentiment": {
+        "score": 4.76,
+        "weight": 0.3,
+        "weighted": 1.43,
+        "confidence": "LOW",
+        "factors": {
+          "reddit_sentiment": {
+            "value": null,
+            "score": 5,
+            "note": "Not trending on Reddit",
+            "source": "ApeWisdom",
+            "rating_note": "Not trending on Reddit"
+          },
+          "stocktwits_sentiment": {
+            "value": null,
+            "score": 5,
+            "note": "No StockTwits data",
+            "source": "StockTwits",
+            "rating_note": "No data \u2014 possibly rate limited"
+          },
+          "news_sentiment": {
+            "articles": 3,
+            "score": 5.3,
+            "source": "finnhub",
+            "rating_note": "3 articles found \u2014 no AI sentiment available",
+            "note": "No AI sentiment, using article count"
+          },
+          "tradingview_consensus": {
+            "recommendation": "SELL",
+            "buy_count": 2,
+            "sell_count": 14,
+            "neutral_count": 10,
+            "score": 3,
+            "source": "TradingView (tradingview-ta)",
+            "rating_note": "Sell \u2014 majority of indicators bearish (2B/10N/14S)"
+          },
+          "rss_buzz": {
+            "value": null,
+            "score": 5,
+            "source": "Seeking Alpha / RSS feeds",
+            "rating_note": "No RSS mentions found",
+            "note": "No RSS mentions"
+          },
+          "insider_activity": {
+            "value": null,
+            "score": 5,
+            "source": "Finnhub",
+            "rating_note": "No insider trade data available",
+            "note": "No insider data"
+          },
+          "congress_trades": {
+            "value": null,
+            "score": 5,
+            "source": "Mboum Finance",
+            "rating_note": "No Congress trade data available",
+            "note": "No Congress data"
+          }
+        }
+      }
+    },
+    "entry_exit": {
+      "current_price": 4.525000095367432,
+      "atr": 0.35,
+      "entries": {
+        "aggressive": 4.37,
+        "moderate": 4.09,
+        "conservative": 2.47
+      },
+      "targets": {
+        "target_1": 4.89,
+        "target_2": 5.4,
+        "target_3": 5.92
+      },
+      "stop_loss": 2.12,
+      "risk_reward": {
+        "aggressive\u2192target_1": {
+          "entry": 4.37,
+          "target": 4.89,
+          "stop": 2.12,
+          "risk": 2.25,
+          "reward": 0.52,
+          "rr_ratio": 0.23,
+          "favorable": false
+        },
+        "aggressive\u2192target_2": {
+          "entry": 4.37,
+          "target": 5.4,
+          "stop": 2.12,
+          "risk": 2.25,
+          "reward": 1.03,
+          "rr_ratio": 0.46,
+          "favorable": false
+        },
+        "aggressive\u2192target_3": {
+          "entry": 4.37,
+          "target": 5.92,
+          "stop": 2.12,
+          "risk": 2.25,
+          "reward": 1.55,
+          "rr_ratio": 0.69,
+          "favorable": false
+        },
+        "moderate\u2192target_1": {
+          "entry": 4.09,
+          "target": 4.89,
+          "stop": 2.12,
+          "risk": 1.97,
+          "reward": 0.8,
+          "rr_ratio": 0.41,
+          "favorable": false
+        },
+        "moderate\u2192target_2": {
+          "entry": 4.09,
+          "target": 5.4,
+          "stop": 2.12,
+          "risk": 1.97,
+          "reward": 1.3,
+          "rr_ratio": 0.66,
+          "favorable": false
+        },
+        "moderate\u2192target_3": {
+          "entry": 4.09,
+          "target": 5.92,
+          "stop": 2.12,
+          "risk": 1.97,
+          "reward": 1.83,
+          "rr_ratio": 0.93,
+          "favorable": false
+        },
+        "conservative\u2192target_1": {
+          "entry": 2.47,
+          "target": 4.89,
+          "stop": 2.12,
+          "risk": 0.35,
+          "reward": 2.42,
+          "rr_ratio": 6.96,
+          "favorable": true
+        },
+        "conservative\u2192target_2": {
+          "entry": 2.47,
+          "target": 5.4,
+          "stop": 2.12,
+          "risk": 0.35,
+          "reward": 2.93,
+          "rr_ratio": 8.42,
+          "favorable": true
+        },
+        "conservative\u2192target_3": {
+          "entry": 2.47,
+          "target": 5.92,
+          "stop": 2.12,
+          "risk": 0.35,
+          "reward": 3.45,
+          "rr_ratio": 9.92,
+          "favorable": true
+        }
+      },
+      "position_sizes": {
+        "aggressive": {
+          "$10,000": {
+            "shares": 89,
+            "cost": "$388.87",
+            "pct_of_portfolio": "3.9%"
+          },
+          "$50,000": {
+            "shares": 445,
+            "cost": "$1,944.34",
+            "pct_of_portfolio": "3.9%"
+          },
+          "$100,000": {
+            "shares": 890,
+            "cost": "$3,888.68",
+            "pct_of_portfolio": "3.9%"
+          }
+        },
+        "moderate": {
+          "$10,000": {
+            "shares": 101,
+            "cost": "$413.28",
+            "pct_of_portfolio": "4.1%"
+          },
+          "$50,000": {
+            "shares": 507,
+            "cost": "$2,074.59",
+            "pct_of_portfolio": "4.1%"
+          },
+          "$100,000": {
+            "shares": 1015,
+            "cost": "$4,153.27",
+            "pct_of_portfolio": "4.2%"
+          }
+        },
+        "conservative": {
+          "$10,000": {
+            "shares": 575,
+            "cost": "$1,420.25",
+            "pct_of_portfolio": "14.2%"
+          },
+          "$50,000": {
+            "shares": 2876,
+            "cost": "$7,103.72",
+            "pct_of_portfolio": "14.2%"
+          },
+          "$100,000": {
+            "shares": 5753,
+            "cost": "$14,209.91",
+            "pct_of_portfolio": "14.2%"
+          }
+        }
+      },
+      "context": {
+        "supports_used": [
+          4.37,
+          4.33,
+          4.32,
+          2.47,
+          2.31
+        ],
+        "resistances_used": [
+          4.89,
+          4.97,
+          5.04,
+          5.07,
+          5.12
+        ],
+        "fibonacci": {
+          "0.0% (High)": 10.52,
+          "23.6%": 9.06,
+          "38.2%": 8.15,
+          "50.0%": 7.42,
+          "61.8%": 6.69,
+          "78.6%": 5.65,
+          "100.0% (Low)": 4.32
+        },
+        "pivot": 4.79
+      }
+    },
+    "tradingview": {
+      "ticker": "LAC",
+      "interval": "1d",
+      "recommendation": "SELL",
+      "buy_count": 2,
+      "sell_count": 14,
+      "neutral_count": 10,
+      "oscillators": {
+        "recommendation": "NEUTRAL",
+        "buy": 1,
+        "sell": 1,
+        "neutral": 9
+      },
+      "moving_averages": {
+        "recommendation": "STRONG_SELL",
+        "buy": 1,
+        "sell": 13,
+        "neutral": 1
+      },
+      "rsi": 41.76796122602483,
+      "macd": -0.09106366810213196,
+      "macd_signal": -0.10746660610767891,
+      "ema_20": 4.885799981757854,
+      "sma_50": 5.124799999999999,
+      "sma_200": 4.369449999999999,
+      "adx": 15.371677658886268,
+      "atr": null,
+      "bbands_upper": 5.203653941572841,
+      "bbands_lower": 4.292846058427153,
+      "volume": 5851823
+    },
+    "fundamentals_summary": {
+      "name": "Lithium Americas Corp.",
+      "sector": "Basic Materials",
+      "market_cap": 1373284480,
+      "pe_ratio": null,
+      "forward_pe": -12.108644,
+      "pb_ratio": 2.3074963,
+      "revenue_growth": null,
+      "earnings_growth": null,
+      "profit_margin": 0.0,
+      "roe": -0.32026002,
+      "debt_to_equity": 45.225,
+      "free_cash_flow": -528574624,
+      "analyst_target": 6.53333
+    },
+    "dividends": {
+      "yield": null,
+      "payout_ratio": 0.0
+    },
+    "key_articles": [
+      {
+        "source": "Seeking Alpha",
+        "title": "Lithium Americas: Where Is The Future Of U.S. Lithium Headed?",
+        "summary": "",
+        "link": "https://seekingalpha.com/article/4878759-lithium-americas-where-is-the-future-of-us-lithium-headed?source=feed_symbol_LAC",
+        "published": "2026-03-05T13:00:00",
+        "sentiment": null,
+        "sentiment_flag": "\ud83d\udfe1"
+      },
+      {
+        "source": "Benzinga",
+        "title": "Shares of lithium-related companies are trading lower amid a stronger dollar and a broader market pullback as the conflict in the Middle East persists.",
+        "summary": "",
+        "link": "https://finnhub.io/api/news?id=842fd5e75ca803f44750edd69d379c6e7ddb0611adef1e4dda59d6605c763b55",
+        "published": 1772551627,
+        "sentiment": 0.2,
+        "sentiment_method": "title_keywords",
+        "sentiment_flag": "\ud83d\udfe2"
+      },
+      {
+        "source": "Benzinga",
+        "title": "Shares of lithium-related companies are trading lower amid a possible selloff. The commodity rallied yesterday after Zimbabwe's government suspended exports of raw materials, including lithium concentrates.",
+        "summary": "",
+        "link": "https://finnhub.io/api/news?id=2d4db8d8b344612dea94fb35999c9ef2f6a79b196d007d4ee8483e9b62fa09ef",
+        "published": 1772116065,
+        "sentiment": -0.2,
+        "sentiment_method": "title_keywords",
+        "sentiment_flag": "\ud83d\udd34"
+      }
+    ],
+    "api_status": {
+      "price_history": {
+        "success": true,
+        "api_used": "yfinance",
+        "attempts": [
+          {
+            "api_id": "yfinance",
+            "success": true,
+            "error": null
+          }
+        ]
+      },
+      "fundamentals": {
+        "success": true,
+        "api_used": "yfinance",
+        "attempts": [
+          {
+            "api_id": "yfinance",
+            "success": true,
+            "error": null
+          }
+        ]
+      },
+      "analyst_ratings": {
+        "success": true,
+        "api_used": "finnhub",
+        "all_sources": {
+          "finnhub": {
+            "success": true,
+            "data": {
+              "ticker": "LAC",
+              "buy": 0,
+              "hold": 5,
+              "sell": 3,
+              "strong_buy": 0,
+              "strong_sell": 1,
+              "period": "2026-03-01",
+              "history": [
+                {
+                  "buy": 0,
+                  "hold": 5,
+                  "period": "2026-03-01",
+                  "sell": 3,
+                  "strongBuy": 0,
+                  "strongSell": 1,
+                  "symbol": "LAC.TO"
+                },
+                {
+                  "buy": 0,
+                  "hold": 5,
+                  "period": "2026-02-01",
+                  "sell": 3,
+                  "strongBuy": 0,
+                  "strongSell": 1,
+                  "symbol": "LAC.TO"
+                },
+                {
+                  "buy": 0,
+                  "hold": 4,
+                  "period": "2026-01-01",
+                  "sell": 4,
+                  "strongBuy": 0,
+                  "strongSell": 1,
+                  "symbol": "LAC.TO"
+                },
+                {
+                  "buy": 0,
+                  "hold": 4,
+                  "period": "2025-12-01",
+                  "sell": 4,
+                  "strongBuy": 0,
+                  "strongSell": 1,
+                  "symbol": "LAC.TO"
+                }
+              ]
+            },
+            "error": null
+          },
+          "yfinance": {
+            "success": false,
+            "data": null,
+            "error": "Rate limited: 5/5 calls in last minute"
+          },
+          "seeking_alpha_rapidapi": {
+            "success": false,
+            "data": null,
+            "error": "ValueError: Seeking Alpha RapidAPI key not configured"
+          }
+        }
+      },
+      "tradingview": {
+        "success": true,
+        "api_used": "tradingview"
+      },
+      "insider_trades": {
+        "success": true,
+        "api_used": "finnhub"
+      },
+      "news_sentiment": {
+        "success": true,
+        "api_used": "finnhub"
+      },
+      "reddit_sentiment": {
+        "success": true,
+        "api_used": "apewisdom"
+      },
+      "social_sentiment": {
+        "success": false,
+        "api_used": null
+      },
+      "earnings": {
+        "success": true,
+        "api_used": "yfinance"
+      },
+      "congress_trades": {
+        "success": false,
+        "api_used": null
+      }
+    },
+    "data_sources": {
+      "price_history": "yfinance",
+      "fundamentals": "yfinance",
+      "analyst_ratings": "finnhub",
+      "technicals": "local (pandas/ta)",
+      "tradingview": "tradingview-ta",
+      "insider_trades": "finnhub",
+      "news_sentiment": "finnhub",
+      "reddit_sentiment": "apewisdom",
+      "earnings": "yfinance",
+      "dividends": "yfinance"
+    },
+    "elapsed_seconds": 39.6,
+    "all_analyst_results": {
+      "finnhub": {
+        "success": true,
+        "data": {
+          "ticker": "LAC",
+          "buy": 0,
+          "hold": 5,
+          "sell": 3,
+          "strong_buy": 0,
+          "strong_sell": 1,
+          "period": "2026-03-01",
+          "history": [
+            {
+              "buy": 0,
+              "hold": 5,
+              "period": "2026-03-01",
+              "sell": 3,
+              "strongBuy": 0,
+              "strongSell": 1,
+              "symbol": "LAC.TO"
+            },
+            {
+              "buy": 0,
+              "hold": 5,
+              "period": "2026-02-01",
+              "sell": 3,
+              "strongBuy": 0,
+              "strongSell": 1,
+              "symbol": "LAC.TO"
+            },
+            {
+              "buy": 0,
+              "hold": 4,
+              "period": "2026-01-01",
+              "sell": 4,
+              "strongBuy": 0,
+              "strongSell": 1,
+              "symbol": "LAC.TO"
+            },
+            {
+              "buy": 0,
+              "hold": 4,
+              "period": "2025-12-01",
+              "sell": 4,
+              "strongBuy": 0,
+              "strongSell": 1,
+              "symbol": "LAC.TO"
+            }
+          ]
+        },
+        "error": null
+      },
+      "yfinance": {
+        "success": false,
+        "data": null,
+        "error": "Rate limited: 5/5 calls in last minute"
+      },
+      "seeking_alpha_rapidapi": {
+        "success": false,
+        "data": null,
+        "error": "ValueError: Seeking Alpha RapidAPI key not configured"
+      }
+    },
+    "fundamentals_detail": {
+      "ticker": "LAC",
+      "name": "Lithium Americas Corp.",
+      "sector": "Basic Materials",
+      "industry": "Other Industrial Metals & Mining",
+      "market_cap": 1373284480,
+      "pe_ratio": null,
+      "forward_pe": -12.108644,
+      "pb_ratio": 2.3074963,
+      "ps_ratio": null,
+      "dividend_yield": null,
+      "beta": 3.036,
+      "eps": -1.08,
+      "revenue": null,
+      "revenue_growth": null,
+      "earnings_growth": null,
+      "profit_margin": 0.0,
+      "gross_margin": 0.0,
+      "operating_margin": 0.0,
+      "roe": -0.32026002,
+      "roa": -0.01988,
+      "debt_to_equity": 45.225,
+      "free_cash_flow": -528574624,
+      "target_mean_price": 6.53333,
+      "target_high_price": 8.0,
+      "target_low_price": 5.0,
+      "recommendation": "hold",
+      "num_analysts": 9,
+      "52w_high": 10.52,
+      "52w_low": 2.31,
+      "50d_avg": 5.1286,
+      "200d_avg": 4.36075
+    },
+    "earnings_detail": {
+      "ticker": "LAC",
+      "earnings": [
+        {
+          "period": "2024-12-31 00:00:00",
+          "actual": -0.03537,
+          "estimate": -0.03,
+          "surprisePercent": -0.17899999
+        },
+        {
+          "period": "2025-03-31 00:00:00",
+          "actual": -0.0203,
+          "estimate": -0.04,
+          "surprisePercent": 0.4925
+        },
+        {
+          "period": "2025-06-30 00:00:00",
+          "actual": -0.06,
+          "estimate": -0.05,
+          "surprisePercent": -0.2
+        },
+        {
+          "period": "2025-09-30 00:00:00",
+          "actual": -0.0339,
+          "estimate": -0.0513,
+          "surprisePercent": 0.3392
+        }
+      ],
+      "surprise_avg": 0.1131750025,
+      "beat_count": 2,
+      "miss_count": 2
+    },
+    "insider_detail": {
+      "ticker": "LAC",
+      "recent_transactions": [
+        {
+          "change": -7836,
+          "currency": "",
+          "filingDate": "2026-02-11",
+          "id": "0000912282-26-000295",
+          "isDerivative": true,
+          "name": "CROWLEY TIMOTHY AMBROSE",
+          "share": 0,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "M",
+          "transactionDate": "2026-02-09",
+          "transactionPrice": 0
+        },
+        {
+          "change": 7836,
+          "currency": "",
+          "filingDate": "2026-02-11",
+          "id": "0000912282-26-000295",
+          "isDerivative": false,
+          "name": "CROWLEY TIMOTHY AMBROSE",
+          "share": 168750,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "M",
+          "transactionDate": "2026-02-09",
+          "transactionPrice": 0
+        },
+        {
+          "change": -8707,
+          "currency": "",
+          "filingDate": "2026-02-11",
+          "id": "0000912282-26-000293",
+          "isDerivative": true,
+          "name": "GRANDY EDWARD",
+          "share": 0,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "M",
+          "transactionDate": "2026-02-09",
+          "transactionPrice": 0
+        },
+        {
+          "change": 8707,
+          "currency": "",
+          "filingDate": "2026-02-11",
+          "id": "0000912282-26-000293",
+          "isDerivative": false,
+          "name": "GRANDY EDWARD",
+          "share": 182079,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "M",
+          "transactionDate": "2026-02-09",
+          "transactionPrice": 0
+        },
+        {
+          "change": -28149,
+          "currency": "",
+          "filingDate": "2026-02-02",
+          "id": "0000912282-26-000238",
+          "isDerivative": true,
+          "name": "ZAWADZKI ALEXI ILLYA",
+          "share": 28149,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "M",
+          "transactionDate": "2026-01-29",
+          "transactionPrice": 0
+        },
+        {
+          "change": 31647,
+          "currency": "",
+          "filingDate": "2026-02-02",
+          "id": "0000912282-26-000238",
+          "isDerivative": false,
+          "name": "ZAWADZKI ALEXI ILLYA",
+          "share": 96986,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "A",
+          "transactionDate": "2026-01-29",
+          "transactionPrice": 0
+        },
+        {
+          "change": 32971,
+          "currency": "",
+          "filingDate": "2026-02-02",
+          "id": "0000912282-26-000235",
+          "isDerivative": true,
+          "name": "GRANDY EDWARD",
+          "share": 32971,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "A",
+          "transactionDate": "2026-01-29",
+          "transactionPrice": 0
+        },
+        {
+          "change": 33655,
+          "currency": "",
+          "filingDate": "2026-02-02",
+          "id": "0000912282-26-000235",
+          "isDerivative": false,
+          "name": "GRANDY EDWARD",
+          "share": 173372,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "A",
+          "transactionDate": "2026-01-29",
+          "transactionPrice": 0
+        },
+        {
+          "change": 55403,
+          "currency": "",
+          "filingDate": "2026-02-02",
+          "id": "0000912282-26-000234",
+          "isDerivative": true,
+          "name": "GERSPACHER RICHARD",
+          "share": 55403,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "A",
+          "transactionDate": "2026-01-29",
+          "transactionPrice": 0
+        },
+        {
+          "change": 44434,
+          "currency": "",
+          "filingDate": "2026-02-02",
+          "id": "0000912282-26-000234",
+          "isDerivative": false,
+          "name": "GERSPACHER RICHARD",
+          "share": 137862,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "A",
+          "transactionDate": "2026-01-29",
+          "transactionPrice": 0
+        },
+        {
+          "change": 26199,
+          "currency": "",
+          "filingDate": "2026-02-02",
+          "id": "0000912282-26-000233",
+          "isDerivative": true,
+          "name": "CROWLEY TIMOTHY AMBROSE",
+          "share": 26199,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "A",
+          "transactionDate": "2026-01-29",
+          "transactionPrice": 0
+        },
+        {
+          "change": 25490,
+          "currency": "",
+          "filingDate": "2026-02-02",
+          "id": "0000912282-26-000233",
+          "isDerivative": false,
+          "name": "CROWLEY TIMOTHY AMBROSE",
+          "share": 160914,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "A",
+          "transactionDate": "2026-01-29",
+          "transactionPrice": 0
+        },
+        {
+          "change": 46496,
+          "currency": "",
+          "filingDate": "2026-02-02",
+          "id": "0000912282-26-000232",
+          "isDerivative": true,
+          "name": "COLTON LUKE",
+          "share": 46496,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "A",
+          "transactionDate": "2026-01-29",
+          "transactionPrice": 0
+        },
+        {
+          "change": 37554,
+          "currency": "",
+          "filingDate": "2026-02-02",
+          "id": "0000912282-26-000232",
+          "isDerivative": false,
+          "name": "COLTON LUKE",
+          "share": 37554,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "A",
+          "transactionDate": "2026-01-29",
+          "transactionPrice": 0
+        },
+        {
+          "change": 26199,
+          "currency": "",
+          "filingDate": "2026-02-02",
+          "id": "0000912282-26-000231",
+          "isDerivative": true,
+          "name": "BARNUM AUBREE",
+          "share": 26199,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "A",
+          "transactionDate": "2026-01-29",
+          "transactionPrice": 0
+        },
+        {
+          "change": 25613,
+          "currency": "",
+          "filingDate": "2026-02-02",
+          "id": "0000912282-26-000231",
+          "isDerivative": false,
+          "name": "BARNUM AUBREE",
+          "share": 95886,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "A",
+          "transactionDate": "2026-01-29",
+          "transactionPrice": 0
+        },
+        {
+          "change": -12002,
+          "currency": "",
+          "filingDate": "2026-01-27",
+          "id": "0000912282-26-000154",
+          "isDerivative": true,
+          "name": "ZAWADZKI ALEXI ILLYA",
+          "share": 12002,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "M",
+          "transactionDate": "2026-01-23",
+          "transactionPrice": 0
+        },
+        {
+          "change": -6668,
+          "currency": "",
+          "filingDate": "2026-01-27",
+          "id": "0000912282-26-000154",
+          "isDerivative": false,
+          "name": "ZAWADZKI ALEXI ILLYA",
+          "share": 65339,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "F",
+          "transactionDate": "2026-01-23",
+          "transactionPrice": 6.45
+        },
+        {
+          "change": 12002,
+          "currency": "",
+          "filingDate": "2026-01-27",
+          "id": "0000912282-26-000154",
+          "isDerivative": false,
+          "name": "ZAWADZKI ALEXI ILLYA",
+          "share": 72007,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "M",
+          "transactionDate": "2026-01-23",
+          "transactionPrice": 0
+        },
+        {
+          "change": -8375,
+          "currency": "",
+          "filingDate": "2026-01-27",
+          "id": "0000912282-26-000150",
+          "isDerivative": true,
+          "name": "GRANDY EDWARD",
+          "share": 8374,
+          "source": "sec",
+          "symbol": "LAC",
+          "transactionCode": "M",
+          "transactionDate": "2026-01-23",
+          "transactionPrice": 0
+        }
+      ],
+      "buys_last_50": 0,
+      "sells_last_50": 0,
+      "net_insider_signal": "neutral"
+    },
+    "reddit_detail": {
+      "ticker": "LAC",
+      "rank": null,
+      "mentions": 0,
+      "mentions_24h_ago": 0,
+      "upvotes": 0
+    },
+    "stocktwits_detail": null,
+    "news_detail": {
+      "ticker": "LAC",
+      "articles": [
+        {
+          "category": "company",
+          "datetime": 1772697600,
+          "headline": "Lithium Americas: Where Is The Future Of U.S. Lithium Headed?",
+          "id": 139307489,
+          "image": "https://static.seekingalpha.com/cdn/s3/uploads/getty_images/2203824296/image_2203824296.jpg?io=getty-c-w1536",
+          "related": "LAC",
+          "source": "SeekingAlpha",
+          "summary": "Lithium Americas is a pre-revenue pure play on the Thacker Pass clay-based lithium project, with significant execution risk. Read why LAC stock is rated a hold.",
+          "url": "https://finnhub.io/api/news?id=6429a343759d94a271fe80602320c00381692ad77a961316fd0a6a158ea10f03"
+        },
+        {
+          "category": "company",
+          "datetime": 1772551627,
+          "headline": "Shares of lithium-related companies are trading lower amid a stronger dollar and a broader market pullback as the conflict in the Middle East persists.",
+          "id": 139295578,
+          "image": "",
+          "related": "LAC",
+          "source": "Benzinga",
+          "summary": "",
+          "url": "https://finnhub.io/api/news?id=842fd5e75ca803f44750edd69d379c6e7ddb0611adef1e4dda59d6605c763b55"
+        },
+        {
+          "category": "company",
+          "datetime": 1772116065,
+          "headline": "Shares of lithium-related companies are trading lower amid a possible selloff. The commodity rallied yesterday after Zimbabwe's government suspended exports of raw materials, including lithium concentrates.",
+          "id": 139246749,
+          "image": "",
+          "related": "LAC",
+          "source": "Benzinga",
+          "summary": "",
+          "url": "https://finnhub.io/api/news?id=2d4db8d8b344612dea94fb35999c9ef2f6a79b196d007d4ee8483e9b62fa09ef"
+        }
+      ],
+      "article_count": 3,
+      "sources": [
+        "SeekingAlpha",
+        "Benzinga"
+      ],
+      "source": "finnhub"
+    }
+  }
+}
