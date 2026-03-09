@@ -15,14 +15,14 @@ triggers:
 
 # Persona Development
 
-Personas are Claude Code plugins in `~/projects/personal/personas/plugins/{name}/`.
+Personas live in `~/.personas/{name}/`, each with its own git repo.
 
 ## Plugin Structure
 
 Each persona contains:
 - `.claude-plugin/plugin.json` — metadata (name, version, author, description)
 - `CLAUDE.md` — personality, capabilities, MCP tools, communication style, session start, self-management rules
-- `profile.md.example` — template for users to copy to `~/.personas/{name}/profile.md`
+- `profile.md.example` — template for users to copy to `profile.md`
 - `profile.md` — user's actual personal context (never committed)
 - `skills/{domain}/{skill-name}/SKILL.md` — skills with YAML frontmatter
 - `hooks/hooks.json` + hook scripts — lifecycle hooks (optional)
@@ -39,9 +39,9 @@ Use `Skill('plugin-dev:create-plugin')` to scaffold, then:
 3. Create skills under `skills/{domain}/{skill-name}/SKILL.md`
 4. Choose MCPs from the Domain Reference table
 5. Decide if a dashboard would help (see Dashboard Pattern)
-6. Add entry to `personas/.claude-plugin/marketplace.json`
-7. Bump version in both `plugin.json` AND `marketplace.json`
-8. Push to GitHub — persona-manager bootstraps `~/.personas/{name}/` on next session start
+6. Create `.gitignore` with the standard persona gitignore (profile.md, .mcp.json, .claude/memory/, *.db*, *.log, *.local.json, *.local.md)
+7. Bump version in `plugin.json`
+8. Initialize git repo (`git init`) and make initial commit
 
 ---
 
@@ -108,7 +108,7 @@ To recall: read MEMORY.md or the relevant topic file.
 
 ## Self-Management
 
-This persona lives at `~/projects/personal/personas/plugins/{name}/`.
+This persona lives at `~/.personas/{name}/`.
 All files are immediately live — no reinstall needed.
 
 ### When to update what
@@ -270,7 +270,7 @@ Simple personas (cooking, one-off advice) usually don't need one.
 ### Dashboard design
 
 Keep **Warren's Tokyo Night aesthetic** as the style reference
-(`plugins/warren/dashboard.html`). Tabs to adapt per persona:
+(`~/.personas/warren/dashboard.html`). Tabs to adapt per persona:
 
 | Persona type | Suggested tabs |
 |-------------|----------------|
@@ -287,13 +287,13 @@ Use red/amber/green indicators based on urgency or emoji prefix.
 Python serves static files. For personas with frequent task updates, consider extending
 `open.sh` to run a POST-capable server that writes checkbox state changes back to
 `TASKS.md`. This turns the dashboard into a live task board, not just a viewer.
-See `plugins/warren/dashboard.html` for the read-only baseline to build from.
+See `~/.personas/warren/dashboard.html` for the read-only baseline to build from.
 
 ### open.sh pattern
 
 ```bash
 #!/bin/bash
-cd ~/projects/personal/personas/plugins/{name}
+cd ~/.personas/{name}
 pkill -f "python3 -m http.server {PORT}" 2>/dev/null
 python3 -m http.server {PORT} &
 sleep 0.5
@@ -308,7 +308,7 @@ Use a unique port per persona to avoid collisions (Warren: 7384).
 
 **If profile.md doesn't exist:**
 1. Tell the user it's missing
-2. Guide: `cp ~/.claude/plugins/cache/*/plugins/{name}/profile.md.example ~/.personas/{name}/profile.md`
+2. Guide: `cp ~/.personas/{name}/profile.md.example ~/.personas/{name}/profile.md`
 3. Walk through key fields together — don't continue without profile context
 
 **Self-configuring persona (Mila pattern):** On first session, actively
@@ -319,21 +319,17 @@ the user to fill in the template themselves.
 
 ## Runtime Model
 
-Skills activate via **local-scope plugin install**:
+Each persona is a standalone directory at `~/.personas/{name}/` with its own git repo.
 
-```bash
-mkdir -p ~/.personas/{name}
-cd ~/.personas/{name}
-claude plugin install {name}@personas --scope local
-```
+Skills activate when CWD is `~/.personas/{name}/` — native isolation via `--setting-sources project`.
 
-Skills only activate when CWD is `~/.personas/{name}/` — native isolation.
-
-Workspace layout (auto-bootstrapped by `.zshrc`):
-- `~/.personas/{name}/CLAUDE.md` → symlink → plugin cache (auto-updates)
-- `~/.personas/{name}/skills/` → symlink → plugin cache skills/
-- `~/.personas/{name}/.mcp.json` → local only, never committed
-- `~/.personas/{name}/.claude/settings.local.json` → written by plugin install
+Workspace layout:
+- `~/.personas/{name}/CLAUDE.md` — personality and rules
+- `~/.personas/{name}/skills/` — domain skills
+- `~/.personas/{name}/.claude/settings.json` — sandbox config (committed)
+- `~/.personas/{name}/.mcp.json` — MCP config (gitignored)
+- `~/.personas/{name}/profile.md` — user context (gitignored)
+- `~/.personas/{name}/.claude/memory/` — auto-memory (gitignored)
 
 ---
 
@@ -360,7 +356,7 @@ Usage:
 
 ## Version Bumping
 
-Bump in BOTH `plugin.json` AND `marketplace.json` before every commit.
+Bump `plugin.json` version before every commit.
 - Patch: skill/doc changes
 - Minor: new skills or dashboard
 - Major: breaking changes to CLAUDE.md structure

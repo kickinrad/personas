@@ -12,7 +12,7 @@
         "intentPatterns": ["(create|build|design|add|make|new).*?persona", "persona.*?(for|that|who|to)", "i want a persona", "help me.*?persona"]
       },
       "fileTriggers": {
-        "pathPatterns": ["**/personas/plugins/**"],
+        "pathPatterns": ["**/.personas/**"],
         "contentPatterns": []
       }
     }

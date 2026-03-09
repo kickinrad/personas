@@ -16,13 +16,13 @@ description: Deploy a persona to a remote server for scheduled autonomous execut
 ### Step 1: Identify Target
 
 Ask which persona and which remote host:
-- Persona directory (e.g., plugins/warren/ or ~/.personas/warren/)
+- Persona directory (e.g., ~/.personas/warren/)
 - Remote host (e.g., cloud via Tailscale, or full SSH address)
 
 ### Step 2: Sync Workspace
 
 ```bash
-rsync -avz --exclude='.claude/memory/' {persona_dir}/ {host}:~/.personas/{name}/
+rsync -avz --exclude='.claude/memory/' ~/.personas/{name}/ {host}:~/.personas/{name}/
 ```
 
 Note: Exclude memory by default (remote builds its own). Include if user wants continuity.
@@ -90,5 +90,5 @@ Tool: scheduler_add_claude_trigger
 
 Or manually:
 ```bash
-0 */6 * * * rsync -avz {host}:~/.personas/{name}/.claude/memory/ {persona_dir}/.claude/memory/
+0 */6 * * * rsync -avz {host}:~/.personas/{name}/.claude/memory/ ~/.personas/{name}/.claude/memory/
 ```

@@ -1,15 +1,16 @@
 ---
 name: publish
-description: Publish a private persona to the public marketplace. Use when user wants to share a persona, promote a private persona to public, or submit a persona to the marketplace.
+description: Publish a persona to a remote git repository. Use when user wants to share a persona, push a persona to GitHub, or make a persona available publicly.
 ---
 
-# Publish Persona to Marketplace
+# Publish Persona
 
 ## Prerequisites
 
 - Persona must have all committed files ready (CLAUDE.md, plugin.json, skills/, profile.md.example)
 - No personal data in committed files
 - Working profile.md.example template
+- Persona has its own git repo at `~/.personas/{name}/`
 
 ## Pre-Publish Checklist
 
@@ -17,7 +18,7 @@ Before publishing, verify:
 
 1. **No secrets in committed files**
    ```bash
-   grep -r "eyJ\|GOCSPX\|sk-\|password\|secret" plugins/{name}/ --include="*.md" --include="*.json" | grep -v node_modules | grep -v .mcp.json
+   grep -r "eyJ\|GOCSPX\|sk-\|password\|secret" ~/.personas/{name}/ --include="*.md" --include="*.json" | grep -v node_modules | grep -v .mcp.json
    ```
 
 2. **No personal data in CLAUDE.md** — should contain personality/rules only, not specific names/accounts/figures
@@ -34,33 +35,36 @@ Before publishing, verify:
 
 ### Step 1: Bump Version
 
-Update version in `plugins/{name}/.claude-plugin/plugin.json`.
+Update version in `~/.personas/{name}/.claude-plugin/plugin.json`.
 
-### Step 2: Add to Marketplace
-
-Add entry to `.claude-plugin/marketplace.json`:
-
-```json
-{
-  "name": "{name}",
-  "description": "{one-line description}",
-  "source": { "source": "relative", "path": "plugins/{name}" },
-  "version": "{version}"
-}
-```
-
-### Step 3: Commit and Push
+### Step 2: Commit Changes
 
 ```bash
-git add plugins/{name}/ .claude-plugin/marketplace.json
-git commit -m "feat(marketplace): publish {name} persona v{version}"
+cd ~/.personas/{name}
+git add -A
+git commit -m "chore({name}): bump to v{version}"
+```
+
+### Step 3: Push to Remote
+
+If no remote exists yet, create a GitHub repo and add the remote:
+
+```bash
+cd ~/.personas/{name}
+gh repo create {owner}/{name}-persona --public --source=. --push
+```
+
+If remote already exists:
+
+```bash
+cd ~/.personas/{name}
 git push
 ```
 
 ### Step 4: Announce (Optional)
 
-If publishing to a shared marketplace, consider opening a PR instead of pushing directly.
+Share the repo URL. Users can clone directly:
 
 ```bash
-gh pr create --title "feat(marketplace): add {name} persona" --body "..."
+git clone https://github.com/{owner}/{name}-persona ~/.personas/{name}
 ```
