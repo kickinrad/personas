@@ -1,32 +1,31 @@
 # Personas
 
-Public framework for self-evolving AI assistants built on Claude Code plugins. Each persona is a self-contained, self-improving plugin with personality, tools, memory, and full write access to its own directory.
+Public framework for self-evolving AI assistants built on Claude Code plugins. The framework repo contains persona-manager (the meta-tool); individual personas live in `~/.personas/{name}/` as independent git repos.
 
 ## Architecture
 
 ```
-personas/
+personas/                                 # Framework repo
 ├── CLAUDE.md                             # Framework-level context
-├── .claude-plugin/marketplace.json       # Plugin registry (public personas)
+├── .claude-plugin/marketplace.json       # Plugin registry (persona-manager)
 ├── plugins/
-│   ├── persona-manager/                  # Meta-tool: scaffolds + evolves personas
-│   ├── julia/                            # Personal chef
-│   ├── warren/                           # Personal CFO
-│   ├── mila/                             # Brand strategist
-│   └── {persona}/                        # Each persona is a Claude Code plugin
-│       ├── .claude-plugin/plugin.json
-│       ├── CLAUDE.md                     # Personality + rules (committed)
-│       ├── profile.md.example            # Template for user context (committed)
-│       ├── profile.md                    # User's personal data (gitignored)
-│       ├── .mcp.json                     # MCP server config (gitignored)
-│       ├── .claude/
-│       │   ├── settings.json             # Sandbox + permissions (committed)
-│       │   └── memory/                   # Auto-memory (gitignored)
-│       ├── skills/                       # Domain skills (committed)
-│       ├── docs/                         # Reference docs (committed, persona-writable)
-│       └── scripts/                      # Tools and utilities (committed, persona-writable)
+│   └── persona-manager/                  # Meta-tool: scaffolds + evolves personas
 ├── tests/personas-test.sh
 └── docs/plans/
+
+~/.personas/                              # Personas live here (outside this repo)
+└── {persona}/                            # Each persona is its own git repo
+    ├── .claude-plugin/plugin.json
+    ├── CLAUDE.md                         # Personality + rules (committed)
+    ├── profile.md.example                # Template for user context (committed)
+    ├── profile.md                        # User's personal data (gitignored)
+    ├── .mcp.json                         # MCP server config (gitignored)
+    ├── .claude/
+    │   ├── settings.json                 # Sandbox + permissions (committed)
+    │   └── memory/                       # Auto-memory (gitignored)
+    ├── skills/                           # Domain skills (committed)
+    ├── docs/                             # Reference docs (committed, persona-writable)
+    └── scripts/                          # Tools and utilities (committed, persona-writable)
 ```
 
 ## Three-Layer Model
@@ -41,14 +40,14 @@ Every persona uses three layers — never mix them:
 
 ## CLI Aliases
 
-Each persona is invokable by name from any directory. Shell functions in `~/.config/zsh/.personas.zsh` auto-discover persona dirs and create aliases:
+Each persona is invokable by name from any directory. Shell functions in `~/.config/zsh/.personas.zsh` auto-discover persona dirs in `~/.personas/` and create aliases:
 
 ```bash
 warren              # interactive session
 warren "do weekly"  # one-shot prompt
 ```
 
-The shell function `cd`s into the persona dir and runs `claude --setting-sources project --dangerously-skip-permissions`. These flags:
+The shell function `cd`s into `~/.personas/{name}/` and runs `claude --setting-sources project --dangerously-skip-permissions`. These flags:
 - Loads persona's `CLAUDE.md` (personality)
 - Loads persona's `.claude/settings.json` (sandbox config)
 - Loads persona's `.mcp.json` (tools)
@@ -110,14 +109,14 @@ First-run scaffolding is handled by instructions in each persona's CLAUDE.md, no
 
 ## Plugin Distribution
 
-Personas are distributed via Claude Code plugin marketplace:
+The persona-manager is distributed via the Claude Code plugin marketplace:
 
 ```bash
 /plugin marketplace add kickinrad/personas
-/plugin install warren@personas
+/plugin install persona-manager@personas
 ```
 
-Versions tracked in both `plugin.json` and `marketplace.json`. Bump both before committing.
+Individual personas are independent git repos in `~/.personas/`. They can optionally be published to their own marketplace repos.
 
 ## Lifecycle (No Custom CLI)
 
@@ -125,47 +124,48 @@ All lifecycle operations use native Claude Code features or persona-manager skil
 
 | Action | How |
 |--------|-----|
-| Install persona | `/plugin install {name}@personas` |
-| Create persona | `Skill('persona-manager:persona-dev')` |
-| Update persona | `/plugin update {name}@personas` |
+| Install persona-manager | `/plugin install persona-manager@personas` |
+| Create persona | `Skill('persona-manager:persona-dev')` — scaffolds to `~/.personas/` |
 | Deploy to remote | `Skill('persona-manager:deploy')` |
 | Publish to marketplace | `Skill('persona-manager:publish')` |
 | Daily use | Shell alias (`warren`, `julia`, etc.) |
 
 ## Private vs Public Personas
 
-- **Public**: Listed in a clean public repo's `marketplace.json`, installable by anyone
-- **Private**: This repo (full history, personal data in gitignored files)
-- **Going public**: Create fresh repo from clean snapshot — no history carries over. Use `Skill('persona-manager:publish')` to prepare a persona for public release
-- **Separate private repo**: Alternative for private personas with own `marketplace.json`
+- **All personas are independent repos** in `~/.personas/{name}/`, each with their own git history
+- **Public**: Push to a public GitHub repo, optionally list in a `marketplace.json`
+- **Private**: Keep local or push to a private repo
+- **Going public**: Since each persona is its own repo, just create a fresh remote — no history scrubbing needed
 
 ## Security Rules
 
-- **Never commit secrets** — `.mcp.json` and `profile.md` are gitignored
+- **Never commit secrets** — `.mcp.json` and `profile.md` are gitignored per-persona
 - **Use `pass`** for credentials in `.mcp.json`: `$(pass show service/key-name)`
 - **Never hardcode** OAuth tokens, API keys, or JWT tokens
 - **Sandbox** restricts each persona to its own directory + whitelisted network domains
 
 ## Gitignored (Never Commit)
 
-- `plugins/*/profile.md` — personal data
-- `plugins/*/.mcp.json` — API keys and secrets
-- `plugins/*/.claude/memory/` — auto-memory
-- `plugins/*/.claude/settings.local.json` — local overrides
-- `plugins/*/*.db*` — local databases
+Each persona's `.gitignore` handles its own secrets. Common patterns:
+
+- `profile.md` — personal data
+- `.mcp.json` — API keys and secrets
+- `.claude/memory/` — auto-memory
+- `.claude/settings.local.json` — local overrides
+- `*.db*` — local databases
 - `*.log`, `*.local.json`, `*.local.md`
 
 ## Git Flow
 
 `feat/*` / `fix/*` / `docs/*` → `main`
 
-Commits: `type(scope): description` — scope is persona name or `framework`
+Commits: `type(scope): description` — scope is `framework` for this repo, persona name for persona repos
 
 ## Gotchas
 
 - Personas activate only when CWD is the persona's directory — `--setting-sources project` ensures total isolation
 - MCP servers must be configured per-persona in `.mcp.json` (gitignored), not globally
-- `marketplace.json` and `plugin.json` versions must stay in sync
 - The scheduler MCP server lives outside this repo at `~/projects/personal/home-base/services/home-scheduler`
 - On WSL2, AdGuard may block Yahoo Finance domains — allowlist `fc.yahoo.com` for Warren's financial analysis
 - `.claude/settings.json` (sandbox config) IS committed — `.claude/settings.local.json` is gitignored
+- Personas live in `~/.personas/`, NOT in this framework repo

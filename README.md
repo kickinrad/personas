@@ -2,7 +2,7 @@
 
 **Self-evolving AI assistants built on Claude Code plugins.**
 
-Each persona is a standalone Claude Code plugin with its own personality, skills, memory, and sandbox. Install one, type its name, and you have a dedicated AI assistant that remembers your context and gets better over time — no Docker, no infrastructure, no configuration servers.
+Each persona is a standalone Claude Code plugin with its own personality, skills, memory, and sandbox. Use persona-manager to scaffold one, type its name, and you have a dedicated AI assistant that remembers your context and gets better over time — no Docker, no infrastructure, no configuration servers.
 
 ```
 $ warren "weekly review"
@@ -22,33 +22,36 @@ Action items:
 ## Quick Start
 
 ```bash
-# 1. Clone
-git clone https://github.com/kickinrad/personas.git ~/personas
-cd ~/personas
+# 1. Install persona-manager as a Claude Code plugin
+/plugin marketplace add kickinrad/personas
+/plugin install persona-manager@personas
 
-# 2. Set up shell aliases (add to .zshrc or .bashrc)
-source plugins/.personas.zsh
-# Or copy the alias snippet from docs/getting-started.md
+# 2. Create your first persona
+persona-manager "create a personal CFO persona called warren"
+# Scaffolds to ~/.personas/warren/
 
-# 3. Pick a persona and configure your profile
-cp plugins/warren/profile.md.example plugins/warren/profile.md
+# 3. Set up shell aliases (add to .zshrc or .bashrc)
+source ~/.config/zsh/.personas.zsh
+# Or add: for d in ~/.personas/*/; do alias "$(basename $d)"="cd $d && claude"; done
+
+# 4. Configure your profile
+cp ~/.personas/warren/profile.md.example ~/.personas/warren/profile.md
 # Edit profile.md with your details
 
-# 4. Use it
+# 5. Use it
 warren              # interactive session
 warren "weekly review"  # one-shot prompt
 ```
 
 See [Getting Started](docs/getting-started.md) for the full setup guide.
 
-## Available Personas
+## What's Included
 
-| Persona | Role | What it does |
-|---------|------|--------------|
-| **julia** | Personal Chef | Meal planning, pantry tracking, grocery lists, recipe management |
-| **warren** | Personal CFO | Budget reviews, net worth tracking, spending analysis, trade evaluation |
-| **mila** | Brand Strategist | Content planning, brand voice, creative project management |
-| **persona-manager** | Meta-tool | Scaffolds new personas, manages deployment and publishing |
+| Component | Role | What it does |
+|-----------|------|--------------|
+| **persona-manager** | Meta-tool | Scaffolds new personas to `~/.personas/`, manages deployment and publishing |
+
+Persona-manager can create any persona you need — a personal chef, a CFO, a brand strategist, a fitness coach, a writing editor. Each one is scaffolded as an independent repo in `~/.personas/`.
 
 ## How It Works
 
@@ -69,6 +72,7 @@ The real magic is **self-improvement**: personas observe patterns across session
 ```bash
 # Use the persona-manager skill
 persona-manager "create a fitness coach persona"
+# Creates ~/.personas/fitness-coach/ with full plugin structure
 ```
 
 Or scaffold manually — see [Creating Personas](docs/creating-personas.md) for the full guide.
@@ -85,36 +89,38 @@ Or scaffold manually — see [Creating Personas](docs/creating-personas.md) for 
 ## Project Structure
 
 ```
-personas/
+personas/                          # This framework repo
 ├── plugins/
-│   ├── persona-manager/          # Meta-tool for scaffolding
-│   ├── julia/                    # Personal chef
-│   ├── warren/                   # Personal CFO
-│   ├── mila/                     # Brand strategist
-│   └── {your-persona}/
-│       ├── .claude-plugin/plugin.json
-│       ├── CLAUDE.md             # Personality (committed)
-│       ├── profile.md.example    # Profile template (committed)
-│       ├── profile.md            # Your data (gitignored)
-│       ├── .mcp.json             # API keys (gitignored)
-│       ├── .claude/settings.json # Sandbox config (committed)
-│       ├── skills/               # Domain skills
-│       ├── docs/                 # Reference documents
-│       └── scripts/              # Tools and utilities
+│   └── persona-manager/           # Meta-tool for scaffolding
 ├── tests/
 └── docs/
+
+~/.personas/                       # Your personas (independent repos)
+├── warren/                        # Each persona is its own git repo
+│   ├── .claude-plugin/plugin.json
+│   ├── CLAUDE.md                  # Personality (committed)
+│   ├── profile.md.example         # Profile template (committed)
+│   ├── profile.md                 # Your data (gitignored)
+│   ├── .mcp.json                  # API keys (gitignored)
+│   ├── .claude/settings.json      # Sandbox config (committed)
+│   ├── skills/                    # Domain skills
+│   ├── docs/                      # Reference documents
+│   └── scripts/                   # Tools and utilities
+├── julia/
+└── mila/
 ```
 
 ## Contributing
 
-Contributions welcome. To add a new persona to the marketplace:
+Contributions welcome. This repo contains the persona-manager framework — individual personas live in their own repos.
+
+To contribute:
 
 1. Fork the repo
-2. Create your persona under `plugins/`
-3. Add an entry to `.claude-plugin/marketplace.json`
-4. Open a PR with a description of what your persona does
+2. Improve persona-manager (scaffolding, deployment, publishing skills)
+3. Open a PR with a description of your changes
 
-Please follow the [Creating Personas](docs/creating-personas.md) guide for structure conventions.
+Please follow the [Creating Personas](docs/creating-personas.md) guide for persona structure conventions.
 
 ## License
 
