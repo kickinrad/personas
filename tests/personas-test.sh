@@ -95,5 +95,60 @@ else
 fi
 echo ""
 
+# Persona directory checks (~/.personas/)
+PERSONAS_DIR="$HOME/.personas"
+if [[ -d "$PERSONAS_DIR" ]]; then
+  echo "Persona directory checks (~/.personas/)"
+  for persona_dir in "$PERSONAS_DIR"/*/; do
+    [[ -d "$persona_dir" ]] || continue
+    pname=$(basename "$persona_dir")
+    echo "  Checking: $pname"
+
+    # Must have plugin.json
+    ppjson="$persona_dir/.claude-plugin/plugin.json"
+    if [[ -f "$ppjson" ]]; then
+      check "plugin.json exists" "pass"
+      pversion=$(jq -r '.version // empty' "$ppjson" 2>/dev/null)
+      [[ -n "$pversion" ]] && check "version present ($pversion)" "pass" || check "version present" "missing"
+    else
+      check "plugin.json exists" "missing"
+    fi
+
+    # Must have CLAUDE.md
+    [[ -f "$persona_dir/CLAUDE.md" ]] && \
+      check "CLAUDE.md exists" "pass" || check "CLAUDE.md exists" "missing"
+
+    # Must have sandbox config
+    psettings="$persona_dir/.claude/settings.json"
+    if [[ -f "$psettings" ]]; then
+      jq -e '.sandbox' "$psettings" >/dev/null 2>&1 && \
+        check "sandbox config present" "pass" || check "sandbox config present" "missing sandbox key"
+    else
+      check "sandbox config present" ".claude/settings.json missing"
+    fi
+
+    # Must have .gitignore
+    [[ -f "$persona_dir/.gitignore" ]] && \
+      check ".gitignore exists" "pass" || check ".gitignore exists" "missing"
+
+    # No secrets in committed files
+    psecret_hits=""
+    while IFS= read -r -d '' f; do
+      basename_f=$(basename "$f")
+      [[ "$basename_f" == ".mcp.json" ]] && continue
+      if grep -qE '(eyJ[A-Za-z0-9_-]{10,}|GOCSPX-|sk-[A-Za-z0-9]{20,}|BEGIN PRIVATE KEY)' "$f" 2>/dev/null; then
+        psecret_hits+=" $f"
+      fi
+    done < <(find "$persona_dir" \( -name "*.md" -o -name "*.json" \) -print0 2>/dev/null)
+    [[ -z "$psecret_hits" ]] && \
+      check "no secrets in files" "pass" || check "no secrets in files" "found in:$psecret_hits"
+
+    echo ""
+  done
+else
+  echo "Persona directory checks (~/.personas/): skipped (directory not found)"
+  echo ""
+fi
+
 echo "Results: $PASS passed, $FAIL failed"
 [[ $FAIL -eq 0 ]]
