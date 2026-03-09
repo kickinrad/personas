@@ -98,9 +98,8 @@ Publishing is always a manual decision. The persona never publishes itself.
 
 **Steps:**
 1. Bump version in `plugin.json`
-2. Bump version in `marketplace.json`
-3. Commit and push
-4. Others can install the updated persona
+2. Commit and push the persona's own git repo
+3. Others can clone or pull the updated persona into their `~/.personas/`
 
 ## The Pattern Promotion Rule
 
@@ -131,14 +130,15 @@ This prevents one-off preferences from becoming permanent rules while ensuring r
 
 ## Reviewing Persona Evolution
 
-All persona changes are tracked in git. To see how a persona has evolved:
+Each persona has its own git repo, so all changes are tracked independently. To see how a persona has evolved:
 
 ```bash
 # See all changes to a persona's rules
-git log --oneline plugins/warren/CLAUDE.md
+cd ~/.personas/warren
+git log --oneline CLAUDE.md
 
 # See all skill additions
-git log --oneline -- plugins/warren/skills/
+git log --oneline -- skills/
 
 # See the full diff of a self-improvement commit
 git show <commit-hash>

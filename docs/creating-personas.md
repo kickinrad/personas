@@ -11,29 +11,41 @@ persona-manager "create a fitness coach persona"
 ```
 
 The persona-manager skill will:
-1. Scaffold the directory structure
+1. Scaffold the directory structure in `~/.personas/your-persona/`
 2. Generate a `CLAUDE.md` with your described personality
 3. Create a `profile.md.example` template
-4. Set up `plugin.json` and sandbox config
-5. Add it to the marketplace registry
+4. Set up `plugin.json`, sandbox config, and `.gitignore`
+5. Initialize a git repo for the persona
 
 ## Option 2: Manual Scaffolding
 
 ### Directory Structure
 
-Create the following under `plugins/`:
+Create the following under `~/.personas/`:
 
 ```
-plugins/your-persona/
+~/.personas/your-persona/
 ├── .claude-plugin/
 │   └── plugin.json          # Plugin metadata
 ├── .claude/
 │   └── settings.json        # Sandbox configuration
+├── .gitignore               # Ignores profile.md, .mcp.json, memory, etc.
 ├── CLAUDE.md                # Personality and rules
 ├── profile.md.example       # Profile template for users
 └── skills/
     └── {domain}/            # Skill files go here
 ```
+
+After scaffolding, initialize the persona as its own git repo:
+
+```bash
+cd ~/.personas/your-persona
+git init
+git add -A
+git commit -m "feat(your-persona): initial scaffold"
+```
+
+Each persona is a self-contained repo — it tracks its own history independently from the framework.
 
 ### plugin.json
 
@@ -254,18 +266,22 @@ See [Self-Improvement](self-improvement.md) for the full model.
 
 ## Testing Your Persona
 
-Run the included test suite to verify structure:
+Each persona has its own git repo, so structural tests run against the persona directory directly:
 
 ```bash
-bash tests/personas-test.sh
+# Verify structure manually
+ls ~/.personas/your-persona/CLAUDE.md
+ls ~/.personas/your-persona/.claude-plugin/plugin.json
+ls ~/.personas/your-persona/profile.md.example
+ls ~/.personas/your-persona/.claude/settings.json
 ```
 
-This checks:
-- `plugin.json` exists and has a version
-- `CLAUDE.md` exists
-- `profile.md.example` exists
-- `.claude/settings.json` has sandbox enabled
-- No `profile.md` or `.mcp.json` committed (these should be gitignored)
+Check that secrets are gitignored:
+
+```bash
+cd ~/.personas/your-persona
+git status  # profile.md and .mcp.json should NOT appear as tracked
+```
 
 Manual testing checklist:
 - [ ] Run an interactive session — does the persona read `profile.md`?
@@ -274,36 +290,23 @@ Manual testing checklist:
 - [ ] Check memory after a session — did it write meaningful learnings?
 - [ ] Verify sandbox — can it access files outside its directory? (It should not.)
 
-## Publishing to the Marketplace
+## Publishing
 
-To make your persona available to others:
+Each persona is its own git repo. To share a persona:
 
-1. Add an entry to `.claude-plugin/marketplace.json`:
-
-```json
-{
-  "name": "your-persona",
-  "source": "./plugins/your-persona",
-  "description": "One-line description.",
-  "version": "1.0.0",
-  "category": "persona"
-}
-```
-
-2. Make sure versions match in both `plugin.json` and `marketplace.json`.
-
-3. Commit and push:
+1. Create a remote repo for it (e.g., on GitHub)
+2. Push the persona's repo:
 
 ```bash
-git add plugins/your-persona/ .claude-plugin/marketplace.json
-git commit -m "feat(your-persona): add to marketplace"
-git push
+cd ~/.personas/your-persona
+git remote add origin https://github.com/you/your-persona.git
+git push -u origin main
 ```
 
-4. Others can then install it:
+3. Others can clone it into their own `~/.personas/` directory:
 
 ```bash
-claude plugin install your-persona@personas
+git clone https://github.com/you/your-persona.git ~/.personas/your-persona
 ```
 
 ## Next Steps

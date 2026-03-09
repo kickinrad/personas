@@ -9,7 +9,9 @@ This guide walks you through setting up the personas framework and running your 
 - zsh or bash
 - Linux (bubblewrap) or macOS (Seatbelt) for native sandboxing
 
-## 1. Clone the Repository
+## 1. Clone the Framework
+
+The framework repo contains persona-manager (the meta-tool for scaffolding and evolving personas). Individual personas live separately in `~/.personas/`.
 
 ```bash
 git clone https://github.com/kickinrad/personas.git ~/personas
@@ -21,12 +23,11 @@ cd ~/personas
 Personas are invoked by name from any directory. Add the following to your shell config (e.g., `~/.zshrc`, `~/.bashrc`, or a sourced file like `~/.config/zsh/.personas.zsh`):
 
 ```bash
-_PERSONAS_ROOT="$HOME/personas/plugins"
+_PERSONAS_ROOT="$HOME/.personas"
 
 for _p_dir in "$_PERSONAS_ROOT"/*/; do
   [[ -d "$_p_dir" ]] || continue
   _p_name=$(basename "$_p_dir")
-  [[ "$_p_name" == "persona-manager" ]] && continue
   [[ -f "${_p_dir}CLAUDE.md" ]] || continue
 
   if [[ ! -f "${_p_dir}.mcp.json" ]]; then
@@ -56,20 +57,24 @@ source ~/.zshrc  # or whatever file you added it to
 ```
 
 **What this does:**
-- Scans `plugins/` for directories with a `CLAUDE.md`
+- Scans `~/.personas/` for directories with a `CLAUDE.md`
 - Creates a shell function for each persona (e.g., `warren`, `julia`)
 - Each function `cd`s into the persona directory and runs Claude Code with the persona's MCP config
 - `--strict-mcp-config` prevents global MCP servers from leaking into persona sessions
 
-> **Tip:** Update `_PERSONAS_ROOT` if you cloned the repo somewhere other than `~/personas`.
+> **Tip:** Update `_PERSONAS_ROOT` if you store personas somewhere other than `~/.personas/`.
 
-## 3. Choose a Persona
+## 3. Create or Install a Persona
 
-Pick one to start with. Julia (personal chef) is a good first choice — she has no required API integrations.
+Create a persona using persona-manager, or manually scaffold one into `~/.personas/`:
 
 ```bash
-ls plugins/
-# julia/  mila/  persona-manager/  warren/
+# Using persona-manager
+persona-manager "create a personal chef persona"
+
+# Or list existing personas
+ls ~/.personas/
+# julia/  warren/  mila/
 ```
 
 ## 4. Configure Your Profile
@@ -77,10 +82,10 @@ ls plugins/
 Each persona ships a `profile.md.example` with the fields it needs. Copy it and fill in your details:
 
 ```bash
-cp plugins/julia/profile.md.example plugins/julia/profile.md
+cp ~/.personas/julia/profile.md.example ~/.personas/julia/profile.md
 ```
 
-Open `plugins/julia/profile.md` in your editor and fill in the blanks. This file is gitignored — your personal data stays local.
+Open `~/.personas/julia/profile.md` in your editor and fill in the blanks. This file is gitignored — your personal data stays local.
 
 **What goes in profile.md:**
 - Your name and household details
@@ -148,13 +153,13 @@ Your shell aliases are not loaded. Make sure you:
 
 ### Persona does not pick up profile.md
 
-- Verify the file exists: `ls plugins/{name}/profile.md`
+- Verify the file exists: `ls ~/.personas/{name}/profile.md`
 - Make sure you copied from `profile.md.example`, not renamed it
 - Check that you are running the persona from the aliases, not from a random directory
 
 ### MCP server not connecting
 
-- Check `.mcp.json` syntax: `jq . plugins/{name}/.mcp.json`
+- Check `.mcp.json` syntax: `jq . ~/.personas/{name}/.mcp.json`
 - Verify the MCP server package is installed: `npx -y @package/name --version`
 - Check API keys are valid
 - Some MCP servers require network access — check the persona's `.claude/settings.json` for `allowedDomains`

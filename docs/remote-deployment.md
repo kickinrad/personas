@@ -14,14 +14,15 @@ Personas can run on remote servers for scheduled, autonomous tasks — weekly fi
 ```
 Local Machine                    Remote Server
 ┌──────────────────┐            ┌──────────────────┐
-│ plugins/warren/  │   rsync    │ ~/.personas/     │
-│   CLAUDE.md      │ ────────→  │   warren/        │
-│   skills/        │            │     CLAUDE.md    │
-│   profile.md     │            │     skills/      │
-│   .mcp.json      │            │     profile.md   │
-│                  │            │     .mcp.json    │
+│ ~/.personas/     │            │ ~/.personas/     │
+│   warren/        │   rsync    │   warren/        │
+│     CLAUDE.md    │ ────────→  │     CLAUDE.md    │
+│     skills/      │            │     skills/      │
+│     profile.md   │            │     profile.md   │
+│     .mcp.json    │            │     .mcp.json    │
 │                  │  ← rsync   │     .claude/     │
-│   .claude/memory │ ←────────  │       memory/    │
+│     .claude/     │ ←────────  │       memory/    │
+│       memory/    │            │                  │
 └──────────────────┘            └──────────────────┘
                                       ↑
                                    scheduler MCP
@@ -53,7 +54,7 @@ This interactive skill will:
 ```bash
 rsync -avz \
   --exclude='.claude/memory/' \
-  plugins/warren/ \
+  ~/.personas/warren/ \
   remote-host:~/.personas/warren/
 ```
 
@@ -126,7 +127,7 @@ Pull remote memory back to your local machine on a schedule:
 
 ```bash
 # Add to local crontab
-0 */6 * * * rsync -avz remote-host:~/.personas/warren/.claude/memory/ ~/personas/plugins/warren/.claude/memory/
+0 */6 * * * rsync -avz remote-host:~/.personas/warren/.claude/memory/ ~/.personas/warren/.claude/memory/
 ```
 
 This runs every 6 hours and pulls any new memory entries. You can review what the persona learned remotely by reading the memory files locally.
@@ -235,7 +236,7 @@ If using Tailscale for SSH:
 ssh remote-host 'tailscale status'
 
 # Use Tailscale hostname
-rsync -avz plugins/warren/ cloud:~/.personas/warren/
+rsync -avz ~/.personas/warren/ cloud:~/.personas/warren/
 ```
 
 ## Next Steps
