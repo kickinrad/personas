@@ -1,6 +1,0 @@
-{
-  "eval_id": 0,
-  "eval_name": "persona-creation-baseline",
-  "prompt": "I want to create a new persona for a personal trainer named Coach. She should be encouraging but data-driven, track workouts and progress, and use a scheduler MCP for reminders. She'll need a dashboard since I want to see my weekly stats. Walk me through setting this up.",
-  "assertions": []
-}

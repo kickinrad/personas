@@ -1,6 +1,0 @@
-{
-  "eval_id": 1,
-  "eval_name": "self-improvement",
-  "prompt": "I've been using Warren for a few months and I want to add proper self-improvement capability. Like, when I correct him on something repeatedly, he should eventually make it a permanent rule. And I want a /update --comprehensive command that audits whether his current skills still match how I actually use him.",
-  "assertions": []
-}

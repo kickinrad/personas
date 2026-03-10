@@ -1,6 +1,0 @@
-{
-  "eval_id": 2,
-  "eval_name": "skill-promotion",
-  "prompt": "My finance persona keeps doing tax calculations manually every session — walking through estimated quarterly tax math, figuring out what I owe for the year, etc. This has happened like 4 or 5 times now. Should this be a skill? How would I actually make that happen?",
-  "assertions": []
-}
