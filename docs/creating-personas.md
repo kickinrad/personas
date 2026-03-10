@@ -310,4 +310,3 @@ git clone https://github.com/you/your-persona.git ~/.personas/your-persona
 ## Next Steps
 
 - [Self-Improvement](self-improvement.md) — How the evolution engine works
-- [Remote Deployment](remote-deployment.md) — Run personas on servers

@@ -49,7 +49,7 @@ See [Getting Started](docs/getting-started.md) for the full setup guide.
 
 | Component | Role | What it does |
 |-----------|------|--------------|
-| **persona-manager** | Meta-tool | Scaffolds new personas to `~/.personas/`, manages deployment |
+| **persona-manager** | Meta-tool | Scaffolds new personas to `~/.personas/`, manages evolution |
 
 Persona-manager can create any persona you need — a personal chef, a CFO, a brand strategist, a fitness coach, a writing editor. Each one is scaffolded as an independent repo in `~/.personas/`.
 
@@ -84,7 +84,7 @@ Or scaffold manually — see [Creating Personas](docs/creating-personas.md) for 
 | [Getting Started](docs/getting-started.md) | Full setup, first session walkthrough |
 | [Creating Personas](docs/creating-personas.md) | Build a custom persona from scratch |
 | [Self-Improvement](docs/self-improvement.md) | How personas evolve over time |
-| [Remote Deployment](docs/remote-deployment.md) | Run personas on servers with cron |
+
 
 ## Project Structure
 
@@ -117,7 +117,7 @@ Contributions welcome. This repo contains the persona-manager framework — indi
 To contribute:
 
 1. Fork the repo
-2. Improve persona-manager (scaffolding, deployment skills)
+2. Improve persona-manager (scaffolding, skills)
 3. Open a PR with a description of your changes
 
 Please follow the [Creating Personas](docs/creating-personas.md) guide for persona structure conventions.

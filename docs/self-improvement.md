@@ -188,4 +188,3 @@ Memory is exploratory — it captures context, outcomes, and patterns. Rules are
 ## Next Steps
 
 - [Creating Personas](creating-personas.md) — Build a persona with self-improvement built in
-- [Remote Deployment](remote-deployment.md) — Evolving personas that run unattended

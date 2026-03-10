@@ -63,7 +63,6 @@ The shell function `cd`s into `~/.personas/{name}/` and runs `claude --setting-s
 |------|---------|
 | Interactive | `{name}` (sandbox + skip-permissions via alias) |
 | One-shot | `{name} "prompt"` (sandbox + skip-permissions via alias) |
-| Remote/scheduled | Scheduler MCP (`scheduler_add_claude_trigger`) on remote server via rsync + Tailscale (crontab as fallback) |
 
 ## Native Sandboxing
 
@@ -110,7 +109,6 @@ All lifecycle operations use native Claude Code features or persona-manager skil
 | Create persona | `Skill('persona-manager:persona-dev')` — scaffolds to `~/.personas/` |
 | Add dashboard | `Skill('persona-manager:persona-dashboard')` — expansion pack |
 | Push to GitHub | `gh repo create` during scaffolding, or `git push` anytime |
-| Deploy to remote | `Skill('persona-manager:deploy')` — expansion pack |
 | Daily use | Shell alias (`{name}`, `{name} "prompt"`) |
 
 ## Private vs Public Personas
@@ -148,6 +146,5 @@ Commits: `type(scope): description` — scope is `framework` for this repo, pers
 
 - Personas activate only when CWD is the persona's directory — `--setting-sources project` ensures total isolation
 - MCP servers must be configured per-persona in `.mcp.json` (gitignored), not globally
-- The scheduler MCP server lives outside this repo at `~/projects/personal/home-base/services/home-scheduler`
 - `.claude/settings.json` (sandbox config) IS committed — `.claude/settings.local.json` is gitignored
 - Personas live in `~/.personas/`, NOT in this framework repo
