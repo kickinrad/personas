@@ -16,7 +16,7 @@ description: Deploy a persona to a remote server for scheduled autonomous execut
 ### Step 1: Identify Target
 
 Ask which persona and which remote host:
-- Persona directory (e.g., ~/.personas/warren/)
+- Persona directory (e.g., `~/.personas/{name}/`)
 - Remote host (e.g., cloud via Tailscale, or full SSH address)
 
 ### Step 2: Sync Workspace

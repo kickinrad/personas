@@ -20,10 +20,13 @@ personas/                                 # Framework repo
     ├── profile.md.example                # Template for user context (committed)
     ├── profile.md                        # User's personal data (gitignored)
     ├── .mcp.json                         # MCP server config (gitignored)
+    ├── hooks.json                        # Stop + PreCompact hooks (committed)
     ├── .claude/
     │   ├── settings.json                 # Sandbox + permissions (committed)
     │   └── memory/                       # Auto-memory (gitignored)
-    ├── skills/                           # Domain skills (committed)
+    ├── skills/
+    │   ├── {domain}/                     # Domain skills (committed)
+    │   └── self-improve/SKILL.md         # Ships with every persona
     ├── docs/                             # Reference docs (committed, persona-writable)
     └── scripts/                          # Tools and utilities (committed, persona-writable)
 ```
@@ -86,54 +89,34 @@ Each persona customizes allowed domains for its MCP servers and APIs. Personas c
 
 ## Self-Improvement (Core Feature)
 
-Personas are self-evolving. They have full write access to their own directory and can grow new capabilities over time.
+Every persona ships with a `self-improve` skill and hooks that automate evolution:
 
-**Level 1 — Memory** (automatic, every session):
-Update `.claude/memory/MEMORY.md` with learnings, corrections, observed patterns.
+- **Hooks** (`hooks.json`): Stop hook reminds persona to update memory; PreCompact hook saves context before compaction
+- **Self-improve skill** (`skills/self-improve/SKILL.md`): Handles rule promotion, skill creation, tool creation, and periodic audits
 
-**Level 2 — Rule Promotion** (propose to user):
-Edit own `CLAUDE.md` to add/refine behavioral rules. Edit `profile.md` to capture missing context. Commit: `improve(self): description`.
+The four levels remain the same — memory (automatic), rule promotion (propose), skill creation (propose), tool creation (propose). See the self-improve skill for the full workflow.
 
-**Level 3 — Skill Creation** (propose to user):
-Write new `skills/{name}/SKILL.md` files. Write reference docs to `docs/`. Commit: `feat(self): add {skill-name} skill`.
+## Session Start
 
-**Level 4 — Tool Creation** (propose to user):
-Write scripts to `scripts/`. Propose MCP server additions to `.mcp.json`. Create config files for new integrations. Commit: `feat(self): add {tool-name}`.
+First-run scaffolding is handled by instructions in each persona's CLAUDE.md. On first session, if `profile.md` doesn't exist, the persona guides the user through setup (guide or interview pattern). Hooks handle memory automation (Stop, PreCompact) but not scaffolding.
 
-**Level 5 — Publish** (user-initiated only):
-Bump `plugin.json` version. `git push`. Update `marketplace.json` if public.
-
-## Session Start (No Hooks)
-
-First-run scaffolding is handled by instructions in each persona's CLAUDE.md, not hooks. On first session, if `profile.md` doesn't exist, the persona copies from `profile.md.example` and guides the user through setup. No global hook side effects.
-
-## Plugin Distribution
-
-The persona-manager is distributed via the Claude Code plugin marketplace:
-
-```bash
-/plugin marketplace add kickinrad/personas
-/plugin install persona-manager@personas
-```
-
-Individual personas are independent git repos in `~/.personas/`. They can optionally be published to their own marketplace repos.
-
-## Lifecycle (No Custom CLI)
+## Lifecycle
 
 All lifecycle operations use native Claude Code features or persona-manager skills:
 
 | Action | How |
 |--------|-----|
-| Install persona-manager | `/plugin install persona-manager@personas` |
+| Install persona-manager | `/plugin marketplace add kickinrad/personas` then `/plugin install persona-manager@personas` |
 | Create persona | `Skill('persona-manager:persona-dev')` — scaffolds to `~/.personas/` |
-| Deploy to remote | `Skill('persona-manager:deploy')` |
-| Publish to marketplace | `Skill('persona-manager:publish')` |
-| Daily use | Shell alias (`warren`, `julia`, etc.) |
+| Add dashboard | `Skill('persona-manager:persona-dashboard')` — expansion pack |
+| Push to GitHub | `gh repo create` during scaffolding, or `git push` anytime |
+| Deploy to remote | `Skill('persona-manager:deploy')` — expansion pack |
+| Daily use | Shell alias (`{name}`, `{name} "prompt"`) |
 
 ## Private vs Public Personas
 
 - **All personas are independent repos** in `~/.personas/{name}/`, each with their own git history
-- **Public**: Push to a public GitHub repo, optionally list in a `marketplace.json`
+- **Public**: Push to a public GitHub repo
 - **Private**: Keep local or push to a private repo
 - **Going public**: Since each persona is its own repo, just create a fresh remote — no history scrubbing needed
 
@@ -166,6 +149,5 @@ Commits: `type(scope): description` — scope is `framework` for this repo, pers
 - Personas activate only when CWD is the persona's directory — `--setting-sources project` ensures total isolation
 - MCP servers must be configured per-persona in `.mcp.json` (gitignored), not globally
 - The scheduler MCP server lives outside this repo at `~/projects/personal/home-base/services/home-scheduler`
-- On WSL2, AdGuard may block Yahoo Finance domains — allowlist `fc.yahoo.com` for Warren's financial analysis
 - `.claude/settings.json` (sandbox config) IS committed — `.claude/settings.local.json` is gitignored
 - Personas live in `~/.personas/`, NOT in this framework repo

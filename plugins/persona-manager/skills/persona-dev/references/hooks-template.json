@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "type": "prompt",
+        "prompt": "Before ending: if anything meaningful happened this session (decisions, corrections, discoveries, preferences), update .claude/memory/MEMORY.md with a dated entry. Keep entries concise — one line per learning. Skip if nothing worth remembering occurred."
+      }
+    ],
+    "PreCompact": [
+      {
+        "type": "prompt",
+        "prompt": "Context is about to be compacted. Summarize any important session context that hasn't been written to .claude/memory/MEMORY.md yet. Write it now so it survives compaction."
+      }
+    ]
+  }
+}

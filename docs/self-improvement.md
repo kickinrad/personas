@@ -1,6 +1,6 @@
 # Self-Improvement
 
-Personas are designed to evolve. They have full write access to their own directory and can grow new capabilities over time through a structured five-level model.
+Personas are designed to evolve. Every persona ships with a `self-improve` skill (`skills/self-improve/SKILL.md`) and hooks (`hooks.json`) that automate the evolution process. They have full write access to their own directory and can grow new capabilities over time through a structured five-level model.
 
 ## The Five Levels
 
@@ -24,6 +24,8 @@ Every session, the persona writes learnings to `.claude/memory/MEMORY.md`. This 
 ```
 
 Memory is the raw material for all other levels. It accumulates context that makes the persona more effective session after session.
+
+**Hooks automate this:** The Stop hook reminds the persona to update memory before ending each session. The PreCompact hook saves context before compaction so nothing is lost mid-session.
 
 ### Level 2: Rule Promotion (Claude Proposes, User Approves)
 
@@ -125,7 +127,7 @@ This prevents one-off preferences from becoming permanent rules while ensuring r
 | Propose new skills | Yes (proposes) | User must approve the write |
 | Write scripts or tools | No | Must propose and get approval |
 | Modify other personas | No | Sandbox prevents cross-directory access |
-| Publish to marketplace | No | User-initiated only |
+| Push to GitHub | No | User-initiated only |
 | Install new MCP servers | No | Must propose, user configures |
 
 ## Reviewing Persona Evolution
@@ -151,7 +153,7 @@ Self-improvement commits follow the convention:
 
 ## The Self-Audit Cycle
 
-Personas can perform periodic self-audits (monthly or on request):
+The self-improve skill includes a periodic audit workflow. Trigger it monthly or on request ("time for a self-audit"):
 
 1. **Read memory** — Scan MEMORY.md for recurring themes
 2. **Identify friction** — What keeps getting handled ad-hoc?

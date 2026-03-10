@@ -1,5 +1,5 @@
 {
-  "description": "Activation rules for persona development skill",
+  "description": "Activation rules for persona-manager skills",
   "rules": {
     "persona-dev": {
       "kind": "skill",
@@ -13,6 +13,21 @@
       },
       "fileTriggers": {
         "pathPatterns": ["**/.personas/**"],
+        "contentPatterns": []
+      }
+    },
+    "persona-dashboard": {
+      "kind": "skill",
+      "type": "process",
+      "enforcement": "must",
+      "priority": "medium",
+      "activationHint": "Skill('persona-manager:persona-dashboard')",
+      "promptTriggers": {
+        "keywords": ["dashboard", "persona dashboard", "task board", "visual status"],
+        "intentPatterns": ["(add|set up|create|build|install).*?dashboard", "dashboard.*?(for|to|persona)", "want a dashboard", "task board"]
+      },
+      "fileTriggers": {
+        "pathPatterns": [],
         "contentPatterns": []
       }
     }

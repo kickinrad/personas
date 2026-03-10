@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{PersonaName} Dashboard</title>
+  <style>
+    :root {
+      --bg-primary: #1e1e2e;
+      --bg-secondary: #2a2a3e;
+      --bg-card: #333348;
+      --text-primary: #cdd6f4;
+      --text-secondary: #a6adc8;
+      --text-muted: #6c7086;
+      --accent: #89b4fa;
+      --accent-hover: #74c7ec;
+      --green: #a6e3a1;
+      --yellow: #f9e2af;
+      --red: #f38ba8;
+      --border: #45475a;
+      --radius: 8px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 { font-size: 1.4rem; font-weight: 600; }
+    header .meta { color: var(--text-muted); font-size: 0.85rem; }
+
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+    }
+
+    .tab {
+      padding: 0.75rem 1.25rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      font-size: 0.9rem;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .tab:hover { color: var(--text-primary); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .tab-content {
+      display: none;
+      padding: 2rem;
+      max-width: 900px;
+    }
+
+    .tab-content.active { display: block; }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card h3 { font-size: 0.95rem; margin-bottom: 0.25rem; }
+    .card p { color: var(--text-secondary); font-size: 0.85rem; }
+
+    .section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin: 1.5rem 0 0.75rem;
+    }
+
+    .section-title:first-child { margin-top: 0; }
+
+    .status-active { border-left: 3px solid var(--accent); }
+    .status-waiting { border-left: 3px solid var(--yellow); }
+    .status-done { border-left: 3px solid var(--green); opacity: 0.7; }
+
+    .markdown-content {
+      white-space: pre-wrap;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .loading { color: var(--text-muted); font-style: italic; padding: 2rem; }
+    .error { color: var(--red); padding: 1rem; background: var(--bg-card); border-radius: var(--radius); }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>{PersonaName} Dashboard</h1>
+  <span class="meta" id="last-updated"></span>
+</header>
+
+<div class="tabs" id="tab-bar"></div>
+
+<div id="tab-panels"></div>
+
+<script>
+  const TABS = [
+    { id: 'tasks', label: 'Tasks', file: 'TASKS.md', parser: parseTasks },
+    { id: 'profile', label: 'Profile', file: 'profile.md' },
+    { id: 'memory', label: 'Memory', file: '.claude/memory/MEMORY.md' },
+    { id: 'system', label: 'System', file: 'CLAUDE.md' },
+  ];
+
+  // Build tabs and panels using safe DOM methods
+  const tabBar = document.getElementById('tab-bar');
+  const panels = document.getElementById('tab-panels');
+
+  TABS.forEach((tab, i) => {
+    const tabEl = document.createElement('div');
+    tabEl.className = 'tab' + (i === 0 ? ' active' : '');
+    tabEl.dataset.tab = tab.id;
+    tabEl.textContent = tab.label;
+    tabBar.appendChild(tabEl);
+
+    const panel = document.createElement('div');
+    panel.className = 'tab-content' + (i === 0 ? ' active' : '');
+    panel.id = 'tab-' + tab.id;
+    const loading = document.createElement('div');
+    loading.className = 'loading';
+    loading.textContent = 'Loading ' + tab.label.toLowerCase() + '...';
+    panel.appendChild(loading);
+    panels.appendChild(panel);
+  });
+
+  // Tab switching
+  tabBar.addEventListener('click', (e) => {
+    const tab = e.target.closest('.tab');
+    if (!tab) return;
+    tabBar.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    panels.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+
+  // Safe element creation helpers
+  function createCard(title, description, statusClass) {
+    const card = document.createElement('div');
+    card.className = 'card' + (statusClass ? ' ' + statusClass : '');
+    const h3 = document.createElement('h3');
+    h3.textContent = title;
+    card.appendChild(h3);
+    if (description) {
+      const p = document.createElement('p');
+      p.textContent = description;
+      card.appendChild(p);
+    }
+    return card;
+  }
+
+  function createSectionTitle(text, count) {
+    const el = document.createElement('div');
+    el.className = 'section-title';
+    el.textContent = text + (count != null ? ' (' + count + ')' : '');
+    return el;
+  }
+
+  function createMarkdownContent(text) {
+    const el = document.createElement('pre');
+    el.className = 'markdown-content';
+    el.textContent = text;
+    return el;
+  }
+
+  function createError(message) {
+    const el = document.createElement('div');
+    el.className = 'error';
+    el.textContent = message;
+    return el;
+  }
+
+  // Parse TASKS.md into DOM elements
+  function parseTasks(text, container) {
+    const sections = { active: [], waiting: [], someday: [], done: [] };
+    let current = null;
+
+    for (const line of text.split('\n')) {
+      const trimmed = line.trim();
+      if (/^##\s+active/i.test(trimmed)) current = 'active';
+      else if (/^##\s+waiting/i.test(trimmed)) current = 'waiting';
+      else if (/^##\s+someday/i.test(trimmed)) current = 'someday';
+      else if (/^##\s+done/i.test(trimmed)) current = 'done';
+      else if (current && /^-\s+\[.\]/.test(trimmed)) {
+        const taskText = trimmed.replace(/^-\s+\[.\]\s*/, '').replace(/^~~|~~$/g, '').replace(/^\*\*|\*\*$/g, '');
+        sections[current].push(taskText);
+      }
+    }
+
+    const statusMap = { active: 'status-active', waiting: 'status-waiting', someday: '', done: 'status-done' };
+    const labelMap = { active: 'Active', waiting: 'Waiting On', someday: 'Someday', done: 'Done' };
+    let hasItems = false;
+
+    for (const [key, items] of Object.entries(sections)) {
+      if (items.length === 0) continue;
+      hasItems = true;
+      container.appendChild(createSectionTitle(labelMap[key], items.length));
+      for (const item of items) {
+        const parts = item.split(' — ');
+        container.appendChild(createCard(parts[0], parts[1] || null, statusMap[key]));
+      }
+    }
+
+    if (!hasItems) {
+      container.appendChild(createCard('No tasks found', 'Create a TASKS.md to get started.'));
+    }
+  }
+
+  // Fetch and display a file
+  async function loadFile(tab) {
+    const container = document.getElementById('tab-' + tab.id);
+    try {
+      const res = await fetch(tab.file);
+      if (!res.ok) throw new Error(tab.file + ' not found');
+      const text = await res.text();
+      container.textContent = '';
+      if (tab.parser) {
+        tab.parser(text, container);
+      } else {
+        container.appendChild(createMarkdownContent(text));
+      }
+    } catch (e) {
+      container.textContent = '';
+      container.appendChild(createError('Could not load ' + tab.file + ': ' + e.message));
+    }
+  }
+
+  // Load all data
+  TABS.forEach(loadFile);
+
+  // Update timestamp
+  document.getElementById('last-updated').textContent = 'Updated: ' + new Date().toLocaleString();
+</script>
+
+</body>
+</html>

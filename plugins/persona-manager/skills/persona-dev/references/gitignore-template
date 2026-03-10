@@ -1,0 +1,27 @@
+# Personal data — never commit
+profile.md
+
+# MCP config contains API keys
+.mcp.json
+
+# Auto-memory
+.claude/memory/
+
+# Local overrides
+.claude/settings.local.json
+
+# Databases
+*.db
+*.db-journal
+*.sqlite
+
+# Logs
+*.log
+
+# Local config variants
+*.local.json
+*.local.md
+
+# OS files
+.DS_Store
+Thumbs.db

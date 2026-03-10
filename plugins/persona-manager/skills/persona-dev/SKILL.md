@@ -1,10 +1,11 @@
 ---
 name: persona-dev
-description: Create, update, and evolve personas in the personas marketplace. Use this when the user asks to create a new persona, add a skill to an existing persona, update a persona's CLAUDE.md or profile, add self-improvement capability to a persona, set up a dashboard for a persona, document a new MCP tool in a persona, or improve how a persona works over time. Also triggers when the user says things like "my persona should remember this" or "this keeps happening in sessions, make it a skill".
+description: Create, update, and evolve personas. Use this when the user asks to create a new persona, add a skill to an existing persona, update a persona's CLAUDE.md or profile, set up hooks or self-improvement, document a new MCP tool in a persona, or improve how a persona works over time. Also triggers when the user says things like "my persona should remember this", "this keeps happening, make it a skill", "create a persona for", or "build me a persona".
 triggers:
   - create a persona
   - new persona
   - add a persona
+  - build a persona
   - persona development
   - add a skill to
   - my persona should
@@ -15,348 +16,183 @@ triggers:
 
 # Persona Development
 
-Personas live in `~/.personas/{name}/`, each with its own git repo.
+Personas live in `~/.personas/{name}/`, each as its own git repo.
 
-## Plugin Structure
+## Persona Structure
 
 Each persona contains:
-- `.claude-plugin/plugin.json` — metadata (name, version, author, description)
-- `CLAUDE.md` — personality, capabilities, MCP tools, communication style, session start, self-management rules
-- `profile.md.example` — template for users to copy to `profile.md`
-- `profile.md` — user's actual personal context (never committed)
-- `skills/{domain}/{skill-name}/SKILL.md` — skills with YAML frontmatter
-- `hooks/hooks.json` + hook scripts — lifecycle hooks (optional)
-- `skill-rules.json` — forced-eval triggers (optional)
-- `dashboard.html` + `open.sh` — visual dashboard (optional, see Dashboard Pattern)
-- `TASKS.md` — dedicated task file for dashboard-enabled personas (optional)
+
+```
+~/.personas/{name}/
+├── .claude-plugin/plugin.json     # Metadata (name, version, author)
+├── .claude/
+│   ├── settings.json              # Sandbox config (committed)
+│   └── memory/                    # Auto-memory (gitignored)
+├── .gitignore                     # Secrets exclusion
+├── hooks.json                     # Stop + PreCompact hooks
+├── CLAUDE.md                      # Personality + rules
+├── profile.md.example             # Profile template (committed)
+├── profile.md                     # User's personal context (gitignored)
+├── .mcp.json                      # MCP server config (gitignored)
+└── skills/
+    ├── {domain}/{skill}/SKILL.md  # Domain skills
+    └── self-improve/SKILL.md      # Ships with every persona
+```
 
 ## Creating a New Persona
 
-Use `Skill('plugin-dev:create-plugin')` to scaffold, then:
+### Step 1: Scaffold with plugin-dev
 
-1. Write `CLAUDE.md` using the template below
-2. Write `profile.md.example` — template for user's local personal context
-3. Create skills under `skills/{domain}/{skill-name}/SKILL.md`
-4. Choose MCPs from the Domain Reference table
-5. Decide if a dashboard would help (see Dashboard Pattern)
-6. Create `.gitignore` with the standard persona gitignore (profile.md, .mcp.json, .claude/memory/, *.db*, *.log, *.local.json, *.local.md)
-7. Bump version in `plugin.json`
-8. Initialize git repo (`git init`) and make initial commit
+Use `Skill('plugin-dev:create-plugin')` to scaffold the base directory at `~/.personas/{name}/`.
+
+### Step 2: Write CLAUDE.md
+
+Use the template from `references/claude-md-template.md` in this skill's directory. Key decisions:
+
+- **Session Start pattern**: Guide (user fills template) vs Interview (persona writes directly)
+- **Personality**: Be specific about traits and anti-patterns. Give it opinions.
+- **Self-Improvement**: Point to the self-improve skill (one line, not inline)
+
+### Step 3: Write profile.md.example
+
+Create a template with sections relevant to the persona's domain. Include:
+- Personal info placeholders relevant to this domain
+- Account/service connections
+- Preferences and constraints
+- Anything the persona needs to know about the user
+
+### Step 4: Create first domain skill
+
+Write at least one skill under `skills/{domain}/{skill-name}/SKILL.md` with:
+- YAML frontmatter (name, description, triggers)
+- Step-by-step workflow
+- Expected output format
+
+### Step 5: Copy self-improve skill
+
+Copy `references/self-improve-skill.md` to `skills/self-improve/SKILL.md`. Replace `{name}` with the persona name. This ships with every persona — it handles memory management, rule promotion, skill creation, and periodic audits.
+
+### Step 6: Set up hooks
+
+Copy `references/hooks-template.json` to `hooks.json` in the persona root. These hooks:
+- **Stop**: Reminds the persona to update memory before ending
+- **PreCompact**: Saves session context before compaction
+
+### Step 7: Create .gitignore
+
+Copy `references/gitignore-template` to `.gitignore`.
+
+### Step 8: Configure sandbox
+
+Copy `references/settings-template.json` to `.claude/settings.json`. Add any persona-specific network domains for MCP servers to `allowedDomains`.
+
+### Step 9: Initialize git repo
+
+```bash
+cd ~/.personas/{name}
+git init
+git add -A
+git commit -m "feat({name}): initial scaffold"
+```
+
+### Step 10: Optional GitHub remote
+
+Ask the user: "Want to set up a GitHub repo for this persona?"
+- If yes: `gh repo create kickinrad/{name} --private --source=. --push`
+- If no: Skip — can always add a remote later
 
 ---
 
-## CLAUDE.md Template
+## Three-Layer Model
 
-Use this structure for all new personas:
+Every persona uses three layers — never mix them:
 
-```markdown
-# {PersonaName} {emoji}
-
-> **ABOUTME**: {PersonaName} is a {role description — no personal names}.
-> **ABOUTME**: {One line on what they do.}
-
-## Who I Am
-
-{Personality — 2-3 paragraphs. Generic, no personal data.}
-
-## How I'll Be
-
-- **Trait** — description
-- **Trait** — description
-
-## What I Won't Do
-
-- Anti-pattern
-- Anti-pattern
-
-## Session Start
-
-**Every session:** Read `profile.md` (in this directory) before doing anything else.
-If it doesn't exist, guide them to copy `profile.md.example` and fill it in.
-
-**After reading profile.md:** Check which MCP tools are available in this workspace.
-For any MCP server listed under "MCP Tools Available" that isn't connected:
-- Tell the user which capabilities are unavailable
-- Ask: skip for now, or help set it up?
-- Never assume an MCP is connected — always adapt
-
-## Skills Auto-Activate
-
-Skills in `skills/{domain}/` auto-load when you detect trigger keywords:
-
-| Say this... | Skill activates | What happens |
-|-------------|-----------------|--------------|
-| [trigger phrase] | `skill-name` | [description] |
-
-**The skills contain the full workflow** — follow their instructions exactly.
-
-## MCP Tools Available
-
-{List by MCP server. Only include tools that are core to this persona.
-See Domain Reference table in the persona-dev skill for guidance.}
-
-## Memory
-
-Use Claude Code's built-in auto memory. Files live in the project's
-`.claude/memory/` directory — no MCP required.
-
-**Store when:** {persona-specific: what kinds of things are worth remembering}
-**Recall when:** {persona-specific: when to pull from memory}
-
-To save: write or append to MEMORY.md or topic files in the memory directory.
-To recall: read MEMORY.md or the relevant topic file.
-
-## Self-Management
-
-This persona lives at `~/.personas/{name}/`.
-All files are immediately live — no reinstall needed.
-
-### When to update what
-
-| File | Update when | How |
-|------|------------|-----|
-| `profile.md` | Stable facts change (new account, preference shift) | Propose → write with approval |
-| `MEMORY.md` | Something worth remembering across sessions happened | Write directly |
-| `CLAUDE.md` (rules) | A behavioral pattern should become permanent | Propose → write with approval |
-| New skill file | A 3+ step workflow recurs with no existing skill | Draft → propose to user |
-| `TASKS.md` | Task status changes (if dashboard-enabled) | Write directly |
-
-### Pattern → Rule promotion
-
-**Don't create new memory files** (no `corrections.md`, `feedback.md`, etc.) — MEMORY.md is the
-single source of truth for dynamic learnings. **Don't create a meta-skill for self-improvement** —
-embed audit logic as behavioral rules in CLAUDE.md, not as a separate skill file.
-
-When you notice the same correction or preference 3+ times across sessions
-(visible in memory), propose making it permanent:
-
-> "I've noticed you always ask me to X. Want me to add that as a rule in my CLAUDE.md?"
-
-Then write the change directly to CLAUDE.md.
-
-### Skill gap detection
-
-When handling a request that involves 3+ steps with no existing skill:
-- Note it in memory as a potential skill gap
-- After 3 occurrences, draft a SKILL.md and propose it to the user
-- Once approved, write it to `skills/{domain}/{skill-name}/SKILL.md` — it's live immediately
-
-### Periodic self-audit
-
-Monthly (or triggered by `/update --comprehensive` for dashboard-enabled personas):
-
-1. Read MEMORY.md and count recurring themes — friction points, corrections, repeated questions
-2. Identify what keeps getting handled ad-hoc that should be a skill
-3. Propose changes before writing anything:
-   - Recurring correction (3+ sessions) → propose a CLAUDE.md behavioral rule
-   - 3+ step ad-hoc workflow without a skill → draft a SKILL.md
-   - Outdated profile.md fact → flag for the user to update
-4. Present all proposals clearly. User approves before any file is changed.
-
-The key distinction: MEMORY.md stores what happened; CLAUDE.md rules what always happens.
-Don't promote a one-off to a rule — look for the pattern first.
-
-### Reference docs
-
-For stable domain context too long for profile.md, create `.md` files
-in the plugin directory (e.g., `accounts.md`, `brand-voice.md`,
-`pantry-staples.md`) and reference them in Session Start.
-
-## Important Rules
-
-1. **Skills own the workflow** — follow skill procedures exactly
-2. **Profile.md first** — read it every session before anything else
-3. **Memory is {domain}-specific** — save every meaningful insight
-4. {Additional persona-specific rules}
-```
+| Layer | File | Who Writes | Content |
+|-------|------|-----------|---------|
+| **Personality** | `CLAUDE.md` | Human (Claude proposes) | Role, rules, skills, communication style |
+| **Context** | `profile.md` | Human (guided by Claude) | Personal data, accounts, preferences |
+| **Memory** | `.claude/memory/` | Claude (automatic) | Session outcomes, learnings, patterns |
 
 ---
 
 ## Profile.md vs Memory — Canonical Definitions
 
-| Layer | What goes here | Who writes it | When read |
-|-------|---------------|---------------|-----------|
-| **profile.md** | WHO you are, WHAT you have, HOW you like to work. Stable facts that don't change session to session. | User (manually, with guidance) | Every session start |
-| **MEMORY.md** | WHAT HAPPENED, WHAT WAS DECIDED, WHAT WORKED. Dynamic learnings and session outcomes. | Claude (automatically) | When past context matters |
-| **CLAUDE.md rules** | HOW THE PERSONA BEHAVES. Permanent behavioral rules, promoted from patterns. | Claude proposes, user approves | Always in context |
+| Question | Answer | File |
+|----------|--------|------|
+| Will this be true next month without action? | Yes | `profile.md` |
+| Did Claude discover or decide this? | Yes | `MEMORY.md` |
+| Should this always happen, every session? | Yes | `CLAUDE.md` rule |
 
-**Rule of thumb:**
-- Same next month without action → `profile.md`
-- Claude discovered or decided it → `memory`
-- Should always happen → `CLAUDE.md` rule
-
----
-
-## MCP Availability Check
-
-Always add this pattern to every persona's **Session Start**:
-
-```markdown
-**After reading profile.md:** Check which MCP tools are available.
-For any disconnected server: tell the user what's unavailable, ask
-to skip or set up. Offer text-only mode if all MCPs are unavailable.
-```
-
----
-
-## Domain Reference: Tools by Persona Type
-
-Different domains need different tools. Start here when choosing MCPs:
-
-| Domain | Typical MCPs | Core capabilities |
-|--------|-------------|-------------------|
-| **Finance** | `monarch`, `home-scheduler` | Account balances, transactions, budgets, scheduled reviews |
-| **Life / Organization** | `home-scheduler` | Task management, daily rhythms, morning briefings |
-| **Food / Cooking** | `mealie`, `wlater` (Keep), `google-workspace` | Recipe DB, pantry, meal plans, grocery list, calendar |
-| **Brand / Creative** | `wlater` (Keep), `google-workspace` | Idea capture, content calendar, task tracking |
-| **Health / Fitness** | `google-workspace` | Workout tracking, scheduling, progress logging |
-| **Cross-persona** | `home-scheduler` | Universal: schedule reminders, recurring reviews, notifications |
-
-**What `home-scheduler` gives every persona:**
-- `scheduler_add_claude_trigger` — schedule a recurring Claude prompt (e.g., weekly review)
-- `scheduler_add_bridgey_notify` — Discord notification
-- `scheduler_add_reminder` — desktop popup
-- Bootstrap default schedules on first session (weekly reviews, monthly snapshots)
-
----
-
-## Dashboard Pattern (Optional)
-
-Personas with rich ongoing data benefit from a visual dashboard.
-Good candidates: finance, life systems, brand tracking.
-Simple personas (cooking, one-off advice) usually don't need one.
-
-### Files to create
-
-- `dashboard.html` — Tokyo Night styled, loads data files via `fetch()`
-- `open.sh` — starts Python HTTP server on a unique port, opens browser
-- `TASKS.md` — dedicated task file (separate from MEMORY.md — priorities live here)
-
-### Commands to add
-
-**`/start`** — first-session initializer and daily opener:
-1. Check for `TASKS.md`, `MEMORY.md`, `dashboard.html` — create any that are missing
-2. Run `open.sh` to launch the dashboard
-3. If first session: guide user through profile.md setup and seed initial memory
-
-**`/update`** — regular sync (great for weekly reviews):
-1. Triage stale `TASKS.md` items (anything overdue? blocked? done?)
-2. Pull fresh data from connected MCPs
-3. Prompt user to open the dashboard and review
-
-**`/update --comprehensive`** — deep scan mode (monthly or when things feel messy):
-1. Everything in `/update`, plus:
-2. Scan MEMORY.md for recurring friction patterns (same issue 3+ times → propose a fix)
-3. Identify tasks that keep resurfacing without resolution (blocked? deserves a skill?)
-4. Propose CLAUDE.md or SKILL.md changes based on session patterns
-
-### TASKS.md format
-
-```markdown
-# Tasks
-
-## Active
-- [ ] **Task title** — context, for whom, due [date]
-
-## Waiting On
-- [ ] **Waiting on X** — since [date]
-
-## Someday
-
-## Done
-- [x] ~~Completed task~~ ([date])
-```
-
-### Dashboard design
-
-Keep **Warren's Tokyo Night aesthetic** as the style reference
-(`~/.personas/warren/dashboard.html`). Tabs to adapt per persona:
-
-| Persona type | Suggested tabs |
-|-------------|----------------|
-| Finance | Priorities (from TASKS.md), Profile, Memory, System |
-| Life system | Today (from TASKS.md), Briefing, Profile, Memory |
-| Brand / Creative | Priorities, Content Calendar, Profile, Memory |
-
-**Dashboard fetches:** `TASKS.md`, `profile.md`, `MEMORY.md`, `CLAUDE.md`
-
-The Priorities tab parses TASKS.md into a card grid.
-Use red/amber/green indicators based on urgency or emoji prefix.
-
-**Bi-directional editing (optional enhancement):** The default dashboard is read-only —
-Python serves static files. For personas with frequent task updates, consider extending
-`open.sh` to run a POST-capable server that writes checkbox state changes back to
-`TASKS.md`. This turns the dashboard into a live task board, not just a viewer.
-See `~/.personas/warren/dashboard.html` for the read-only baseline to build from.
-
-### open.sh pattern
-
-```bash
-#!/bin/bash
-cd ~/.personas/{name}
-pkill -f "python3 -m http.server {PORT}" 2>/dev/null
-python3 -m http.server {PORT} &
-sleep 0.5
-explorer.exe "http://localhost:{PORT}/dashboard.html"
-```
-
-Use a unique port per persona to avoid collisions (Warren: 7384).
-
----
-
-## First Session vs. Subsequent Sessions
-
-**If profile.md doesn't exist:**
-1. Tell the user it's missing
-2. Guide: `cp ~/.personas/{name}/profile.md.example ~/.personas/{name}/profile.md`
-3. Walk through key fields together — don't continue without profile context
-
-**Self-configuring persona (Mila pattern):** On first session, actively
-interview the user and write profile.md directly. Other personas guide
-the user to fill in the template themselves.
-
----
-
-## Runtime Model
-
-Each persona is a standalone directory at `~/.personas/{name}/` with its own git repo.
-
-Skills activate when CWD is `~/.personas/{name}/` — native isolation via `--setting-sources project`.
-
-Workspace layout:
-- `~/.personas/{name}/CLAUDE.md` — personality and rules
-- `~/.personas/{name}/skills/` — domain skills
-- `~/.personas/{name}/.claude/settings.json` — sandbox config (committed)
-- `~/.personas/{name}/.mcp.json` — MCP config (gitignored)
-- `~/.personas/{name}/profile.md` — user context (gitignored)
-- `~/.personas/{name}/.claude/memory/` — auto-memory (gitignored)
+**profile.md** = WHO you are, WHAT you have, HOW you like to work. Stable facts.
+**MEMORY.md** = WHAT HAPPENED, WHAT WAS DECIDED, WHAT WORKED. Dynamic learnings.
+**CLAUDE.md rules** = HOW THE PERSONA BEHAVES. Permanent, promoted from patterns.
 
 ---
 
 ## CLI Aliases
 
-Auto-discovered from `~/.personas/*/` via `.zshrc`:
+Auto-discovered from `~/.personas/*/` via shell function in `~/.config/zsh/.personas.zsh`:
 
 ```bash
 for _persona_dir in "$HOME/.personas"/*/; do
   _persona_name=$(basename "$_persona_dir")
-  eval "${_persona_name}() { (cd \"$_persona_dir\" && claude --mcp-config \"${_persona_dir}.mcp.json\" --strict-mcp-config \"\$@\") }"
+  eval "${_persona_name}() { (cd \"$_persona_dir\" && claude --setting-sources project --dangerously-skip-permissions \"\$@\") }"
 done
 unset _persona_dir _persona_name
 ```
 
-After installing: `source ~/.zshrc` — alias is created automatically.
+After creating a persona: `source ~/.config/zsh/.personas.zsh` — the alias is created automatically.
 
 Usage:
-- `warren` → interactive session with Warren's MCPs only
-- `warren "weekly review"` → one-shot skill trigger
-- `--strict-mcp-config` blocks global MCPs from leaking in
+- `{name}` — interactive session
+- `{name} "do weekly review"` — one-shot prompt
+
+---
+
+## First Session Patterns
+
+**Pattern A — Guide** (default): The persona tells the user to copy `profile.md.example` to `profile.md` and walks through each section together. Best for personas where the user knows their own context well.
+
+**Pattern B — Interview**: The persona actively interviews the user and writes `profile.md` directly from answers. Best for personas where the user needs help articulating their context (e.g., financial goals, health history).
+
+Choose the pattern in `CLAUDE.md` Session Start. See `references/claude-md-template.md` for both patterns.
+
+---
+
+## MCP Availability Check
+
+Always embed this pattern in every persona's Session Start (already in the CLAUDE.md template):
+
+```
+After reading profile.md: Check which MCP tools are available.
+For any disconnected server, tell the user what's unavailable
+and ask: skip for now, or help set it up?
+Offer text-only mode if all MCPs are unavailable.
+```
+
+When adding MCP servers:
+1. Document tools in CLAUDE.md under "MCP Tools Available"
+2. Add domains to `.claude/settings.json` → `network.allowedDomains`
+3. Configure the server in `.mcp.json` (gitignored)
+
+---
+
+## Expansion Packs
+
+Some capabilities are optional and can be installed into personas after creation:
+
+| Pack | Skill | What it adds |
+|------|-------|-------------|
+| Dashboard | `persona-manager:persona-dashboard` | Visual dashboard (HTML), task tracking, open.sh |
+| Deploy | `persona-manager:deploy` | Remote deployment via rsync + Tailscale |
+
+These are separate skills in persona-manager — invoke them when the user asks for the capability.
 
 ---
 
 ## Version Bumping
 
-Bump `plugin.json` version before every commit.
-- Patch: skill/doc changes
-- Minor: new skills or dashboard
-- Major: breaking changes to CLAUDE.md structure
+Bump `plugin.json` version before every commit:
+- **Patch**: Skill/doc changes
+- **Minor**: New skills or capabilities
+- **Major**: Breaking changes to CLAUDE.md structure

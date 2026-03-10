@@ -28,7 +28,7 @@ Action items:
 
 # 2. Create your first persona
 persona-manager "create a personal CFO persona called warren"
-# Scaffolds to ~/.personas/warren/
+# Scaffolds to ~/.personas/warren/ (optionally creates a GitHub repo)
 
 # 3. Set up shell aliases (add to .zshrc or .bashrc)
 source ~/.config/zsh/.personas.zsh
@@ -49,7 +49,7 @@ See [Getting Started](docs/getting-started.md) for the full setup guide.
 
 | Component | Role | What it does |
 |-----------|------|--------------|
-| **persona-manager** | Meta-tool | Scaffolds new personas to `~/.personas/`, manages deployment and publishing |
+| **persona-manager** | Meta-tool | Scaffolds new personas to `~/.personas/`, manages deployment |
 
 Persona-manager can create any persona you need — a personal chef, a CFO, a brand strategist, a fitness coach, a writing editor. Each one is scaffolded as an independent repo in `~/.personas/`.
 
@@ -117,7 +117,7 @@ Contributions welcome. This repo contains the persona-manager framework — indi
 To contribute:
 
 1. Fork the repo
-2. Improve persona-manager (scaffolding, deployment, publishing skills)
+2. Improve persona-manager (scaffolding, deployment skills)
 3. Open a PR with a description of your changes
 
 Please follow the [Creating Personas](docs/creating-personas.md) guide for persona structure conventions.

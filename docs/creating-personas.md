@@ -14,8 +14,10 @@ The persona-manager skill will:
 1. Scaffold the directory structure in `~/.personas/your-persona/`
 2. Generate a `CLAUDE.md` with your described personality
 3. Create a `profile.md.example` template
-4. Set up `plugin.json`, sandbox config, and `.gitignore`
-5. Initialize a git repo for the persona
+4. Copy the `self-improve` skill (memory, rule promotion, skill creation, audits)
+5. Set up hooks (`hooks.json` — Stop + PreCompact for auto-memory)
+6. Set up `plugin.json`, sandbox config, and `.gitignore`
+7. Initialize a git repo for the persona
 
 ## Option 2: Manual Scaffolding
 
@@ -30,10 +32,13 @@ Create the following under `~/.personas/`:
 ├── .claude/
 │   └── settings.json        # Sandbox configuration
 ├── .gitignore               # Ignores profile.md, .mcp.json, memory, etc.
+├── hooks.json               # Stop + PreCompact hooks for auto-memory
 ├── CLAUDE.md                # Personality and rules
 ├── profile.md.example       # Profile template for users
 └── skills/
-    └── {domain}/            # Skill files go here
+    ├── {domain}/            # Domain skill files
+    └── self-improve/
+        └── SKILL.md         # Self-improvement skill (ships with every persona)
 ```
 
 After scaffolding, initialize the persona as its own git repo:
@@ -240,29 +245,22 @@ Then reference the MCP server's tools in your `CLAUDE.md` under "MCP Tools Avail
 
 Remember to add the MCP server's domains to `.claude/settings.json` under `network.allowedDomains`.
 
-## Self-Management Section
+## Self-Improvement
 
-Add this to every persona's `CLAUDE.md` to enable self-improvement:
+Every persona ships with a `self-improve` skill at `skills/self-improve/SKILL.md` and hooks for auto-memory. These are copied from the persona-manager's reference templates during scaffolding.
 
-```markdown
-## Self-Management
+The self-improve skill handles:
+- **Memory management** — what to store, MEMORY.md conventions
+- **Rule promotion** — 3+ corrections → propose CLAUDE.md rule
+- **Skill creation** — 3+ ad-hoc workflows → draft SKILL.md
+- **Tool creation** — scripts, docs, MCP proposals
+- **Periodic audit** — monthly memory scan and proposals
 
-### When to update what
+The hooks (`hooks.json`) handle:
+- **Stop** — reminds the persona to update memory before ending
+- **PreCompact** — saves session context before compaction
 
-| File | Update when | How |
-|------|------------|-----|
-| `profile.md` | Stable facts change | Propose, write with approval |
-| `MEMORY.md` | Something worth remembering | Write directly |
-| `CLAUDE.md` | A pattern should become permanent | Propose, write with approval |
-| New skill file | A workflow recurs with no existing skill | Draft, propose to user |
-
-### Pattern promotion
-
-When you notice the same correction 3+ times across sessions,
-propose making it a permanent rule in CLAUDE.md.
-```
-
-See [Self-Improvement](self-improvement.md) for the full model.
+In the persona's CLAUDE.md, the Self-Improvement section is just one line pointing to the skill. See [Self-Improvement](self-improvement.md) for the full model.
 
 ## Testing Your Persona
 
