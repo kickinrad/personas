@@ -178,4 +178,3 @@ Your shell aliases are not loaded. Make sure you:
 
 - [Creating Personas](creating-personas.md) — Build your own custom persona
 - [Self-Improvement](self-improvement.md) — Understand how personas evolve
-- [Remote Deployment](remote-deployment.md) — Run personas on servers

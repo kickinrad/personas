@@ -184,7 +184,6 @@ Some capabilities are optional and can be installed into personas after creation
 | Pack | Skill | What it adds |
 |------|-------|-------------|
 | Dashboard | `persona-manager:persona-dashboard` | Visual dashboard (HTML), task tracking, open.sh |
-| Deploy | `persona-manager:deploy` | Remote deployment via rsync + Tailscale |
 
 These are separate skills in persona-manager — invoke them when the user asks for the capability.
 
