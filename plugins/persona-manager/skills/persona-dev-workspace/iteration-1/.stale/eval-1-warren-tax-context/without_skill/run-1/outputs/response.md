@@ -11,7 +11,7 @@ The fix is straightforward: **add a dedicated Tax Filing Context section to `pro
 ## File to Update
 
 ```
-/home/wilst/projects/personal/personas/plugins/warren/profile.md
+/home/user/projects/personal/personas/plugins/warren/profile.md
 ```
 
 ---
@@ -27,17 +27,17 @@ Insert the following section **between the existing "Income Sources" section and
 
 | Key | Detail |
 |-----|--------|
-| Filing status | **Married Filing Jointly** (with Sako) |
-| Primary income types | W2 (Sako — Upspring) + Self-employment / Schedule C (Wils — b.f.f.) |
-| Self-employment tax | Yes — SE tax applies to b.f.f. net profit. Deduct 50% of SE tax from gross income. |
-| Quarterly estimated taxes | **Required** — Wils has no withholding on b.f.f. income. 2026 quarters: Apr 15, Jun 16, Sep 15, Jan 15. |
+| Filing status | **Married Filing Jointly** (with [spouse]) |
+| Primary income types | W2 ([spouse] — [employer]) + Self-employment / Schedule C (the user — [business name]) |
+| Self-employment tax | Yes — SE tax applies to [business name] net profit. Deduct 50% of SE tax from gross income. |
+| Quarterly estimated taxes | **Required** — the user has no withholding on [business name] income. 2026 quarters: Apr 15, Jun 16, Sep 15, Jan 15. |
 | Home office deduction | Simplified method — ~200 sqft / ~1,200 sqft total = ~1/6. Max $5/sqft = $1,000/year. |
-| ACA / health insurance | Marketplace policy (Sentara, 955447). ACA premium deduction applies for Wils as self-employed. |
+| ACA / health insurance | Marketplace policy ([provider, policy #]). ACA premium deduction applies for the user as self-employed. |
 | Inherited IRA / RMDs | Annual RMDs required through 2034. Must fully deplete by Dec 31, 2035. Pair with SEP-IRA contributions. |
 | SEP-IRA | Self-employed retirement vehicle — contributions reduce Schedule C net profit and AGI. |
 | State | Virginia — files VA state return separately. |
-| Dad's gift (~$1,150/mo) | NOT taxable income. Gift from father's personal checking. Do not include in income calculations. |
-| Otherthings.jpg (Sako) | Sako's side business — tracked separately, not consolidated into household Schedule C. |
+| Family gift (~$X/mo) | NOT taxable income. Gift from family member's personal checking. Do not include in income calculations. |
+| [Spouse's side business] ([spouse]) | [spouse]'s side business — tracked separately, not consolidated into household Schedule C. |
 
 *This section should be treated as stable context. Update only when filing status, employment status, or structure changes.*
 ```
@@ -56,7 +56,7 @@ Insert the following section **between the existing "Income Sources" section and
 
 ## Complete Edit (with surrounding context for placement)
 
-In `/home/wilst/projects/personal/personas/plugins/warren/profile.md`, find this existing block:
+In `/home/user/projects/personal/personas/plugins/warren/profile.md`, find this existing block:
 
 ```markdown
 *Note: Always fetch live income from Monarch `get_cashflow` for current period analysis*
@@ -77,17 +77,17 @@ Replace it with:
 
 | Key | Detail |
 |-----|--------|
-| Filing status | **Married Filing Jointly** (with Sako) |
-| Primary income types | W2 (Sako — Upspring) + Self-employment / Schedule C (Wils — b.f.f.) |
-| Self-employment tax | Yes — SE tax applies to b.f.f. net profit. Deduct 50% of SE tax from gross income. |
-| Quarterly estimated taxes | **Required** — Wils has no withholding on b.f.f. income. 2026 quarters: Apr 15, Jun 16, Sep 15, Jan 15. |
+| Filing status | **Married Filing Jointly** (with [spouse]) |
+| Primary income types | W2 ([spouse] — [employer]) + Self-employment / Schedule C (the user — [business name]) |
+| Self-employment tax | Yes — SE tax applies to [business name] net profit. Deduct 50% of SE tax from gross income. |
+| Quarterly estimated taxes | **Required** — the user has no withholding on [business name] income. 2026 quarters: Apr 15, Jun 16, Sep 15, Jan 15. |
 | Home office deduction | Simplified method — ~200 sqft / ~1,200 sqft total = ~1/6. Max $5/sqft = $1,000/year. |
-| ACA / health insurance | Marketplace policy (Sentara, 955447). ACA premium deduction applies for Wils as self-employed. |
+| ACA / health insurance | Marketplace policy ([provider, policy #]). ACA premium deduction applies for the user as self-employed. |
 | Inherited IRA / RMDs | Annual RMDs required through 2034. Must fully deplete by Dec 31, 2035. Pair with SEP-IRA contributions. |
 | SEP-IRA | Self-employed retirement vehicle — contributions reduce Schedule C net profit and AGI. |
 | State | Virginia — files VA state return separately. |
-| Dad's gift (~$1,150/mo) | NOT taxable income. Gift from father's personal checking. Do not include in income calculations. |
-| Otherthings.jpg (Sako) | Sako's side business — tracked separately, not consolidated into household Schedule C. |
+| Family gift (~$X/mo) | NOT taxable income. Gift from family member's personal checking. Do not include in income calculations. |
+| [Spouse's side business] ([spouse]) | [spouse]'s side business — tracked separately, not consolidated into household Schedule C. |
 
 *This section should be treated as stable context. Update only when filing status, employment status, or structure changes.*
 

@@ -84,7 +84,7 @@
         {
           "text": "provides_specific_content",
           "passed": true,
-          "evidence": "Response provides a complete markdown table block to add, with specific fields: Filing status (MFJ), Wils income type, Sako income type, Quarterly estimated taxes, SE tax, Key deductions, Inherited IRA RMDs, and Relevant forms \u2014 plus exact placement instructions (after Income Sources, around line 109)."
+          "evidence": "Response provides a complete markdown table block to add, with specific fields: Filing status, income types, Quarterly estimated taxes, SE tax, Key deductions, Inherited IRA RMDs, and Relevant forms \u2014 plus exact placement instructions (after Income Sources, around line 109)."
         },
         {
           "text": "shows_profile_vs_rule_distinction",
@@ -208,7 +208,7 @@
         {
           "text": "provides_specific_content",
           "passed": true,
-          "evidence": "Response provides a full markdown table with 11 specific rows (Filing status, Primary income types, Self-employment tax, Quarterly estimated taxes, Home office deduction, ACA/health insurance, Inherited IRA/RMDs, SEP-IRA, State, Dad's gift, Otherthings.jpg) plus exact file path and placement instructions with surrounding context for the edit."
+          "evidence": "Response provides a full markdown table with 11 specific rows (Filing status, Primary income types, Self-employment tax, Quarterly estimated taxes, Home office deduction, ACA/health insurance, Inherited IRA/RMDs, SEP-IRA, State, and other household income sources) plus exact file path and placement instructions with surrounding context for the edit."
         },
         {
           "text": "shows_profile_vs_rule_distinction",

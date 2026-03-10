@@ -1,6 +1,6 @@
 # Warren Self-Improvement: Design & Implementation
 
-Great feature request, Wils. This is a two-part problem: **passive learning** (absorbing corrections over time) and **active auditing** (`/update --comprehensive`). Here's how I'd build both.
+Great feature request, the user. This is a two-part problem: **passive learning** (absorbing corrections over time) and **active auditing** (`/update --comprehensive`). Here's how I'd build both.
 
 ---
 
@@ -98,7 +98,7 @@ Flag skills as: ACTIVE | DORMANT | NEEDS_UPDATE
 ## 3. Identify Missing Skills
 Look for patterns in memory that repeat across sessions but don't have a skill:
 - Topics you discuss that follow a consistent workflow
-- Questions Wils asks regularly that don't map to a trigger
+- Questions the user asks regularly that don't map to a trigger
 - Workflows you improvise every time
 
 Flag these as: CANDIDATE_SKILL

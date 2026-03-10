@@ -1,15 +1,5 @@
 .DS_Store
+.worktrees/
+*.log
 *.local.json
 *.local.md
-.worktrees/
-
-# Private persona data — never commit
-plugins/*/profile.md
-plugins/*/.mcp.json
-plugins/*/.claude/
-plugins/*/*.db
-plugins/*/*.db-shm
-plugins/*/*.db-wal
-*.log
-plugins/*/*.log
-plugins/warren/dashboard.html

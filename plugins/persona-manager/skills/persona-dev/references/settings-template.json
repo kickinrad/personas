@@ -1,0 +1,15 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "filesystem": {
+      "allowWrite": ["."],
+      "denyRead": ["~/.aws", "~/.ssh", "~/.gnupg", "../"]
+    },
+    "network": {
+      "allowedDomains": [
+        "api.anthropic.com"
+      ]
+    }
+  }
+}

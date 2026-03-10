@@ -2,7 +2,7 @@
   "name": "personas",
   "owner": { "name": "kickinrad", "url": "https://github.com/kickinrad" },
   "metadata": {
-    "description": "Personal AI personas for Claude Code",
+    "description": "Framework for self-evolving AI personas on Claude Code",
     "version": "1.0.0",
     "pluginRoot": "./plugins"
   },
@@ -10,37 +10,9 @@
     {
       "name": "persona-manager",
       "source": "./plugins/persona-manager",
-      "description": "Bootstraps and manages ~/.personas/{name}/ project directories",
-      "version": "1.0.4",
-      "category": "management"
-    },
-    {
-      "name": "luna",
-      "source": "./plugins/luna",
-      "description": "Luna — life assistant. Morning briefings, task management, brain dumps.",
-      "version": "1.1.0",
-      "category": "persona"
-    },
-    {
-      "name": "julia",
-      "source": "./plugins/julia",
-      "description": "Julia — personal chef. Meal planning, pantry management, recipe discovery.",
+      "description": "Scaffolds and manages AI personas in ~/.personas/",
       "version": "1.2.0",
-      "category": "persona"
-    },
-    {
-      "name": "warren",
-      "source": "./plugins/warren",
-      "description": "Warren — personal CFO. Sharp, analytical. Monarch Money integration, weekly reviews, net worth tracking, trading habit building.",
-      "version": "1.1.0",
-      "category": "persona"
-    },
-    {
-      "name": "mila",
-      "source": "./plugins/mila",
-      "description": "Mila — brand manager and creative strategist. Helps you build intentionally across multiple focus areas.",
-      "version": "1.1.0",
-      "category": "persona"
+      "category": "management"
     }
   ]
 }

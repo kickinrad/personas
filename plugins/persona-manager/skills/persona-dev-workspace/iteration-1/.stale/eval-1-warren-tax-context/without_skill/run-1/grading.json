@@ -20,7 +20,7 @@
     {
       "text": "provides_specific_content",
       "passed": true,
-      "evidence": "Response provides a full markdown table with 11 specific rows (Filing status, Primary income types, Self-employment tax, Quarterly estimated taxes, Home office deduction, ACA/health insurance, Inherited IRA/RMDs, SEP-IRA, State, Dad's gift, Otherthings.jpg) plus exact file path and placement instructions with surrounding context for the edit."
+      "evidence": "Response provides a full markdown table with 11 specific rows (Filing status, Primary income types, Self-employment tax, Quarterly estimated taxes, Home office deduction, ACA/health insurance, Inherited IRA/RMDs, SEP-IRA, State, family gift, spouse's side business) plus exact file path and placement instructions with surrounding context for the edit."
     },
     {
       "text": "shows_profile_vs_rule_distinction",

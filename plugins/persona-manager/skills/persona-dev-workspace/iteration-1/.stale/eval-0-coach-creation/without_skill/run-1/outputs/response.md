@@ -518,8 +518,8 @@ Data-forward, but not robotic. Celebrate real progress. Be honest if progress ha
   "description": "Coach — your personal fitness trainer. Workout tracking, weekly planning, calendar blocking, and accountability.",
   "version": "0.0.0-dev",
   "author": {
-    "name": "kickinrad",
-    "url": "https://github.com/kickinrad"
+    "name": "your-github-handle",
+    "url": "https://github.com/your-github-handle"
   }
 }
 ```
@@ -539,11 +539,11 @@ Data-forward, but not robotic. Celebrate real progress. Be honest if progress ha
       ]
     },
     "scheduler": {
-      "command": "/home/wilst/.local/bin/uv",
+      "command": "/home/user/.local/bin/uv",
       "args": [
         "run",
         "--project",
-        "/home/wilst/projects/personal/home-base/services/home-scheduler",
+        "/home/user/projects/personal/home-base/services/home-scheduler",
         "home-scheduler"
       ]
     }
@@ -555,7 +555,7 @@ Data-forward, but not robotic. Celebrate real progress. Be honest if progress ha
 
 ---
 
-## Guidance for Wils
+## Guidance
 
 ### What this covers vs what you'd still need to fill in
 

@@ -1,173 +1,127 @@
-# kickinrad/personas
+# Personas
 
-> Private monorepo for persistent, personal AI assistants built on Claude Code. Each persona lives directly in this repo — edit and go.
+**Self-evolving AI assistants built on Claude Code plugins.**
+
+Each persona is a standalone Claude Code plugin with its own personality, skills, memory, and sandbox. Use persona-manager to scaffold one, type its name, and you have a dedicated AI assistant that remembers your context and gets better over time — no Docker, no infrastructure, no configuration servers.
 
 ```
-$ luna "good morning"
+$ warren "weekly review"
 
-🌙 Good morning! Let me pull your day together...
+📊 Weekly Financial Review — Mar 3-8, 2026
 
-🌤  Weather   — 62°F, partly cloudy. Light jacket weather.
-📅  Calendar  — 10am standup, 2pm 1:1 with Marco
-✅  Tasks     — 3 due today: Review PR #47, Call insurance, Groceries
-📝  Big 3     — From last night: ship auth refactor, gym, newsletter draft
+Income:   $4,200  ✓ on track
+Spending: $2,847  ⚠️ dining out up 34% vs. last month
+Savings:  $1,353  → auto-transferred to HYSA
 
-Energy check: how are you feeling today?
+Action items:
+1. Dining budget is trending $400 over — cut back or reallocate?
+2. Car insurance renewal hits Thursday — I found a $180/yr cheaper quote
+3. Roth IRA contribution room: $2,500 remaining for 2026
 ```
 
----
+## Quick Start
+
+```bash
+# 1. Install persona-manager as a Claude Code plugin
+/plugin marketplace add kickinrad/personas
+/plugin install persona-manager@personas
+
+# 2. Create your first persona
+persona-manager "create a personal CFO persona called warren"
+# Scaffolds to ~/.personas/warren/ (optionally creates a GitHub repo)
+
+# 3. Set up shell aliases (add to .zshrc or .bashrc)
+source ~/.config/zsh/.personas.zsh
+# Or add: for d in ~/.personas/*/; do alias "$(basename $d)"="cd $d && claude"; done
+
+# 4. Configure your profile
+cp ~/.personas/warren/profile.md.example ~/.personas/warren/profile.md
+# Edit profile.md with your details
+
+# 5. Use it
+warren              # interactive session
+warren "weekly review"  # one-shot prompt
+```
+
+See [Getting Started](docs/getting-started.md) for the full setup guide.
+
+## What's Included
+
+| Component | Role | What it does |
+|-----------|------|--------------|
+| **persona-manager** | Meta-tool | Scaffolds new personas to `~/.personas/`, manages deployment |
+
+Persona-manager can create any persona you need — a personal chef, a CFO, a brand strategist, a fitness coach, a writing editor. Each one is scaffolded as an independent repo in `~/.personas/`.
 
 ## How It Works
 
-Personas are Claude Code plugins. Each one is three layers stacked together:
+Every persona is three layers stacked together:
 
-| Layer | File | What it is |
-|-------|------|------------|
-| **Personality** | `plugins/{name}/CLAUDE.md` | Role, skills, rules — committed |
-| **Context** | `plugins/{name}/profile.md` | Your personal data — gitignored |
-| **Memory** | `plugins/{name}/.claude/memory/` | Auto-written by Claude across sessions — gitignored |
+| Layer | File | Purpose |
+|-------|------|---------|
+| **Personality** | `CLAUDE.md` | Role, rules, communication style — committed to git |
+| **Context** | `profile.md` | Your personal data — gitignored, never shared |
+| **Memory** | `.claude/memory/` | Auto-written learnings across sessions — gitignored |
 
-Each persona activates only when its working directory is `plugins/{name}/` — no global state bleed, no shared context.
+Personas run in native OS sandboxes (bubblewrap on Linux, Seatbelt on macOS). Each one is restricted to its own directory and whitelisted network domains. No Docker required.
 
----
+The real magic is **self-improvement**: personas observe patterns across sessions and propose new skills, rules, and tools. A chef that learns your family's preferences. A CFO that spots your spending blind spots. They get better because they're designed to.
 
-## Structure
+## Create Your Own
+
+```bash
+# Use the persona-manager skill
+persona-manager "create a fitness coach persona"
+# Creates ~/.personas/fitness-coach/ with full plugin structure
+```
+
+Or scaffold manually — see [Creating Personas](docs/creating-personas.md) for the full guide.
+
+## Documentation
+
+| Guide | What you'll learn |
+|-------|-------------------|
+| [Getting Started](docs/getting-started.md) | Full setup, first session walkthrough |
+| [Creating Personas](docs/creating-personas.md) | Build a custom persona from scratch |
+| [Self-Improvement](docs/self-improvement.md) | How personas evolve over time |
+| [Remote Deployment](docs/remote-deployment.md) | Run personas on servers with cron |
+
+## Project Structure
 
 ```
-personas/
-├── .gitignore                    ← covers profile.md, .mcp.json, .claude/, *.db, *.log
+personas/                          # This framework repo
 ├── plugins/
-│   ├── persona-manager/          ← scaffolding tool (user-scoped install)
-│   ├── luna/                     ← life assistant
-│   │   ├── CLAUDE.md             ← committed
-│   │   ├── skills/               ← committed
-│   │   ├── profile.md.example    ← committed template
-│   │   ├── profile.md            ← gitignored (your personal data)
-│   │   ├── .mcp.json             ← gitignored (MCP server config)
-│   │   └── .claude/              ← gitignored (settings + memory)
-│   ├── julia/   (same structure)
-│   ├── warren/  (same structure)
-│   └── mila/    (same structure)
-└── tests/
-    └── personas-test.sh
+│   └── persona-manager/           # Meta-tool for scaffolding
+├── tests/
+└── docs/
+
+~/.personas/                       # Your personas (independent repos)
+├── warren/                        # Each persona is its own git repo
+│   ├── .claude-plugin/plugin.json
+│   ├── CLAUDE.md                  # Personality (committed)
+│   ├── profile.md.example         # Profile template (committed)
+│   ├── profile.md                 # Your data (gitignored)
+│   ├── .mcp.json                  # API keys (gitignored)
+│   ├── .claude/settings.json      # Sandbox config (committed)
+│   ├── skills/                    # Domain skills
+│   ├── docs/                      # Reference documents
+│   └── scripts/                   # Tools and utilities
+├── julia/
+└── mila/
 ```
 
----
+## Contributing
 
-## Setup (new machine)
+Contributions welcome. This repo contains the persona-manager framework — individual personas live in their own repos.
 
-### 1. Clone
+To contribute:
 
-```bash
-git clone git@github.com:kickinrad/personas.git ~/projects/personal/personas
-```
+1. Fork the repo
+2. Improve persona-manager (scaffolding, deployment skills)
+3. Open a PR with a description of your changes
 
-### 2. Add shell functions
+Please follow the [Creating Personas](docs/creating-personas.md) guide for persona structure conventions.
 
-Add to `~/.config/zsh/.personas.zsh` (or equivalent):
+## License
 
-```bash
-_PERSONAS_ROOT="$HOME/projects/personal/personas/plugins"
-
-for _p_dir in "$_PERSONAS_ROOT"/*/; do
-  [[ -d "$_p_dir" ]] || continue
-  _p_name=$(basename "$_p_dir")
-  [[ "$_p_name" == "persona-manager" ]] && continue
-  [[ -f "${_p_dir}CLAUDE.md" ]] || continue
-
-  if [[ ! -f "${_p_dir}.mcp.json" ]]; then
-    printf '{\n  "mcpServers": {}\n}\n' > "${_p_dir}.mcp.json"
-  fi
-
-  eval "${_p_name}() {
-    if [[ \$# -gt 0 ]]; then
-      (cd \"${_p_dir}\" && claude \
-        --mcp-config \"${_p_dir}.mcp.json\" \
-        --strict-mcp-config \
-        -p \"\$*\")
-    else
-      (cd \"${_p_dir}\" && claude \
-        --mcp-config \"${_p_dir}.mcp.json\" \
-        --strict-mcp-config)
-    fi
-  }"
-done
-unset _PERSONAS_ROOT _p_dir _p_name
-```
-
-Then `source ~/.config/zsh/.personas.zsh` (or open a new terminal).
-
-### 3. Register plugins
-
-Update `~/.claude/plugins/installed_plugins.json` — each persona needs a local entry pointing to its plugin dir. Example for luna:
-
-```json
-"luna@personas": [{
-  "scope": "local",
-  "projectPath": "/home/wilst/projects/personal/personas/plugins/luna",
-  "installPath": "/home/wilst/projects/personal/personas/plugins/luna",
-  "version": "local",
-  "installedAt": "2026-02-25T19:44:33.119Z",
-  "lastUpdated": "2026-03-02T00:00:00.000Z"
-}]
-```
-
-### 4. Create private data files
-
-Copy the example and fill in your details:
-
-```bash
-cp plugins/luna/profile.md.example plugins/luna/profile.md
-# Edit profile.md — add your name, location, and context
-```
-
-Create `.claude/settings.local.json` per persona (controls which MCP servers and plugin are active):
-
-```json
-{
-  "enabledPlugins": { "luna@personas": true },
-  "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["calendar", "tasks"]
-}
-```
-
-### 5. Use
-
-```bash
-luna          # open interactive session
-luna "hi"     # one-shot prompt
-```
-
----
-
-## Day-to-Day
-
-**Edit and immediately use** — no install, no update, no cache. Just:
-
-```bash
-# Edit a persona
-code ~/projects/personal/personas/plugins/luna/CLAUDE.md
-
-# Use it (picks up changes immediately)
-luna
-```
-
-**Add a new skill:**
-
-```bash
-mkdir -p plugins/luna/skills/my-skill
-# Create SKILL.md with YAML frontmatter
-git add plugins/luna/skills/my-skill/SKILL.md
-git commit -m "feat(luna): add my-skill"
-```
-
----
-
-## Included Personas
-
-| Persona | Role | Skills |
-|---------|------|--------|
-| **luna** 🌙 | Life assistant | morning briefing, brain dump, evening shutdown, stuck mode |
-| **julia** 👩‍🍳 | Personal chef | meal planning, pantry, grocery lists |
-| **warren** 📊 | Personal CFO | weekly review, budget health, net worth, trading review |
-| **mila** ✨ | Brand strategist | content planning, agency growth, music career, writing, quarterly goals |
+MIT

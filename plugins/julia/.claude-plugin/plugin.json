@@ -1,9 +1,0 @@
-{
-  "name": "julia",
-  "description": "Julia — your personal chef. Meal planning, pantry management, recipe discovery.",
-  "version": "0.0.0-dev",
-  "author": {
-    "name": "kickinrad",
-    "url": "https://github.com/kickinrad"
-  }
-}

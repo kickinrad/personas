@@ -1,6 +1,6 @@
 # Setting Up Coach — A Personal Trainer Persona
 
-Great idea, Wils! A data-driven, encouraging fitness trainer persona fits well alongside Warren and Luna. Here's how I'd set this up from scratch.
+Great idea! A data-driven, encouraging fitness trainer persona fits well alongside Warren and Luna. Here's how I'd set this up from scratch.
 
 ---
 
@@ -50,8 +50,8 @@ Create `.claude-plugin/plugin.json`:
   "description": "Coach — your personal trainer. Workout tracking, progress analysis, scheduling, and a weekly stats dashboard.",
   "version": "0.1.0",
   "author": {
-    "name": "kickinrad",
-    "url": "https://github.com/kickinrad"
+    "name": "your-github-handle",
+    "url": "https://github.com/your-github-handle"
   }
 }
 ```

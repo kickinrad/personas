@@ -20,7 +20,7 @@
     {
       "text": "provides_specific_content",
       "passed": true,
-      "evidence": "Response provides a complete markdown table block to add, with specific fields: Filing status (MFJ), Wils income type, Sako income type, Quarterly estimated taxes, SE tax, Key deductions, Inherited IRA RMDs, and Relevant forms \u2014 plus exact placement instructions (after Income Sources, around line 109)."
+      "evidence": "Response provides a complete markdown table block to add, with specific fields: Filing status, income types, Quarterly estimated taxes, SE tax, Key deductions, Inherited IRA RMDs, and Relevant forms \u2014 plus exact placement instructions (after Income Sources, around line 109)."
     },
     {
       "text": "shows_profile_vs_rule_distinction",
