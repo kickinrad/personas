@@ -6,11 +6,11 @@
   <a href="LICENSE"><img src="https://img.shields.io/github/license/kickinrad/personas?style=flat" alt="License"></a>
 </p>
 
-Self-evolving AI assistants built on Claude Code plugins.
+Self-evolving AI personas built as native Claude Code plugins.
 
 <!-- YOUR INTRO — write 1-2 sentences in your own voice -->
 
-Each persona is a standalone Claude Code plugin with its own personality, skills, memory, and sandbox. Type its name and you have a dedicated AI assistant that remembers your context and gets better over time — no Docker, no infrastructure, no configuration servers.
+Each persona is a standalone Claude Code plugin with its own personality, skills, memory, and OS-level sandbox. Install the framework, scaffold a persona, type its name from any directory — you have a dedicated AI assistant that remembers your context and improves itself over time. No Docker, no infrastructure, no configuration servers.
 
 ```
 $ warren "weekly review"
@@ -36,90 +36,152 @@ Action items:
 
 # 2. Create your first persona
 persona-manager "create a personal CFO persona called warren"
-# Scaffolds to ~/.personas/warren/ (optionally creates a GitHub repo)
+# Scaffolds to ~/.personas/warren/ with full plugin structure + GitHub repo
 
 # 3. Set up shell aliases (add to .zshrc or .bashrc)
 source ~/.config/zsh/.personas.zsh
-# Or add: for d in ~/.personas/*/; do alias "$(basename $d)"="cd $d && claude"; done
+# Or: for d in ~/.personas/*/; do alias "$(basename $d)"="cd $d && claude"; done
 
-# 4. Configure your profile
-cp ~/.personas/warren/profile.md.example ~/.personas/warren/profile.md
-# Edit profile.md with your details
+# 4. First session — persona guides you through profile setup
+warren
+# Warren asks about your accounts, income, goals — saves to profile.md
 
-# 5. Use it
+# 5. From now on, just use it
 warren              # interactive session
 warren "weekly review"  # one-shot prompt
 ```
 
-## Features
-
-- **Native Claude Code plugins** — no external runtime, just plugins and shell aliases
-- **Three-layer model** — personality (CLAUDE.md), context (profile.md), and memory (.claude/memory/) stay cleanly separated
-- **Self-improvement** — personas promote learnings from memory to rules to skills automatically
-- **OS-level sandboxing** — each persona is filesystem and network isolated via bubblewrap/Seatbelt
-- **Independent repos** — each persona lives in `~/.personas/{name}/` with its own git history
-- **Any persona you need** — a CFO, a chef, a brand strategist, a fitness coach, a writing editor
+See [Getting Started](docs/getting-started.md) for the full setup guide.
 
 ## How It Works
 
-Every persona is three layers stacked together:
+### Three-Layer Model
 
-| Layer | File | Purpose |
-|-------|------|---------|
-| **Personality** | `CLAUDE.md` | Role, rules, communication style — committed to git |
-| **Context** | `profile.md` | Your personal data — gitignored, never shared |
-| **Memory** | `.claude/memory/` | Auto-written learnings across sessions — gitignored |
+Every persona separates what it is from what it knows about you from what it learns:
 
-Personas run in native OS sandboxes (bubblewrap on Linux, Seatbelt on macOS). Each one is restricted to its own directory and whitelisted network domains. No Docker required.
+| Layer | File | Who Writes | Committed? |
+|-------|------|-----------|------------|
+| **Personality** | `CLAUDE.md` | Human (Claude proposes) | Yes |
+| **Context** | `profile.md` | Human (guided by persona) | No — gitignored |
+| **Memory** | `.claude/memory/` | Persona (automatic) | No — gitignored |
 
-The real magic is **self-improvement**: personas observe patterns across sessions and propose new skills, rules, and tools. A chef that learns your family's preferences. A CFO that spots your spending blind spots. They get better because they're designed to.
+Personality defines the role, rules, and communication style. Context holds your personal data. Memory accumulates session-by-session learnings. They never mix.
 
-<details>
-<summary>Project Structure</summary>
+### Self-Improvement
 
+Personas ship with a `self-improve` skill and hooks that drive automatic evolution:
+
+1. **Memory** — Stop and PreCompact hooks remind the persona to write learnings after every session
+2. **Rule promotion** — after a pattern appears 3+ times in memory, the persona proposes a permanent rule in CLAUDE.md
+3. **Skill creation** — after an ad-hoc workflow repeats 3+ times, the persona drafts a reusable skill
+4. **Tool creation** — scripts, docs, or MCP server additions proposed when gaps are identified
+
+Every level above memory requires your approval before changes are committed. You stay in control; the persona does the legwork.
+
+### Sandboxing
+
+Each persona runs in a native OS sandbox (bubblewrap on Linux, Seatbelt on macOS) configured in `.claude/settings.json`:
+
+```json
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "filesystem": {
+      "allowWrite": ["."],
+      "denyRead": ["~/.aws", "~/.ssh", "~/.gnupg", "../"]
+    },
+    "network": {
+      "allowedDomains": ["api.anthropic.com"]
+    }
+  }
+}
 ```
-personas/                          # This framework repo
-├── plugins/
-│   └── persona-manager/           # Meta-tool for scaffolding
-├── tests/
-└── docs/
 
-~/.personas/                       # Your personas (independent repos)
-├── warren/                        # Each persona is its own git repo
-│   ├── .claude-plugin/plugin.json
-│   ├── CLAUDE.md                  # Personality (committed)
-│   ├── profile.md.example         # Profile template (committed)
-│   ├── profile.md                 # Your data (gitignored)
-│   ├── .mcp.json                  # API keys (gitignored)
-│   ├── .claude/settings.json      # Sandbox config (committed)
-│   ├── skills/                    # Domain skills
-│   ├── docs/                      # Reference documents
-│   └── scripts/                   # Tools and utilities
-├── julia/
-└── mila/
-```
+Personas can only write to their own directory, can't read parent directories or other personas' files, and can only reach whitelisted network domains. Each persona customizes `allowedDomains` for its own MCP servers.
 
-</details>
+### Shell Aliases
 
-<details>
-<summary>Self-Improvement Levels</summary>
-
-1. **Memory** — automatic session learnings written to `.claude/memory/`
-2. **Rule promotion** — proven patterns proposed for CLAUDE.md
-3. **Skill creation** — repeated workflows proposed as new skills
-4. **Tool creation** — scripts and utilities proposed for `scripts/`
-
-Each level requires human approval before changes are committed.
-
-</details>
-
-## Create Your Own
+The alias system auto-discovers personas in `~/.personas/` and creates callable functions:
 
 ```bash
-# Use the persona-manager skill
-persona-manager "create a fitness coach persona"
-# Creates ~/.personas/fitness-coach/ with full plugin structure
+warren              # cd into ~/.personas/warren/, launch Claude Code
+warren "do weekly"  # one-shot with sandboxed permissions
 ```
+
+Under the hood: `cd ~/.personas/{name}/ && claude --setting-sources project --dangerously-skip-permissions`. The `--setting-sources project` flag loads only the persona's config (ignoring global settings), and `--dangerously-skip-permissions` is safe because the sandbox restricts everything.
+
+## What's Included
+
+This repo ships **persona-manager** — the meta-tool that scaffolds and manages personas.
+
+| Skill | What it does |
+|-------|-------------|
+| **persona-dev** | Scaffolds a new persona with CLAUDE.md, profile template, sandbox config, hooks, self-improve skill, gitignore, and optional GitHub repo. Also handles persona updates and evolution. |
+| **persona-dashboard** | Expansion pack — adds an HTML dashboard with task tracking, profile viewer, memory browser, and system overview. Single-file app served locally on ports 7300-7399. |
+
+Every scaffolded persona includes:
+- `CLAUDE.md` with personality template (role, rules, session start, skills table)
+- `profile.md.example` for guided user setup (Guide or Interview pattern)
+- `hooks.json` with Stop + PreCompact hooks for memory automation
+- `self-improve` skill for the evolution engine
+- `.claude/settings.json` with sandbox config
+- `.gitignore` protecting secrets (profile.md, .mcp.json, memory, local overrides)
+
+<details>
+<summary>Persona Directory Structure</summary>
+
+```
+~/.personas/{name}/                  # Each persona is its own git repo
+├── .claude-plugin/plugin.json       # Plugin metadata + version
+├── .claude/
+│   ├── settings.json                # Sandbox config (committed)
+│   └── memory/                      # Auto-memory (gitignored)
+├── CLAUDE.md                        # Personality + rules (committed)
+├── profile.md.example               # Context template (committed)
+├── profile.md                       # Your personal data (gitignored)
+├── .mcp.json                        # MCP servers + API keys (gitignored)
+├── hooks.json                       # Stop + PreCompact hooks (committed)
+├── .gitignore                       # Secret protection (committed)
+├── skills/
+│   ├── {domain}/SKILL.md            # Domain-specific skills
+│   └── self-improve/SKILL.md        # Evolution engine
+├── docs/                            # Reference docs (persona-writable)
+└── scripts/                         # Tools + utilities (persona-writable)
+```
+
+</details>
+
+<details>
+<summary>Framework Repo Structure</summary>
+
+```
+personas/                            # This repo
+├── plugins/
+│   └── persona-manager/             # Meta-tool
+│       ├── skills/
+│       │   ├── persona-dev/         # Scaffolding + evolution skill
+│       │   │   └── references/      # Templates copied to every persona
+│       │   └── persona-dashboard/   # Dashboard expansion pack
+│       │       └── assets/          # HTML dashboard template
+│       └── skill-rules.json         # Activation triggers
+├── docs/
+│   ├── getting-started.md           # Installation + first session
+│   ├── creating-personas.md         # Manual + automated scaffolding
+│   └── self-improvement.md          # Evolution engine details
+└── tests/
+    └── personas-test.sh             # Structure + secret validation
+```
+
+</details>
+
+## Documentation
+
+| Guide | What you'll learn |
+|-------|-------------------|
+| [Getting Started](docs/getting-started.md) | Installation, shell aliases, first session |
+| [Creating Personas](docs/creating-personas.md) | Scaffold with persona-manager or build manually |
+| [Self-Improvement](docs/self-improvement.md) | How the 5-level evolution engine works |
 
 ## Contributing
 
