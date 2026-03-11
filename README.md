@@ -6,11 +6,9 @@
   <a href="LICENSE"><img src="https://img.shields.io/github/license/kickinrad/personas?style=flat" alt="License"></a>
 </p>
 
-Self-evolving AI personas built as native Claude Code plugins.
+Self-evolving AI personas built on Claude Code.
 
-<!-- YOUR INTRO — write 1-2 sentences in your own voice -->
-
-Each persona is a standalone Claude Code plugin with its own personality, skills, memory, and OS-level sandbox. Install the framework, scaffold a persona, type its name from any directory — you have a dedicated AI assistant that remembers your context and improves itself over time. No Docker, no infrastructure, no configuration servers.
+Each persona is a standalone git-tracked directory with its own personality, skills, memory, and OS-level sandbox. Install the framework, scaffold a persona, type its name from any directory — you have a dedicated AI assistant that remembers your context and improves itself over time. No Docker, no infrastructure, no configuration servers.
 
 ```
 $ warren "weekly review"
@@ -36,11 +34,10 @@ Action items:
 
 # 2. Create your first persona
 persona-manager "create a personal CFO persona called warren"
-# Scaffolds to ~/.personas/warren/ with full plugin structure + GitHub repo
+# Scaffolds to ~/.personas/warren/ with sandbox, hooks, self-improve skill
 
 # 3. Set up shell aliases (add to .zshrc or .bashrc)
-source ~/.config/zsh/.personas.zsh
-# Or: for d in ~/.personas/*/; do alias "$(basename $d)"="cd $d && claude"; done
+source ~/.personas/.aliases.sh
 
 # 4. First session — persona guides you through profile setup
 warren
@@ -51,7 +48,7 @@ warren              # interactive session
 warren "weekly review"  # one-shot prompt
 ```
 
-See [Getting Started](docs/getting-started.md) for the full setup guide.
+All setup and creation details live in the `persona-dev` skill — install persona-manager and it guides you through everything.
 
 ## How It Works
 
@@ -74,7 +71,7 @@ Personas ship with a `self-improve` skill and hooks that drive automatic evoluti
 1. **Memory** — Stop and PreCompact hooks remind the persona to write learnings after every session
 2. **Rule promotion** — after a pattern appears 3+ times in memory, the persona proposes a permanent rule in CLAUDE.md
 3. **Skill creation** — after an ad-hoc workflow repeats 3+ times, the persona drafts a reusable skill
-4. **Tool creation** — scripts, docs, or MCP server additions proposed when gaps are identified
+4. **Tool & integration discovery** — researches existing MCP servers, CLI tools, and expansion packs before building custom solutions
 
 Every level above memory requires your approval before changes are committed. You stay in control; the persona does the legwork.
 
@@ -132,8 +129,7 @@ Every scaffolded persona includes:
 <summary>Persona Directory Structure</summary>
 
 ```
-~/.personas/{name}/                  # Each persona is its own git repo
-├── .claude-plugin/plugin.json       # Plugin metadata + version
+~/.personas/{name}/                  # Each persona is its own git-tracked directory
 ├── .claude/
 │   ├── settings.json                # Sandbox config (committed)
 │   └── memory/                      # Auto-memory (gitignored)
@@ -166,9 +162,7 @@ personas/                            # This repo
 │       │       └── assets/          # HTML dashboard template
 │       └── skill-rules.json         # Activation triggers
 ├── docs/
-│   ├── getting-started.md           # Installation + first session
-│   ├── creating-personas.md         # Manual + automated scaffolding
-│   └── self-improvement.md          # Evolution engine details
+│   └── plans/                       # Historical design documents
 └── tests/
     └── personas-test.sh             # Structure + secret validation
 ```
@@ -177,11 +171,12 @@ personas/                            # This repo
 
 ## Documentation
 
-| Guide | What you'll learn |
-|-------|-------------------|
-| [Getting Started](docs/getting-started.md) | Installation, shell aliases, first session |
-| [Creating Personas](docs/creating-personas.md) | Scaffold with persona-manager or build manually |
-| [Self-Improvement](docs/self-improvement.md) | How the 5-level evolution engine works |
+All documentation lives in the persona-manager skill system — install the plugin and the skills guide you through everything:
+
+| Skill | What it covers |
+|-------|---------------|
+| `persona-dev` | Creating, updating, and evolving personas — discovery, scaffolding, shell setup, testing, troubleshooting |
+| `persona-dashboard` | Expansion pack — adds HTML dashboard with task tracking and status overview |
 
 ## Contributing
 

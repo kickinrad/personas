@@ -1,6 +1,6 @@
 ---
 name: self-improve
-description: Self-improvement workflow for evolving this persona — memory management, rule promotion, skill creation, tool creation, and periodic audits. Triggers when you notice recurring patterns, want to propose a new rule or skill, or it's time for a self-audit.
+description: Self-improvement workflow for evolving this persona — memory management, rule promotion, skill creation, tool & integration discovery, workspace hygiene, and periodic audits. Triggers when you notice recurring patterns, want to propose a new rule or skill, need a new tool, or it's time for a self-audit.
 triggers:
   - self-improve
   - self-audit
@@ -23,8 +23,9 @@ This persona lives at `~/.personas/{name}/`. All files are immediately live — 
 | `profile.md` | Stable facts change (new account, preference shift) | Propose, write with approval |
 | `CLAUDE.md` (rules) | A behavioral pattern should become permanent | Propose, write with approval |
 | New skill file | A 3+ step workflow recurs with no existing skill | Draft, propose to user |
-| New script/tool | A capability gap needs automation | Draft, propose to user |
+| New script/tool | A capability gap needs automation (research first!) | Draft, propose to user |
 | `docs/*.md` | Stable domain context too long for profile.md | Write with approval |
+| Remove files | Stale docs, unused scripts, dead skills | Propose removal in audit |
 
 ## Level 1: Memory Management (Automatic)
 
@@ -69,18 +70,45 @@ When handling a request that involves **3+ steps** with no existing skill, and i
 5. Update the Skills table in CLAUDE.md
 6. Commit: `feat(self): add {skill-name} skill`
 
-## Level 4: Tool Creation (Propose to User)
+## Level 4: Tool & Integration Discovery (Propose to User)
 
 When a capability gap needs automation beyond conversation:
 
-1. Identify what's needed (script, reference doc, MCP addition)
-2. Draft the artifact:
-   - Scripts go to `scripts/`
-   - Reference docs go to `docs/`
-   - MCP proposals describe the server + required domains
-3. Propose with a preview
-4. On approval, write the files
-5. For MCP changes: remind user to update `.mcp.json` and `.claude/settings.json`
+### Step 1: Research before building
+
+Before creating anything custom, investigate what already exists:
+
+- **MCP servers** — search for community or official MCP servers that solve the problem. A well-maintained server beats a custom script every time
+- **CLI tools** — check if there's an existing tool (`gh`, `jq`, `fzf`, etc.) that handles it. Many problems have mature solutions
+- **Expansion packs** — check if a persona-manager expansion pack covers it (e.g., `persona-manager:persona-dashboard` for task tracking and visual status)
+- **Reference docs** — sometimes the "tool" you need is just good documentation in `docs/`
+
+Present findings: "Here's what I found that could help: [options]. Want to use an existing tool, or should I build something?"
+
+### Step 2: Identify what's needed
+
+| Need | Where it goes | Example |
+|------|--------------|---------|
+| Script or utility | `scripts/{tool-name}/` | Data pipeline, API wrapper, setup script |
+| Reference doc | `docs/` | Domain knowledge, checklists, templates |
+| MCP server (existing) | `.mcp.json` + sandbox allowlist | Community server for a service |
+| MCP server (custom) | Propose — user configures | Only if nothing exists |
+| CLI tool integration | `scripts/` or CLAUDE.md instructions | Wrapping an external CLI |
+| Expansion pack | Invoke the persona-manager skill | Dashboard, future packs |
+
+### Step 3: Keep custom builds simple
+
+- If it would take more than ~100 lines or needs ongoing maintenance, prefer an existing tool
+- Custom scripts should do one thing well — no Swiss Army knives
+- Always include a brief comment header explaining what the script does and when to use it
+
+### Step 4: Propose, build, integrate
+
+1. Propose with a preview of what you'll create or install
+2. On approval, write the files (or guide MCP setup)
+3. For MCP changes: remind user to update `.mcp.json` and `.claude/settings.json` network allowlist
+4. For scripts: make executable (`chmod +x`), add to `scripts/` with its own subdir if non-trivial
+5. Update CLAUDE.md if the new tool changes workflows
 6. Commit: `feat(self): add {tool-name}`
 
 ## Periodic Audit
@@ -94,7 +122,13 @@ Run monthly, or when the user says "time for a self-audit":
    - Outdated profile.md fact → flag for user update
 3. **Review existing rules** — any that no longer apply? Propose removal
 4. **Review existing skills** — any that need updating based on recent sessions?
-5. **Present all proposals** clearly in a single summary:
+5. **Workspace hygiene sweep:**
+   - Scan `docs/` and `scripts/` for stale or outdated files — propose removal or update
+   - Check MCP servers — any unused or disconnected for 3+ sessions? Flag for removal
+   - Review MEMORY.md length — if over ~100 lines, summarize older entries
+   - Check for loose files in the root that should be in `docs/` or `scripts/`
+   - Verify `.gitignore` is up to date with any new generated files
+7. **Present all proposals** clearly in a single summary:
 
 ```
 ## Self-Audit Results
@@ -109,11 +143,16 @@ Run monthly, or when the user says "time for a self-audit":
 ### Profile.md Updates
 - **Flag:** {fact} may be outdated — please verify
 
+### Workspace Cleanup
+- **Remove:** `docs/old-thing.md` — not referenced in 5+ sessions
+- **Move:** `root-file.md` → `docs/reference/` — misplaced
+- **Flag:** MCP server `{name}` unused for 3+ sessions — remove?
+
 ### No Action Needed
-- Memory is clean, rules are current, no skill gaps detected
+- Memory is clean, rules are current, workspace is tidy, no skill gaps detected
 ```
 
-6. Wait for approval on each proposal before writing anything
+8. Wait for approval on each proposal before writing anything
 
 ## The Key Distinction
 

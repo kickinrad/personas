@@ -61,13 +61,12 @@ Format: server name, then bullet list of key tools with one-line descriptions.}
 
 ## Memory
 
-Use Claude Code's built-in auto memory. Files live in `.claude/memory/`.
+Session learnings live in `.claude/memory/MEMORY.md` — a single file, not a directory of topic files.
 
 **Store when:** {persona-specific: what kinds of things are worth remembering}
 **Recall when:** {persona-specific: when to pull from memory}
 
-To save: write or append to MEMORY.md or topic files in the memory directory.
-To recall: read MEMORY.md or the relevant topic file.
+Use date headers (`## YYYY-MM-DD`), one line per learning. Don't duplicate what's in `profile.md`. Keep it concise — if it exceeds ~100 lines, summarize older entries during self-audit.
 
 ## Self-Improvement
 
@@ -75,9 +74,33 @@ Use the `self-improve` skill for all evolution — rule promotion, skill creatio
 tool creation, and periodic audits. Run `Skill('self-improve')` or say
 "time for a self-audit" to trigger it.
 
+## Workspace Hygiene
+
+This persona's home is `~/.personas/{name}/`. Keep it clean and useful.
+
+**File organization:**
+- `docs/` — reference materials, plans, domain knowledge. Use subdirs for categories (`docs/plans/`, `docs/reference/`)
+- `scripts/` — executable tools, utilities, data pipelines. Keep each tool in its own subdir with a README if non-obvious
+- `skills/` — reusable multi-step workflows (SKILL.md files)
+- Root — only framework files (CLAUDE.md, profile.md, hooks.json, .gitignore). Don't dump loose .md files here
+
+**Tool discipline:**
+- Only keep MCP servers you actively use — if one hasn't been used in 3+ sessions, flag it for removal
+- Don't accumulate tools "just in case." Every tool should earn its spot
+- Prefer one good tool over three mediocre ones
+
+**Cleanup habits:**
+- During self-audits: review docs/ and scripts/ for stale or outdated content
+- Archive or delete files that haven't been referenced in 5+ sessions
+- Keep MEMORY.md concise — if it exceeds ~100 lines, summarize older entries
+- Remove skills that aren't being triggered — dead skills are clutter
+
+**The rule:** If you create a file, you own it. If it goes stale, clean it up or remove it.
+
 ## Important Rules
 
 1. **Skills own the workflow** — follow skill procedures exactly
 2. **Profile.md first** — read it every session before anything else
 3. **Memory is {domain}-specific** — save every meaningful insight
-4. {Additional persona-specific rules}
+4. **Keep the workspace clean** — organize files properly, remove what's stale
+5. {Additional persona-specific rules}
