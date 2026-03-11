@@ -1,8 +1,16 @@
-# Personas
+<p align="center">
+  <img src="assets/banner.svg" alt="personas" width="600">
+</p>
 
-**Self-evolving AI assistants built on Claude Code plugins.**
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/kickinrad/personas?style=flat" alt="License"></a>
+</p>
 
-Each persona is a standalone Claude Code plugin with its own personality, skills, memory, and sandbox. Use persona-manager to scaffold one, type its name, and you have a dedicated AI assistant that remembers your context and gets better over time — no Docker, no infrastructure, no configuration servers.
+Self-evolving AI assistants built on Claude Code plugins.
+
+<!-- YOUR INTRO — write 1-2 sentences in your own voice -->
+
+Each persona is a standalone Claude Code plugin with its own personality, skills, memory, and sandbox. Type its name and you have a dedicated AI assistant that remembers your context and gets better over time — no Docker, no infrastructure, no configuration servers.
 
 ```
 $ warren "weekly review"
@@ -43,15 +51,14 @@ warren              # interactive session
 warren "weekly review"  # one-shot prompt
 ```
 
-See [Getting Started](docs/getting-started.md) for the full setup guide.
+## Features
 
-## What's Included
-
-| Component | Role | What it does |
-|-----------|------|--------------|
-| **persona-manager** | Meta-tool | Scaffolds new personas to `~/.personas/`, manages evolution |
-
-Persona-manager can create any persona you need — a personal chef, a CFO, a brand strategist, a fitness coach, a writing editor. Each one is scaffolded as an independent repo in `~/.personas/`.
+- **Native Claude Code plugins** — no external runtime, just plugins and shell aliases
+- **Three-layer model** — personality (CLAUDE.md), context (profile.md), and memory (.claude/memory/) stay cleanly separated
+- **Self-improvement** — personas promote learnings from memory to rules to skills automatically
+- **OS-level sandboxing** — each persona is filesystem and network isolated via bubblewrap/Seatbelt
+- **Independent repos** — each persona lives in `~/.personas/{name}/` with its own git history
+- **Any persona you need** — a CFO, a chef, a brand strategist, a fitness coach, a writing editor
 
 ## How It Works
 
@@ -67,26 +74,8 @@ Personas run in native OS sandboxes (bubblewrap on Linux, Seatbelt on macOS). Ea
 
 The real magic is **self-improvement**: personas observe patterns across sessions and propose new skills, rules, and tools. A chef that learns your family's preferences. A CFO that spots your spending blind spots. They get better because they're designed to.
 
-## Create Your Own
-
-```bash
-# Use the persona-manager skill
-persona-manager "create a fitness coach persona"
-# Creates ~/.personas/fitness-coach/ with full plugin structure
-```
-
-Or scaffold manually — see [Creating Personas](docs/creating-personas.md) for the full guide.
-
-## Documentation
-
-| Guide | What you'll learn |
-|-------|-------------------|
-| [Getting Started](docs/getting-started.md) | Full setup, first session walkthrough |
-| [Creating Personas](docs/creating-personas.md) | Build a custom persona from scratch |
-| [Self-Improvement](docs/self-improvement.md) | How personas evolve over time |
-
-
-## Project Structure
+<details>
+<summary>Project Structure</summary>
 
 ```
 personas/                          # This framework repo
@@ -110,18 +99,36 @@ personas/                          # This framework repo
 └── mila/
 ```
 
+</details>
+
+<details>
+<summary>Self-Improvement Levels</summary>
+
+1. **Memory** — automatic session learnings written to `.claude/memory/`
+2. **Rule promotion** — proven patterns proposed for CLAUDE.md
+3. **Skill creation** — repeated workflows proposed as new skills
+4. **Tool creation** — scripts and utilities proposed for `scripts/`
+
+Each level requires human approval before changes are committed.
+
+</details>
+
+## Create Your Own
+
+```bash
+# Use the persona-manager skill
+persona-manager "create a fitness coach persona"
+# Creates ~/.personas/fitness-coach/ with full plugin structure
+```
+
 ## Contributing
 
-Contributions welcome. This repo contains the persona-manager framework — individual personas live in their own repos.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-To contribute:
+## Star History
 
-1. Fork the repo
-2. Improve persona-manager (scaffolding, skills)
-3. Open a PR with a description of your changes
-
-Please follow the [Creating Personas](docs/creating-personas.md) guide for persona structure conventions.
+[![Star History Chart](https://api.star-history.com/svg?repos=kickinrad/personas&type=Date)](https://star-history.com/#kickinrad/personas&Date)
 
 ## License
 
-MIT
+[Apache-2.0](LICENSE)
