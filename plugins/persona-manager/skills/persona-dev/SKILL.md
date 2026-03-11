@@ -28,9 +28,9 @@ Each persona contains:
 │   ├── settings.json              # Sandbox config (committed)
 │   └── memory/                    # Auto-memory (gitignored)
 ├── .gitignore                     # Secrets exclusion
-├── hooks.json                     # Stop + PreCompact hooks
+├── hooks.json                     # SessionStart + Stop + PreCompact hooks
 ├── CLAUDE.md                      # Personality + rules
-├── profile.md.example             # Profile template (committed)
+├── profile-template.md             # Profile template (committed)
 ├── profile.md                     # User's personal context (gitignored)
 ├── .mcp.json                      # MCP server config (gitignored)
 ├── skills/
@@ -58,7 +58,7 @@ Before building anything, understand what this persona needs to be. Ask the user
 - What domain or role? (finance advisor, personal chef, brand strategist, etc.)
 - What's the persona's expertise and voice? (casual vs formal, opinionated vs neutral, proactive vs reactive)
 - What workflows will it handle? (weekly reviews, meal planning, code review, etc.)
-- What does the user need the persona to know about them? (accounts, preferences, constraints — this shapes `profile.md.example`)
+- What does the user need the persona to know about them? (accounts, preferences, constraints — this shapes `profile-template.md`)
 
 **Explore based on domain:**
 - What external services or APIs does the persona need? (→ MCP server research in Phase 2)
@@ -82,13 +82,15 @@ Present findings to the user: "Here's what I found that could enhance this perso
 
 ### Phase 3: Scaffold
 
-Create the directory structure directly:
+**First, check if the persona already exists:**
+- If `~/.personas/{name}/CLAUDE.md` exists, stop and ask: "A persona named `{name}` already exists. Update it, or pick a different name?"
+- Don't proceed with scaffolding if it would overwrite an existing persona
+
+Create the directory structure:
 
 ```bash
 mkdir -p ~/.personas/{name}/{.claude/memory,skills,docs,scripts}
 ```
-
-No external dependencies — this skill handles everything.
 
 ### Phase 4: Build core files
 
@@ -96,43 +98,62 @@ No external dependencies — this skill handles everything.
 
 Use the template from `references/claude-md-template.md`. Key decisions:
 
-- **Session Start pattern**: Guide (user fills template) vs Interview (persona writes directly)
 - **Personality**: Be specific about traits and anti-patterns. Give it opinions
 - **Workspace Hygiene section**: Include it — every persona must maintain its own workspace
 - **Self-Improvement**: Point to the self-improve skill (one line, not inline)
 
-**4b. Write profile.md.example**
+**4b. Create profile-template.md**
 
-Create a template with sections relevant to the persona's domain. Include:
-- Personal info placeholders relevant to this domain
-- Account/service connections
-- Preferences and constraints
-- Anything the persona needs to know about the user
+Copy `references/profile-template.md` and customize it for this persona's domain:
+- Rename/add/remove sections to fit the domain (e.g., a finance persona needs "Accounts & Assets", a chef persona needs "Dietary Restrictions")
+- Update placeholders to be domain-specific
+- Update the interview instructions comment with persona-specific guidance on what to ask and how to probe deeper
 
-**4c. Create first domain skill(s)**
+This file is committed — it's the spec for how `profile.md` should look when filled out.
+
+**4c. Copy profile-template.md → profile.md**
+
+Copy the customized `profile-template.md` to `profile.md`. On first session, the SessionStart hook reads this, sees the unfilled placeholders, and interviews the user to populate it. `profile.md` is gitignored — the template stays as the committed reference.
+
+**4d. Create first domain skill(s)**
 
 Write at least one skill under `skills/{domain}/{skill-name}/SKILL.md` with:
 - YAML frontmatter (name, description, triggers)
 - Step-by-step workflow
 - Expected output format
 
-**4d. Copy self-improve skill**
+**4e. Copy self-improve skill**
 
 Copy `references/self-improve-skill.md` to `skills/self-improve/SKILL.md`. Replace `{name}` with the persona name. This ships with every persona — it handles memory management, rule promotion, skill creation, tool discovery, and periodic audits.
 
-**4e. Set up hooks**
+**4f. Set up hooks**
 
 Copy `references/hooks-template.json` to `hooks.json` in the persona root. These hooks:
-- **Stop**: Reminds the persona to update memory before ending
-- **PreCompact**: Saves session context before compaction
+- **SessionStart** (command): Reads `profile.md` contents into session context via `additionalContext` — the persona then interviews if unfilled or checks completeness. Must be `type: "command"` (SessionStart only supports command hooks)
+- **Stop** (prompt): Reminds the persona to update memory before ending
+- **PreCompact** (prompt): Saves session context before compaction
 
-**4f. Create .gitignore**
+**4g. Create .gitignore**
 
 Copy `references/gitignore-template` to `.gitignore`.
 
-**4g. Configure sandbox**
+**4h. Configure sandbox**
 
 Copy `references/settings-template.json` to `.claude/settings.json`. Add any persona-specific network domains for MCP servers to `allowedDomains`.
+
+**4i. Validate scaffold**
+
+Before proceeding, verify all required files exist:
+- [ ] `CLAUDE.md`
+- [ ] `profile-template.md`
+- [ ] `profile.md` (copy of template, ready for first-session interview)
+- [ ] `hooks.json`
+- [ ] `.gitignore`
+- [ ] `.claude/settings.json`
+- [ ] `skills/self-improve/SKILL.md`
+- [ ] At least one domain skill in `skills/`
+
+If anything is missing, fix it now — don't proceed with gaps.
 
 ### Phase 5: Configure integrations
 
@@ -157,16 +178,20 @@ Ask the user: "Want to set up a GitHub repo for this persona?"
 - If yes: `gh repo create {github-username}/{name} --private --source=. --push`
 - If no: Skip — can always add a remote later
 
-### Phase 7: Set up shell alias + verify
+### Phase 7: Configure shell aliases + verify
 
-Tell the user how to set up the CLI alias for their shell (see [CLI Aliases](#cli-aliases) below), then verify the persona works:
+Automatically set up the alias system so the persona is callable by name:
 
-```bash
-source ~/.personas/.aliases.sh   # or their shell's equivalent
-{name}                           # should start an interactive session
-```
+1. **Create `~/.personas/.aliases.sh`** if it doesn't exist (see [CLI Aliases](#cli-aliases) below for the template)
+2. **Add source line to the user's shell config** if not already present:
+   - Detect the user's shell from `$SHELL`
+   - For zsh: append to `~/.zshrc`
+   - For bash: append to `~/.bashrc`
+   - The line to add: `[ -f "$HOME/.personas/.aliases.sh" ] && source "$HOME/.personas/.aliases.sh"`
+   - **Check first** — only add if the line isn't already there
+3. **Tell the user** to restart their shell or run `source ~/.personas/.aliases.sh` to activate immediately
 
-Run through the [Testing a Persona](#testing-a-persona) checklist to confirm everything works.
+Then verify the persona works — run through the [Testing a Persona](#testing-a-persona) checklist.
 
 ---
 
@@ -177,7 +202,7 @@ Every persona uses three layers — never mix them:
 | Layer | File | Who Writes | Content |
 |-------|------|-----------|---------|
 | **Personality** | `CLAUDE.md` | Human (Claude proposes) | Role, rules, skills, communication style |
-| **Context** | `profile.md` | Human (guided by Claude) | Personal data, accounts, preferences |
+| **Context** | `profile.md` | Claude (from user interview) | Personal data, accounts, preferences |
 | **Memory** | `.claude/memory/` | Claude (automatic) | Session outcomes, learnings, patterns |
 
 ---
@@ -202,7 +227,7 @@ Personas are invoked by name from any directory via shell functions that auto-di
 
 ### Setup
 
-Create `~/.personas/.aliases.sh` (works in both bash and zsh):
+Create `~/.personas/.aliases.sh`:
 
 ```bash
 #!/usr/bin/env bash
@@ -225,33 +250,13 @@ done
 unset _persona_dir _persona_name
 ```
 
-**Source from your shell config:**
+**Source from your shell config** (add to `~/.zshrc` or `~/.bashrc`):
 
-| Shell | Add to |
-|-------|--------|
-| **zsh** | `~/.zshrc`: `[ -f "$HOME/.personas/.aliases.sh" ] && source "$HOME/.personas/.aliases.sh"` |
-| **bash** | `~/.bashrc`: `[ -f "$HOME/.personas/.aliases.sh" ] && source "$HOME/.personas/.aliases.sh"` |
-| **fish** | `~/.config/fish/conf.d/personas.fish` — see fish snippet below |
-
-**Fish shell** (different syntax — create `~/.config/fish/conf.d/personas.fish`):
-
-```fish
-# Auto-discover personas for fish shell
-for persona_dir in $HOME/.personas/*/
-    set persona_name (basename $persona_dir)
-    test -f "$persona_dir/CLAUDE.md"; or continue
-
-    function $persona_name --description "Launch $persona_name persona" --wraps=claude
-        if test (count $argv) -gt 0
-            cd $persona_dir; and claude --setting-sources project --dangerously-skip-permissions -p "$argv"
-        else
-            cd $persona_dir; and claude --setting-sources project --dangerously-skip-permissions
-        end
-    end
-end
+```bash
+[ -f "$HOME/.personas/.aliases.sh" ] && source "$HOME/.personas/.aliases.sh"
 ```
 
-After creating or updating a persona: `source ~/.personas/.aliases.sh` (or restart your shell).
+After creating or updating a persona: `source ~/.personas/.aliases.sh` or restart your shell.
 
 **Usage:**
 - `{name}` — interactive session
@@ -263,13 +268,11 @@ After creating or updating a persona: `source ~/.personas/.aliases.sh` (or resta
 
 ---
 
-## First Session Patterns
+## First Session Flow
 
-**Pattern A — Guide** (default): The persona tells the user to copy `profile.md.example` to `profile.md` and walks through each section together. Best for personas where the user knows their own context well.
+On first session, `profile.md` exists as an unfilled copy of `profile-template.md`. The SessionStart hook reads it, sees the template placeholders, and interviews the user to populate each section. The persona follows the interview instructions embedded in the template to ask the right questions and fill out the profile to spec.
 
-**Pattern B — Interview**: The persona actively interviews the user and writes `profile.md` directly from answers. Best for personas where the user needs help articulating their context (e.g., financial goals, health history).
-
-Choose the pattern in `CLAUDE.md` Session Start. See `references/claude-md-template.md` for both patterns.
+On subsequent sessions, the SessionStart hook reads `profile.md` automatically. If any sections are still incomplete, the persona prompts the user to fill in the gaps before proceeding.
 
 ---
 
@@ -309,7 +312,7 @@ During self-audits, personas can also discover expansion packs that would help w
 
 After creation, verify:
 
-- [ ] Run `{name}` — does the persona greet you and check for `profile.md`?
+- [ ] Run `{name}` — does the SessionStart hook read `profile.md` (or trigger the interview if missing)?
 - [ ] Try each skill trigger — does the right skill activate?
 - [ ] Ask something outside its domain — does it redirect gracefully?
 - [ ] End a session — does it write meaningful learnings to MEMORY.md?
@@ -327,7 +330,7 @@ Test with adversarial prompts too — ask the persona to do something it shouldn
 
 **Persona doesn't pick up profile.md:**
 - Verify the file exists: `ls ~/.personas/{name}/profile.md`
-- Make sure you copied from `profile.md.example`, not renamed it
+- Check that hooks.json includes the SessionStart hook (reads profile.md automatically)
 
 **MCP server not connecting:**
 - Check `.mcp.json` syntax: `jq . ~/.personas/{name}/.mcp.json`

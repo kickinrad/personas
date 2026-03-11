@@ -1,5 +1,12 @@
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "cat profile.md 2>/dev/null | head -100 | jq -Rs '{hookSpecificOutput: {hookEventName: \"SessionStart\", additionalContext: (\"Profile contents:\\n\" + . + \"\\nIf profile.md contains unfilled template placeholders, follow the interview instructions in the template to ask the user the right questions and populate each section (see Session Start in CLAUDE.md). If already filled out but incomplete, ask the user to fill in the gaps before proceeding.\")}}'",
+        "timeout": 5000
+      }
+    ],
     "Stop": [
       {
         "type": "prompt",
