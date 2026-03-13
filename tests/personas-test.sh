@@ -104,16 +104,6 @@ if [[ -d "$PERSONAS_DIR" ]]; then
     pname=$(basename "$persona_dir")
     echo "  Checking: $pname"
 
-    # Must have plugin.json
-    ppjson="$persona_dir/.claude-plugin/plugin.json"
-    if [[ -f "$ppjson" ]]; then
-      check "plugin.json exists" "pass"
-      pversion=$(jq -r '.version // empty' "$ppjson" 2>/dev/null)
-      [[ -n "$pversion" ]] && check "version present ($pversion)" "pass" || check "version present" "missing"
-    else
-      check "plugin.json exists" "missing"
-    fi
-
     # Must have CLAUDE.md
     [[ -f "$persona_dir/CLAUDE.md" ]] && \
       check "CLAUDE.md exists" "pass" || check "CLAUDE.md exists" "missing"

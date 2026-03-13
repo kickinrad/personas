@@ -104,9 +104,9 @@ Adapt tabs to the persona's domain:
 
 After installing the dashboard, update the persona's CLAUDE.md:
 
-1. Add `TASKS.md` to the Self-Management table
+1. Add a note about `TASKS.md` under the Skills or Important Rules section (e.g., "Update TASKS.md when tasks change")
 2. Add `open.sh` reference to Session Start (optional — "run `bash open.sh` to launch dashboard")
 
-## Version Bump
+## After Adding
 
-Bump the persona's `plugin.json` version (minor) after adding a dashboard.
+Commit the new files: `feat({name}): add dashboard expansion pack`
