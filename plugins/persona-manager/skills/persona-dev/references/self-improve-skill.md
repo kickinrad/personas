@@ -80,7 +80,7 @@ Before creating anything custom, investigate what already exists:
 
 - **MCP servers** — search for community or official MCP servers that solve the problem. A well-maintained server beats a custom script every time
 - **CLI tools** — check if there's an existing tool (`gh`, `jq`, `fzf`, etc.) that handles it. Many problems have mature solutions
-- **Expansion packs** — check if a persona-manager expansion pack covers it (e.g., `persona-manager:persona-dashboard` for task tracking and visual status)
+- **Expansion packs** — check if a persona expansion pack covers it (e.g., `persona-dashboard:install` for task tracking and visual status)
 - **Reference docs** — sometimes the "tool" you need is just good documentation in `docs/`
 
 Present findings: "Here's what I found that could help: [options]. Want to use an existing tool, or should I build something?"

@@ -114,7 +114,7 @@ All lifecycle operations use native Claude Code features or persona-manager skil
 |--------|-----|
 | Install persona-manager | `/plugin marketplace add kickinrad/personas` then `/plugin install persona-manager@personas` |
 | Create persona | `Skill('persona-manager:persona-dev')` — scaffolds to `~/.personas/` |
-| Add dashboard | `Skill('persona-manager:persona-dashboard')` — expansion pack |
+| Add dashboard | `Skill('persona-dashboard:install')` — expansion pack |
 | Push to GitHub | `gh repo create` during scaffolding, or `git push` anytime |
 | Daily use | Shell alias (`{name}`, `{name} "prompt"`) |
 

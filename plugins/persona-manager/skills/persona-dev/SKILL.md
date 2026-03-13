@@ -75,7 +75,7 @@ Before writing a single file, research what tools and integrations could enhance
 1. **MCP servers** — search for community or official MCP servers relevant to the domain (recipe APIs, financial data, calendar, etc.). Existing MCP servers beat custom scripts
 2. **CLI tools** — identify useful CLI tools already installed or easily available (`gh`, `jq`, domain-specific CLIs)
 3. **Expansion packs** — check if any persona-manager expansion packs fit:
-   - `persona-manager:persona-dashboard` — visual dashboard with task tracking (good for personas with ongoing work, reviews, or regular check-ins)
+   - `persona-dashboard:install` — visual dashboard with task tracking (good for personas with ongoing work, reviews, or regular check-ins)
 4. **Reference material** — find domain-specific best practices, checklists, or frameworks that should live in `docs/`
 
 Present findings to the user: "Here's what I found that could enhance this persona: [list]. Which of these should we include?"
@@ -300,7 +300,7 @@ Optional capabilities that can be installed into personas after creation:
 
 | Pack | Skill | What it adds | Good for |
 |------|-------|-------------|----------|
-| Dashboard | `persona-manager:persona-dashboard` | Visual dashboard (HTML), task tracking, open.sh | Personas with ongoing work, reviews, regular check-ins |
+| Dashboard | `persona-dashboard:install` | Visual dashboard (HTML), task tracking, open.sh | Personas with ongoing work, reviews, regular check-ins |
 
 These are separate skills in persona-manager — invoke them when the user asks for the capability, or suggest them during Phase 2 (Research) when creating a persona.
 

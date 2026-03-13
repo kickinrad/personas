@@ -112,7 +112,7 @@ This repo ships **persona-manager** — the meta-tool that scaffolds and manages
 | Skill | What it does |
 |-------|-------------|
 | **persona-dev** | Scaffolds a new persona with CLAUDE.md, profile template, sandbox config, hooks, self-improve skill, gitignore, and optional GitHub repo. Also handles persona updates and evolution. |
-| **persona-dashboard** | Expansion pack — adds an HTML dashboard with task tracking, profile viewer, memory browser, and system overview. Single-file app served locally on ports 7300-7399. |
+| **persona-dashboard** (separate plugin) | Expansion pack — adds an HTML dashboard with task tracking, profile viewer, memory browser, and system overview. Single-file app served locally on ports 7300-7399. |
 
 Every scaffolded persona includes:
 - `CLAUDE.md` with personality template (role, rules, session start, skills table)
@@ -155,8 +155,9 @@ personas/                            # This repo
 │       ├── skills/
 │       │   ├── persona-dev/         # Scaffolding + evolution skill
 │       │   │   └── references/      # Templates copied to every persona
-│       │   └── persona-dashboard/   # Dashboard expansion pack
-│       │       └── assets/          # HTML dashboard template
+│   └── persona-dashboard/           # Dashboard expansion pack (separate plugin)
+│       └── skills/install/          # Dashboard installation skill
+│           └── assets/              # HTML dashboard template
 │       └── skill-rules.json         # Activation triggers
 ├── docs/
 │   └── plans/                       # Historical design documents
@@ -173,7 +174,7 @@ All documentation lives in the persona-manager skill system — install the plug
 | Skill | What it covers |
 |-------|---------------|
 | `persona-dev` | Creating, updating, and evolving personas — discovery, scaffolding, shell setup, testing, troubleshooting |
-| `persona-dashboard` | Expansion pack — adds HTML dashboard with task tracking and status overview |
+| `persona-dashboard:install` | Expansion pack — adds HTML dashboard with task tracking and status overview (separate plugin) |
 
 ## Contributing
 

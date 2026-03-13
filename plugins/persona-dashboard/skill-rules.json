@@ -1,0 +1,20 @@
+{
+  "description": "Activation rules for persona-dashboard skills",
+  "rules": {
+    "install": {
+      "kind": "skill",
+      "type": "process",
+      "enforcement": "must",
+      "priority": "medium",
+      "activationHint": "Skill('persona-dashboard:install')",
+      "promptTriggers": {
+        "keywords": ["dashboard", "persona dashboard", "task board", "visual status"],
+        "intentPatterns": ["(add|set up|create|build|install).*?dashboard", "dashboard.*?(for|to|persona)", "want a dashboard", "task board"]
+      },
+      "fileTriggers": {
+        "pathPatterns": [],
+        "contentPatterns": []
+      }
+    }
+  }
+}
