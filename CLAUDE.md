@@ -16,30 +16,29 @@ personas/                                 # Framework repo
 ~/.personas/                              # Personas live here (outside this repo)
 ├── .aliases.sh                           # Shell functions for all personas (bash/zsh)
 └── {persona}/                            # Each persona is its own git-tracked directory
-    ├── CLAUDE.md                         # Personality + rules (committed)
-    ├── profile-template.md                # Template for user context (committed)
-    ├── profile.md                        # User's personal data (gitignored)
-    ├── .mcp.json                         # MCP server config (gitignored)
-    ├── hooks.json                        # SessionStart + Stop + PreCompact hooks (committed)
+    ├── CLAUDE.md                         # Role, rules, skill refs (committed)
     ├── .claude/
-    │   ├── settings.json                 # Sandbox + permissions (committed)
-    │   └── memory/                       # Auto-memory (gitignored)
+    │   ├── settings.json                 # Sandbox + autoMemoryDirectory (committed)
+    │   ├── output-styles/               # Personality, tone, style (committed)
+    │   └── settings.local.json          # (always gitignored)
+    ├── hooks.json                        # SessionStart hook (committed)
+    ├── profile-template.md               # Template for user context (committed)
+    ├── .mcp.json                         # MCP server config (gitignored)
     ├── skills/
     │   ├── {domain}/{skill}/SKILL.md     # Domain skills (committed)
     │   └── self-improve/SKILL.md         # Ships with every persona
-    ├── docs/                             # Reference docs, plans (committed, persona-writable)
-    └── scripts/                          # Tools and utilities (committed, persona-writable)
+    ├── tools/                            # Utilities, scripts, pipelines (committed)
+    ├── docs/                             # Reference docs, plans (committed)
+    └── user/                             # Personal data silo (optionally gitignored)
+        ├── profile.md                    # User's personal data (filled from interview)
+        └── memory/                       # Native auto-memory
+            ├── MEMORY.md                 # Index (first 200 lines loaded)
+            └── *.md                      # Topic files (read on demand)
 ```
 
-## Three-Layer Model
+## What Is a Persona?
 
-Every persona uses three layers — never mix them:
-
-| Layer | File | Who Writes | Content |
-|-------|------|-----------|---------|
-| **Personality** | `CLAUDE.md` | Human (Claude proposes) | Role, rules, skills, communication style |
-| **Context** | `profile.md` | Persona (from user interview) | Personal data, accounts, preferences |
-| **Memory** | `.claude/memory/` | Claude (automatic) | Session outcomes, learnings, patterns |
+**A persona is a self-contained AI assistant.** It combines standard Claude Code features — identity (CLAUDE.md), output style (`.claude/output-styles/`), user context (`user/profile.md`), skills, hooks, MCP tools, sandbox settings, and native auto-memory (`user/memory/`) — into a specialized agent that evolves over time. The persona maintains all of these itself; identity changes require human approval, everything else evolves automatically.
 
 ## CLI Aliases
 
@@ -73,10 +72,11 @@ Each alias `cd`s into `~/.personas/{name}/` and runs `claude --setting-sources p
 
 ## Native Sandboxing
 
-Each persona ships `.claude/settings.json` with sandbox config. No Docker required — uses OS-level isolation (bubblewrap on Linux, Seatbelt on macOS).
+Each persona ships `.claude/settings.json` with sandbox config and `autoMemoryDirectory`. No Docker required — uses OS-level isolation (bubblewrap on Linux, Seatbelt on macOS).
 
 ```json
 {
+  "autoMemoryDirectory": "user/memory",
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
@@ -95,16 +95,17 @@ Each persona customizes allowed domains for its MCP servers and APIs. Personas c
 
 ## Self-Improvement (Core Feature)
 
-Every persona ships with a `self-improve` skill and hooks that automate evolution:
+Every persona ships with a `self-improve` skill that drives evolution:
 
-- **Hooks** (`hooks.json`): SessionStart hook reads `profile.md` (or triggers the first-session interview if missing); Stop hook reminds persona to update memory; PreCompact hook saves context before compaction
+- **SessionStart hook** (`hooks.json`): Reads `user/profile.md` on every session (or triggers the first-session interview if unfilled)
+- **Native auto-memory** (`user/memory/`): Handled automatically by Claude Code via `autoMemoryDirectory` — no custom hooks needed
 - **Self-improve skill** (`skills/self-improve/SKILL.md`): Handles rule promotion, skill creation, tool & integration discovery, workspace hygiene, and periodic audits
 
-The four levels: memory (automatic), rule promotion (propose), skill creation (propose), tool & integration discovery (research existing solutions first, then propose). Periodic audits include workspace hygiene — cleaning stale files, pruning unused tools, keeping the persona lean. See the self-improve skill for the full workflow.
+The four levels: memory (automatic/native), rule promotion (propose), skill creation (propose), tool & integration discovery (research existing solutions first, then propose). Periodic audits include workspace hygiene — cleaning stale files, pruning unused tools, keeping the persona lean. See the self-improve skill for the full workflow.
 
 ## Session Start
 
-On first session, `profile.md` exists as an unfilled copy of `profile-template.md`. The SessionStart hook reads it, follows the embedded interview instructions to ask the user the right questions, and populates each section. On returning sessions, the hook reads `profile.md` and checks for completeness. Hooks handle profile setup (SessionStart), memory automation (Stop), and compaction safety (PreCompact).
+On first session, `user/profile.md` exists as an unfilled copy of `profile-template.md`. The SessionStart hook reads it, follows the embedded interview instructions to ask the user the right questions, and populates each section. On returning sessions, the hook reads `user/profile.md` and checks for completeness.
 
 ## Lifecycle
 
@@ -121,27 +122,26 @@ All lifecycle operations use native Claude Code features or persona-manager skil
 ## Private vs Public Personas
 
 - **All personas are independent repos** in `~/.personas/{name}/`, each with their own git history
-- **Public**: Push to a public GitHub repo
+- **Public**: Uncomment `# user/` in `.gitignore`, push to a public GitHub repo
 - **Private**: Keep local or push to a private repo
 - **Going public**: Since each persona is its own repo, just create a fresh remote — no history scrubbing needed
 
 ## Security Rules
 
-- **Never commit secrets** — `.mcp.json` and `profile.md` are gitignored per-persona
+- **Never commit secrets** — `.mcp.json` is always gitignored; `user/` is optionally gitignored for public sharing
 - **Use `pass`** for credentials in `.mcp.json`: `$(pass show service/key-name)`
 - **Never hardcode** OAuth tokens, API keys, or JWT tokens
 - **Sandbox** restricts each persona to its own directory + whitelisted network domains
 
 ## Gitignored (Never Commit)
 
-Each persona's `.gitignore` handles its own secrets. Common patterns:
+Each persona's `.gitignore` handles its own secrets:
 
-- `profile.md` — personal data
-- `.mcp.json` — API keys and secrets
-- `.claude/memory/` — auto-memory
-- `.claude/settings.local.json` — local overrides
-- `*.db*` — local databases
-- `*.log`, `*.local.json`, `*.local.md`
+- `user/` — uncomment to share persona publicly (keeps personal data private)
+- `.mcp.json` — API keys and secrets (always ignored)
+- `.claude/settings.local.json` — local overrides (always ignored)
+- `*.local.json`, `*.local.md` — local config variants
+- `*.db*`, `*.log` — local databases and logs
 
 ## Git Flow
 
@@ -155,3 +155,4 @@ Commits: `type(scope): description` — scope is `framework` for this repo, pers
 - MCP servers must be configured per-persona in `.mcp.json` (gitignored), not globally
 - `.claude/settings.json` (sandbox config) IS committed — `.claude/settings.local.json` is gitignored
 - Personas live in `~/.personas/`, NOT in this framework repo
+- Output styles live in `.claude/output-styles/` — personality/tone is separate from rules in CLAUDE.md

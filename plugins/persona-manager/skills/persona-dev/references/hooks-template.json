@@ -3,20 +3,8 @@
     "SessionStart": [
       {
         "type": "command",
-        "command": "cat profile.md 2>/dev/null | head -100 | jq -Rs '{hookSpecificOutput: {hookEventName: \"SessionStart\", additionalContext: (\"Profile contents:\\n\" + . + \"\\nIf profile.md contains unfilled template placeholders, follow the interview instructions in the template to ask the user the right questions and populate each section (see Session Start in CLAUDE.md). If already filled out but incomplete, ask the user to fill in the gaps before proceeding.\")}}'",
+        "command": "cat user/profile.md 2>/dev/null | head -100 | jq -Rs '{hookSpecificOutput: {hookEventName: \"SessionStart\", additionalContext: (\"Profile contents:\\n\" + . + \"\\nIf profile.md contains unfilled template placeholders, follow the interview instructions in the template to ask the user the right questions and populate each section (see Session Start in CLAUDE.md). If already filled out but incomplete, ask the user to fill in the gaps before proceeding.\")}}'",
         "timeout": 5000
-      }
-    ],
-    "Stop": [
-      {
-        "type": "prompt",
-        "prompt": "Before ending: if anything meaningful happened this session (decisions, corrections, discoveries, preferences), update .claude/memory/MEMORY.md with a dated entry. Keep entries concise — one line per learning. Skip if nothing worth remembering occurred."
-      }
-    ],
-    "PreCompact": [
-      {
-        "type": "prompt",
-        "prompt": "Context is about to be compacted. Summarize any important session context that hasn't been written to .claude/memory/MEMORY.md yet. Write it now so it survives compaction."
       }
     ]
   }

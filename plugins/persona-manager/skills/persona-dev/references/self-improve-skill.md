@@ -1,6 +1,6 @@
 ---
 name: self-improve
-description: Self-improvement workflow for evolving this persona — memory management, rule promotion, skill creation, tool & integration discovery, workspace hygiene, and periodic audits. Triggers when you notice recurring patterns, want to propose a new rule or skill, need a new tool, or it's time for a self-audit.
+description: Self-improvement workflow for evolving this persona — rule promotion, skill creation, tool & integration discovery, workspace hygiene, and periodic audits. Triggers when you notice recurring patterns, want to propose a new rule or skill, need a new tool, or it's time for a self-audit.
 triggers:
   - self-improve
   - self-audit
@@ -19,27 +19,22 @@ This persona lives at `~/.personas/{name}/`. All files are immediately live — 
 
 | File | Update when | How |
 |------|------------|-----|
-| `MEMORY.md` | Something worth remembering happened | Write directly |
-| `profile.md` | Stable facts change (new account, preference shift) | Propose, write with approval |
+| `user/memory/` | Something worth remembering happened | Native auto-memory handles this |
+| `user/profile.md` | Stable facts change (new account, preference shift) | Propose, write with approval |
 | `CLAUDE.md` (rules) | A behavioral pattern should become permanent | Propose, write with approval |
 | New skill file | A 3+ step workflow recurs with no existing skill | Draft, propose to user |
-| New script/tool | A capability gap needs automation (research first!) | Draft, propose to user |
+| New tool | A capability gap needs automation (research first!) | Draft, propose to user |
 | `docs/*.md` | Stable domain context too long for profile.md | Write with approval |
-| Remove files | Stale docs, unused scripts, dead skills | Propose removal in audit |
+| Remove files | Stale docs, unused tools, dead skills | Propose removal in audit |
 
-## Level 1: Memory Management (Automatic)
+## Level 1: Memory Management (Native Auto-Memory)
 
-Every session, update `.claude/memory/MEMORY.md` with:
-- Session outcomes and key decisions
-- User corrections and discovered preferences
-- Observed patterns ("user always asks for X on Mondays")
-- Things that worked well or poorly
+Memory is handled natively by Claude Code via `user/memory/`. The system automatically creates topic-based memory files and reads them when relevant.
 
-**Conventions:**
-- Use date headers (`## YYYY-MM-DD`)
-- Keep entries concise — one line per learning
-- Don't duplicate what's already in profile.md
-- Don't create extra memory files (no `corrections.md`, `feedback.md`) — MEMORY.md is the single source
+During self-audits, review `user/memory/MEMORY.md` and topic files for:
+- Recurring patterns worth promoting to rules
+- Outdated entries worth cleaning up
+- Gaps in what's being captured
 
 ## Level 2: Rule Promotion (Propose to User)
 
@@ -89,25 +84,25 @@ Present findings: "Here's what I found that could help: [options]. Want to use a
 
 | Need | Where it goes | Example |
 |------|--------------|---------|
-| Script or utility | `scripts/{tool-name}/` | Data pipeline, API wrapper, setup script |
+| Script or utility | `tools/{tool-name}/` | Data pipeline, API wrapper, setup script |
 | Reference doc | `docs/` | Domain knowledge, checklists, templates |
 | MCP server (existing) | `.mcp.json` + sandbox allowlist | Community server for a service |
 | MCP server (custom) | Propose — user configures | Only if nothing exists |
-| CLI tool integration | `scripts/` or CLAUDE.md instructions | Wrapping an external CLI |
+| CLI tool integration | `tools/` or CLAUDE.md instructions | Wrapping an external CLI |
 | Expansion pack | Invoke the persona-manager skill | Dashboard, future packs |
 
 ### Step 3: Keep custom builds simple
 
 - If it would take more than ~100 lines or needs ongoing maintenance, prefer an existing tool
-- Custom scripts should do one thing well — no Swiss Army knives
-- Always include a brief comment header explaining what the script does and when to use it
+- Custom tools should do one thing well — no Swiss Army knives
+- Always include a brief comment header explaining what the tool does and when to use it
 
 ### Step 4: Propose, build, integrate
 
 1. Propose with a preview of what you'll create or install
 2. On approval, write the files (or guide MCP setup)
 3. For MCP changes: remind user to update `.mcp.json` and `.claude/settings.json` network allowlist
-4. For scripts: make executable (`chmod +x`), add to `scripts/` with its own subdir if non-trivial
+4. For tools: make executable (`chmod +x`), add to `tools/` with its own subdir if non-trivial
 5. Update CLAUDE.md if the new tool changes workflows
 6. Commit: `feat(self): add {tool-name}`
 
@@ -115,18 +110,17 @@ Present findings: "Here's what I found that could help: [options]. Want to use a
 
 Run monthly, or when the user says "time for a self-audit":
 
-1. **Read memory** — scan MEMORY.md for recurring themes, friction points, repeated questions
+1. **Read memory** — scan `user/memory/MEMORY.md` and topic files for recurring themes, friction points, repeated questions
 2. **Check for promotable patterns:**
    - Recurring correction (3+ sessions) → propose CLAUDE.md rule
    - Recurring multi-step workflow → propose new SKILL.md
-   - Outdated profile.md fact → flag for user update
+   - Outdated `user/profile.md` fact → flag for user update
 3. **Review existing rules** — any that no longer apply? Propose removal
 4. **Review existing skills** — any that need updating based on recent sessions?
 5. **Workspace hygiene sweep:**
-   - Scan `docs/` and `scripts/` for stale or outdated files — propose removal or update
+   - Scan `docs/` and `tools/` for stale or outdated files — propose removal or update
    - Check MCP servers — any unused or disconnected for 3+ sessions? Flag for removal
-   - Review MEMORY.md length — if over ~100 lines, summarize older entries
-   - Check for loose files in the root that should be in `docs/` or `scripts/`
+   - Check for loose files in the root that should be in `docs/` or `tools/`
    - Verify `.gitignore` is up to date with any new generated files
 7. **Present all proposals** clearly in a single summary:
 
@@ -140,7 +134,7 @@ Run monthly, or when the user says "time for a self-audit":
 ### Proposed New Skills
 - **{skill-name}** — handles {workflow}, triggered {N} times ad-hoc
 
-### Profile.md Updates
+### Profile Updates
 - **Flag:** {fact} may be outdated — please verify
 
 ### Workspace Cleanup

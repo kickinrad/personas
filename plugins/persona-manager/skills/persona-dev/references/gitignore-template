@@ -1,27 +1,16 @@
-# Personal data — never commit
-profile.md
+# Uncomment to share this persona publicly
+# user/
 
-# MCP config contains API keys
+# Secrets — always ignored
 .mcp.json
-
-# Auto-memory
-.claude/memory/
-
-# Local overrides
 .claude/settings.local.json
 
-# Databases
+# Local files
+*.local.json
+*.local.md
 *.db
 *.db-journal
 *.sqlite
-
-# Logs
 *.log
-
-# Local config variants
-*.local.json
-*.local.md
-
-# OS files
 .DS_Store
 Thumbs.db

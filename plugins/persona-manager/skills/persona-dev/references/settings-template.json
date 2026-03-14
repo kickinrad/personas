@@ -1,4 +1,5 @@
 {
+  "autoMemoryDirectory": "user/memory",
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,

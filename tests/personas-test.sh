@@ -117,6 +117,16 @@ if [[ -d "$PERSONAS_DIR" ]]; then
       check "sandbox config present" ".claude/settings.json missing"
     fi
 
+    # Must have user/ directory
+    [[ -d "$persona_dir/user" ]] && \
+      check "user/ directory exists" "pass" || check "user/ directory exists" "missing"
+
+    # Must have autoMemoryDirectory in settings.json
+    if [[ -f "$psettings" ]]; then
+      jq -e '.autoMemoryDirectory' "$psettings" >/dev/null 2>&1 && \
+        check "autoMemoryDirectory configured" "pass" || check "autoMemoryDirectory configured" "missing in settings.json"
+    fi
+
     # Must have .gitignore
     [[ -f "$persona_dir/.gitignore" ]] && \
       check ".gitignore exists" "pass" || check ".gitignore exists" "missing"

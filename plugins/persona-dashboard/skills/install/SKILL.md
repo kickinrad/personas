@@ -48,7 +48,7 @@ Copy the template from `assets/dashboard.html` in this skill's directory to the 
 
 - Update the page title to match the persona name
 - Adjust tab labels if needed (default: Tasks, Profile, Memory, System)
-- The template reads: `TASKS.md`, `profile.md`, `MEMORY.md`, `CLAUDE.md`
+- The template reads: `TASKS.md`, `user/profile.md`, `user/memory/MEMORY.md`, `CLAUDE.md`
 
 The dashboard is a single-file HTML app served by a local Python HTTP server. It uses `fetch()` to load markdown files and renders them as formatted cards.
 

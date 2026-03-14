@@ -24,26 +24,32 @@ Each persona contains:
 
 ```
 ~/.personas/{name}/
+├── CLAUDE.md                    # Role, rules, skill refs (committed)
 ├── .claude/
-│   ├── settings.json              # Sandbox config (committed)
-│   └── memory/                    # Auto-memory (gitignored)
-├── .gitignore                     # Secrets exclusion
-├── hooks.json                     # SessionStart + Stop + PreCompact hooks
-├── CLAUDE.md                      # Personality + rules
-├── profile-template.md             # Profile template (committed)
-├── profile.md                     # User's personal context (gitignored)
-├── .mcp.json                      # MCP server config (gitignored)
+│   ├── settings.json            # Sandbox + autoMemoryDirectory (committed)
+│   ├── output-styles/           # Personality, tone, style (committed)
+│   └── settings.local.json      # (always gitignored)
+├── hooks.json                   # SessionStart hook (committed)
+├── profile-template.md           # Interview template (committed)
+├── .mcp.json                    # MCP server config (gitignored)
 ├── skills/
-│   ├── {domain}/{skill}/SKILL.md  # Domain skills
-│   └── self-improve/SKILL.md      # Ships with every persona
-├── docs/                          # Reference materials, plans (committed)
-└── scripts/                       # Tools and utilities (committed)
+│   ├── {domain}/{skill}/SKILL.md # Domain skills
+│   └── self-improve/SKILL.md    # Ships with every persona
+├── tools/                       # Utilities, scripts, pipelines (committed)
+├── docs/                        # Reference materials, plans (committed)
+├── user/                        # Personal data silo (optionally gitignored)
+│   ├── profile.md               # User's personal context (filled from interview)
+│   └── memory/                  # Native auto-memory
+│       ├── MEMORY.md            # Index (first 200 lines loaded)
+│       └── *.md                 # Topic files (read on demand)
+└── .gitignore
 ```
 
 **Workspace organization:**
 - `docs/` — domain knowledge, reference materials, plans. Use subdirs for categories (`docs/plans/`, `docs/reference/`)
-- `scripts/` — executable tools, utilities, data pipelines. Each tool gets its own subdir if non-trivial
+- `tools/` — executable tools, utilities, data pipelines. Each tool gets its own subdir if non-trivial
 - `skills/` — reusable multi-step workflows (SKILL.md files)
+- `user/` — personal data silo (profile.md, memory/)
 - Root — only framework files. Don't dump loose files here
 
 ---
@@ -63,8 +69,8 @@ Before building anything, understand what this persona needs to be. Ask the user
 **Explore based on domain:**
 - What external services or APIs does the persona need? (→ MCP server research in Phase 2)
 - Are there recurring multi-step tasks? (→ skill planning)
-- What kind of data does it work with? (→ tool/script needs)
-- What should the persona push back on? (→ anti-patterns in CLAUDE.md)
+- What kind of data does it work with? (→ tool needs)
+- What should the persona push back on? (→ anti-patterns in output style)
 
 Don't rush this. A well-understood persona is easier to build and evolves better. Ask follow-up questions — domain expertise matters.
 
@@ -89,7 +95,7 @@ Present findings to the user: "Here's what I found that could enhance this perso
 Create the directory structure:
 
 ```bash
-mkdir -p ~/.personas/{name}/{.claude/memory,skills,docs,scripts}
+mkdir -p ~/.personas/{name}/{.claude/output-styles,skills,docs,tools,user/memory}
 ```
 
 ### Phase 4: Build core files
@@ -98,7 +104,7 @@ mkdir -p ~/.personas/{name}/{.claude/memory,skills,docs,scripts}
 
 Use the template from `references/claude-md-template.md`. Key decisions:
 
-- **Personality**: Be specific about traits and anti-patterns. Give it opinions
+- **Role and rules**: Be specific about what this persona does and its boundaries
 - **Workspace Hygiene section**: Include it — every persona must maintain its own workspace
 - **Self-Improvement**: Point to the self-improve skill (one line, not inline)
 
@@ -109,11 +115,11 @@ Copy `references/profile-template.md` and customize it for this persona's domain
 - Update placeholders to be domain-specific
 - Update the interview instructions comment with persona-specific guidance on what to ask and how to probe deeper
 
-This file is committed — it's the spec for how `profile.md` should look when filled out.
+This file is committed — it's the spec for how `user/profile.md` should look when filled out.
 
-**4c. Copy profile-template.md → profile.md**
+**4c. Copy profile-template.md → user/profile.md**
 
-Copy the customized `profile-template.md` to `profile.md`. On first session, the SessionStart hook reads this, sees the unfilled placeholders, and interviews the user to populate it. `profile.md` is gitignored — the template stays as the committed reference.
+Copy the customized `profile-template.md` to `user/profile.md`. On first session, the SessionStart hook reads this, sees the unfilled placeholders, and interviews the user to populate it. `user/profile.md` is optionally gitignored (via the `user/` line in `.gitignore`) — the template stays as the committed reference.
 
 **4d. Create first domain skill(s)**
 
@@ -124,14 +130,12 @@ Write at least one skill under `skills/{domain}/{skill-name}/SKILL.md` with:
 
 **4e. Copy self-improve skill**
 
-Copy `references/self-improve-skill.md` to `skills/self-improve/SKILL.md`. Replace `{name}` with the persona name. This ships with every persona — it handles memory management, rule promotion, skill creation, tool discovery, and periodic audits.
+Copy `references/self-improve-skill.md` to `skills/self-improve/SKILL.md`. Replace `{name}` with the persona name. This ships with every persona — it handles rule promotion, skill creation, tool discovery, and periodic audits.
 
 **4f. Set up hooks**
 
-Copy `references/hooks-template.json` to `hooks.json` in the persona root. These hooks:
-- **SessionStart** (command): Reads `profile.md` contents into session context via `additionalContext` — the persona then interviews if unfilled or checks completeness. Must be `type: "command"` (SessionStart only supports command hooks)
-- **Stop** (prompt): Reminds the persona to update memory before ending
-- **PreCompact** (prompt): Saves session context before compaction
+Copy `references/hooks-template.json` to `hooks.json` in the persona root. The hook:
+- **SessionStart** (command): Reads `user/profile.md` contents into session context via `additionalContext` — the persona then interviews if unfilled or checks completeness. Must be `type: "command"` (SessionStart only supports command hooks)
 
 **4g. Create .gitignore**
 
@@ -139,17 +143,23 @@ Copy `references/gitignore-template` to `.gitignore`.
 
 **4h. Configure sandbox**
 
-Copy `references/settings-template.json` to `.claude/settings.json`. Add any persona-specific network domains for MCP servers to `allowedDomains`.
+Copy `references/settings-template.json` to `.claude/settings.json`. This includes `autoMemoryDirectory: "user/memory"` for native auto-memory. Add any persona-specific network domains for MCP servers to `allowedDomains`.
 
-**4i. Validate scaffold**
+**4i. Create output style**
+
+Copy `references/output-style-template.md` to `.claude/output-styles/{name}.md`. Fill in the persona's personality, tone, and communication style from the Discovery phase. Set `keep-coding-instructions: false` for non-coding personas.
+
+**4j. Validate scaffold**
 
 Before proceeding, verify all required files exist:
 - [ ] `CLAUDE.md`
 - [ ] `profile-template.md`
-- [ ] `profile.md` (copy of template, ready for first-session interview)
+- [ ] `user/profile.md` (copy of template, ready for first-session interview)
+- [ ] `.claude/output-styles/{name}.md`
 - [ ] `hooks.json`
 - [ ] `.gitignore`
-- [ ] `.claude/settings.json`
+- [ ] `.claude/settings.json` (with `autoMemoryDirectory`)
+- [ ] `user/memory/` directory exists
 - [ ] `skills/self-improve/SKILL.md`
 - [ ] At least one domain skill in `skills/`
 
@@ -195,28 +205,22 @@ Then verify the persona works — run through the [Testing a Persona](#testing-a
 
 ---
 
-## Three-Layer Model
+## What Is a Persona?
 
-Every persona uses three layers — never mix them:
-
-| Layer | File | Who Writes | Content |
-|-------|------|-----------|---------|
-| **Personality** | `CLAUDE.md` | Human (Claude proposes) | Role, rules, skills, communication style |
-| **Context** | `profile.md` | Claude (from user interview) | Personal data, accounts, preferences |
-| **Memory** | `.claude/memory/` | Claude (automatic) | Session outcomes, learnings, patterns |
+**A persona is a self-contained AI assistant.** It combines standard Claude Code features — identity (CLAUDE.md), user context (`user/profile.md`), output style (`.claude/output-styles/`), skills, hooks, MCP tools, sandbox settings, and native auto-memory (`user/memory/`) — into a specialized agent that evolves over time. The persona maintains all of these itself; identity changes require human approval, everything else evolves automatically.
 
 ---
 
-## Profile.md vs Memory — Canonical Definitions
+## Profile vs Memory vs Rules — Canonical Definitions
 
 | Question | Answer | File |
 |----------|--------|------|
-| Will this be true next month without action? | Yes | `profile.md` |
-| Did Claude discover or decide this? | Yes | `MEMORY.md` |
+| Will this be true next month without action? | Yes | `user/profile.md` |
+| Did Claude discover or decide this? | Yes | `user/memory/` |
 | Should this always happen, every session? | Yes | `CLAUDE.md` rule |
 
-**profile.md** = WHO you are, WHAT you have, HOW you like to work. Stable facts.
-**MEMORY.md** = WHAT HAPPENED, WHAT WAS DECIDED, WHAT WORKED. Dynamic learnings.
+**user/profile.md** = WHO you are, WHAT you have, HOW you like to work. Stable facts.
+**user/memory/** = WHAT HAPPENED, WHAT WAS DECIDED, WHAT WORKED. Dynamic learnings.
 **CLAUDE.md rules** = HOW THE PERSONA BEHAVES. Permanent, promoted from patterns.
 
 ---
@@ -270,9 +274,9 @@ After creating or updating a persona: `source ~/.personas/.aliases.sh` or restar
 
 ## First Session Flow
 
-On first session, `profile.md` exists as an unfilled copy of `profile-template.md`. The SessionStart hook reads it, sees the template placeholders, and interviews the user to populate each section. The persona follows the interview instructions embedded in the template to ask the right questions and fill out the profile to spec.
+On first session, `user/profile.md` exists as an unfilled copy of `profile-template.md`. The SessionStart hook reads it, sees the template placeholders, and interviews the user to populate each section. The persona follows the interview instructions embedded in the template to ask the right questions and fill out the profile to spec.
 
-On subsequent sessions, the SessionStart hook reads `profile.md` automatically. If any sections are still incomplete, the persona prompts the user to fill in the gaps before proceeding.
+On subsequent sessions, the SessionStart hook reads `user/profile.md` automatically. If any sections are still incomplete, the persona prompts the user to fill in the gaps before proceeding.
 
 ---
 
@@ -281,7 +285,7 @@ On subsequent sessions, the SessionStart hook reads `profile.md` automatically. 
 Always embed this pattern in every persona's Session Start (already in the CLAUDE.md template):
 
 ```
-After reading profile.md: Check which MCP tools are available.
+After reading user/profile.md: Check which MCP tools are available.
 For any disconnected server, tell the user what's unavailable
 and ask: skip for now, or help set it up?
 Offer text-only mode if all MCPs are unavailable.
@@ -312,10 +316,10 @@ During self-audits, personas can also discover expansion packs that would help w
 
 After creation, verify:
 
-- [ ] Run `{name}` — does the SessionStart hook read `profile.md` (or trigger the interview if missing)?
+- [ ] Run `{name}` — does the SessionStart hook read `user/profile.md` (or trigger the interview if unfilled)?
 - [ ] Try each skill trigger — does the right skill activate?
 - [ ] Ask something outside its domain — does it redirect gracefully?
-- [ ] End a session — does it write meaningful learnings to MEMORY.md?
+- [ ] Check that `autoMemoryDirectory` is set in `.claude/settings.json`
 - [ ] Check sandbox — `ls ../` from within the persona should fail
 
 Test with adversarial prompts too — ask the persona to do something it shouldn't. A good persona redirects gracefully rather than blindly complying.
@@ -328,9 +332,9 @@ Test with adversarial prompts too — ask the persona to do something it shouldn
 - Shell aliases not loaded — run `source ~/.personas/.aliases.sh`
 - Check that `~/.personas/{name}/CLAUDE.md` exists (the alias script requires it)
 
-**Persona doesn't pick up profile.md:**
-- Verify the file exists: `ls ~/.personas/{name}/profile.md`
-- Check that hooks.json includes the SessionStart hook (reads profile.md automatically)
+**Persona doesn't pick up profile:**
+- Verify the file exists: `ls ~/.personas/{name}/user/profile.md`
+- Check that hooks.json includes the SessionStart hook (reads `user/profile.md` automatically)
 
 **MCP server not connecting:**
 - Check `.mcp.json` syntax: `jq . ~/.personas/{name}/.mcp.json`
@@ -347,7 +351,7 @@ Tips for users to get the most out of persona evolution:
 
 **Do:**
 - Correct the persona explicitly — "no, always do X instead" creates clear memory entries that can be promoted to rules
-- Review memory periodically — read MEMORY.md, delete entries that are wrong
+- Review memory periodically — read `user/memory/MEMORY.md`, delete entries that are wrong
 - Approve good promotions — when the persona proposes a rule or skill that fits, approve it
 - Use trigger phrases consistently — this trains both you and the persona
 

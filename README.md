@@ -38,7 +38,7 @@ persona-manager "create a personal CFO persona called warren"
 
 # 3. First session — persona interviews you and builds your profile
 warren
-# Warren asks about your accounts, income, goals — writes profile.md from your answers
+# Warren asks about your accounts, income, goals — writes user/profile.md from your answers
 
 # 4. From now on, just use it
 warren              # interactive session
@@ -49,23 +49,13 @@ All setup and creation details live in the `persona-dev` skill — install perso
 
 ## How It Works
 
-### Three-Layer Model
-
-Every persona separates what it is from what it knows about you from what it learns:
-
-| Layer | File | Who Writes | Committed? |
-|-------|------|-----------|------------|
-| **Personality** | `CLAUDE.md` | Human (Claude proposes) | Yes |
-| **Context** | `profile.md` | Persona (from user interview) | No — gitignored |
-| **Memory** | `.claude/memory/` | Persona (automatic) | No — gitignored |
-
-Personality defines the role, rules, and communication style. Context holds your personal data. Memory accumulates session-by-session learnings. They never mix.
+**A persona is a self-contained AI assistant.** It combines standard Claude Code features — identity (CLAUDE.md), output style (`.claude/output-styles/`), user context (`user/profile.md`), skills, hooks, MCP tools, sandbox settings, and native auto-memory (`user/memory/`) — into a specialized agent that evolves over time. The persona maintains all of these itself; identity changes require human approval, everything else evolves automatically.
 
 ### Self-Improvement
 
-Personas ship with a `self-improve` skill and hooks that drive automatic evolution:
+Personas ship with a `self-improve` skill and a SessionStart hook that drive automatic evolution:
 
-1. **Memory** — SessionStart reads profile context, Stop and PreCompact hooks write learnings after every session
+1. **Memory** — native auto-memory via `autoMemoryDirectory` captures learnings automatically; SessionStart hook reads profile context
 2. **Rule promotion** — after a pattern appears 3+ times in memory, the persona proposes a permanent rule in CLAUDE.md
 3. **Skill creation** — after an ad-hoc workflow repeats 3+ times, the persona drafts a reusable skill
 4. **Tool & integration discovery** — researches existing MCP servers, CLI tools, and expansion packs before building custom solutions
@@ -78,6 +68,7 @@ Each persona runs in a native OS sandbox (bubblewrap on Linux, Seatbelt on macOS
 
 ```json
 {
+  "autoMemoryDirectory": "user/memory",
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
@@ -111,36 +102,42 @@ This repo ships **persona-manager** — the meta-tool that scaffolds and manages
 
 | Skill | What it does |
 |-------|-------------|
-| **persona-dev** | Scaffolds a new persona with CLAUDE.md, profile template, sandbox config, hooks, self-improve skill, gitignore, and optional GitHub repo. Also handles persona updates and evolution. |
+| **persona-dev** | Scaffolds a new persona with CLAUDE.md, output style, profile template, sandbox config, hooks, self-improve skill, gitignore, and optional GitHub repo. Also handles persona updates and evolution. |
 | **persona-dashboard** (separate plugin) | Expansion pack — adds an HTML dashboard with task tracking, profile viewer, memory browser, and system overview. Single-file app served locally on ports 7300-7399. |
 
 Every scaffolded persona includes:
-- `CLAUDE.md` with personality template (role, rules, session start, skills table)
-- `profile-template.md` as interview reference (persona writes profile.md from user answers)
-- `hooks.json` with SessionStart + Stop + PreCompact hooks
+- `CLAUDE.md` with role, rules, session start, skills table
+- `.claude/output-styles/{name}.md` with personality and tone
+- `profile-template.md` as interview reference (persona writes `user/profile.md` from user answers)
+- `hooks.json` with SessionStart hook (native auto-memory handles the rest)
 - `self-improve` skill for the evolution engine
-- `.claude/settings.json` with sandbox config
-- `.gitignore` protecting secrets (profile.md, .mcp.json, memory, local overrides)
+- `.claude/settings.json` with sandbox config and `autoMemoryDirectory`
+- `.gitignore` protecting secrets (`.mcp.json` always ignored; `user/` optionally ignored for public sharing)
 
 <details>
 <summary>Persona Directory Structure</summary>
 
 ```
-~/.personas/{name}/                  # Each persona is its own git-tracked directory
+~/.personas/{name}/                       # Each persona is its own git-tracked directory
+├── CLAUDE.md                             # Role, rules, skill refs (committed)
 ├── .claude/
-│   ├── settings.json                # Sandbox config (committed)
-│   └── memory/                      # Auto-memory (gitignored)
-├── CLAUDE.md                        # Personality + rules (committed)
-├── profile-template.md               # Context template (committed)
-├── profile.md                       # Your personal data (gitignored)
-├── .mcp.json                        # MCP servers + API keys (gitignored)
-├── hooks.json                       # SessionStart + Stop + PreCompact hooks (committed)
-├── .gitignore                       # Secret protection (committed)
+│   ├── settings.json                     # Sandbox + autoMemoryDirectory (committed)
+│   ├── output-styles/                    # Personality, tone, style (committed)
+│   └── settings.local.json              # (always gitignored)
+├── hooks.json                            # SessionStart hook (committed)
+├── profile-template.md                    # Context template (committed)
+├── .mcp.json                             # MCP servers + API keys (gitignored)
+├── .gitignore                            # Secret protection (committed)
 ├── skills/
-│   ├── {domain}/{skill}/SKILL.md    # Domain-specific skills
-│   └── self-improve/SKILL.md        # Evolution engine
-├── docs/                            # Reference docs (persona-writable)
-└── scripts/                         # Tools + utilities (persona-writable)
+│   ├── {domain}/{skill}/SKILL.md         # Domain-specific skills
+│   └── self-improve/SKILL.md             # Evolution engine
+├── tools/                                # Utilities + scripts (persona-writable)
+├── docs/                                 # Reference docs (persona-writable)
+└── user/                                 # Personal data silo (optionally gitignored)
+    ├── profile.md                        # Your personal data (filled from interview)
+    └── memory/                           # Native auto-memory
+        ├── MEMORY.md                     # Index (first 200 lines loaded)
+        └── *.md                          # Topic files (read on demand)
 ```
 
 </details>
