@@ -45,6 +45,8 @@ warren              # interactive session
 warren "weekly review"  # one-shot prompt
 ```
 
+**Using Cowork?** Open `~/.personas/{name}/` as a project folder — the persona loads automatically. No shell aliases needed.
+
 All setup and creation details live in the `persona-dev` skill — install persona-manager and it guides you through everything.
 
 ## How It Works
@@ -95,6 +97,10 @@ warren "do weekly"  # one-shot with sandboxed permissions
 ```
 
 Under the hood: `cd ~/.personas/{name}/ && claude --setting-sources project --dangerously-skip-permissions`. The `--setting-sources project` flag loads only the persona's config (ignoring global settings), and `--dangerously-skip-permissions` is safe because the sandbox restricts everything.
+
+### Cowork
+
+In Claude Code Cowork, open `~/.personas/{name}/` as a project folder. Cowork loads the persona's CLAUDE.md, settings, hooks, and MCP config automatically from the project directory — same isolation, no aliases required.
 
 ## What's Included
 
