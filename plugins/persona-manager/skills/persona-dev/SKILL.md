@@ -201,9 +201,11 @@ Ask the user: "Want to set up a GitHub repo for this persona?"
 - If yes: `gh repo create {github-username}/{name} --private --source=. --push`
 - If no: Skip — can always add a remote later
 
-### Phase 7: Configure shell aliases + verify
+### Phase 7: Configure invocation + verify
 
-Automatically set up the alias system so the persona is callable by name:
+**If CLI detected:**
+
+Set up the alias system so the persona is callable by name:
 
 1. **Create `~/.personas/.aliases.sh`** if it doesn't exist (see [CLI Aliases](#cli-aliases) below for the template)
 2. **Add source line to the user's shell config** if not already present:
@@ -214,7 +216,14 @@ Automatically set up the alias system so the persona is callable by name:
    - **Check first** — only add if the line isn't already there
 3. **Tell the user** to restart their shell or run `source ~/.personas/.aliases.sh` to activate immediately
 
-Then verify the persona works — run through the [Testing a Persona](#testing-a-persona) checklist.
+**If Cowork detected:**
+
+Ask: "Do you also use Claude Code from the terminal? I can set up shell aliases so you can launch this persona from the command line too."
+
+- If yes → follow the CLI alias setup above
+- If no → skip aliases and tell the user: "To use this persona in Cowork, open `~/.personas/{name}/` as a project folder."
+
+**Then verify** — run through the [Testing a Persona](#testing-a-persona) checklist regardless of environment.
 
 ---
 
