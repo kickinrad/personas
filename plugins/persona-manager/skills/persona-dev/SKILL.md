@@ -58,6 +58,19 @@ Each persona contains:
 
 ### Phase 1: Discovery
 
+**Environment detection (silent — no user questions):**
+
+Before asking discovery questions, detect the runtime environment to set smart defaults:
+
+1. Check if `/mnt/c/Users` exists → **Cowork on Windows** (WSL2 VM)
+2. Check for no TTY and Lima process markers → **Cowork on macOS**
+3. Otherwise → **CLI** (Linux/Mac native)
+
+Set internal defaults based on detection:
+- `offer_aliases`: `false` if Cowork detected, `true` if CLI detected
+
+These defaults are used in Phase 7 — no user-facing questions here.
+
 Before building anything, understand what this persona needs to be. Ask the user:
 
 **Required:**
