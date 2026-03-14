@@ -365,6 +365,11 @@ Test with adversarial prompts too — ask the persona to do something it shouldn
 **Sandbox errors (Linux):**
 - Bubblewrap must be installed: `which bwrap || sudo apt install bubblewrap`
 
+**Persona not loading in Cowork:**
+- Make sure you opened the persona's root directory (`~/.personas/{name}/`) as the project folder, not a parent or child directory
+- Verify `CLAUDE.md` and `.claude/settings.json` exist in the root — Cowork loads project config from the opened folder
+- MCP servers still need `.mcp.json` in the persona root — Cowork reads it the same way as CLI
+
 ---
 
 ## Guiding Persona Growth
