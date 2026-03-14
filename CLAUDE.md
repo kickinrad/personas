@@ -63,12 +63,17 @@ Each alias `cd`s into `~/.personas/{name}/` and runs `claude --setting-sources p
 - Ignores global `~/.claude/CLAUDE.md` and `~/.claude/settings.json`
 - Skips permission prompts (safe because sandbox restricts filesystem + network)
 
+## Cowork
+
+In Claude Code Cowork (desktop app), personas work by opening `~/.personas/{name}/` as a project folder. Cowork automatically loads the persona's `CLAUDE.md`, `.claude/settings.json`, hooks, and MCP config — no aliases needed.
+
 ## Running Personas
 
 | Mode | Command |
 |------|---------|
 | Interactive | `{name}` (sandbox + skip-permissions via alias) |
 | One-shot | `{name} "prompt"` (sandbox + skip-permissions via alias) |
+| Cowork | Open `~/.personas/{name}/` as project folder |
 
 ## Native Sandboxing
 
