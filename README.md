@@ -26,57 +26,34 @@ Want the shopping list for sides, or just rolling with what you have?
 
 ## Quick Start
 
-### Step 1: Install the plugin
+### Step 1: Install the plugin and create a persona
 
-<details open>
-<summary><strong>Claude Code (CLI)</strong></summary>
+Persona creation requires the persona-manager plugin, which is installed via **Claude Code CLI**. You only need to do this once — after setup, the persona works everywhere.
 
 ```
 /plugin marketplace add kickinrad/personas
 /plugin install persona-manager@personas
 ```
 
-</details>
-
-<details>
-<summary><strong>Claude Desktop (Chat tab)</strong></summary>
-
-Click **+** next to the prompt box → **Plugins** → **Add plugin**, then search for `kickinrad/personas` and install **persona-manager**. Or use the same `/plugin` commands as CLI.
-
-</details>
-
-### Step 2: Create a persona
-
-In the same session, ask Claude to create your persona:
+Then ask Claude to create your persona:
 
 ```
 create a personal chef persona called chef
 ```
 
-The `persona-dev` skill activates automatically — it scaffolds everything to `~/.personas/chef/` including sandbox config, hooks, output style, self-improve skill, and gitignore. It also asks whether you'll use CLI, Desktop, or both, and configures paths and MCP servers accordingly.
+The `persona-dev` skill activates automatically — it scaffolds everything to `~/.personas/chef/` including sandbox config, hooks, output style, self-improve skill, and gitignore. It asks whether you'll use CLI, Desktop, or both, and configures paths and MCP servers accordingly.
 
-### Step 3: Launch your persona
+### Step 2: Launch your persona
 
-<details open>
-<summary><strong>Claude Code (CLI)</strong></summary>
+Once created, the persona works in any environment:
 
-The scaffolding step sets up shell aliases automatically. Reload your shell, then:
+| Mode | How |
+|------|-----|
+| CLI | `chef` or `chef "what should I make?"` — shell aliases set up during creation |
+| Cowork | Select `~/.personas/chef/` as project folder |
+| Desktop Chat | Select `~/.personas/chef/` as project folder |
 
-```bash
-chef                          # interactive session
-chef "what should I make?"    # one-shot prompt
-```
-
-</details>
-
-<details>
-<summary><strong>Claude Desktop (Cowork)</strong></summary>
-
-Start a new Cowork session and select `~/.personas/chef/` as your project folder. Claude loads the persona's identity, sandbox, skills, and MCP tools automatically.
-
-If the persona needs MCP servers, persona-dev will offer to configure them in your `claude_desktop_config.json` so Cowork can access them.
-
-</details>
+If the persona uses MCP servers, persona-dev offers to configure them in your `claude_desktop_config.json` so Cowork and Desktop Chat can access them too.
 
 On first launch, the persona interviews you to build your profile — it asks the right questions based on its role, then writes `user/profile.md` from your answers. Every session after that, it reads your profile and picks up where you left off.
 
@@ -132,13 +109,7 @@ Personas can connect to external services via MCP servers (recipe APIs, financia
 
 Local scripts and utilities go in `tools/` — the persona creates and invokes these via bash. MCP is for external service connections.
 
-### Running Personas
-
-| Mode | How |
-|------|-----|
-| CLI — interactive | `chef` — shell alias, launches sandboxed session |
-| CLI — one-shot | `chef "what should I make?"` — runs prompt and exits |
-| Desktop — Cowork | Select `~/.personas/chef/` as project folder |
+### Shell Aliases
 
 Shell aliases auto-discover personas in `~/.personas/` and create callable functions. Under the hood: `cd ~/.personas/{name}/ && claude --setting-sources project --dangerously-skip-permissions --remote-control`. The flags load only the persona's config, skip permission prompts (safe because sandbox restricts everything), and enable external tool integration.
 
