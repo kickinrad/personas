@@ -1,0 +1,25 @@
+{
+  "name": "personas",
+  "owner": { "name": "kickinrad", "url": "https://github.com/kickinrad" },
+  "metadata": {
+    "description": "Framework for self-evolving AI personas on Claude Code",
+    "version": "1.0.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "persona-manager",
+      "source": "./plugins/persona-manager",
+      "description": "Scaffolds and manages AI personas in ~/.personas/",
+      "version": "1.2.0",
+      "category": "management"
+    },
+    {
+      "name": "persona-dashboard",
+      "source": "./plugins/persona-dashboard",
+      "description": "Expansion pack — adds a visual HTML dashboard with task tracking to any persona",
+      "version": "1.0.0",
+      "category": "expansion"
+    }
+  ]
+}
