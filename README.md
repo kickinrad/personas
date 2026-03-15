@@ -28,12 +28,24 @@ Want the shopping list for sides, or just rolling with what you have?
 
 ### Step 1: Install the plugin and create a persona
 
-Persona creation requires the persona-manager plugin, which is installed via **Claude Code CLI**. You only need to do this once — after setup, the persona works everywhere.
+Persona creation requires the persona-manager plugin. Install it once — after setup, the persona works everywhere.
+
+<details open>
+<summary><strong>Claude Code (CLI)</strong></summary>
 
 ```
 /plugin marketplace add kickinrad/personas
 /plugin install persona-manager@personas
 ```
+
+</details>
+
+<details>
+<summary><strong>Claude Desktop</strong></summary>
+
+Click **+** next to the prompt box → **Plugins** → **Add plugin**, then search for `kickinrad/personas` and install **persona-manager**.
+
+</details>
 
 Then ask Claude to create your persona:
 
