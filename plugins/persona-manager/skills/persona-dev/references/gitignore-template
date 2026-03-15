@@ -1,16 +1,24 @@
-# Uncomment to share this persona publicly
+# User data — uncomment to share persona publicly
 # user/
 
-# Secrets — always ignored
+# MCP config contains API keys
 .mcp.json
+
+# Local overrides
 .claude/settings.local.json
 
-# Local files
-*.local.json
-*.local.md
+# Databases
 *.db
 *.db-journal
 *.sqlite
+
+# Logs
 *.log
+
+# Local config variants
+*.local.json
+*.local.md
+
+# OS files
 .DS_Store
 Thumbs.db

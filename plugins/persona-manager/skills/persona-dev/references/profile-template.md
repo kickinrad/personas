@@ -2,7 +2,9 @@
 
 <!-- INTERVIEW INSTRUCTIONS (for the persona, not the user)
 On first session, read this template and interview the user to fill out each section.
-- Ask about each section conversationally — don't just read the placeholders
+- Use AskUserQuestion to ask each section's questions — one section at a time
+- Present what you're asking about and why, then let the user respond
+- Don't just read the placeholders — ask conversationally
 - Fill in answers directly, replacing the {placeholders}
 - If the user doesn't know or wants to skip a section, leave it blank with a TODO note
 - After completing the interview, show the filled profile and confirm before saving
