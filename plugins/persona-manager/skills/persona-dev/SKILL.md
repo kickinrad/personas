@@ -224,11 +224,60 @@ If anything is missing, fix it now — don't proceed with gaps.
 
 If Phase 2 identified useful MCP servers or tools:
 
-1. Document tools in CLAUDE.md under "MCP Tools Available"
-2. Add domains to `.claude/settings.json` → `network.allowedDomains`
-3. Tell the user how to configure each server in `.mcp.json` (gitignored — secrets go here)
-4. For CLI tools: add usage instructions to relevant skills or CLAUDE.md
-5. For expansion packs: ask the user if they want to install them now
+**5a. Configure MCP servers**
+
+1. Write the MCP server config to the persona's `.mcp.json` (gitignored — secrets go here)
+2. Add server domains to `.claude/settings.json` → `network.allowedDomains`
+3. Document tools in CLAUDE.md under "MCP Tools Available"
+
+**Credential handling in `.mcp.json`:**
+- Use environment variable expansion: `"Authorization": "Bearer ${MONARCH_API_KEY}"`
+- Set the env vars in the user's shell profile or use a `.env` loader
+- Never hardcode secrets — `.mcp.json` is gitignored but should still be clean
+
+**5b. Configure Desktop MCP (if setup mode includes `desktop`)**
+
+The persona's `.mcp.json` works for CLI, but Cowork reads from a separate config file (`claude_desktop_config.json`). If the persona has MCP servers and setup mode includes `desktop`:
+
+**Ask the user:** "This persona uses MCP servers. Want me to add them to your Claude Desktop config so they work in Cowork too?"
+
+If yes:
+
+1. **Detect the Desktop config path:**
+   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - Windows (from WSL2): `/mnt/c/Users/{WINUSER}/AppData/Roaming/Claude/claude_desktop_config.json`
+   - Linux: `~/.config/Claude/claude_desktop_config.json`
+
+2. **Read the existing config** (create if missing):
+   ```bash
+   DESKTOP_CONFIG="<detected path>"
+   if [ ! -f "$DESKTOP_CONFIG" ]; then
+     echo '{}' > "$DESKTOP_CONFIG"
+   fi
+   ```
+
+3. **Merge new MCP servers** using `jq` — add the persona's servers without overwriting existing ones:
+   ```bash
+   jq '.mcpServers += { "server-name": { ... } }' "$DESKTOP_CONFIG" > "$DESKTOP_CONFIG.tmp" \
+     && mv "$DESKTOP_CONFIG.tmp" "$DESKTOP_CONFIG"
+   ```
+
+4. **Tell the user** to restart Claude Desktop for changes to take effect
+
+If no: skip — the user can always add MCP servers to Desktop config later.
+
+**Why two files?** CLI and Cowork use separate MCP configurations. The persona's `.mcp.json` handles CLI, and `claude_desktop_config.json` handles Cowork.
+
+**5c. Configure local tools**
+
+- `tools/` is for local scripts, data pipelines, and utilities the persona creates or uses via bash
+- MCP servers are for external service integrations (APIs, databases, third-party services)
+- Don't mix them — a tool in `tools/` is invoked by the persona via bash, an MCP server is a persistent connection
+- For CLI tools: add usage instructions to relevant skills or CLAUDE.md
+
+**5d. Install expansion packs**
+
+Ask the user if they want to install any expansion packs identified in Phase 2.
 
 ### Phase 6: Initialize git + optional GitHub
 

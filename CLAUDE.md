@@ -162,10 +162,35 @@ Each persona's `.gitignore` handles its own secrets:
 
 Commits: `type(scope): description` — scope is `framework` for this repo, persona name for persona repos
 
+## MCP Server Configuration
+
+MCP servers are configured in two places depending on the environment:
+
+| Environment | Config file | Scope |
+|-------------|-----------|-------|
+| CLI + Desktop Code tab | `.mcp.json` (in persona dir) | Per-persona, gitignored |
+| Desktop Chat + Cowork | `claude_desktop_config.json` | Global, per-machine |
+
+**Why two files?** CLI and the Desktop Code tab read project-scoped `.mcp.json`. But Desktop Chat and Cowork run separately and only read the global `claude_desktop_config.json`. Both need the same MCP servers — just in different files.
+
+**Desktop config location:**
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json` (from WSL2: `/mnt/c/Users/{WINUSER}/AppData/Roaming/Claude/claude_desktop_config.json`)
+- Linux: `~/.config/Claude/claude_desktop_config.json`
+
+During persona setup, persona-dev offers to merge MCP servers into `claude_desktop_config.json` when setup mode includes Desktop. The user just needs to restart Claude Desktop for changes to take effect.
+
+**Credential handling:** Use environment variable expansion in `.mcp.json` (`${API_KEY}`). Never hardcode secrets — `.mcp.json` is gitignored but should still be clean.
+
+**`tools/` vs MCP:**
+- `tools/` — local scripts and utilities invoked by the persona via bash
+- MCP servers — persistent connections to external services (APIs, databases)
+- Don't mix them
+
 ## Gotchas
 
 - Personas activate only when CWD is the persona's directory — `--setting-sources project` ensures total isolation
-- MCP servers must be configured per-persona in `.mcp.json` (gitignored), not globally
+- MCP servers need to be in both `.mcp.json` (CLI) and `claude_desktop_config.json` (Cowork) — persona-dev handles this automatically
 - `.claude/settings.json` (sandbox config) IS committed — `.claude/settings.local.json` is gitignored
 - Personas live in `~/.personas/`, NOT in this framework repo
 - Output styles live in `.claude/output-styles/` — personality/tone is separate from rules in CLAUDE.md

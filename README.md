@@ -39,7 +39,7 @@ Want the shopping list for sides, or just rolling with what you have?
 </details>
 
 <details>
-<summary><strong>Claude Desktop</strong></summary>
+<summary><strong>Claude Desktop (Chat tab)</strong></summary>
 
 Click **+** next to the prompt box → **Plugins** → **Add plugin**, then search for `kickinrad/personas` and install **persona-manager**. Or use the same `/plugin` commands as CLI.
 
@@ -53,7 +53,7 @@ In the same session, ask Claude to create your persona:
 create a personal chef persona called chef
 ```
 
-The `persona-dev` skill activates automatically — it scaffolds everything to `~/.personas/chef/` including sandbox config, hooks, output style, self-improve skill, and gitignore.
+The `persona-dev` skill activates automatically — it scaffolds everything to `~/.personas/chef/` including sandbox config, hooks, output style, self-improve skill, and gitignore. It also asks whether you'll use CLI, Desktop, or both, and configures paths and MCP servers accordingly.
 
 ### Step 3: Launch your persona
 
@@ -70,17 +70,17 @@ chef "what should I make?"    # one-shot prompt
 </details>
 
 <details>
-<summary><strong>Claude Desktop</strong></summary>
+<summary><strong>Claude Desktop (Cowork)</strong></summary>
 
-Start a new session and select `~/.personas/chef/` as your project folder. Claude loads the persona's identity, sandbox, and skills automatically.
+Start a new Cowork session and select `~/.personas/chef/` as your project folder. Claude loads the persona's identity, sandbox, skills, and MCP tools automatically.
+
+If the persona needs MCP servers, persona-dev will offer to configure them in your `claude_desktop_config.json` so Cowork can access them.
 
 </details>
 
 On first launch, the persona interviews you to build your profile — it asks the right questions based on its role, then writes `user/profile.md` from your answers. Every session after that, it reads your profile and picks up where you left off.
 
 ### Cross-platform notes
-
-During setup, persona-dev asks whether you'll use **CLI**, **Desktop**, or **both** — and configures paths accordingly.
 
 - **macOS / Linux** — CLI and Desktop share `~/`, so `~/.personas/` works everywhere. No extra setup.
 - **Windows (WSL2)** — CLI runs in WSL (`/home/user/`) while Desktop sees `C:\Users\user\`. If you use both, persona-dev creates personas on the Windows side and symlinks `~/.personas/` in WSL so both environments see the same files. If you only use CLI, personas stay in WSL for better I/O performance.
@@ -123,13 +123,22 @@ Each persona runs in a native OS sandbox (bubblewrap on Linux, Seatbelt on macOS
 
 Personas can only write to their own directory, can't read parent directories or other personas' files, and can only reach whitelisted network domains. Each persona customizes `allowedDomains` for its own MCP servers.
 
+### MCP Servers & Tools
+
+Personas can connect to external services via MCP servers (recipe APIs, financial data, calendars, etc.). During setup, persona-dev researches available MCP servers for your domain and configures them automatically.
+
+- **CLI + Code tab** — MCP config lives in the persona's `.mcp.json` (gitignored)
+- **Desktop Chat + Cowork** — persona-dev auto-merges the same servers into `claude_desktop_config.json` so Cowork can use them too
+
+Local scripts and utilities go in `tools/` — the persona creates and invokes these via bash. MCP is for external service connections.
+
 ### Running Personas
 
 | Mode | How |
 |------|-----|
-| Interactive (CLI) | `chef` — shell alias, launches sandboxed session |
-| One-shot (CLI) | `chef "what should I make?"` — runs prompt and exits |
-| Desktop | Select `~/.personas/chef/` as project folder |
+| CLI — interactive | `chef` — shell alias, launches sandboxed session |
+| CLI — one-shot | `chef "what should I make?"` — runs prompt and exits |
+| Desktop — Cowork | Select `~/.personas/chef/` as project folder |
 
 Shell aliases auto-discover personas in `~/.personas/` and create callable functions. Under the hood: `cd ~/.personas/{name}/ && claude --setting-sources project --dangerously-skip-permissions --remote-control`. The flags load only the persona's config, skip permission prompts (safe because sandbox restricts everything), and enable external tool integration.
 
