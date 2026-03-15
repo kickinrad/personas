@@ -38,16 +38,20 @@ Persona creation requires the persona-manager plugin. Install it once — after 
 /plugin install persona-manager@personas
 ```
 
+Launch Claude Code as normal and get your ideas ready. 
+
 </details>
 
 <details>
 <summary><strong>Claude Desktop</strong></summary>
 
-Click **+** next to the prompt box → **Plugins** → **Add plugin**, then search for `kickinrad/personas` and install **persona-manager**.
+Open Claude Desktop and navigate to Customize pane→ **Personal Plugins +** → **Browse Plugins** -> Personal ->  + Add Marketplace from Github,  enter `kickinrad/personas` and install **persona-manager** and any desired expansion packs. Create a new Cowork instance starting in your default user directory, and invoke the plugin to begin. 
+
+Alternatively, navigate to the "Customize" menu, select the Persona Manager personal plugin, the select the Persona Dev skill and use the three dot menu to copy the skill or run it in Claude Desktop Chat. Because of CoWork's sandboxing, this can be preferable for setting up WSL compatibility, aliases, and advanced configs.
 
 </details>
 
-Then ask Claude to create your persona:
+Then ask Claude to create your persona: 
 
 ```
 create a personal chef persona called chef
@@ -72,7 +76,8 @@ On first launch, the persona interviews you to build your profile — it asks th
 ### Cross-platform notes
 
 - **macOS / Linux** — CLI and Desktop share `~/`, so `~/.personas/` works everywhere. No extra setup.
-- **Windows (WSL2)** — CLI runs in WSL (`/home/user/`) while Desktop sees `C:\Users\user\`. If you use both, persona-dev creates personas on the Windows side and symlinks `~/.personas/` in WSL so both environments see the same files. If you only use CLI, personas stay in WSL for better I/O performance.
+- **Windows (native)** — Personas live at `%USERPROFILE%\.personas\`. No bash aliases — use PowerShell functions or launch via Desktop. No sandbox support, so `--dangerously-skip-permissions` is never used.
+- **WSL** — CLI runs in WSL (`/home/user/`) while Desktop sees `C:\Users\user\`. If you use both, persona-dev creates personas on the Windows side and symlinks `~/.personas/` in WSL so both environments see the same files. If you only use CLI, personas stay in WSL for better I/O performance.
 
 ## How It Works
 
@@ -110,20 +115,20 @@ Each persona runs in a native OS sandbox (bubblewrap on Linux, Seatbelt on macOS
 }
 ```
 
-Personas can only write to their own directory, can't read parent directories or other personas' files, and can only reach whitelisted network domains. Each persona customizes `allowedDomains` for its own MCP servers.
+Personas can only write to their own directory, can't read parent directories or other personas' files, and can only reach whitelisted network domains. Each persona customizes `allowedDomains` for its own MCP servers. Sandboxing not available on Windows Claude Code CLI. 
 
 ### MCP Servers & Tools
 
 Personas can connect to external services via MCP servers (recipe APIs, financial data, calendars, etc.). During setup, persona-dev researches available MCP servers for your domain and configures them automatically.
 
 - **CLI + Code tab** — MCP config lives in the persona's `.mcp.json` (gitignored)
-- **Desktop Chat + Cowork** — persona-dev auto-merges the same servers into `claude_desktop_config.json` so Cowork can use them too
+- **Desktop Chat + Cowork** — persona-dev merges the same servers into `claude_desktop_config.json` so Desktop Chat and Cowork can access them too
 
 Local scripts and utilities go in `tools/` — the persona creates and invokes these via bash. MCP is for external service connections.
 
 ### Shell Aliases
 
-Shell aliases auto-discover personas in `~/.personas/` and create callable functions. Under the hood: `cd ~/.personas/{name}/ && claude --setting-sources project --dangerously-skip-permissions --remote-control`. The flags load only the persona's config, skip permission prompts (safe because sandbox restricts everything), and enable external tool integration.
+Shell aliases auto-discover personas in `~/.personas/` and create callable functions. Each persona stores its launch flags in `.claude-flags` (configured during setup). On sandboxed platforms (macOS/Linux/WSL2) the default is `--setting-sources project --dangerously-skip-permissions --remote-control`. On Windows native, `--dangerously-skip-permissions` is omitted because there's no OS-level sandbox.
 
 ## What's Included
 
@@ -132,66 +137,20 @@ This repo ships **persona-manager** — the meta-tool that scaffolds and manages
 | Skill | What it does |
 |-------|-------------|
 | **persona-dev** | Scaffolds a new persona with CLAUDE.md, output style, profile template, sandbox config, hooks, self-improve skill, gitignore, and optional GitHub repo. Also handles persona updates and evolution. |
-| **persona-dashboard** (separate plugin) | Expansion pack — adds an HTML dashboard with task tracking, profile viewer, memory browser, and system overview. Single-file app served locally on ports 7300-7399. |
+
+
+## Expansion Packs
+
+| **persona-dashboard** (separate plugin) | Adds an HTML dashboard with task tracking, profile viewer, memory browser, and system overview. Single-file app served locally on ports 7300-7399. |
 
 Every scaffolded persona includes:
 - `CLAUDE.md` with role, rules, session start, skills table
 - `.claude/output-styles/{name}.md` with personality and tone
 - `profile-template.md` as interview reference (persona writes `user/profile.md` from user answers)
-- `hooks.json` with SessionStart hook (native auto-memory handles the rest)
+- `hooks.json` with SessionStart, Stop, and PreCompact hooks
 - `self-improve` skill for the evolution engine
 - `.claude/settings.json` with sandbox config and `autoMemoryDirectory`
 - `.gitignore` protecting secrets (`.mcp.json` always ignored; `user/` optionally ignored for public sharing)
-
-<details>
-<summary>Persona Directory Structure</summary>
-
-```
-~/.personas/{name}/                       # Each persona is its own git-tracked directory
-├── CLAUDE.md                             # Role, rules, skill refs (committed)
-├── .claude/
-│   ├── settings.json                     # Sandbox + autoMemoryDirectory (committed)
-│   ├── output-styles/                    # Personality, tone, style (committed)
-│   └── settings.local.json              # (always gitignored)
-├── hooks.json                            # SessionStart hook (committed)
-├── profile-template.md                    # Context template (committed)
-├── .mcp.json                             # MCP servers + API keys (gitignored)
-├── .gitignore                            # Secret protection (committed)
-├── skills/
-│   ├── {domain}/{skill}/SKILL.md         # Domain-specific skills
-│   └── self-improve/SKILL.md             # Evolution engine
-├── tools/                                # Utilities + scripts (persona-writable)
-├── docs/                                 # Reference docs (persona-writable)
-└── user/                                 # Personal data silo (optionally gitignored)
-    ├── profile.md                        # Your personal data (filled from interview)
-    └── memory/                           # Native auto-memory
-        ├── MEMORY.md                     # Index (first 200 lines loaded)
-        └── *.md                          # Topic files (read on demand)
-```
-
-</details>
-
-<details>
-<summary>Framework Repo Structure</summary>
-
-```
-personas/                            # This repo
-├── plugins/
-│   ├── persona-manager/             # Meta-tool
-│   │   ├── skills/
-│   │   │   └── persona-dev/         # Scaffolding + evolution skill
-│   │   │       └── references/      # Templates copied to every persona
-│   │   └── skill-rules.json         # Activation triggers
-│   └── persona-dashboard/           # Dashboard expansion pack (separate plugin)
-│       ├── skills/install/          # Dashboard installation skill
-│       │   └── assets/              # HTML dashboard template
-│       └── skill-rules.json         # Activation triggers
-├── assets/                          # Logo + branding
-└── tests/
-    └── personas-test.sh             # Structure + secret validation
-```
-
-</details>
 
 ## Documentation
 

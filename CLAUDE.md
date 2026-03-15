@@ -21,7 +21,8 @@ personas/                                 # Framework repo
     │   ├── settings.json                 # Sandbox + autoMemoryDirectory (committed)
     │   ├── output-styles/               # Personality, tone, style (committed)
     │   └── settings.local.json          # (always gitignored)
-    ├── hooks.json                        # SessionStart hook (committed)
+    ├── hooks.json                        # SessionStart + Stop + PreCompact hooks (committed)
+    ├── .claude-flags                     # Per-persona CLI launch flags (committed)
     ├── profile-template.md               # Template for user context (committed)
     ├── .mcp.json                         # MCP server config (gitignored)
     ├── skills/
@@ -103,12 +104,12 @@ Personas run across multiple Claude environments. Each has different capabilitie
 | **CLI** | Yes (Seatbelt/bubblewrap) | Full access within sandbox rules | `.mcp.json` (project) | macOS, Linux, WSL2, Windows* |
 | **Desktop Code tab** | Yes (OS-level) | Same as CLI sandbox | `.mcp.json` (project) | macOS, Windows |
 | **Desktop Chat** | No (server-side) | No direct filesystem access | `claude_desktop_config.json` (global) | macOS, Windows |
-| **Cowork** | Yes (Linux VM) | Folder-scoped only, blocks symlink escapes | `.mcp.json` (project) | macOS (Apple Silicon only) |
+| **Cowork** | Yes (Linux VM) | Folder-scoped only, blocks symlink escapes | `claude_desktop_config.json` (global) | macOS (Apple Silicon only) |
 
 *Windows native CLI has no sandbox support — `--dangerously-skip-permissions` must never be used.
 
 **Key implications for personas:**
-- MCP servers need to be in `.mcp.json` (CLI/Code tab/Cowork) AND `claude_desktop_config.json` (Desktop Chat) for full coverage
+- MCP servers need to be in `.mcp.json` (CLI/Code tab) AND `claude_desktop_config.json` (Desktop Chat/Cowork) for full coverage
 - Cowork cannot create symlinks outside its mounted folder — cross-environment setup must be done from a terminal
 - Desktop Chat has no filesystem access — it relies entirely on MCP servers and conversation
 
@@ -217,10 +218,10 @@ MCP servers are configured in two places depending on the environment:
 
 | Environment | Config file | Scope |
 |-------------|-----------|-------|
-| CLI + Desktop Code tab + Cowork | `.mcp.json` (in persona dir) | Per-persona, gitignored |
-| Desktop Chat | `claude_desktop_config.json` | Global, per-machine |
+| CLI + Desktop Code tab | `.mcp.json` (in persona dir) | Per-persona, gitignored |
+| Desktop Chat + Cowork | `claude_desktop_config.json` | Global, per-machine |
 
-**Why two files?** CLI, Desktop Code tab, and Cowork all read project-scoped `.mcp.json`. But Desktop Chat runs separately and only reads the global `claude_desktop_config.json`. If users want MCP tools available across all environments, servers need to be in both files.
+**Why two files?** CLI and the Desktop Code tab read project-scoped `.mcp.json`. But Desktop Chat and Cowork run as part of Claude Desktop and only read the global `claude_desktop_config.json`. If users want MCP tools available across all environments, servers need to be in both files.
 
 **Desktop config location:**
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
@@ -245,7 +246,7 @@ Every persona ships three hooks in `hooks.json`:
 ## Gotchas
 
 - Personas activate only when CWD is the persona's directory — `--setting-sources project` ensures total isolation
-- MCP servers need to be in both `.mcp.json` (CLI/Code tab/Cowork) and `claude_desktop_config.json` (Desktop Chat) — persona-dev handles this
+- MCP servers need to be in both `.mcp.json` (CLI/Code tab) and `claude_desktop_config.json` (Desktop Chat/Cowork) — persona-dev handles this
 - `.claude/settings.json` (sandbox config) IS committed — `.claude/settings.local.json` is gitignored
 - Personas live in `~/.personas/`, NOT in this framework repo
 - Output styles live in `.claude/output-styles/` — personality/tone is separate from rules in CLAUDE.md
