@@ -27,7 +27,7 @@
     font-weight="400"
     letter-spacing="3.5"
     fill="#94A3B8"
-  >native AI assistants for claude code</text>
+  >native AI assistants for claude</text>
 
   <style>
     @media (prefers-color-scheme: dark) {
