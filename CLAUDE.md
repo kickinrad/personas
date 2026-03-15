@@ -40,7 +40,15 @@ personas/                                 # Framework repo
 
 **A persona is a self-contained AI assistant.** It combines standard Claude Code features — identity (CLAUDE.md), output style (`.claude/output-styles/`), user context (`user/profile.md`), skills, hooks, MCP tools, sandbox settings, and native auto-memory (`user/memory/`) — into a specialized agent that evolves over time. The persona maintains all of these itself; identity changes require human approval, everything else evolves automatically.
 
-## CLI Aliases
+## Running Personas
+
+| Mode | How |
+|------|-----|
+| Interactive (CLI) | `{name}` — shell alias, sandboxed session |
+| One-shot (CLI) | `{name} "prompt"` — runs prompt and exits |
+| Desktop | Select `~/.personas/{name}/` as project folder |
+
+### CLI Aliases
 
 Each persona is invokable by name from any directory. Shell functions in `~/.personas/.aliases.sh` auto-discover persona dirs and create aliases:
 
@@ -57,20 +65,23 @@ The aliases file works in both bash and zsh. Source it from your shell config:
 ```
 
 Each alias `cd`s into `~/.personas/{name}/` and runs `claude --setting-sources project --dangerously-skip-permissions --remote-control`. These flags:
-- Loads persona's `CLAUDE.md` (personality)
-- Loads persona's `.claude/settings.json` (sandbox config)
-- Loads persona's `.mcp.json` (tools)
-- Ignores global `~/.claude/CLAUDE.md` and `~/.claude/settings.json`
-- Skips permission prompts (safe because sandbox restricts filesystem + network)
-- Enables browser extension and external tool integration via remote control
+- `--setting-sources project` — loads only persona's config (ignores global `~/.claude/CLAUDE.md` and `~/.claude/settings.json`)
+- `--dangerously-skip-permissions` — safe because sandbox restricts filesystem + network
+- `--remote-control` — enables browser extension and external tool integration
 
-## Running Personas
+### Desktop
 
-| Mode | Command |
-|------|---------|
-| Interactive (CLI) | `{name}` (sandbox + skip-permissions via alias) |
-| One-shot (CLI) | `{name} "prompt"` (sandbox + skip-permissions via alias) |
-| Desktop (Cowork) | Open `~/.personas/{name}/` as project folder |
+Select the persona directory as your project folder when starting a Claude Desktop session. Desktop reads the same CLAUDE.md, `.claude/settings.json`, hooks, output styles, and `.mcp.json` — the persona activates automatically.
+
+### Cross-Platform (Windows / WSL2)
+
+On macOS and Linux, CLI and Desktop share `~/` — no extra setup needed.
+
+On Windows, CLI runs inside WSL2 (`/home/user/`) while Desktop sees `C:\Users\user\`. During persona creation, persona-dev detects this and asks the user's preference:
+
+- **CLI only**: personas stay in WSL2's `~/.personas/` (better I/O performance)
+- **Desktop only**: personas go to `/mnt/c/Users/{WINUSER}/.personas/`
+- **Both**: personas on Windows side + symlink from WSL2's `~/.personas/` (transparent to both environments)
 
 ## Native Sandboxing
 

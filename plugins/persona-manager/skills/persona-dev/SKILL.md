@@ -58,9 +58,32 @@ Each persona contains:
 
 ### Phase 1: Discovery
 
-Before building anything, understand what this persona needs to be. Ask the user:
+**Environment detection (silent — don't ask, just detect):**
 
-**Required:**
+```
+if /mnt/c/Users exists → Windows (WSL2)
+else → native (Linux or macOS)
+```
+
+**Setup preference (ask once):**
+
+Ask the user: "Will you use this persona from **Claude Code CLI**, **Claude Desktop**, or **both**?"
+
+This determines path setup (Phase 3) and alias configuration (Phase 7):
+
+| Environment | Setup mode | Persona path | Aliases? |
+|-------------|-----------|--------------|----------|
+| Native + CLI | `cli` | `~/.personas/{name}/` | Yes |
+| Native + Desktop | `desktop` | `~/.personas/{name}/` | No |
+| Native + both | `both` | `~/.personas/{name}/` | Yes |
+| WSL2 + CLI | `cli` | `~/.personas/{name}/` (WSL-native, fast) | Yes |
+| WSL2 + Desktop | `desktop` | `/mnt/c/Users/{WINUSER}/.personas/{name}/` | No |
+| WSL2 + both | `both` | Windows side + symlink from `~/.personas/` | Yes |
+
+On native Linux/macOS, CLI and Desktop share `~/` — no special handling needed. On WSL2, the filesystems differ: CLI sees `/home/user/` while Desktop sees `C:\Users\user\`. The symlink approach bridges them.
+
+**Then ask about the persona itself:**
+
 - What domain or role? (finance advisor, personal chef, brand strategist, etc.)
 - What's the persona's expertise and voice? (casual vs formal, opinionated vs neutral, proactive vs reactive)
 - What workflows will it handle? (weekly reviews, meal planning, code review, etc.)
@@ -92,11 +115,43 @@ Present findings to the user: "Here's what I found that could enhance this perso
 - If `~/.personas/{name}/CLAUDE.md` exists, stop and ask: "A persona named `{name}` already exists. Update it, or pick a different name?"
 - Don't proceed with scaffolding if it would overwrite an existing persona
 
-Create the directory structure:
+**Set up the persona path based on Phase 1 detection:**
+
+On native Linux/macOS (all modes) or WSL2 + CLI-only:
 
 ```bash
 mkdir -p ~/.personas/{name}/{.claude/output-styles,skills,docs,tools,user/memory}
 ```
+
+On WSL2 + Desktop-only:
+
+```bash
+WINUSER=$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r')
+WIN_PERSONAS="/mnt/c/Users/$WINUSER/.personas"
+mkdir -p "$WIN_PERSONAS/{name}"/{.claude/output-styles,skills,docs,tools,user/memory}
+```
+
+On WSL2 + both (symlink bridge):
+
+```bash
+WINUSER=$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r')
+WIN_PERSONAS="/mnt/c/Users/$WINUSER/.personas"
+mkdir -p "$WIN_PERSONAS/{name}"/{.claude/output-styles,skills,docs,tools,user/memory}
+
+# Create ~/.personas/ symlink if it doesn't exist
+if [ ! -e "$HOME/.personas" ]; then
+  ln -s "$WIN_PERSONAS" "$HOME/.personas"
+elif [ ! -L "$HOME/.personas" ]; then
+  # ~/.personas/ exists as a real directory — migrate existing personas
+  echo "Migrating existing personas to Windows side for Desktop compatibility..."
+  cp -r "$HOME/.personas/"* "$WIN_PERSONAS/" 2>/dev/null
+  mv "$HOME/.personas" "$HOME/.personas.bak"
+  ln -s "$WIN_PERSONAS" "$HOME/.personas"
+  echo "Backup at ~/.personas.bak — remove after verifying migration"
+fi
+```
+
+The symlink makes `~/.personas/` in WSL2 point to `C:\Users\{WINUSER}\.personas\` on the Windows side. CLI aliases, Desktop project folders, and git all work transparently through the symlink. Slight I/O overhead vs WSL-native, but negligible for persona-sized directories.
 
 ### Phase 4: Build core files
 
@@ -188,9 +243,11 @@ Ask the user: "Want to set up a GitHub repo for this persona?"
 - If yes: `gh repo create {github-username}/{name} --private --source=. --push`
 - If no: Skip — can always add a remote later
 
-### Phase 7: Configure shell aliases + verify
+### Phase 7: Configure launch method + verify
 
-Automatically set up the alias system so the persona is callable by name:
+**If setup mode is `cli` or `both`:**
+
+Set up shell aliases so the persona is callable by name:
 
 1. **Create `~/.personas/.aliases.sh`** if it doesn't exist (see [CLI Aliases](#cli-aliases) below for the template)
 2. **Add source line to the user's shell config** if not already present:
@@ -200,6 +257,18 @@ Automatically set up the alias system so the persona is callable by name:
    - The line to add: `[ -f "$HOME/.personas/.aliases.sh" ] && source "$HOME/.personas/.aliases.sh"`
    - **Check first** — only add if the line isn't already there
 3. **Tell the user** to restart their shell or run `source ~/.personas/.aliases.sh` to activate immediately
+
+**If setup mode is `desktop` only:**
+
+Skip aliases. Tell the user:
+- "Start a new Claude Desktop session and select `~/.personas/{name}/` as your project folder. Claude loads the persona's identity, sandbox, and skills automatically."
+- On WSL2: use the Windows path `C:\Users\{WINUSER}\.personas\{name}\` when selecting the project folder
+
+**If setup mode is `both`:**
+
+After setting up aliases, also tell the user how to use the persona in Desktop:
+- On native: "In Claude Desktop, select `~/.personas/{name}/` as your project folder"
+- On WSL2: "In Claude Desktop, select `C:\Users\{WINUSER}\.personas\{name}\` as your project folder — it's the same directory your CLI aliases point to via symlink"
 
 Then verify the persona works — run through the [Testing a Persona](#testing-a-persona) checklist.
 

@@ -11,61 +11,79 @@ Self-evolving AI personas built on Claude Code.
 Each persona is a standalone git-tracked directory with its own personality, skills, memory, and OS-level sandbox. Install the framework, scaffold a persona, and you have a dedicated AI assistant that remembers your context and improves itself over time. No Docker, no infrastructure, no configuration servers.
 
 ```
-$ warren "weekly review"
+$ chef "what should I make tonight?"
 
-📊 Weekly Financial Review — Mar 3-8, 2026
+🍳 Based on what's in your pantry + this week's goals:
 
-Income:   $4,200  ✓ on track
-Spending: $2,847  ⚠️ dining out up 34% vs. last month
-Savings:  $1,353  → auto-transferred to HYSA
+You have chicken thighs defrosting, plus rice and that gochujang
+from last week. Let's do dakgalbi (spicy Korean chicken stir-fry).
 
-Action items:
-1. Dining budget is trending $400 over — cut back or reallocate?
-2. Car insurance renewal hits Thursday — I found a $180/yr cheaper quote
-3. Roth IRA contribution room: $2,500 remaining for 2026
+  Prep: 15 min  Cook: 20 min  Calories: ~480
+
+I'll skip the cabbage since you mentioned hating it last time.
+Want the shopping list for sides, or just rolling with what you have?
 ```
 
 ## Quick Start
 
-### Claude Code (CLI)
+### Step 1: Install the plugin
 
-```bash
-# 1. Install persona-manager as a Claude Code plugin
+<details open>
+<summary><strong>Claude Code (CLI)</strong></summary>
+
+```
 /plugin marketplace add kickinrad/personas
 /plugin install persona-manager@personas
-
-# 2. Create your first persona
-persona-manager "create a personal CFO persona called warren"
-# Scaffolds to ~/.personas/warren/ with sandbox, hooks, shell aliases — all automatic
-
-# 3. First session — persona interviews you and builds your profile
-warren
-# Warren asks about your accounts, income, goals — writes user/profile.md from your answers
-
-# 4. From now on, just use it
-warren              # interactive session
-warren "weekly review"  # one-shot prompt
 ```
 
-### Claude Desktop (Cowork)
+</details>
+
+<details>
+<summary><strong>Claude Desktop</strong></summary>
+
+Click **+** next to the prompt box → **Plugins** → **Add plugin**, then search for `kickinrad/personas` and install **persona-manager**. Or use the same `/plugin` commands as CLI.
+
+</details>
+
+### Step 2: Create a persona
+
+In the same session, ask Claude to create your persona:
+
+```
+create a personal chef persona called chef
+```
+
+The `persona-dev` skill activates automatically — it scaffolds everything to `~/.personas/chef/` including sandbox config, hooks, output style, self-improve skill, and gitignore.
+
+### Step 3: Launch your persona
+
+<details open>
+<summary><strong>Claude Code (CLI)</strong></summary>
+
+The scaffolding step sets up shell aliases automatically. Reload your shell, then:
 
 ```bash
-# 1. Install persona-manager as a Claude Code plugin
-/plugin marketplace add kickinrad/personas
-/plugin install persona-manager@personas
-
-# 2. Create your first persona
-persona-manager "create a personal CFO persona called warren"
-# Scaffolds to ~/.personas/warren/ — same path on all platforms
-
-# 3. Open the persona as a project folder in Claude Desktop
-#    File → Open Project → ~/.personas/warren/
-
-# 4. First session — persona interviews you and builds your profile
-#    Warren asks about your accounts, income, goals — writes user/profile.md from your answers
+chef                          # interactive session
+chef "what should I make?"    # one-shot prompt
 ```
 
-Personas work identically in both environments — same directory structure, same sandbox config, same skills. The persona-dev skill auto-detects your environment and adjusts setup accordingly (shell aliases for CLI, project folder guidance for Desktop).
+</details>
+
+<details>
+<summary><strong>Claude Desktop</strong></summary>
+
+Start a new session and select `~/.personas/chef/` as your project folder. Claude loads the persona's identity, sandbox, and skills automatically.
+
+</details>
+
+On first launch, the persona interviews you to build your profile — it asks the right questions based on its role, then writes `user/profile.md` from your answers. Every session after that, it reads your profile and picks up where you left off.
+
+### Cross-platform notes
+
+During setup, persona-dev asks whether you'll use **CLI**, **Desktop**, or **both** — and configures paths accordingly.
+
+- **macOS / Linux** — CLI and Desktop share `~/`, so `~/.personas/` works everywhere. No extra setup.
+- **Windows (WSL2)** — CLI runs in WSL (`/home/user/`) while Desktop sees `C:\Users\user\`. If you use both, persona-dev creates personas on the Windows side and symlinks `~/.personas/` in WSL so both environments see the same files. If you only use CLI, personas stay in WSL for better I/O performance.
 
 ## How It Works
 
@@ -109,9 +127,9 @@ Personas can only write to their own directory, can't read parent directories or
 
 | Mode | How |
 |------|-----|
-| Interactive (CLI) | `warren` — shell alias, launches sandboxed session |
-| One-shot (CLI) | `warren "weekly review"` — runs prompt and exits |
-| Desktop (Cowork) | Open `~/.personas/warren/` as project folder |
+| Interactive (CLI) | `chef` — shell alias, launches sandboxed session |
+| One-shot (CLI) | `chef "what should I make?"` — runs prompt and exits |
+| Desktop | Select `~/.personas/chef/` as project folder |
 
 Shell aliases auto-discover personas in `~/.personas/` and create callable functions. Under the hood: `cd ~/.personas/{name}/ && claude --setting-sources project --dangerously-skip-permissions --remote-control`. The flags load only the persona's config, skip permission prompts (safe because sandbox restricts everything), and enable external tool integration.
 

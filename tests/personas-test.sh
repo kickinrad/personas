@@ -61,7 +61,7 @@ for plugin_dir in "$PLUGINS_DIR"/*/; do
     basename_f=$(basename "$f")
     [[ "$basename_f" == ".mcp.json" ]] && continue
     if grep -qE '(eyJ[A-Za-z0-9_-]{10,}|GOCSPX-|sk-[A-Za-z0-9]{20,}|BEGIN PRIVATE KEY)' "$f" 2>/dev/null; then
-      secret_hits+=" $(realpath --relative-to="$REPO_ROOT" "$f")"
+      secret_hits+=" ${f#"$REPO_ROOT"/}"
     fi
   done < <(find "$plugin_dir" \( -name "*.md" -o -name "*.json" \) -print0 2>/dev/null)
   [[ -z "$secret_hits" ]] && \
