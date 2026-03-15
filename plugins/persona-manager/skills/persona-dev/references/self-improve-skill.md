@@ -73,9 +73,9 @@ When a capability gap needs automation beyond conversation:
 
 Before creating anything custom, investigate what already exists:
 
-- **MCP servers** — search for community or official MCP servers that solve the problem. A well-maintained server beats a custom script every time
+- **MCP servers** — search for community or official MCP servers that solve the problem. A well-maintained server beats a custom tool every time
 - **CLI tools** — check if there's an existing tool (`gh`, `jq`, `fzf`, etc.) that handles it. Many problems have mature solutions
-- **Expansion packs** — check if a persona expansion pack covers it (e.g., `persona-dashboard:install` for task tracking and visual status)
+- **Expansion packs** — check if a persona-manager expansion pack covers it (e.g., `persona-manager:persona-dashboard` for task tracking and visual status)
 - **Reference docs** — sometimes the "tool" you need is just good documentation in `docs/`
 
 Present findings: "Here's what I found that could help: [options]. Want to use an existing tool, or should I build something?"
@@ -122,7 +122,7 @@ Run monthly, or when the user says "time for a self-audit":
    - Check MCP servers — any unused or disconnected for 3+ sessions? Flag for removal
    - Check for loose files in the root that should be in `docs/` or `tools/`
    - Verify `.gitignore` is up to date with any new generated files
-7. **Present all proposals** clearly in a single summary:
+6. **Present all proposals** clearly in a single summary:
 
 ```
 ## Self-Audit Results
@@ -146,7 +146,7 @@ Run monthly, or when the user says "time for a self-audit":
 - Memory is clean, rules are current, workspace is tidy, no skill gaps detected
 ```
 
-8. Wait for approval on each proposal before writing anything
+7. Wait for approval on each proposal before writing anything
 
 ## The Key Distinction
 
