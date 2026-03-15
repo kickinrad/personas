@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="personas" width="600">
+  <img src="assets/banner.svg" alt="personas" width="650">
 </p>
 
 <p align="center">
@@ -8,7 +8,7 @@
 
 Self-evolving AI personas built on Claude Code.
 
-Each persona is a standalone git-tracked directory with its own personality, skills, memory, and OS-level sandbox. Install the framework, scaffold a persona, type its name from any directory — you have a dedicated AI assistant that remembers your context and improves itself over time. No Docker, no infrastructure, no configuration servers.
+Each persona is a standalone git-tracked directory with its own personality, skills, memory, and OS-level sandbox. Install the framework, scaffold a persona, and you have a dedicated AI assistant that remembers your context and improves itself over time. No Docker, no infrastructure, no configuration servers.
 
 ```
 $ warren "weekly review"
@@ -26,6 +26,8 @@ Action items:
 ```
 
 ## Quick Start
+
+### Claude Code (CLI)
 
 ```bash
 # 1. Install persona-manager as a Claude Code plugin
@@ -45,7 +47,25 @@ warren              # interactive session
 warren "weekly review"  # one-shot prompt
 ```
 
-All setup and creation details live in the `persona-dev` skill — install persona-manager and it guides you through everything.
+### Claude Desktop (Cowork)
+
+```bash
+# 1. Install persona-manager as a Claude Code plugin
+/plugin marketplace add kickinrad/personas
+/plugin install persona-manager@personas
+
+# 2. Create your first persona
+persona-manager "create a personal CFO persona called warren"
+# Scaffolds to ~/.personas/warren/ — same path on all platforms
+
+# 3. Open the persona as a project folder in Claude Desktop
+#    File → Open Project → ~/.personas/warren/
+
+# 4. First session — persona interviews you and builds your profile
+#    Warren asks about your accounts, income, goals — writes user/profile.md from your answers
+```
+
+Personas work identically in both environments — same directory structure, same sandbox config, same skills. The persona-dev skill auto-detects your environment and adjusts setup accordingly (shell aliases for CLI, project folder guidance for Desktop).
 
 ## How It Works
 
@@ -85,16 +105,15 @@ Each persona runs in a native OS sandbox (bubblewrap on Linux, Seatbelt on macOS
 
 Personas can only write to their own directory, can't read parent directories or other personas' files, and can only reach whitelisted network domains. Each persona customizes `allowedDomains` for its own MCP servers.
 
-### Shell Aliases
+### Running Personas
 
-The alias system auto-discovers personas in `~/.personas/` and creates callable functions:
+| Mode | How |
+|------|-----|
+| Interactive (CLI) | `warren` — shell alias, launches sandboxed session |
+| One-shot (CLI) | `warren "weekly review"` — runs prompt and exits |
+| Desktop (Cowork) | Open `~/.personas/warren/` as project folder |
 
-```bash
-warren              # cd into ~/.personas/warren/, launch Claude Code
-warren "do weekly"  # one-shot with sandboxed permissions
-```
-
-Under the hood: `cd ~/.personas/{name}/ && claude --setting-sources project --dangerously-skip-permissions --remote-control`. The `--setting-sources project` flag loads only the persona's config (ignoring global settings), `--dangerously-skip-permissions` is safe because the sandbox restricts everything, and `--remote-control` enables browser extension and external tool integration.
+Shell aliases auto-discover personas in `~/.personas/` and create callable functions. Under the hood: `cd ~/.personas/{name}/ && claude --setting-sources project --dangerously-skip-permissions --remote-control`. The flags load only the persona's config, skip permission prompts (safe because sandbox restricts everything), and enable external tool integration.
 
 ## What's Included
 
@@ -148,16 +167,16 @@ Every scaffolded persona includes:
 ```
 personas/                            # This repo
 ├── plugins/
-│   └── persona-manager/             # Meta-tool
-│       ├── skills/
-│       │   ├── persona-dev/         # Scaffolding + evolution skill
-│       │   │   └── references/      # Templates copied to every persona
+│   ├── persona-manager/             # Meta-tool
+│   │   ├── skills/
+│   │   │   └── persona-dev/         # Scaffolding + evolution skill
+│   │   │       └── references/      # Templates copied to every persona
+│   │   └── skill-rules.json         # Activation triggers
 │   └── persona-dashboard/           # Dashboard expansion pack (separate plugin)
-│       └── skills/install/          # Dashboard installation skill
-│           └── assets/              # HTML dashboard template
+│       ├── skills/install/          # Dashboard installation skill
+│       │   └── assets/              # HTML dashboard template
 │       └── skill-rules.json         # Activation triggers
-├── docs/
-│   └── plans/                       # Historical design documents
+├── assets/                          # Logo + branding
 └── tests/
     └── personas-test.sh             # Structure + secret validation
 ```

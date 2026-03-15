@@ -10,8 +10,8 @@ personas/                                 # Framework repo
 ├── .claude-plugin/marketplace.json       # Plugin registry (persona-manager)
 ├── plugins/
 │   └── persona-manager/                  # Meta-tool: scaffolds + evolves personas
-├── tests/personas-test.sh
-└── docs/plans/
+├── assets/                               # Logo + branding
+└── tests/personas-test.sh
 
 ~/.personas/                              # Personas live here (outside this repo)
 ├── .aliases.sh                           # Shell functions for all personas (bash/zsh)
@@ -68,8 +68,9 @@ Each alias `cd`s into `~/.personas/{name}/` and runs `claude --setting-sources p
 
 | Mode | Command |
 |------|---------|
-| Interactive | `{name}` (sandbox + skip-permissions via alias) |
-| One-shot | `{name} "prompt"` (sandbox + skip-permissions via alias) |
+| Interactive (CLI) | `{name}` (sandbox + skip-permissions via alias) |
+| One-shot (CLI) | `{name} "prompt"` (sandbox + skip-permissions via alias) |
+| Desktop (Cowork) | Open `~/.personas/{name}/` as project folder |
 
 ## Native Sandboxing
 
