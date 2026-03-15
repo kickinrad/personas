@@ -1,0 +1,16 @@
+# Uncomment to share this persona publicly
+# user/
+
+# Secrets — always ignored
+.mcp.json
+.claude/settings.local.json
+
+# Local files
+*.local.json
+*.local.md
+*.db
+*.db-journal
+*.sqlite
+*.log
+.DS_Store
+Thumbs.db

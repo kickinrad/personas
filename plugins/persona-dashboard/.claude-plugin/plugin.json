@@ -1,0 +1,6 @@
+{
+  "name": "persona-dashboard",
+  "description": "Expansion pack — adds a visual HTML dashboard with task tracking to any persona",
+  "version": "1.0.0",
+  "author": { "name": "kickinrad", "url": "https://github.com/kickinrad" }
+}
