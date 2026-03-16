@@ -2,9 +2,7 @@
 # Placeholders: {name} = persona name
 services:
   persona-{name}:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: persona-{name}
     container_name: persona-{name}
     volumes:
       # Persona workspace (read-only — config, skills, CLAUDE.md)

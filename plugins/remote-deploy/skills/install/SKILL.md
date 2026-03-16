@@ -150,10 +150,10 @@ scp ${CLAUDE_PLUGIN_ROOT}/skills/install/references/Dockerfile {tailscale_host}:
 
 3. Build image:
 ```bash
-ssh {tailscale_host} "cd /opt/personas/build && docker build -t persona-base ."
+ssh {tailscale_host} "cd /opt/personas/build && docker build -t persona-{name} ."
 ```
 
-This builds a shared base image. Individual personas use it via `image: persona-base` in their compose file.
+This builds a per-persona image. If deploying multiple personas, each gets its own image (allows independent CLI version updates).
 
 ## Phase 6: Deploy Persona
 
