@@ -71,24 +71,32 @@ When a capability gap needs automation beyond conversation:
 
 ### Step 1: Research before building
 
-Before creating anything custom, investigate what already exists:
+Before creating anything custom, investigate what already exists. Think broadly — the right solution might be an MCP server, a CLI tool, a direct API call, a skill, an agent, a hook, or just good documentation:
 
 - **MCP servers** — search for community or official MCP servers that solve the problem. A well-maintained server beats a custom tool every time
 - **CLI tools** — check if there's an existing tool (`gh`, `jq`, `fzf`, etc.) that handles it. Many problems have mature solutions
+- **APIs** — check if a REST/GraphQL API can be called directly via `curl` or a simple script. Not everything needs an MCP server
+- **Skills** — could a SKILL.md wrap an existing tool or API into a reusable workflow? Skills turn tool knowledge into repeatable playbooks
+- **Agents** — would a specialized subagent handle this better? Agents are good for autonomous multi-step tasks that need their own context
+- **Hooks** — is this a behavioral pattern that should trigger automatically? Hooks automate responses to session events
 - **Expansion packs** — check if a persona-manager expansion pack covers it (e.g., `persona-manager:persona-dashboard` for task tracking and visual status)
 - **Reference docs** — sometimes the "tool" you need is just good documentation in `docs/`
 
-Present findings: "Here's what I found that could help: [options]. Want to use an existing tool, or should I build something?"
+Present findings: "Here's what I found that could help: [options]. Want to use an existing solution, or should I build something?"
 
 ### Step 2: Identify what's needed
 
 | Need | Where it goes | Example |
 |------|--------------|---------|
-| Script or utility | `tools/{tool-name}/` | Data pipeline, API wrapper, setup script |
-| Reference doc | `docs/` | Domain knowledge, checklists, templates |
 | MCP server (existing) | `.mcp.json` + sandbox allowlist | Community server for a service |
 | MCP server (custom) | Propose — user configures | Only if nothing exists |
-| CLI tool integration | `tools/` or CLAUDE.md instructions | Wrapping an external CLI |
+| CLI tool integration | CLAUDE.md instructions or wrap in a skill | Wrapping an external CLI |
+| API integration | `tools/` script or skill instructions | REST/GraphQL calls via curl or script |
+| Skill | `skills/{domain}/{name}/SKILL.md` | Multi-step workflow wrapping tools/APIs |
+| Agent | `.claude/agents/{name}.md` | Autonomous research, analysis, or processing |
+| Hook | `hooks.json` | Domain-specific behavioral automation |
+| Script or utility | `tools/{tool-name}/` | Data pipeline, formatter, setup script |
+| Reference doc | `docs/` | Domain knowledge, checklists, templates |
 | Expansion pack | Invoke the persona-manager skill | Dashboard, future packs |
 
 ### Step 3: Keep custom builds simple
@@ -96,15 +104,19 @@ Present findings: "Here's what I found that could help: [options]. Want to use a
 - If it would take more than ~100 lines or needs ongoing maintenance, prefer an existing tool
 - Custom tools should do one thing well — no Swiss Army knives
 - Always include a brief comment header explaining what the tool does and when to use it
+- A skill that documents how to use an existing CLI tool is better than a wrapper script that reimplements it
 
 ### Step 4: Propose, build, integrate
 
 1. Propose with a preview of what you'll create or install
-2. On approval, write the files (or guide MCP setup)
+2. On approval, write the files (or guide setup)
 3. For MCP changes: remind user to update `.mcp.json` and `.claude/settings.json` network allowlist
-4. For tools: make executable (`chmod +x`), add to `tools/` with its own subdir if non-trivial
-5. Update CLAUDE.md if the new tool changes workflows
-6. Commit: `feat(self): add {tool-name}`
+4. For tools/scripts: make executable (`chmod +x`), add to `tools/` with its own subdir if non-trivial
+5. For skills: write SKILL.md, add trigger phrase to CLAUDE.md skills table
+6. For agents: create `.claude/agents/{name}.md` with system prompt and tool access
+7. For hooks: add entries to `hooks.json`, document what triggers them
+8. Update CLAUDE.md if the new integration changes workflows
+9. Commit: `feat(self): add {tool-name}`
 
 ## Periodic Audit
 
@@ -120,6 +132,10 @@ Run monthly, or when the user says "time for a self-audit":
 5. **Workspace hygiene sweep:**
    - Scan `docs/` and `tools/` for stale or outdated files — propose removal or update
    - Check MCP servers — any unused or disconnected for 3+ sessions? Flag for removal
+   - Check skills — any that wrap tools no longer installed, or workflows that have changed?
+   - Check agents — any in `.claude/agents/` that aren't being triggered?
+   - Check hooks — any domain-specific hooks in `hooks.json` that are no longer useful?
+   - Check scripts in `tools/` — any that duplicate what a skill or MCP server now handles?
    - Check for loose files in the root that should be in `docs/` or `tools/`
    - Verify `.gitignore` is up to date with any new generated files
 6. **Present all proposals** clearly in a single summary:
@@ -141,6 +157,8 @@ Run monthly, or when the user says "time for a self-audit":
 - **Remove:** `docs/old-thing.md` — not referenced in 5+ sessions
 - **Move:** `root-file.md` → `docs/reference/` — misplaced
 - **Flag:** MCP server `{name}` unused for 3+ sessions — remove?
+- **Flag:** Script `tools/{name}` duplicates skill `{skill}` — consolidate?
+- **Flag:** Agent `{name}` not triggered in 3+ sessions — still needed?
 
 ### No Action Needed
 - Memory is clean, rules are current, workspace is tidy, no skill gaps detected
