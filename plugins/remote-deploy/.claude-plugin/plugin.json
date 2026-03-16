@@ -1,0 +1,6 @@
+{
+  "name": "remote-deploy",
+  "description": "Expansion pack — deploy a persona to a remote server as a Docker container with Tailscale SSH access and bidirectional sync",
+  "version": "1.0.0",
+  "author": { "name": "kickinrad", "url": "https://github.com/kickinrad" }
+}

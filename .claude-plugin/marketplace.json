@@ -3,7 +3,7 @@
   "owner": { "name": "kickinrad", "url": "https://github.com/kickinrad" },
   "metadata": {
     "description": "Framework for self-evolving AI personas on Claude Code",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -18,6 +18,13 @@
       "name": "persona-dashboard",
       "source": "./plugins/persona-dashboard",
       "description": "Expansion pack — adds a visual HTML dashboard with task tracking to any persona",
+      "version": "1.0.0",
+      "category": "expansion"
+    },
+    {
+      "name": "remote-deploy",
+      "source": "./plugins/remote-deploy",
+      "description": "Expansion pack — deploy a persona to a remote server as a Docker container with Tailscale SSH access and bidirectional sync",
       "version": "1.0.0",
       "category": "expansion"
     }
