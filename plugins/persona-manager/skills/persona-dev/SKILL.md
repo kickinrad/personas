@@ -26,9 +26,11 @@ Each persona contains:
 ~/.personas/{name}/
 ├── .claude/
 │   ├── settings.json              # Sandbox config + autoMemoryDirectory (committed)
-│   └── output-styles/             # Personality, tone, style (committed)
+│   ├── output-styles/             # Personality, tone, style (committed)
+│   └── hooks/
+│       └── public-repo-guard.sh   # Blocks personal data in public repos (committed)
 ├── .gitignore                     # Secrets exclusion
-├── hooks.json                     # SessionStart + Stop + PreCompact hooks
+├── hooks.json                     # SessionStart + Stop + PreCompact + PreToolUse hooks
 ├── CLAUDE.md                      # Personality + rules
 ├── profile-template.md            # Profile template (committed)
 ├── .mcp.json                      # MCP server config (gitignored)
@@ -45,10 +47,10 @@ Each persona contains:
 ```
 
 **Workspace organization:**
-- `docs/` — domain knowledge, reference materials, plans. Use subdirs for categories (`docs/plans/`, `docs/reference/`)
+- `docs/` — domain knowledge, reference materials, plans. Use subdirs for categories (`docs/reference/`)
 - `tools/` — executable tools, utilities, data pipelines. Each tool gets its own subdir if non-trivial
 - `skills/` — reusable multi-step workflows (SKILL.md files)
-- `user/` — personal data silo: profile.md and auto-memory. Gitignored for public sharing
+- `user/` — personal data silo, ensure ALL personal data lands here: profile.md and auto-memory. Gitignored for public sharing
 - Root — only framework files. Don't dump loose files here
 
 ---
@@ -61,9 +63,10 @@ Before building anything, understand what this persona needs to be. Ask the user
 
 **Required:**
 - What domain or role? (finance advisor, personal chef, brand strategist, etc.)
-- What's the persona's expertise and voice? (casual vs formal, opinionated vs neutral, proactive vs reactive)
+- What's the persona's expertise, personality, and voice? (casual vs formal, opinionated vs neutral, proactive vs reactive, present fun and effective personalities that fit the role and ask for preferences)
 - What workflows will it handle? (weekly reviews, meal planning, code review, etc.)
-- What does the user need the persona to know about them? (accounts, preferences, constraints — this shapes `profile-template.md`)
+- What does the user need the persona to know about them? (info, accounts, preferences, constraints — this shapes `profile-template.md`)
+- What is the personas name? (suggest a selection of fun, memorable first names that fits the role, and ask the user if they have any preferences or want to choose their own)
 
 **Explore based on domain:**
 - What external services or APIs does the persona need? (→ MCP server research in Phase 2)
@@ -80,13 +83,29 @@ Don't rush this. A well-understood persona is easier to build and evolves better
 
 ### Phase 2: Research
 
-Before writing a single file, research what tools and integrations could enhance this persona:
+Before writing a single file, research what tools and integrations could enhance this persona. Think broadly — personas have a rich toolkit beyond MCP servers:
 
-1. **MCP servers** — search for community or official MCP servers relevant to the domain (recipe APIs, financial data, calendar, etc.). Existing MCP servers beat custom scripts
+1. **MCP servers** — search for community or official MCP servers relevant to the domain (recipe APIs, financial data, calendar, etc.). Existing servers beat custom solutions
 2. **CLI tools** — identify useful CLI tools already installed or easily available (`gh`, `jq`, domain-specific CLIs)
-3. **Expansion packs** — check if any persona-manager expansion packs fit:
+3. **APIs** — identify REST/GraphQL APIs the persona could call directly via `curl` or scripts in `tools/`. Not everything needs an MCP server — sometimes a simple API call in a bash script is the right tool
+4. **Skills** — plan domain skills that wrap CLI tools, API workflows, or multi-step processes into reusable SKILL.md files. Skills are the persona's playbooks — they turn "I know how to use this tool" into "here's the complete workflow"
+5. **Agents** — consider whether the persona needs specialized subagents (in `.claude/agents/`) for complex autonomous tasks like research, analysis, or multi-step operations
+6. **Hooks** — beyond the standard SessionStart/Stop/PreCompact, consider domain-specific hooks (e.g., a PreToolUse hook that validates data before writes, a Stop hook that generates a summary)
+7. **Scripts** — bash or python scripts in `tools/` for data pipelines, API wrappers, formatters, or anything the persona does repeatedly
+8. **Reference material** — domain-specific best practices, checklists, templates, or frameworks that should live in `docs/`
+9. **Expansion packs** — check if any persona-manager expansion packs fit:
    - `persona-manager:persona-dashboard` — visual dashboard with task tracking (good for personas with ongoing work, reviews, or regular check-ins)
-4. **Reference material** — find domain-specific best practices, checklists, or frameworks that should live in `docs/`
+
+| Discovery | Where it lives | When to choose it |
+|-----------|---------------|-------------------|
+| MCP server | `.mcp.json` + sandbox allowlist | Persistent connection to an external service |
+| CLI tool | Document in CLAUDE.md or wrap in a skill | Mature tool already exists for the job |
+| API (direct) | `tools/` script or skill instructions | Simple HTTP calls, no persistent connection needed |
+| Skill | `skills/{domain}/{name}/SKILL.md` | Multi-step workflow the persona will repeat |
+| Agent | `.claude/agents/{name}.md` | Autonomous subtask needing its own context |
+| Hook | `hooks.json` | Behavioral automation tied to session events |
+| Script | `tools/{name}` | Data processing, automation, one-off utilities |
+| Reference doc | `docs/` | Domain knowledge the persona should internalize |
 
 Present findings to the user: "Here's what I found that could enhance this persona: [list]. Which of these should we include?"
 
@@ -116,7 +135,7 @@ ln -s /mnt/c/Users/{WINUSER}/.personas ~/.personas
 Create the directory structure:
 
 ```bash
-mkdir -p ~/.personas/{name}/{.claude/output-styles,skills,tools,docs,user/memory}
+mkdir -p ~/.personas/{name}/{.claude/output-styles,.claude/hooks,skills,tools,docs,user/memory}
 ```
 
 ### Phase 4: Build core files
@@ -161,7 +180,8 @@ Copy `references/self-improve-skill.md` to `skills/self-improve/SKILL.md`. Repla
 
 **4f. Set up hooks**
 
-Copy `references/hooks-template.json` to `hooks.json` in the persona root. These hooks:
+Copy `references/hooks-template.json` to `hooks.json` in the persona root. Copy `references/public-repo-guard.sh` to `.claude/hooks/public-repo-guard.sh` and make it executable (`chmod +x`). These hooks:
+- **PreToolUse** (command, matcher: Bash): Runs `public-repo-guard.sh` before git commit/push — checks if the repo is public and blocks if personal data (`user/`, `.mcp.json`, secrets) would be exposed. Every persona gets this by default
 - **SessionStart** (command): Reads `user/profile.md` contents into session context via `additionalContext` — the persona then interviews if unfilled or checks completeness. Must be `type: "command"` (SessionStart only supports command hooks)
 - **Stop** (prompt): Reminds the persona to update memory before ending
 - **PreCompact** (prompt): Saves session context before compaction
@@ -181,6 +201,7 @@ Before proceeding, verify all required files exist:
 - [ ] `profile-template.md`
 - [ ] `user/profile.md` (copy of template, ready for first-session interview)
 - [ ] `hooks.json`
+- [ ] `.claude/hooks/public-repo-guard.sh` (executable)
 - [ ] `.gitignore`
 - [ ] `.claude/settings.json`
 - [ ] `skills/self-improve/SKILL.md`
@@ -190,13 +211,17 @@ If anything is missing, fix it now — don't proceed with gaps.
 
 ### Phase 5: Configure integrations
 
-If Phase 2 identified useful MCP servers or tools:
+If Phase 2 identified useful tools and integrations:
 
-1. Document tools in CLAUDE.md under "MCP Tools Available"
-2. Add domains to `.claude/settings.json` → `network.allowedDomains`
-3. Tell the user how to configure each server in `.mcp.json` (gitignored — secrets go here)
-4. For CLI tools: add usage instructions to relevant skills or CLAUDE.md
-5. For expansion packs: ask the user if they want to install them now
+1. Document everything in CLAUDE.md under "Tools & Integrations" — organized by type (MCP servers, CLI tools, APIs, scripts)
+2. For MCP servers: add domains to `.claude/settings.json` → `network.allowedDomains`, tell the user how to configure `.mcp.json` (gitignored — secrets go here)
+3. For CLI tools: add usage instructions to relevant skills or CLAUDE.md
+4. For APIs: create wrapper scripts in `tools/` or document usage patterns in skills
+5. For skills: write the SKILL.md files that wrap tool usage into complete workflows
+6. For agents: create agent definitions in `.claude/agents/` with appropriate system prompts and tool access
+7. For hooks: add entries to `hooks.json` for domain-specific behavioral automation
+8. For scripts: write to `tools/`, make executable, add brief comment header
+9. For expansion packs: ask the user if they want to install them now
 
 ### Phase 6: Initialize git + GitHub sync
 
@@ -212,6 +237,19 @@ git commit -m "feat({name}): initial scaffold"
 - If yes: `gh repo create {github-username}/{name} --private --source=. --push`
 - If no: Skip — can always add a remote later
 - Explain the benefit: backup, version history, sharing between CLI/Desktop/machines
+
+**Public vs private — the persona handles this, not the user:**
+- **Private repo (default):** Safe to commit everything including `user/` (profile, memories). Good for personal backup and cross-machine sync
+- **Public repo:** If the user chooses public (or says "make it public"), the persona MUST immediately:
+  1. Uncomment `user/` in `.gitignore`
+  2. Remove `user/` from git tracking: `git rm -r --cached user/`
+  3. Commit the change: `git commit -m "fix({name}): gitignore user/ for public repo"`
+  4. Create a fresh remote (don't push existing history that may contain personal data)
+- **Going public later:** If the self-improve skill or the user detects the repo has gone public, the persona handles the same steps automatically — don't ask the user to do it manually, they'll forget. The `public-repo-guard.sh` hook is the safety net, but the persona should proactively fix the gitignore rather than waiting for the hook to block
+
+**Never commit these to any repo (public or private):**
+- `.mcp.json` — contains API keys and secrets (always gitignored)
+- Files matching `*.env`, `*.secret`, `*.key`, `*.pem` — credential files
 
 ### Phase 7: Configure launch flags
 
@@ -244,13 +282,14 @@ sudo dnf install bubblewrap socat      # Fedora
 
 **Step 2: Present default flags and walk through customization**
 
-Present the detected config and explain each flag. **All flags are optional** — use `AskUserQuestion` to walk through each one and let the user decide:
+Present the detected config and walk the user through each flag using `AskUserQuestion`. Explain what each one does, why it matters, and the tradeoff. **All flags are optional** — the user decides:
 
-| Flag | Default | Purpose | When to change |
-|------|---------|---------|----------------|
-| `--setting-sources project` | Recommended ON | Loads only this persona's config, ignores global `~/.claude/CLAUDE.md` | Turn off if user wants global config to merge in |
-| `--dangerously-skip-permissions` | ON if sandbox available, **OFF on Windows** | Skips permission prompts — safe only because sandbox restricts filesystem + network | Disable if user wants manual approval per action |
-| `--remote-control` | Recommended ON | Enables browser extension and external tool integration | Disable if persona doesn't need browser/external tools |
+| Flag | What it does | Ask the user |
+|------|-------------|--------------|
+| `--setting-sources project` | Loads only this persona's settings.json, ignoring global `~/.claude/settings.json`. Keeps permissions, sandbox, and MCP config isolated to this persona | "This keeps your persona isolated from your global Claude config. Recommended ON unless you want global settings to merge in. Enable?" |
+| `--dangerously-skip-permissions` | Skips permission prompts for every tool use. **Only safe when OS-level sandbox is active** (macOS/Linux/WSL2) — the sandbox restricts filesystem + network even without prompts. **NEVER on Windows** | "This lets the persona work without asking permission for every action. It's safe because the sandbox restricts what it can access. Want autonomous mode, or prefer to approve actions manually?" |
+| `--remote-control` | Enables browser extension integration and external tool connections | "This allows tools like the Chrome extension to connect to your persona. Enable?" |
+| `--chrome` | Enables Claude in Chrome browser automation. Gives the persona access to your Chrome browser for web interaction, form filling, screenshots, and debugging | "This lets the persona interact with your Chrome browser (requires the Claude in Chrome extension). Does this persona need browser access?" |
 
 **Resulting flag sets by environment (defaults, all customizable):**
 
@@ -260,6 +299,8 @@ Present the detected config and explain each flag. **All flags are optional** �
 | Linux | Yes (bubblewrap) | `--setting-sources project --dangerously-skip-permissions --remote-control` |
 | WSL2 | Yes (bubblewrap) | `--setting-sources project --dangerously-skip-permissions --remote-control` |
 | Windows native | **No** | `--setting-sources project --remote-control` |
+
+`--chrome` is not in the defaults but is always offered as an optional addition during the walkthrough.
 
 ---
 
@@ -273,10 +314,14 @@ On macOS/Linux/WSL2, `--dangerously-skip-permissions` is safe because the sandbo
 
 ---
 
-Walk the user through each flag: "Here are the recommended flags for your {OS} environment. Let me explain each one and you can customize:"
-- Present each flag with `AskUserQuestion`
-- Explain the tradeoff (convenience vs control)
-- On Windows, explain the sandbox situation clearly before even showing the skip-permissions option
+Present defaults first, then offer customization via `AskUserQuestion`:
+1. Show the recommended flag set for the detected OS environment (from the table above)
+2. Briefly explain what each flag does in plain language
+3. Ask: "These are the recommended defaults for your {OS} setup. Look good, or want to customize?"
+4. If the user wants to customize, walk through each flag individually using `AskUserQuestion` — use the "Ask the user" column from the table above
+5. `--chrome` is always presented as an optional addition: "Want to add Chrome browser automation? This lets the persona interact with web pages in your Chrome browser (requires the Claude in Chrome extension)."
+6. On Windows, explain why `--dangerously-skip-permissions` is not available before moving on
+7. Summarize the final chosen flags before writing to `.claude-flags`
 
 **Step 3: Store the flags**
 

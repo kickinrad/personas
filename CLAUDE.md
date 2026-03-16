@@ -20,8 +20,10 @@ personas/                                 # Framework repo
     ├── .claude/
     │   ├── settings.json                 # Sandbox + autoMemoryDirectory (committed)
     │   ├── output-styles/               # Personality, tone, style (committed)
+    │   ├── hooks/
+    │   │   └── public-repo-guard.sh     # Blocks personal data in public repos (committed)
     │   └── settings.local.json          # (always gitignored)
-    ├── hooks.json                        # SessionStart + Stop + PreCompact hooks (committed)
+    ├── hooks.json                        # SessionStart + Stop + PreCompact + PreToolUse hooks (committed)
     ├── .claude-flags                     # Per-persona CLI launch flags (committed)
     ├── profile-template.md               # Template for user context (committed)
     ├── .mcp.json                         # MCP server config (gitignored)
@@ -73,9 +75,10 @@ Each alias reads per-persona flags from `~/.personas/{name}/.claude-flags` (conf
 | Windows native | `--setting-sources project --remote-control` |
 
 **Available flags:**
-- `--setting-sources project` — loads only persona's config (ignores global `~/.claude/CLAUDE.md` and `~/.claude/settings.json`)
+- `--setting-sources project` — loads only persona's settings.json (ignores global `~/.claude/settings.json`). Keeps permissions, sandbox, and MCP config isolated
 - `--dangerously-skip-permissions` — skips permission prompts. **Only safe when OS-level sandbox is available** (macOS/Linux/WSL2). **⚠ NEVER use on Windows native** — no sandbox means unrestricted filesystem + network access
 - `--remote-control` — enables browser extension and external tool integration
+- `--chrome` — enables Claude in Chrome browser automation (requires extension install). Only add for personas that need web interaction
 
 If `.claude-flags` is missing, the alias falls back to safe defaults (no `--dangerously-skip-permissions`).
 
@@ -163,7 +166,7 @@ Every persona ships with a `self-improve` skill that drives evolution:
 - **Native auto-memory** (`user/memory/`): Handled automatically by Claude Code via `autoMemoryDirectory` — no custom hooks needed
 - **Self-improve skill** (`skills/self-improve/SKILL.md`): Handles rule promotion, skill creation, tool & integration discovery, workspace hygiene, and periodic audits
 
-The four levels: memory (automatic/native), rule promotion (propose), skill creation (propose), tool & integration discovery (research existing solutions first, then propose). Periodic audits include workspace hygiene — cleaning stale files, pruning unused tools, keeping the persona lean. See the self-improve skill for the full workflow.
+The four levels: memory (automatic/native), rule promotion (propose), skill creation (propose), tool & integration discovery (research existing MCP servers, CLI tools, APIs, then propose skills, agents, hooks, or scripts as needed). Periodic audits include workspace hygiene — cleaning stale files, pruning unused tools, keeping the persona lean. See the self-improve skill for the full workflow.
 
 ## Session Start
 
@@ -184,9 +187,9 @@ All lifecycle operations use native Claude Code features or persona-manager skil
 ## Private vs Public Personas
 
 - **All personas are independent repos** in `~/.personas/{name}/`, each with their own git history
-- **Public**: Uncomment `# user/` in `.gitignore`, push to a public GitHub repo
-- **Private**: Keep local or push to a private repo
-- **Going public**: Since each persona is its own repo, just create a fresh remote — no history scrubbing needed
+- **Private (default)**: Safe to commit everything including `user/`. Keep local or push to a private repo
+- **Public**: The persona handles the transition — uncomments `user/` in `.gitignore`, removes `user/` from tracking, and creates a fresh remote. The `public-repo-guard.sh` hook blocks any commit/push that would expose personal data in a public repo
+- **Going public later**: The persona handles it automatically — don't rely on the user to remember. Create a fresh remote rather than pushing history that may contain personal data
 
 ## Security Rules
 
@@ -195,6 +198,16 @@ All lifecycle operations use native Claude Code features or persona-manager skil
 - **Never hardcode** OAuth tokens, API keys, or JWT tokens
 - **Sandbox** restricts each persona to its own directory + whitelisted network domains
 - **Never use `--dangerously-skip-permissions` on Windows native** — no OS-level sandbox exists; this flag grants unrestricted access to the entire filesystem and network. persona-dev enforces this during setup and must refuse even if the user insists
+
+### Public Repo Guard
+
+Every persona ships with a `public-repo-guard.sh` hook (`.claude/hooks/public-repo-guard.sh`) that fires on `git commit` and `git push` via a PreToolUse hook in `hooks.json`. For public repos, the guard blocks if:
+- `user/` is not gitignored (personal data would be exposed)
+- `user/` files are staged for commit
+- `.mcp.json` is tracked (API keys would be exposed)
+- Files matching secret patterns (`*.env`, `*.key`, `*.pem`, etc.) are staged
+
+Private repos are allowed through without checks — personal data backup is safe there.
 
 ## Gitignored (Never Commit)
 
