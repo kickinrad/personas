@@ -1,8 +1,10 @@
 {
-  "Stop": [
-    {
-      "type": "prompt",
-      "prompt": "Before ending: if you made changes to config, skills, CLAUDE.md, or other non-memory files this session, remind the user to run /sync push to update the remote deployment. If the remote persona may have generated new memory entries, suggest /sync pull to retrieve them."
-    }
-  ]
+  "hooks": {
+    "Stop": [
+      {
+        "type": "prompt",
+        "prompt": "Before ending: if you made changes to config, skills, CLAUDE.md, or other non-memory files this session, remind the user to run /sync push to update the remote deployment. If the remote persona may have generated new memory entries, suggest /sync pull to retrieve them."
+      }
+    ]
+  }
 }
