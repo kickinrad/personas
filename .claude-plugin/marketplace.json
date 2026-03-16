@@ -3,7 +3,7 @@
   "owner": { "name": "kickinrad", "url": "https://github.com/kickinrad" },
   "metadata": {
     "description": "Framework for self-evolving AI personas on Claude Code",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
