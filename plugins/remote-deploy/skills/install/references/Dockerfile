@@ -12,5 +12,5 @@ RUN npm install -g @anthropic-ai/claude-code
 USER node
 WORKDIR /workspace
 
-# Default: headless pipe mode
-ENTRYPOINT ["claude", "--print"]
+# Keep container alive as a daemon — invoke claude via docker exec
+CMD ["sleep", "infinity"]
