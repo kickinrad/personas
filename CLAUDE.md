@@ -225,6 +225,8 @@ Each persona's `.gitignore` handles its own secrets:
 
 Commits: `type(scope): description` — scope is `framework` for this repo, persona name for persona repos
 
+**Version bumping:** Bump `plugins/persona-manager/.claude-plugin/plugin.json` AND `.claude-plugin/marketplace.json` version fields together on every feature or fix commit to persona-manager. Use semver — patch for fixes, minor for features, major for breaking changes.
+
 ## MCP Server Configuration
 
 MCP servers are configured in two places depending on the environment:
@@ -251,14 +253,15 @@ During persona setup, persona-dev offers to merge MCP servers into `claude_deskt
 
 ## Hooks
 
-Every persona ships three hooks in `hooks.json`:
+Every persona ships four hooks in `hooks.json`:
+- **PreToolUse** (command, matcher: Bash): Runs `public-repo-guard.sh` before git commit/push — blocks personal data exposure in public repos
 - **SessionStart** (command): Reads `user/profile.md` into session context; triggers interview if unfilled
 - **Stop** (prompt): Reminds persona to persist meaningful learnings to `user/memory/` before ending
 - **PreCompact** (prompt): Saves session context to memory before compaction
 
 ## Gotchas
 
-- Personas activate only when CWD is the persona's directory — `--setting-sources project` ensures total isolation
+- Personas activate only when CWD is the persona's directory — `--setting-sources project` isolates settings.json (permissions, sandbox, MCP) but global `~/.claude/CLAUDE.md` still loads
 - MCP servers need to be in both `.mcp.json` (CLI/Code tab) and `claude_desktop_config.json` (Desktop Chat/Cowork) — persona-dev handles this
 - `.claude/settings.json` (sandbox config) IS committed — `.claude/settings.local.json` is gitignored
 - Personas live in `~/.personas/`, NOT in this framework repo
@@ -267,3 +270,9 @@ Every persona ships three hooks in `hooks.json`:
 - Desktop app is macOS + Windows only — Linux users are CLI-only
 - Cowork is macOS Apple Silicon only — cannot create symlinks outside mounted folders
 - Per-persona launch flags live in `.claude-flags` (read by `.aliases.sh`)
+
+## Testing
+
+```bash
+bash tests/personas-test.sh
+```
