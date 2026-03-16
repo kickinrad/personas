@@ -194,9 +194,35 @@ Copy `references/gitignore-template` to `.gitignore`.
 
 Copy `references/settings-template.json` to `.claude/settings.json`. Add any persona-specific network domains for MCP servers to `allowedDomains`.
 
-**4i. Validate scaffold**
+**4i. Create README.md**
+
+Every persona repo gets a short README. Keep it minimal — this isn't a library, it's a personal assistant:
+
+```markdown
+# {PersonaName} {emoji}
+
+> {One-line role description}
+
+A self-evolving AI persona built on [Claude Code](https://claude.com/claude-code) using the [personas](https://github.com/kickinrad/personas) framework.
+
+## Usage
+
+```bash
+{name}              # interactive session
+{name} "do weekly"  # one-shot prompt
+```
+
+## Setup
+
+See the [personas framework](https://github.com/kickinrad/personas) for installation and setup.
+```
+
+For **public repos**, consider adding a brief "What it does" section describing the persona's domain and skills.
+
+**4j. Validate scaffold**
 
 Before proceeding, verify all required files exist:
+- [ ] `README.md`
 - [ ] `CLAUDE.md`
 - [ ] `profile-template.md`
 - [ ] `user/profile.md` (copy of template, ready for first-session interview)
@@ -237,6 +263,13 @@ git commit -m "feat({name}): initial scaffold"
 - If yes: `gh repo create {github-username}/{name} --private --source=. --push`
 - If no: Skip — can always add a remote later
 - Explain the benefit: backup, version history, sharing between CLI/Desktop/machines
+
+**After creating the repo, set description and topics:**
+```bash
+gh repo edit --description "{PersonaName} — {one-line role description}. A self-evolving AI persona on Claude Code."
+gh repo edit --add-topic claude-code --add-topic persona
+```
+Add 1-2 domain-specific topics too (e.g., `finance`, `cooking`, `fitness`).
 
 **Public vs private — the persona handles this, not the user:**
 - **Private repo (default):** Safe to commit everything including `user/` (profile, memories). Good for personal backup and cross-machine sync

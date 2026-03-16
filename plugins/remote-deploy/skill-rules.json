@@ -1,0 +1,20 @@
+{
+  "description": "Activation rules for remote-deploy skills",
+  "rules": {
+    "install": {
+      "kind": "skill",
+      "type": "process",
+      "enforcement": "must",
+      "priority": "medium",
+      "activationHint": "Skill('remote-deploy:install')",
+      "promptTriggers": {
+        "keywords": ["remote deploy", "deploy persona", "remote server", "deploy to server", "run persona remotely", "headless persona", "24/7 persona"],
+        "intentPatterns": ["(deploy|run|set up|install).*?(remote|server|vps|headless)", "persona.*?(remote|server|deploy|headless)", "run.*?24.?7", "always.?on.*?persona"]
+      },
+      "fileTriggers": {
+        "pathPatterns": [],
+        "contentPatterns": []
+      }
+    }
+  }
+}

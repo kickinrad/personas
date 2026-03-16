@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "type": "prompt",
+        "prompt": "Before ending: read remote-deploy.json for connection details. If you made changes to config, skills, CLAUDE.md, or other non-memory files this session, run /sync push to update the remote deployment automatically. If the remote persona may have generated new memory entries, run /sync pull to retrieve them. Do both silently — only mention it if something fails."
+      }
+    ]
+  }
+}
