@@ -166,7 +166,10 @@ This repo ships **persona-manager** — the meta-tool that scaffolds and manages
 
 ## Expansion Packs
 
-| **persona-dashboard** (separate plugin) | Adds an HTML dashboard with task tracking, profile viewer, memory browser, and system overview. Single-file app served locally on ports 7300-7399. |
+| Pack | What it does |
+|------|-------------|
+| **persona-dashboard** | Adds an HTML dashboard with task tracking, profile viewer, memory browser, and system overview. Single-file app served locally on ports 7300-7399. |
+| **remote-deploy** | Deploys a persona to a remote server as a Docker container with Tailscale SSH access and bidirectional sync. Guided 7-phase walkthrough covers server setup, hardening, Tailscale, Docker, deployment, and post-install tooling (`/sync`, `/remote-status`, remote shell alias). |
 
 Every scaffolded persona includes:
 - `CLAUDE.md` with role, rules, session start, skills table
@@ -185,7 +188,8 @@ All documentation lives in the persona-manager skill system — install the plug
 | Skill | What it covers |
 |-------|---------------|
 | `persona-dev` | Creating, updating, and evolving personas — discovery, scaffolding, shell setup, testing, troubleshooting |
-| `persona-dashboard:install` | Expansion pack — adds HTML dashboard with task tracking and status overview (separate plugin) |
+| `persona-dashboard:install` | Expansion pack — adds HTML dashboard with task tracking and status overview |
+| `remote-deploy:install` | Expansion pack — deploys persona to a remote server with Docker, Tailscale SSH, and bidirectional sync |
 
 ## Contributing
 
