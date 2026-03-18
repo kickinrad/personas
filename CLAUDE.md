@@ -262,7 +262,7 @@ Every persona ships four hooks in `hooks.json`:
 
 ## Gotchas
 
-- Personas activate only when CWD is the persona's directory — `--setting-sources project` isolates settings.json (permissions, sandbox, MCP) but global `~/.claude/CLAUDE.md` still loads
+- Personas activate only when CWD is the persona's directory — `--setting-sources project` isolates both settings.json AND CLAUDE.md (global `~/.claude/CLAUDE.md` does NOT load)
 - MCP servers need to be in both `.mcp.json` (CLI/Code tab) and `claude_desktop_config.json` (Desktop Chat/Cowork) — persona-dev handles this
 - `.claude/settings.json` (sandbox config) IS committed — `.claude/settings.local.json` is gitignored
 - Personas live in `~/.personas/`, NOT in this framework repo
