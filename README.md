@@ -6,9 +6,27 @@
   <a href="LICENSE"><img src="https://img.shields.io/github/license/kickinrad/personas?style=flat" alt="License"></a>
 </p>
 
-Self-evolving AI personas built on Claude Code.
+Independent, self-contained AI agent personas built with native Claude features first. Accessible from CLI, Claude Cowork, and remote servers. 
 
-Personas are not chat workspaces with sticky instructions — they're standalone AI agents that learn about you, grow new skills, and improve themselves over time. Each one is a git-tracked directory with its own personality, memory, sandbox, hooks, and tool integrations. Scaffold one, launch it by name from any terminal, and watch it evolve from a blank slate into a specialized assistant that knows how you work. No Docker, no infrastructure, no configuration servers — just native Claude Code features composed into something greater.
+Hello! Personas are my take on a simple and elegant Claw-like (lol) framework using native abilties for Claude. 
+
+A persona is simply a folder. This folder is isolated (does not use your global Claude Code config or claude.md!) and contains a custom-made (created together with the user) personality and instruction (system instructions replacing the default Claude Code prompt), a guide for what the assistant should do and what tools it has (claude.md), a .gitignored user folder with a profile.md for storing important personal information and memory using the native claude memory (but actually stored in your project folder not globally somewhere not version tracked), a tools subfolder for helpful tools and scripts and such, any skills that the persona needs for knowledge or abilties, and a few config files and maybe your MCP settings. Keep it local, or connect it to GitHub to backup or share with others. 
+
+Each persona is configured with it's own flags and configuration to your taste, with sandboxing, permission bypass, chrome connection, and remote control all enabled as the preset if you choose to use that. This means each persona runs self-contained, can use a Chrome browser for tasks, and be accessed remotely through your Claude apps or website!. 
+
+Install the personas marketplace and use the persona-dev plugin to be walked through creating a personalized assistant for any task or topic. The plugin will interview you, research what it needs to know, and try to find helpful MCPs, tools, scripts, and other projects that it can use to help fulfil it's objectives. It will create the framework for you, try to create aliases for your new persona if you are in CLI, and (in theory) get them all working and configured for you.
+
+<examples here>
+
+Each persona, once defined, can extend itself as needed. It has some simple basic auto-learning with memory, and may ask to create addtional .md files to store data or track things. Each persona is also gifted a self-improvement skill at birth, it can use this skill to develop new skills. Or create tools. And also just keep itself organized with a periodic audit. 
+
+Want more functionality??? We have expansion packs! In order to keep the base plugin and idea as focused and simple and clean as possible, I decided on this expansion-pack format for additional features that users may want to extend personas with. These are really just skills, and you can use ANY plugin or skill you like with a persona. Either way, just install via the /plugin menu while talking to your persona and you will be good to go. At launch, I am including two to demonstrate the concept and help get you going. 
+
+persona-dashboard is an HTML playground based on the dashboard used by the official Claude Cowork Productivity plugin. This is useful for visualizing data, keeping track of memory, task lists, etc. It can even be interactive! Install the plugin to your persona and give it a run. The persona will create a simple customized HTML dashboard and you can work with it to get it just right. 
+
+persona-remote is a helper skill demonstrating remote deployment with Tailscale. Why would you want that? Well, maybe you are running cron schedules on your persona and need to turn your PC off. Or maybe you think that is safer. Or maybe you want to have a remote cloud of personas that all talk to each other and plan your life for you. Well, this plugin should help walk you through everything, from setting up a remote server, to installing Tailscale and connecting, and deploying your persona to a Docker container, and try to make sure you are safe and secure while doing all this. 
+
+No required dependencies, no complex infrastructure, no configuration servers — just native Claude Code features composed into something a bit more girthy. 
 
 ```
 $ chef "what should I make tonight?"
