@@ -25,7 +25,7 @@ personas/                                 # Framework repo
     │   └── settings.local.json          # (always gitignored)
     ├── hooks.json                        # SessionStart + Stop + PreCompact + PreToolUse hooks (committed)
     ├── .claude-flags                     # Per-persona CLI launch flags (committed)
-    ├── profile-template.md               # Template for user context (committed)
+    ├── docs/                              # Reference materials, plans (committed)
     ├── .mcp.json                         # MCP server config (gitignored)
     ├── skills/
     │   ├── {domain}/{skill}/SKILL.md     # Domain skills (committed)
@@ -170,7 +170,7 @@ The four levels: memory (automatic/native), rule promotion (propose), skill crea
 
 ## Session Start
 
-On first session, `user/profile.md` exists as an unfilled copy of `profile-template.md`. The SessionStart hook reads it, then the persona uses `AskUserQuestion` to interview the user section by section — structured input, not a wall of conversational text. On returning sessions, the hook reads `user/profile.md` and checks for completeness.
+On first session, `user/profile.md` contains an unfilled template with placeholders and interview instructions. The SessionStart hook reads it, then the persona uses `AskUserQuestion` to interview the user section by section — structured input, not a wall of conversational text. The persona fills `user/profile.md` in place. On returning sessions, the hook reads the populated profile and checks for completeness.
 
 ## Lifecycle
 

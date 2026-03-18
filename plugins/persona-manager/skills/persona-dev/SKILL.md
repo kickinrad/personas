@@ -32,7 +32,7 @@ Each persona contains:
 ├── .gitignore                     # Secrets exclusion
 ├── hooks.json                     # SessionStart + Stop + PreCompact + PreToolUse hooks
 ├── CLAUDE.md                      # Personality + rules
-├── profile-template.md            # Profile template (committed)
+├── docs/                          # Reference materials, plans
 ├── .mcp.json                      # MCP server config (gitignored)
 ├── skills/
 │   ├── {domain}/{skill}/SKILL.md  # Domain skills
@@ -65,7 +65,7 @@ Before building anything, understand what this persona needs to be. Ask the user
 - What domain or role? (finance advisor, personal chef, brand strategist, etc.)
 - What's the persona's expertise, personality, and voice? (casual vs formal, opinionated vs neutral, proactive vs reactive, present fun and effective personalities that fit the role and ask for preferences)
 - What workflows will it handle? (weekly reviews, meal planning, code review, etc.)
-- What does the user need the persona to know about them? (info, accounts, preferences, constraints — this shapes `profile-template.md`)
+- What does the user need the persona to know about them? (info, accounts, preferences, constraints — this shapes `user/profile.md`)
 - What is the personas name? (suggest a selection of fun, memorable first names that fits the role, and ask the user if they have any preferences or want to choose their own)
 
 **Explore based on domain:**
@@ -148,18 +148,14 @@ Use the template from `references/claude-md-template.md`. Key decisions:
 - **Workspace Hygiene section**: Include it — every persona must maintain its own workspace
 - **Self-Improvement**: Point to the self-improve skill (one line, not inline)
 
-**4b. Create profile-template.md**
+**4b. Create user/profile.md**
 
-Copy `references/profile-template.md` and customize it for this persona's domain:
+Use `references/profile-template.md` as a starting point and customize it for this persona's domain:
 - Rename/add/remove sections to fit the domain (e.g., a finance persona needs "Accounts & Assets", a chef persona needs "Dietary Restrictions")
 - Update placeholders to be domain-specific
 - Update the interview instructions comment with persona-specific guidance on what to ask and how to probe deeper
 
-This file is committed to root — it's the spec for how `user/profile.md` should look when filled out.
-
-**4c. Copy profile-template.md → user/profile.md**
-
-Copy the customized `profile-template.md` to `user/profile.md`. On first session, the SessionStart hook reads this, sees the unfilled placeholders, and interviews the user to populate each section. The `user/` directory is gitignored for public sharing — the template stays committed in root as the reference.
+Write directly to `user/profile.md`. On first session, the SessionStart hook reads this, sees the unfilled placeholders, and interviews the user to populate each section in place. No separate template file needed — the profile IS the template until it's filled out.
 
 **Important: Use AskUserQuestion for the profile interview.** The persona should use the `AskUserQuestion` tool (not just conversation) when interviewing the user to fill out their profile. This provides a structured input experience — the user sees a clear question with context, rather than a wall of conversational text. Add this to the interview instructions in the template:
 ```
@@ -224,8 +220,7 @@ For **public repos**, consider adding a brief "What it does" section describing 
 Before proceeding, verify all required files exist:
 - [ ] `README.md`
 - [ ] `CLAUDE.md`
-- [ ] `profile-template.md`
-- [ ] `user/profile.md` (copy of template, ready for first-session interview)
+- [ ] `user/profile.md` (template with placeholders, ready for first-session interview)
 - [ ] `hooks.json`
 - [ ] `.claude/hooks/public-repo-guard.sh` (executable)
 - [ ] `.gitignore`
@@ -508,7 +503,7 @@ After creating or updating a persona: `source ~/.personas/.aliases.sh` or restar
 
 ## First Session Flow
 
-On first session, `user/profile.md` exists as an unfilled copy of `profile-template.md`. The SessionStart hook reads it, sees the template placeholders, and uses `AskUserQuestion` to interview the user section by section. The persona follows the interview instructions embedded in the template to ask the right questions and fill out the profile to spec.
+On first session, `user/profile.md` contains an unfilled template with placeholders and interview instructions. The SessionStart hook reads it, sees the placeholders, and uses `AskUserQuestion` to interview the user section by section. The persona follows the interview instructions embedded in the file to ask the right questions and fill out the profile in place.
 
 On subsequent sessions, the SessionStart hook reads `user/profile.md` automatically. If any sections are still incomplete, the persona prompts the user to fill in the gaps before proceeding.
 

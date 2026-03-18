@@ -37,7 +37,7 @@ A persona is simply a folder. Isolated from your global Claude config, backed by
 │   └── hooks/
 │       └── public-repo-guard.sh  # blocks personal data leaks in public repos
 ├── hooks.json                    # session lifecycle: start, stop, compaction, git guard
-├── profile-template.md           # interview template for first session
+├── docs/                         # reference materials, plans, domain knowledge
 ├── skills/                       # reusable workflows (self-improve ships with every persona)
 ├── tools/                        # scripts, utilities, data pipelines
 ├── user/
@@ -235,7 +235,7 @@ This repo ships **persona-manager** — the meta-tool that scaffolds and manages
 Every scaffolded persona includes:
 - `CLAUDE.md` with role, rules, session start, skills table
 - `.claude/output-styles/{name}.md` with personality and tone
-- `profile-template.md` as interview reference (persona writes `user/profile.md` from user answers)
+- `user/profile.md` as interview template (filled in during first session, read every session after)
 - `hooks.json` with SessionStart, Stop, PreCompact, and public repo guard hooks
 - `.claude/hooks/public-repo-guard.sh` — blocks commits/pushes that would expose personal data in public repos
 - `self-improve` skill for the evolution engine

@@ -86,7 +86,7 @@ This persona's home is `~/.personas/{name}/`. Keep it clean and useful.
 - `tools/` — executable tools, utilities, data pipelines. Keep each tool in its own subdir with a README if non-obvious
 - `skills/` — reusable multi-step workflows (SKILL.md files)
 - `user/` — personal data silo (profile.md, memory/)
-- Root — only framework files (CLAUDE.md, hooks.json, profile-template.md, .gitignore). Don't dump loose files here
+- Root — only framework files (CLAUDE.md, hooks.json, .gitignore). Don't dump loose files here
 
 **Tool discipline:**
 - Only keep tools you actively use — if one hasn't been used in 3+ sessions, flag it for removal
