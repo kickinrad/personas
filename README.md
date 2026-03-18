@@ -6,27 +6,9 @@
   <a href="LICENSE"><img src="https://img.shields.io/github/license/kickinrad/personas?style=flat" alt="License"></a>
 </p>
 
-Independent, self-contained AI agent personas built with native Claude features first. Accessible from CLI, Claude Cowork, and remote servers. 
+Independent, self-contained AI agent personas built with native Claude features first. Accessible from CLI, Claude Cowork, and remote servers.
 
-Hello! Personas are my take on a simple and elegant Claw-like (lol) framework using native abilties for Claude. 
-
-A persona is simply a folder. This folder is isolated (does not use your global Claude Code config or claude.md!) and contains a custom-made (created together with the user) personality and instruction (system instructions replacing the default Claude Code prompt), a guide for what the assistant should do and what tools it has (claude.md), a .gitignored user folder with a profile.md for storing important personal information and memory using the native claude memory (but actually stored in your project folder not globally somewhere not version tracked), a tools subfolder for helpful tools and scripts and such, any skills that the persona needs for knowledge or abilties, and a few config files and maybe your MCP settings. Keep it local, or connect it to GitHub to backup or share with others. 
-
-Each persona is configured with it's own flags and configuration to your taste, with sandboxing, permission bypass, chrome connection, and remote control all enabled as the preset if you choose to use that. This means each persona runs self-contained, can use a Chrome browser for tasks, and be accessed remotely through your Claude apps or website!. 
-
-Install the personas marketplace and use the persona-dev plugin to be walked through creating a personalized assistant for any task or topic. The plugin will interview you, research what it needs to know, and try to find helpful MCPs, tools, scripts, and other projects that it can use to help fulfil it's objectives. It will create the framework for you, try to create aliases for your new persona if you are in CLI, and (in theory) get them all working and configured for you.
-
-<examples here>
-
-Each persona, once defined, can extend itself as needed. It has some simple basic auto-learning with memory, and may ask to create addtional .md files to store data or track things. Each persona is also gifted a self-improvement skill at birth, it can use this skill to develop new skills. Or create tools. And also just keep itself organized with a periodic audit. 
-
-Want more functionality??? We have expansion packs! In order to keep the base plugin and idea as focused and simple and clean as possible, I decided on this expansion-pack format for additional features that users may want to extend personas with. These are really just skills, and you can use ANY plugin or skill you like with a persona. Either way, just install via the /plugin menu while talking to your persona and you will be good to go. At launch, I am including two to demonstrate the concept and help get you going. 
-
-persona-dashboard is an HTML playground based on the dashboard used by the official Claude Cowork Productivity plugin. This is useful for visualizing data, keeping track of memory, task lists, etc. It can even be interactive! Install the plugin to your persona and give it a run. The persona will create a simple customized HTML dashboard and you can work with it to get it just right. 
-
-persona-remote is a helper skill demonstrating remote deployment with Tailscale. Why would you want that? Well, maybe you are running cron schedules on your persona and need to turn your PC off. Or maybe you think that is safer. Or maybe you want to have a remote cloud of personas that all talk to each other and plan your life for you. Well, this plugin should help walk you through everything, from setting up a remote server, to installing Tailscale and connecting, and deploying your persona to a Docker container, and try to make sure you are safe and secure while doing all this. 
-
-No required dependencies, no complex infrastructure, no configuration servers — just native Claude Code features composed into something a bit more girthy. 
+Hello! Personas are my take on a simple and elegant Claw-like (lol) framework using native abilities for Claude.
 
 ```
 $ chef "what should I make tonight?"
@@ -41,6 +23,55 @@ from last week. Let's do dakgalbi (spicy Korean chicken stir-fry).
 I'll skip the cabbage since you mentioned hating it last time.
 Want the shopping list for sides, or just rolling with what you have?
 ```
+
+### What's a persona?
+
+A persona is simply a folder — fully isolated from your global Claude Code config and CLAUDE.md. Inside that folder:
+
+- **Personality & instructions** — a custom output style (system instructions replacing the default Claude Code prompt) and a CLAUDE.md guiding what the assistant should do, know, and what tools it has
+- **Your profile & memory** — a `user/` folder with `profile.md` for personal context and native Claude memory stored locally in your project, not globally somewhere untracked. Gitignored for public personas, committed for private backup
+- **Tools & skills** — a `tools/` subfolder for scripts and utilities, plus `skills/` for reusable knowledge and workflows
+- **Config** — sandbox settings, hooks, MCP server connections, and launch flags
+
+Keep it local, or connect it to GitHub to backup or share with others.
+
+<!-- TODO: ![Persona directory structure](assets/persona-structure.gif) -->
+
+### How do you make one?
+
+Install the personas marketplace and use the persona-dev skill. It will interview you about your persona's role, expertise, and personality, then research the domain to find helpful MCP servers, CLI tools, scripts, and APIs. It scaffolds everything — CLAUDE.md, output style, hooks, sandbox config, shell aliases — and (in theory) gets it all working and configured for you.
+
+<!-- TODO: ![Creating a persona with persona-dev](assets/create-persona.gif) -->
+
+### What can they do?
+
+Each persona is configured with its own flags to your taste — sandboxing, permission bypass, Chrome browser connection, and remote control are all available as presets. This means a persona can run self-contained, automate browser tasks, and be accessed remotely through your Claude apps.
+
+Once running, personas extend themselves. They learn with native auto-memory, and may ask to create additional files to track data or workflows. Every persona ships with a self-improvement skill — it can develop new skills, create tools, and keep itself organized with periodic audits.
+
+<!-- TODO: ![Self-improvement in action](assets/self-improve.gif) -->
+
+### Real personas and their tools
+
+| Persona | Role | MCP Servers | Skills |
+|---------|------|-------------|--------|
+| **warren** | Personal CFO — sharp, data-driven, Buffett-esque | Monarch (finances), Google Workspace, Scheduler | `finance`, `self-improve` |
+| **julia** | Personal Chef — warm, encouraging, Julia Child vibes | Mealie (recipes & meal plans), Google Workspace, Scheduler | `personal-chef`, `self-improve` |
+| **bob** | Home Repair Expert — Norm Abram meets project manager | BuildCAD AI (3D modeling), Excalidraw (diagrams), Google Workspace | `home-repair`, `calculators`, `self-improve` |
+| **nara** | Health & Wellness Coach — holistic, evidence-based | Consensus (research papers), HealthEx (health data) | `wellness`, `self-improve` |
+
+### Expansion packs
+
+The base plugin is intentionally focused and simple. Expansion packs add optional functionality — they're just plugins you install alongside persona-manager via the `/plugin` menu while talking to your persona.
+
+- **persona-dashboard** — an HTML playground based on the dashboard from the official Claude Cowork Productivity plugin. Useful for visualizing data, tracking memory, task lists, and more. Interactive and customizable
+- **remote-deploy** — guided remote deployment with Tailscale. Running cron schedules and need to turn your PC off? Want a remote cloud of personas that plan your life? This walks you through server setup, Tailscale, Docker deployment, and security — all in one go
+
+You can also use ANY other Claude Code plugin or skill with a persona. They're just folders.
+
+---
+
+No complex infrastructure, no configuration servers — just native Claude Code features composed into something a bit more girthy. Linux and WSL2 users need `bubblewrap` and `socat` for sandboxing (`sudo apt install bubblewrap socat`); macOS sandboxing works out of the box.
 
 ## Quick Start
 
