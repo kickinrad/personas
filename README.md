@@ -26,26 +26,38 @@ Want the shopping list for sides, or just rolling with what you have?
 
 ### What's a persona?
 
-A persona is simply a folder — fully isolated from your global Claude Code config and CLAUDE.md. Inside that folder:
+A persona is simply a folder. Isolated from your global Claude config, backed by git, and ready to launch from any terminal. Inside:
 
-- **Personality & instructions** — a custom output style (system instructions replacing the default Claude Code prompt) and a CLAUDE.md guiding what the assistant should do, know, and what tools it has
-- **Your profile & memory** — a `user/` folder with `profile.md` for personal context and native Claude memory stored locally in your project, not globally somewhere untracked. Gitignored for public personas, committed for private backup
-- **Tools & skills** — a `tools/` subfolder for scripts and utilities, plus `skills/` for reusable knowledge and workflows
-- **Config** — sandbox settings, hooks, MCP server connections, and launch flags
+```
+~/.personas/chef/
+├── CLAUDE.md                     # what the persona does, knows, and how it behaves
+├── .claude/
+│   ├── settings.json             # sandbox, permissions, memory config
+│   ├── output-styles/            # personality and tone (replaces default Claude prompt)
+│   └── hooks/
+│       └── public-repo-guard.sh  # blocks personal data leaks in public repos
+├── hooks.json                    # session lifecycle: start, stop, compaction, git guard
+├── profile-template.md           # interview template for first session
+├── skills/                       # reusable workflows (self-improve ships with every persona)
+├── tools/                        # scripts, utilities, data pipelines
+├── user/
+│   ├── profile.md                # your personal context (filled during first session)
+│   └── memory/                   # native auto-memory (local, git-tracked)
+├── .mcp.json                     # MCP server connections (gitignored)
+├── .claude-flags                 # per-persona launch flags
+└── .gitignore                    # protects secrets; optionally ignores user/ for public sharing
+```
 
-Keep it local, or connect it to GitHub to backup or share with others.
-
-<!-- TODO: ![Persona directory structure](assets/persona-structure.gif) -->
-
-### How do you make one?
-
-Install the personas marketplace and use the persona-dev skill. It will interview you about your persona's role, expertise, and personality, then research the domain to find helpful MCP servers, CLI tools, scripts, and APIs. It scaffolds everything — CLAUDE.md, output style, hooks, sandbox config, shell aliases — and (in theory) gets it all working and configured for you.
+Everything is created with you during setup — persona-dev interviews you, researches your domain, and scaffolds the whole thing. Keep it local, connect it to GitHub for backup, or deploy it to a remote server.
 
 <!-- TODO: ![Creating a persona with persona-dev](assets/create-persona.gif) -->
 
-### What can they do?
+Each persona stores its launch flags in `.claude-flags`, configured during setup:
 
-Each persona is configured with its own flags to your taste — sandboxing, permission bypass, Chrome browser connection, and remote control are all available as presets. This means a persona can run self-contained, automate browser tasks, and be accessed remotely through your Claude apps.
+- **Sandboxed** — can only read/write its own directory
+- **Permission bypass** — runs autonomously (only when sandboxed)
+- **Chrome** — browser automation for personas that need it
+- **Remote control** — accessible from Claude Desktop or other apps
 
 Once running, personas extend themselves. They learn with native auto-memory, and may ask to create additional files to track data or workflows. Every persona ships with a self-improvement skill — it can develop new skills, create tools, and keep itself organized with periodic audits.
 
