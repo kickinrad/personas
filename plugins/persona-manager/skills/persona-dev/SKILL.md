@@ -25,7 +25,8 @@ Each persona contains:
 ```
 ~/.personas/{name}/
 ├── .claude/
-│   ├── settings.json              # Sandbox config + autoMemoryDirectory (committed)
+│   ├── settings.json              # Sandbox config (committed)
+│   ├── settings.local.json        # autoMemoryDirectory (gitignored, created during setup)
 │   ├── output-styles/             # Personality, tone, style (committed)
 │   └── hooks/
 │       └── public-repo-guard.sh   # Blocks personal data in public repos (committed)
@@ -190,6 +191,14 @@ Copy `references/gitignore-template` to `.gitignore`.
 
 Copy `references/settings-template.json` to `.claude/settings.json`. Add any persona-specific network domains for MCP servers to `allowedDomains`.
 
+Also create `.claude/settings.local.json` with the memory directory setting:
+```json
+{
+  "autoMemoryDirectory": "user/memory"
+}
+```
+**Important:** `autoMemoryDirectory` must be in `settings.local.json`, not `settings.json`. Claude Code ignores this setting in project settings (`.claude/settings.json`) as a security measure — it only works from local or user settings. The `settings.local.json` file is gitignored, so persona-dev must create it during setup on each machine.
+
 **4i. Create README.md**
 
 Every persona repo gets a short README. Keep it minimal — this isn't a library, it's a personal assistant:
@@ -314,7 +323,7 @@ Present the detected config and walk the user through each flag using `AskUserQu
 
 | Flag | What it does | Ask the user |
 |------|-------------|--------------|
-| `--setting-sources project` | Loads only this persona's settings.json, ignoring global `~/.claude/settings.json`. Keeps permissions, sandbox, and MCP config isolated to this persona | "This keeps your persona isolated from your global Claude config. Recommended ON unless you want global settings to merge in. Enable?" |
+| `--setting-sources project,local` | Loads only this persona's settings.json, ignoring global `~/.claude/settings.json`. Keeps permissions, sandbox, and MCP config isolated to this persona | "This keeps your persona isolated from your global Claude config. Recommended ON unless you want global settings to merge in. Enable?" |
 | `--dangerously-skip-permissions` | Skips permission prompts for every tool use. **Only safe when OS-level sandbox is active** (macOS/Linux/WSL2) — the sandbox restricts filesystem + network even without prompts. **NEVER on Windows** | "This lets the persona work without asking permission for every action. It's safe because the sandbox restricts what it can access. Want autonomous mode, or prefer to approve actions manually?" |
 | `--remote-control` | Enables browser extension integration and external tool connections | "This allows tools like the Chrome extension to connect to your persona. Enable?" |
 | `--chrome` | Enables Claude in Chrome browser automation. Gives the persona access to your Chrome browser for web interaction, form filling, screenshots, and debugging | "This lets the persona interact with your Chrome browser (requires the Claude in Chrome extension). Does this persona need browser access?" |
@@ -323,10 +332,10 @@ Present the detected config and walk the user through each flag using `AskUserQu
 
 | Environment | Sandbox? | Default flags |
 |-------------|----------|---------------|
-| macOS | Yes (Seatbelt) | `--setting-sources project --dangerously-skip-permissions --remote-control` |
-| Linux | Yes (bubblewrap) | `--setting-sources project --dangerously-skip-permissions --remote-control` |
-| WSL2 | Yes (bubblewrap) | `--setting-sources project --dangerously-skip-permissions --remote-control` |
-| Windows native | **No** | `--setting-sources project --remote-control` |
+| macOS | Yes (Seatbelt) | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
+| Linux | Yes (bubblewrap) | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
+| WSL2 | Yes (bubblewrap) | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
+| Windows native | **No** | `--setting-sources project,local --remote-control` |
 
 `--chrome` is not in the defaults but is always offered as an optional addition during the walkthrough.
 
@@ -356,7 +365,7 @@ Present defaults first, then offer customization via `AskUserQuestion`:
 Write the chosen flags into `~/.personas/{name}/.claude-flags` (a single line, sourced by the alias):
 
 ```bash
-echo '--setting-sources project --dangerously-skip-permissions --remote-control' > ~/.personas/{name}/.claude-flags
+echo '--setting-sources project,local --dangerously-skip-permissions --remote-control' > ~/.personas/{name}/.claude-flags
 ```
 
 This file is read by `.aliases.sh` so each persona can have its own flag configuration.
@@ -386,9 +395,9 @@ function {name} {
     param([Parameter(ValueFromRemainingArguments)]$args)
     Push-Location "$env:USERPROFILE\.personas\{name}"
     if ($args) {
-        claude --setting-sources project --remote-control -p ($args -join ' ')
+        claude --setting-sources project,local --remote-control -p ($args -join ' ')
     } else {
-        claude --setting-sources project --remote-control
+        claude --setting-sources project,local --remote-control
     }
     Pop-Location
 }
@@ -425,7 +434,7 @@ Every persona uses three layers — never mix them:
 |-------|------|-----------|---------|
 | **Personality** | `CLAUDE.md` | Human (Claude proposes) | Role, rules, skills, communication style |
 | **Context** | `user/profile.md` | Claude (from user interview, via AskUserQuestion) | Personal data, accounts, preferences |
-| **Memory** | `user/memory/` | Claude (automatic via autoMemoryDirectory) | Session outcomes, learnings, patterns |
+| **Memory** | `user/memory/` | Claude (automatic via autoMemoryDirectory in settings.local.json) + Stop/PreCompact hooks | Session outcomes, learnings, patterns |
 
 ---
 
@@ -465,7 +474,7 @@ for _persona_dir in "$HOME/.personas"/*/; do
   if [ -f "${_persona_dir}.claude-flags" ]; then
     _flags=$(cat "${_persona_dir}.claude-flags")
   else
-    _flags="--setting-sources project --remote-control"
+    _flags="--setting-sources project,local --remote-control"
   fi
 
   eval "${_persona_name}() {
@@ -495,7 +504,7 @@ After creating or updating a persona: `source ~/.personas/.aliases.sh` or restar
 **Per-persona flags:** Each persona stores its flags in `.claude-flags` (a single line). This is configured during Phase 7 (flag setup). If the file is missing, the alias falls back to safe defaults (no `--dangerously-skip-permissions`).
 
 **What the flags do:**
-- `--setting-sources project` — loads only the persona's CLAUDE.md and .claude/settings.json (ignores global config)
+- `--setting-sources project,local` — loads only the persona's CLAUDE.md and .claude/settings.json (ignores global config)
 - `--dangerously-skip-permissions` — skips permission prompts. **Only safe when sandbox is enabled** (macOS/Linux/WSL2). Never use on Windows native
 - `--remote-control` — enables browser extension and external tool integration (Claude in Chrome, etc.)
 

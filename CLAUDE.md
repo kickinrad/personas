@@ -18,7 +18,8 @@ personas/                                 # Framework repo
 └── {persona}/                            # Each persona is its own git-tracked directory
     ├── CLAUDE.md                         # Role, rules, skill refs (committed)
     ├── .claude/
-    │   ├── settings.json                 # Sandbox + autoMemoryDirectory (committed)
+    │   ├── settings.json                 # Sandbox config (committed)
+    │   ├── settings.local.json          # autoMemoryDirectory (gitignored, created during setup)
     │   ├── output-styles/               # Personality, tone, style (committed)
     │   ├── hooks/
     │   │   └── public-repo-guard.sh     # Blocks personal data in public repos (committed)
@@ -71,11 +72,11 @@ Each alias reads per-persona flags from `~/.personas/{name}/.claude-flags` (conf
 
 | Platform | Default flags |
 |----------|---------------|
-| macOS / Linux / WSL2 | `--setting-sources project --dangerously-skip-permissions --remote-control` |
-| Windows native | `--setting-sources project --remote-control` |
+| macOS / Linux / WSL2 | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
+| Windows native | `--setting-sources project,local --remote-control` |
 
 **Available flags:**
-- `--setting-sources project` — loads only persona's settings.json (ignores global `~/.claude/settings.json`). Keeps permissions, sandbox, and MCP config isolated
+- `--setting-sources project,local` — loads only persona's settings.json and settings.local.json (ignores global `~/.claude/settings.json`). Keeps permissions, sandbox, MCP config, and memory config isolated
 - `--dangerously-skip-permissions` — skips permission prompts. **Only safe when OS-level sandbox is available** (macOS/Linux/WSL2). **⚠ NEVER use on Windows native** — no sandbox means unrestricted filesystem + network access
 - `--remote-control` — enables browser extension and external tool integration
 - `--chrome` — enables Claude in Chrome browser automation (requires extension install). Only add for personas that need web interaction
@@ -129,7 +130,7 @@ Personas run across multiple Claude environments. Each has different capabilitie
 
 ## Native Sandboxing
 
-Each persona ships `.claude/settings.json` with sandbox config and `autoMemoryDirectory`. No Docker required — uses OS-level isolation:
+Each persona ships `.claude/settings.json` with sandbox config. No Docker required — uses OS-level isolation:
 
 | Platform | Sandbox implementation | Prerequisites |
 |---|---|---|
@@ -139,7 +140,6 @@ Each persona ships `.claude/settings.json` with sandbox config and `autoMemoryDi
 
 ```json
 {
-  "autoMemoryDirectory": "user/memory",
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
@@ -163,7 +163,7 @@ Each persona customizes allowed domains for its MCP servers and APIs. Personas c
 Every persona ships with a `self-improve` skill that drives evolution:
 
 - **SessionStart hook** (`hooks.json`): Reads `user/profile.md` on every session (or triggers the first-session interview if unfilled)
-- **Native auto-memory** (`user/memory/`): Handled automatically by Claude Code via `autoMemoryDirectory` — no custom hooks needed
+- **Native auto-memory** (`user/memory/`): Redirected via `autoMemoryDirectory` in `.claude/settings.local.json` (not settings.json — Claude ignores it there as a security measure). Stop and PreCompact hooks also write session learnings to `user/memory/` as backup
 - **Self-improve skill** (`skills/self-improve/SKILL.md`): Handles rule promotion, skill creation, tool & integration discovery, workspace hygiene, and periodic audits
 
 The four levels: memory (automatic/native), rule promotion (propose), skill creation (propose), tool & integration discovery (research existing MCP servers, CLI tools, APIs, then propose skills, agents, hooks, or scripts as needed). Periodic audits include workspace hygiene — cleaning stale files, pruning unused tools, keeping the persona lean. See the self-improve skill for the full workflow.
@@ -262,7 +262,7 @@ Every persona ships four hooks in `hooks.json`:
 
 ## Gotchas
 
-- Personas activate only when CWD is the persona's directory — `--setting-sources project` isolates both settings.json AND CLAUDE.md (global `~/.claude/CLAUDE.md` does NOT load)
+- Personas activate only when CWD is the persona's directory — `--setting-sources project,local` isolates settings.json, settings.local.json, AND CLAUDE.md (global `~/.claude/CLAUDE.md` does NOT load)
 - MCP servers need to be in both `.mcp.json` (CLI/Code tab) and `claude_desktop_config.json` (Desktop Chat/Cowork) — persona-dev handles this
 - `.claude/settings.json` (sandbox config) IS committed — `.claude/settings.local.json` is gitignored
 - Personas live in `~/.personas/`, NOT in this framework repo
