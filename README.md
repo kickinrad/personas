@@ -78,6 +78,7 @@ The base plugin is intentionally focused and simple. Expansion packs add optiona
 
 - **persona-dashboard** — an HTML playground based on the dashboard from the official Claude Cowork Productivity plugin. Useful for visualizing data, tracking memory, task lists, and more. Interactive and customizable
 - **remote-deploy** — guided remote deployment with Tailscale. Running cron schedules and need to turn your PC off? Want a remote cloud of personas that plan your life? This walks you through server setup, Tailscale, Docker deployment, and security — all in one go
+- **[bridgey](https://github.com/kickinrad/bridgey)** — inter-agent communication via A2A protocol. Let your personas discover each other, send messages, and collaborate across machines. Works locally and over Tailscale/Docker networks
 
 You can also use ANY other Claude Code plugin or skill with a persona. They're just folders.
 
@@ -150,7 +151,7 @@ Personas interview you on first launch, remember what they learn across sessions
 
 Personas ship with a `self-improve` skill and a SessionStart hook that drive automatic evolution:
 
-1. **Memory** — native auto-memory via `autoMemoryDirectory` captures learnings automatically; SessionStart hook reads profile context
+1. **Memory** — native auto-memory via `autoMemoryDirectory` (in `settings.local.json`) captures learnings automatically; Stop and PreCompact hooks write session context as backup; SessionStart hook reads profile context
 2. **Rule promotion** — after a pattern appears 3+ times in memory, the persona proposes a permanent rule in CLAUDE.md
 3. **Skill creation** — after an ad-hoc workflow repeats 3+ times, the persona drafts a reusable skill
 4. **Tool & integration discovery** — researches MCP servers, CLI tools, APIs, and expansion packs; creates skills to wrap them, agents for autonomous subtasks, hooks for behavioral automation, and scripts for data processing — always preferring existing solutions over custom builds
@@ -163,7 +164,6 @@ Each persona runs in a native OS sandbox (bubblewrap on Linux, Seatbelt on macOS
 
 ```json
 {
-  "autoMemoryDirectory": "user/memory",
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
@@ -202,7 +202,7 @@ For MCP servers specifically:
 
 Shell aliases auto-discover personas in `~/.personas/` and create callable functions. Each persona stores its launch flags in `.claude-flags` (configured during setup). During setup, persona-dev walks through each flag with the user:
 
-- `--setting-sources project` — isolates persona's settings from global config
+- `--setting-sources project,local` — isolates persona's settings from global config
 - `--dangerously-skip-permissions` — autonomous mode (only on sandboxed platforms: macOS/Linux/WSL2, never Windows)
 - `--remote-control` — enables external tool connections
 - `--chrome` — enables Chrome browser automation (only for personas that need web interaction)
@@ -231,6 +231,7 @@ This repo ships **persona-manager** — the meta-tool that scaffolds and manages
 |------|-------------|
 | **persona-dashboard** | Adds an HTML dashboard with task tracking, profile viewer, memory browser, and system overview. Single-file app served locally on ports 7300-7399. |
 | **remote-deploy** | Deploys a persona to a remote server as a Docker container with Tailscale SSH access and bidirectional sync. Guided 7-phase walkthrough covers server setup, hardening, Tailscale, Docker, deployment, and post-install tooling (`/sync`, `/remote-status`, remote shell alias). |
+| **[bridgey](https://github.com/kickinrad/bridgey)** | Inter-agent communication via Google's A2A protocol. Personas discover each other automatically on the same machine; remote agents connect over Tailscale or Docker networks with bearer token auth. |
 
 Every scaffolded persona includes:
 - `CLAUDE.md` with role, rules, session start, skills table
@@ -239,7 +240,7 @@ Every scaffolded persona includes:
 - `hooks.json` with SessionStart, Stop, PreCompact, and public repo guard hooks
 - `.claude/hooks/public-repo-guard.sh` — blocks commits/pushes that would expose personal data in public repos
 - `self-improve` skill for the evolution engine
-- `.claude/settings.json` with sandbox config and `autoMemoryDirectory`
+- `.claude/settings.json` with sandbox config + `.claude/settings.local.json` with `autoMemoryDirectory`
 - `.gitignore` protecting secrets (`.mcp.json` always ignored; `user/` optionally ignored for public sharing)
 
 ## Documentation

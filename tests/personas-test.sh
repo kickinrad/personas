@@ -121,10 +121,13 @@ if [[ -d "$PERSONAS_DIR" ]]; then
     [[ -d "$persona_dir/user" ]] && \
       check "user/ directory exists" "pass" || check "user/ directory exists" "missing"
 
-    # Must have autoMemoryDirectory in settings.json
-    if [[ -f "$psettings" ]]; then
-      jq -e '.autoMemoryDirectory' "$psettings" >/dev/null 2>&1 && \
-        check "autoMemoryDirectory configured" "pass" || check "autoMemoryDirectory configured" "missing in settings.json"
+    # Must have autoMemoryDirectory in settings.local.json (not settings.json — Claude ignores it there)
+    local plocal="$persona_dir/.claude/settings.local.json"
+    if [[ -f "$plocal" ]]; then
+      jq -e '.autoMemoryDirectory' "$plocal" >/dev/null 2>&1 && \
+        check "autoMemoryDirectory configured" "pass" || check "autoMemoryDirectory configured" "missing in settings.local.json"
+    else
+      check "autoMemoryDirectory configured" "settings.local.json not found"
     fi
 
     # Must have .gitignore
