@@ -15,7 +15,7 @@
     "SessionStart": [
       {
         "type": "command",
-        "command": "cat user/profile.md 2>/dev/null | head -100 | jq -Rs '{hookSpecificOutput: {hookEventName: \"SessionStart\", additionalContext: (\"Profile contents:\\n\" + . + \"\\nIf profile.md contains unfilled template placeholders, use AskUserQuestion to interview the user section by section and populate each section (see Session Start in CLAUDE.md). If already filled out but incomplete, ask the user to fill in the gaps before proceeding.\")}}'",
+        "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"Read user/profile.md now. If it contains unfilled template placeholders, use AskUserQuestion to interview the user section by section and populate each section (see Session Start in CLAUDE.md). If already filled out but incomplete, ask the user to fill in the gaps before proceeding. Then check MCP tool availability.\"}}'",
         "timeout": 5000
       }
     ],
@@ -25,10 +25,24 @@
         "prompt": "Before ending: if anything meaningful happened this session (decisions, corrections, discoveries, preferences), update user/memory/ with relevant entries. Keep entries concise — one insight per memory file topic. Skip if nothing worth remembering occurred."
       }
     ],
+    "StopFailure": [
+      {
+        "type": "command",
+        "command": "date -Iseconds > user/memory/.last-crash 2>/dev/null; exit 0",
+        "timeout": 3000
+      }
+    ],
     "PreCompact": [
       {
         "type": "prompt",
         "prompt": "Context is about to be compacted. Summarize any important session context that hasn't been written to user/memory/ yet. Write it now so it survives compaction."
+      }
+    ],
+    "PostCompact": [
+      {
+        "type": "command",
+        "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostCompact\",\"additionalContext\":\"Context was just compacted. Check user/memory/.last-crash — if it exists, a previous session ended unexpectedly. Read it, offer to review what was lost, then delete the marker.\"}}'",
+        "timeout": 3000
       }
     ]
   }

@@ -11,5 +11,16 @@
         "api.anthropic.com"
       ]
     }
+  },
+  "extraKnownMarketplaces": {
+    "personas": {
+      "source": {
+        "source": "github",
+        "repo": "kickinrad/personas"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "persona-manager@personas": true
   }
 }
