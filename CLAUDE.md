@@ -42,7 +42,7 @@ personas/                                 # Framework repo
 
 ## What Is a Persona?
 
-**A persona is a self-contained AI assistant.** It combines standard Claude Code features — identity (CLAUDE.md), output style (`.claude/output-styles/`), user context (`user/profile.md`), skills, hooks, MCP tools, sandbox settings, and native auto-memory (`user/memory/`) — into a specialized agent that evolves over time. The persona maintains all of these itself; identity changes require human approval, everything else evolves automatically.
+**A persona is a self-contained AI assistant.** It combines standard Claude Code features — identity (CLAUDE.md), output style (`.claude/output-styles/`), user context (`user/profile.md`), skills, hooks, MCP tools, sandbox settings, scheduled tasks, and native auto-memory (`user/memory/`) — into a specialized agent that evolves over time. The persona maintains all of these itself; identity changes require human approval, everything else evolves automatically.
 
 ## Running Personas
 
@@ -260,6 +260,32 @@ Every persona ships four hooks in `hooks.json`:
 - **Stop** (prompt): Reminds persona to persist meaningful learnings to `user/memory/` before ending
 - **PreCompact** (prompt): Saves session context to memory before compaction
 
+## Scheduled Tasks
+
+Claude Code has built-in scheduling via `CronCreate`, `CronList`, and `CronDelete` tools. Any persona can use these — scheduling is a core capability, not tied to any expansion pack.
+
+**Session-scoped:** Tasks live in the current Claude Code process and are gone when you exit. For durable scheduling that survives restarts, use Desktop scheduled tasks or GitHub Actions.
+
+### How personas use scheduling
+
+Personas can schedule tasks using natural language — Claude handles the cron expression:
+
+| Use case | Example |
+|----------|---------|
+| Timed reminder | "remind me at 3pm to push the release branch" |
+| Delayed check | "in 45 minutes, check whether the integration tests passed" |
+| Recurring check | "every 30 minutes, check if the deploy finished" |
+
+### Key details
+
+- **Natural language** is the primary interface — describe what and when, Claude creates the cron job
+- **Cron expressions** are standard 5-field format when using `CronCreate` directly
+- **All times are local timezone**, not UTC
+- **3-day expiry** — recurring tasks auto-expire after 3 days. Cancel and recreate for longer runs
+- **Max 50 tasks** per session
+- Tasks fire between turns (not mid-response). If Claude is busy, the task waits
+- **Disable** with `CLAUDE_CODE_DISABLE_CRON=1`
+
 ## Gotchas
 
 - Personas activate only when CWD is the persona's directory — `--setting-sources project,local` isolates settings.json, settings.local.json, AND CLAUDE.md (global `~/.claude/CLAUDE.md` does NOT load)
@@ -271,6 +297,7 @@ Every persona ships four hooks in `hooks.json`:
 - Desktop app is macOS + Windows only — Linux users are CLI-only
 - Cowork is macOS Apple Silicon only — cannot create symlinks outside mounted folders
 - Per-persona launch flags live in `.claude-flags` (read by `.aliases.sh`)
+- Scheduled tasks (`CronCreate`) are session-scoped — they vanish when the session exits. For durable scheduling, use Desktop scheduled tasks or GitHub Actions
 
 ## Testing
 

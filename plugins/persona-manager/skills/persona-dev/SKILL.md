@@ -94,7 +94,8 @@ Before writing a single file, research what tools and integrations could enhance
 6. **Hooks** — beyond the standard SessionStart/Stop/PreCompact, consider domain-specific hooks (e.g., a PreToolUse hook that validates data before writes, a Stop hook that generates a summary)
 7. **Scripts** — bash or python scripts in `tools/` for data pipelines, API wrappers, formatters, or anything the persona does repeatedly
 8. **Reference material** — domain-specific best practices, checklists, templates, or frameworks that should live in `docs/`
-9. **Expansion packs** — check if any persona-manager expansion packs fit:
+9. **Scheduled tasks** — identify workflows that benefit from timed reminders or delayed checks. Any persona can schedule tasks using natural language ("remind me at 3pm to...", "in 45 minutes, check whether..."). These are session-scoped — they vanish on exit. Suggest domain-specific scheduling patterns during persona setup and document them in the CLAUDE.md template
+10. **Expansion packs** — check if any persona-manager expansion packs fit:
    - `persona-manager:persona-dashboard` — visual dashboard with task tracking (good for personas with ongoing work, reviews, or regular check-ins)
 
 | Discovery | Where it lives | When to choose it |
@@ -106,6 +107,7 @@ Before writing a single file, research what tools and integrations could enhance
 | Agent | `.claude/agents/{name}.md` | Autonomous subtask needing its own context |
 | Hook | `hooks.json` | Behavioral automation tied to session events |
 | Script | `tools/{name}` | Data processing, automation, one-off utilities |
+| Scheduled task | Scheduling patterns in CLAUDE.md | Timed reminders, delayed checks |
 | Reference doc | `docs/` | Domain knowledge the persona should internalize |
 
 Present findings to the user: "Here's what I found that could enhance this persona: [list]. Which of these should we include?"

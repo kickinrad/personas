@@ -59,7 +59,7 @@ Each persona stores its launch flags in `.claude-flags`, configured during setup
 - **Chrome** — browser automation for personas that need it
 - **Remote control** — accessible from Claude Desktop or other apps
 
-Once running, personas extend themselves. They learn with native auto-memory, and may ask to create additional files to track data or workflows. Every persona ships with a self-improvement skill — it can develop new skills, create tools, and keep itself organized with periodic audits.
+Once running, personas extend themselves. They learn with native auto-memory, schedule reminders and timed checks with natural language ("remind me at 3pm to..."), and may ask to create additional files to track data or workflows. Every persona ships with a self-improvement skill — it can develop new skills, create tools, and keep itself organized with periodic audits.
 
 <!-- TODO: ![Self-improvement in action](assets/self-improve.gif) -->
 
@@ -145,7 +145,7 @@ On first launch, the persona interviews you to build your profile — it asks th
 
 Personas interview you on first launch, remember what they learn across sessions, propose new rules when patterns emerge, draft reusable skills when workflows repeat, and discover tools and integrations for their domain. They run from your terminal, live in git, and are sandboxed at the OS level so they can't touch anything outside their own directory.
 
-**A persona is a self-contained AI assistant.** It combines standard Claude Code features — identity (CLAUDE.md), output style (`.claude/output-styles/`), user context (`user/profile.md`), skills, hooks, MCP tools, sandbox settings, and native auto-memory (`user/memory/`) — into a specialized agent that evolves over time. The persona maintains all of these itself; identity changes require human approval, everything else evolves automatically.
+**A persona is a self-contained AI assistant.** It combines standard Claude Code features — identity (CLAUDE.md), output style (`.claude/output-styles/`), user context (`user/profile.md`), skills, hooks, MCP tools, sandbox settings, scheduled tasks, and native auto-memory (`user/memory/`) — into a specialized agent that evolves over time. The persona maintains all of these itself; identity changes require human approval, everything else evolves automatically.
 
 ### Self-Improvement
 
@@ -193,6 +193,9 @@ Personas have a full toolkit available — not just MCP servers. During setup, p
 | Agents | `.claude/agents/{name}.md` | Autonomous subtasks needing their own context |
 | Hooks | `hooks.json` | Behavioral automation tied to session events |
 | Scripts | `tools/` | Data pipelines, formatters, utilities |
+| Scheduled tasks | Natural language or `CronCreate` | Timed reminders, delayed checks |
+
+Scheduled tasks are session-scoped — they run while the persona session is active and vanish on exit. Use natural language ("remind me at 3pm to...", "in 45 minutes, check X"). For durable scheduling, use Desktop scheduled tasks or GitHub Actions.
 
 For MCP servers specifically:
 - **CLI + Code tab** — config lives in the persona's `.mcp.json` (gitignored)

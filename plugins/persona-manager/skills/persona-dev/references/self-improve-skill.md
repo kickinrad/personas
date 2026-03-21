@@ -79,6 +79,7 @@ Before creating anything custom, investigate what already exists. Think broadly 
 - **Skills** — could a SKILL.md wrap an existing tool or API into a reusable workflow? Skills turn tool knowledge into repeatable playbooks
 - **Agents** — would a specialized subagent handle this better? Agents are good for autonomous multi-step tasks that need their own context
 - **Hooks** — is this a behavioral pattern that should trigger automatically? Hooks automate responses to session events
+- **Scheduled tasks** — does the user keep asking for reminders or timed checks? Claude Code has built-in scheduling via `CronCreate` — natural language like "remind me at 3pm" or "in 45 minutes, check X" just works. Session-scoped only — suggest Desktop scheduled tasks or GitHub Actions for durable scheduling
 - **Expansion packs** — check if a persona-manager expansion pack covers it (e.g., `persona-manager:persona-dashboard` for task tracking and visual status)
 - **Reference docs** — sometimes the "tool" you need is just good documentation in `docs/`
 
@@ -96,6 +97,7 @@ Present findings: "Here's what I found that could help: [options]. Want to use a
 | Agent | `.claude/agents/{name}.md` | Autonomous research, analysis, or processing |
 | Hook | `hooks.json` | Domain-specific behavioral automation |
 | Script or utility | `tools/{tool-name}/` | Data pipeline, formatter, setup script |
+| Scheduled task | Scheduling patterns in CLAUDE.md | Timed reminder, delayed check |
 | Reference doc | `docs/` | Domain knowledge, checklists, templates |
 | Expansion pack | Invoke the persona-manager skill | Dashboard, future packs |
 
@@ -137,6 +139,7 @@ Run monthly, or when the user says "time for a self-audit":
    - Check hooks — any domain-specific hooks in `hooks.json` that are no longer useful?
    - Check scripts in `tools/` — any that duplicate what a skill or MCP server now handles?
    - Check for loose files in the root that should be in `docs/` or `tools/`
+   - Check for recurring manual checks or reminders the user keeps requesting — could any be automated with scheduled tasks?
    - Verify `.gitignore` is up to date with any new generated files
 6. **Present all proposals** clearly in a single summary:
 
