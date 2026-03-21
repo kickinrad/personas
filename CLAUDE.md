@@ -24,7 +24,7 @@ personas/                                 # Framework repo
     │   ├── hooks/
     │   │   └── public-repo-guard.sh     # Blocks personal data in public repos (committed)
     │   └── settings.local.json          # (always gitignored)
-    ├── hooks.json                        # SessionStart + Stop + PreCompact + PreToolUse hooks (committed)
+    ├── hooks.json                        # SessionStart + Stop + StopFailure + PreCompact + PostCompact + PreToolUse hooks (committed)
     ├── .claude-flags                     # Per-persona CLI launch flags (committed)
     ├── docs/                              # Reference materials, plans (committed)
     ├── .mcp.json                         # MCP server config (gitignored)
@@ -72,10 +72,11 @@ Each alias reads per-persona flags from `~/.personas/{name}/.claude-flags` (conf
 
 | Platform | Default flags |
 |----------|---------------|
-| macOS / Linux / WSL2 | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
-| Windows native | `--setting-sources project,local --remote-control` |
+| macOS / Linux / WSL2 | `--name {name} --setting-sources project,local --dangerously-skip-permissions --remote-control` |
+| Windows native | `--name {name} --setting-sources project,local --remote-control` |
 
 **Available flags:**
+- `--name {name}` — labels the session in the terminal title and prompt bar with the persona's name
 - `--setting-sources project,local` — loads only persona's settings.json and settings.local.json (ignores global `~/.claude/settings.json`). Keeps permissions, sandbox, MCP config, and memory config isolated
 - `--dangerously-skip-permissions` — skips permission prompts. **Only safe when OS-level sandbox is available** (macOS/Linux/WSL2). **⚠ NEVER use on Windows native** — no sandbox means unrestricted filesystem + network access
 - `--remote-control` — enables browser extension and external tool integration
@@ -150,11 +151,19 @@ Each persona ships `.claude/settings.json` with sandbox config. No Docker requir
     "network": {
       "allowedDomains": ["api.anthropic.com"]
     }
+  },
+  "extraKnownMarketplaces": {
+    "personas": {
+      "source": { "source": "github", "repo": "kickinrad/personas" }
+    }
+  },
+  "enabledPlugins": {
+    "persona-manager@personas": true
   }
 }
 ```
 
-Each persona customizes allowed domains for its MCP servers and APIs. Personas cannot read parent directories or other personas' files.
+Each persona customizes allowed domains for its MCP servers and APIs. Personas cannot read parent directories or other personas' files. The `extraKnownMarketplaces` and `enabledPlugins` entries auto-install persona-manager, giving every persona access to persona-dev for self-evolution.
 
 **Windows native caveat:** Since sandbox is not available, `--dangerously-skip-permissions` must never be used. Windows personas run with standard permission prompts. The `.claude-flags` file for Windows personas omits this flag.
 
@@ -162,15 +171,15 @@ Each persona customizes allowed domains for its MCP servers and APIs. Personas c
 
 Every persona ships with a `self-improve` skill that drives evolution:
 
-- **SessionStart hook** (`hooks.json`): Reads `user/profile.md` on every session (or triggers the first-session interview if unfilled)
-- **Native auto-memory** (`user/memory/`): Redirected via `autoMemoryDirectory` in `.claude/settings.local.json` (not settings.json — Claude ignores it there as a security measure). Stop and PreCompact hooks also write session learnings to `user/memory/` as backup
+- **SessionStart hook** (`hooks.json`): Instructs the persona to read `user/profile.md` on every session (or triggers the first-session interview if unfilled)
+- **Native auto-memory** (`user/memory/`): Redirected via `autoMemoryDirectory` in `.claude/settings.local.json` (not settings.json — Claude ignores it there as a security measure). Stop, StopFailure, PreCompact, and PostCompact hooks also manage session learnings and crash recovery
 - **Self-improve skill** (`skills/self-improve/SKILL.md`): Handles rule promotion, skill creation, tool & integration discovery, workspace hygiene, and periodic audits
 
 The four levels: memory (automatic/native), rule promotion (propose), skill creation (propose), tool & integration discovery (research existing MCP servers, CLI tools, APIs, then propose skills, agents, hooks, or scripts as needed). Periodic audits include workspace hygiene — cleaning stale files, pruning unused tools, keeping the persona lean. See the self-improve skill for the full workflow.
 
 ## Session Start
 
-On first session, `user/profile.md` contains an unfilled template with placeholders and interview instructions. The SessionStart hook reads it, then the persona uses `AskUserQuestion` to interview the user section by section — structured input, not a wall of conversational text. The persona fills `user/profile.md` in place. On returning sessions, the hook reads the populated profile and checks for completeness.
+On first session, `user/profile.md` contains an unfilled template with placeholders and interview instructions. The SessionStart hook instructs the persona to read it, then uses `AskUserQuestion` to interview the user section by section — structured input, not a wall of conversational text. The persona fills `user/profile.md` in place. On returning sessions, the hook instructs the persona to read the populated profile and check for completeness.
 
 ## Lifecycle
 
@@ -178,7 +187,7 @@ All lifecycle operations use native Claude Code features or persona-manager skil
 
 | Action | How |
 |--------|-----|
-| Install persona-manager | `/plugin marketplace add kickinrad/personas` then `/plugin install persona-manager@personas` |
+| Install persona-manager | `/plugin marketplace add kickinrad/personas` then `/plugin install persona-manager@personas` (first time only — each persona auto-installs it via `enabledPlugins` in settings.json) |
 | Create persona | `Skill('persona-manager:persona-dev')` — scaffolds to `~/.personas/` |
 | Add dashboard | `Skill('persona-dashboard:install')` — expansion pack |
 | Deploy remotely | `Skill('persona-remote:install')` — expansion pack |
@@ -254,11 +263,13 @@ During persona setup, persona-dev offers to merge MCP servers into `claude_deskt
 
 ## Hooks
 
-Every persona ships four hooks in `hooks.json`:
+Every persona ships six hooks in `hooks.json`:
 - **PreToolUse** (command, matcher: Bash): Runs `public-repo-guard.sh` before git commit/push — blocks personal data exposure in public repos
-- **SessionStart** (command): Reads `user/profile.md` into session context; triggers interview if unfilled
+- **SessionStart** (command): Instructs the persona to read `user/profile.md` and interview if unfilled. Dependency-free — just echoes a JSON instruction
 - **Stop** (prompt): Reminds persona to persist meaningful learnings to `user/memory/` before ending
+- **StopFailure** (command): Writes a crash marker (`user/memory/.last-crash`) when a session dies from an API error — enables crash recovery on next session
 - **PreCompact** (prompt): Saves session context to memory before compaction
+- **PostCompact** (command): After compaction, checks for the crash marker and reminds the persona to review lost context
 
 ## Scheduled Tasks
 

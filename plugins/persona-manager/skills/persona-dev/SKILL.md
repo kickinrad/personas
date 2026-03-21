@@ -31,7 +31,7 @@ Each persona contains:
 │   └── hooks/
 │       └── public-repo-guard.sh   # Blocks personal data in public repos (committed)
 ├── .gitignore                     # Secrets exclusion
-├── hooks.json                     # SessionStart + Stop + PreCompact + PreToolUse hooks
+├── hooks.json                     # SessionStart + Stop + StopFailure + PreCompact + PostCompact + PreToolUse hooks
 ├── CLAUDE.md                      # Personality + rules
 ├── docs/                          # Reference materials, plans
 ├── .mcp.json                      # MCP server config (gitignored)
@@ -181,9 +181,11 @@ Copy `references/self-improve-skill.md` to `skills/self-improve/SKILL.md`. Repla
 
 Copy `references/hooks-template.json` to `hooks.json` in the persona root. Copy `references/public-repo-guard.sh` to `.claude/hooks/public-repo-guard.sh` and make it executable (`chmod +x`). These hooks:
 - **PreToolUse** (command, matcher: Bash): Runs `public-repo-guard.sh` before git commit/push — checks if the repo is public and blocks if personal data (`user/`, `.mcp.json`, secrets) would be exposed. Every persona gets this by default
-- **SessionStart** (command): Reads `user/profile.md` contents into session context via `additionalContext` — the persona then interviews if unfilled or checks completeness. Must be `type: "command"` (SessionStart only supports command hooks)
+- **SessionStart** (command): Injects instruction to read `user/profile.md` and interview the user if unfilled. No dependencies — just echoes a JSON instruction for Claude to act on. Must be `type: "command"` (SessionStart only supports command hooks)
 - **Stop** (prompt): Reminds the persona to update memory before ending
-- **PreCompact** (prompt): Saves session context before compaction
+- **StopFailure** (command): Writes a crash marker to `user/memory/.last-crash` when a session dies from an API error. PostCompact and the next SessionStart can detect this and offer to recover lost context
+- **PreCompact** (prompt): Saves session context to memory before compaction
+- **PostCompact** (command): After compaction, checks for the crash marker and reminds the persona to review what may have been lost
 
 **4g. Create .gitignore**
 
@@ -191,7 +193,7 @@ Copy `references/gitignore-template` to `.gitignore`.
 
 **4h. Configure sandbox**
 
-Copy `references/settings-template.json` to `.claude/settings.json`. Add any persona-specific network domains for MCP servers to `allowedDomains`.
+Copy `references/settings-template.json` to `.claude/settings.json`. Add any persona-specific network domains for MCP servers to `allowedDomains`. The template includes `extraKnownMarketplaces` and `enabledPlugins` to auto-install persona-manager — this gives every persona access to persona-dev for self-evolution without manual plugin installation.
 
 Also create `.claude/settings.local.json` with the memory directory setting:
 ```json
@@ -325,6 +327,7 @@ Present the detected config and walk the user through each flag using `AskUserQu
 
 | Flag | What it does | Ask the user |
 |------|-------------|--------------|
+| `--name {name}` | Sets the session display name in the terminal title and prompt bar. Makes it easy to identify which persona is running | Always include — uses the persona name. No need to ask |
 | `--setting-sources project,local` | Loads only this persona's settings.json, ignoring global `~/.claude/settings.json`. Keeps permissions, sandbox, and MCP config isolated to this persona | "This keeps your persona isolated from your global Claude config. Recommended ON unless you want global settings to merge in. Enable?" |
 | `--dangerously-skip-permissions` | Skips permission prompts for every tool use. **Only safe when OS-level sandbox is active** (macOS/Linux/WSL2) — the sandbox restricts filesystem + network even without prompts. **NEVER on Windows** | "This lets the persona work without asking permission for every action. It's safe because the sandbox restricts what it can access. Want autonomous mode, or prefer to approve actions manually?" |
 | `--remote-control` | Enables browser extension integration and external tool connections | "This allows tools like the Chrome extension to connect to your persona. Enable?" |
@@ -334,12 +337,12 @@ Present the detected config and walk the user through each flag using `AskUserQu
 
 | Environment | Sandbox? | Default flags |
 |-------------|----------|---------------|
-| macOS | Yes (Seatbelt) | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
-| Linux | Yes (bubblewrap) | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
-| WSL2 | Yes (bubblewrap) | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
-| Windows native | **No** | `--setting-sources project,local --remote-control` |
+| macOS | Yes (Seatbelt) | `--name {name} --setting-sources project,local --dangerously-skip-permissions --remote-control` |
+| Linux | Yes (bubblewrap) | `--name {name} --setting-sources project,local --dangerously-skip-permissions --remote-control` |
+| WSL2 | Yes (bubblewrap) | `--name {name} --setting-sources project,local --dangerously-skip-permissions --remote-control` |
+| Windows native | **No** | `--name {name} --setting-sources project,local --remote-control` |
 
-`--chrome` is not in the defaults but is always offered as an optional addition during the walkthrough.
+`--name` is always included with the persona's name — it labels the session in the terminal title and prompt bar. `--chrome` is not in the defaults but is always offered as an optional addition during the walkthrough.
 
 ---
 
@@ -367,7 +370,7 @@ Present defaults first, then offer customization via `AskUserQuestion`:
 Write the chosen flags into `~/.personas/{name}/.claude-flags` (a single line, sourced by the alias):
 
 ```bash
-echo '--setting-sources project,local --dangerously-skip-permissions --remote-control' > ~/.personas/{name}/.claude-flags
+echo '--name {name} --setting-sources project,local --dangerously-skip-permissions --remote-control' > ~/.personas/{name}/.claude-flags
 ```
 
 This file is read by `.aliases.sh` so each persona can have its own flag configuration.
@@ -397,9 +400,9 @@ function {name} {
     param([Parameter(ValueFromRemainingArguments)]$args)
     Push-Location "$env:USERPROFILE\.personas\{name}"
     if ($args) {
-        claude --setting-sources project,local --remote-control -p ($args -join ' ')
+        claude --name {name} --setting-sources project,local --remote-control -p ($args -join ' ')
     } else {
-        claude --setting-sources project,local --remote-control
+        claude --name {name} --setting-sources project,local --remote-control
     }
     Pop-Location
 }
@@ -506,6 +509,7 @@ After creating or updating a persona: `source ~/.personas/.aliases.sh` or restar
 **Per-persona flags:** Each persona stores its flags in `.claude-flags` (a single line). This is configured during Phase 7 (flag setup). If the file is missing, the alias falls back to safe defaults (no `--dangerously-skip-permissions`).
 
 **What the flags do:**
+- `--name {name}` — labels the session in the terminal title and prompt bar so you know which persona is running
 - `--setting-sources project,local` — loads only the persona's CLAUDE.md and .claude/settings.json (ignores global config)
 - `--dangerously-skip-permissions` — skips permission prompts. **Only safe when sandbox is enabled** (macOS/Linux/WSL2). Never use on Windows native
 - `--remote-control` — enables browser extension and external tool integration (Claude in Chrome, etc.)
