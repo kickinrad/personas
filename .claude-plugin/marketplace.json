@@ -11,7 +11,7 @@
       "name": "persona-manager",
       "source": "./plugins/persona-manager",
       "description": "Scaffolds and manages AI personas in ~/.personas/",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "category": "management"
     },
     {

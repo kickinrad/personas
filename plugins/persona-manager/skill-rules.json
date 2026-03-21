@@ -15,6 +15,21 @@
         "pathPatterns": ["**/.personas/**"],
         "contentPatterns": []
       }
+    },
+    "update": {
+      "kind": "skill",
+      "type": "process",
+      "enforcement": "must",
+      "priority": "high",
+      "activationHint": "Skill('persona-manager:update')",
+      "promptTriggers": {
+        "keywords": ["update persona", "persona drift", "sync with framework", "update hooks", "persona maintenance", "check for updates", "persona outdated"],
+        "intentPatterns": ["update.*?persona", "persona.*?(update|drift|sync|outdated|maintenance)", "check.*?(updates|drift)", "sync.*?framework", "update.*?hooks"]
+      },
+      "fileTriggers": {
+        "pathPatterns": ["**/.personas/**/hooks.json", "**/.personas/**/.claude/settings.json"],
+        "contentPatterns": []
+      }
     }
   }
 }

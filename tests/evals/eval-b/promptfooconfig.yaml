@@ -1,0 +1,26 @@
+# Persona Framework End-to-End Eval (Eval System B)
+# Uses a custom provider that launches Claude CLI sessions in a persona directory.
+#
+# Run:  npx promptfoo eval -c promptfooconfig.yaml
+# View: npx promptfoo view
+
+description: "Persona Framework End-to-End Eval"
+
+providers:
+  - id: file://provider.js
+    label: "Claude Persona Session"
+    config:
+      persona_dir: "~/.personas/test-eval-persona"
+      model: "claude-sonnet-4-5-20250929"
+      timeout_ms: 300000
+
+prompts:
+  - "{{prompt}}"
+
+# Default assertions applied to every test (override per-test as needed)
+defaultTest:
+  options:
+    provider: "openai:gpt-4o"  # LLM-judge provider for llm-rubric assertions
+
+# Test scenarios — loaded from external file
+tests: file://scenarios.yaml
