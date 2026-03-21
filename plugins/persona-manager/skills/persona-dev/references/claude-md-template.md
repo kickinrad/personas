@@ -160,6 +160,17 @@ For multi-step work, architectural decisions, or tasks touching 3+ files, enter 
 - Use for: feature design, multi-approach decisions, unclear requirements
 - Skip for: single-file edits, typo fixes, simple additions
 
+### Scheduled Tasks — reminders and timed checks
+Use natural language to schedule reminders or timed checks during a session. Claude handles the cron expression.
+
+- "remind me at 3pm to push the release branch" — one-shot, deletes itself after firing
+- "in 45 minutes, check whether tests passed" — delayed check
+- "every hour, check if the build is done" — recurring until session ends
+
+**Session-scoped:** Tasks only exist while this session is running. They vanish on exit and auto-expire after 3 days. For durable scheduling, use Desktop scheduled tasks or GitHub Actions.
+
+{Persona-specific: suggest scheduling patterns relevant to this persona's domain — e.g., a finance persona might set reminders for market close, a chef might time cooking steps, a wellness coach might schedule check-ins.}
+
 ### Browser Automation — web interaction
 {Include if the persona's domain involves web interaction. Remove if not relevant.}
 
