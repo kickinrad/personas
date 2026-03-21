@@ -1,5 +1,5 @@
 ---
-name: update
+name: persona-update
 description: Detect drift between an existing persona and the current framework version. Checks hooks, flags, settings, skills, and gitignore for missing or outdated entries. Proposes and applies fixes with approval. Use when a persona seems outdated, after framework updates, or for periodic maintenance.
 triggers:
   - update persona
