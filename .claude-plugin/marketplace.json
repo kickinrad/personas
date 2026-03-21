@@ -22,8 +22,8 @@
       "category": "expansion"
     },
     {
-      "name": "remote-deploy",
-      "source": "./plugins/remote-deploy",
+      "name": "persona-remote",
+      "source": "./plugins/persona-remote",
       "description": "Expansion pack — deploy a persona to a remote server as a Docker container with Tailscale SSH access and bidirectional sync",
       "version": "1.0.0",
       "category": "expansion"

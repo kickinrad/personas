@@ -12,7 +12,7 @@ triggers:
   - deploy to vps
 ---
 
-# Remote Deploy (Expansion Pack)
+# Persona Remote (Expansion Pack)
 
 Deploy a persona to a remote server as a Docker container, accessible via Tailscale SSH with bidirectional sync. This walkthrough is adaptive — it detects what's already done and skips completed steps.
 
@@ -239,7 +239,7 @@ remote-{name}() {
 
 ### 7e: Store remote config in persona
 
-Create `~/.personas/{name}/remote-deploy.json` (for skills to reference):
+Create `~/.personas/{name}/persona-remote.json` (for skills to reference):
 
 ```json
 {
@@ -250,7 +250,7 @@ Create `~/.personas/{name}/remote-deploy.json` (for skills to reference):
 }
 ```
 
-Add `remote-deploy.json` to the persona's `.gitignore` (contains host-specific info).
+Add `persona-remote.json` to the persona's `.gitignore` (contains host-specific info).
 
 ### 7f: Verify everything
 
@@ -271,7 +271,7 @@ ssh {tailscale_host} "sudo ufw allow in on tailscale0 to any port {port}"
 
 **⚠ NEVER run `ufw allow {port}` without `in on tailscale0` — that exposes the port to the public internet.** All persona services should only be reachable via Tailscale.
 
-Document any opened ports in `remote-deploy.json`:
+Document any opened ports in `persona-remote.json`:
 
 ```json
 {
@@ -300,6 +300,7 @@ Commit the new skills, hook changes, and config to the persona's git repo:
 
 ```bash
 cd ~/.personas/{name}
-git add skills/remote/ hooks.json remote-deploy.json .gitignore
-git commit -m "feat({name}): add remote-deploy expansion pack"
+git add skills/remote/ hooks.json persona-remote.json .gitignore
+
+git commit -m "feat({name}): add persona-remote expansion pack"
 ```
