@@ -3,7 +3,7 @@
   "owner": { "name": "kickinrad", "url": "https://github.com/kickinrad" },
   "metadata": {
     "description": "Framework for self-evolving AI personas on Claude Code",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -26,6 +26,17 @@
       "source": "./plugins/remote-deploy",
       "description": "Expansion pack — deploy a persona to a remote server as a Docker container with Tailscale SSH access and bidirectional sync",
       "version": "1.0.0",
+      "category": "expansion"
+    },
+    {
+      "name": "bridgey",
+      "source": {
+        "source": "github",
+        "repo": "kickinrad/bridgey",
+        "ref": "main"
+      },
+      "description": "Expansion pack — inter-agent communication via A2A protocol",
+      "version": "0.3.0",
       "category": "expansion"
     }
   ]
