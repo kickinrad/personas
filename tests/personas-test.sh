@@ -122,7 +122,7 @@ if [[ -d "$PERSONAS_DIR" ]]; then
       check "user/ directory exists" "pass" || check "user/ directory exists" "missing"
 
     # Must have autoMemoryDirectory in settings.local.json (not settings.json — Claude ignores it there)
-    local plocal="$persona_dir/.claude/settings.local.json"
+    plocal="$persona_dir/.claude/settings.local.json"
     if [[ -f "$plocal" ]]; then
       jq -e '.autoMemoryDirectory' "$plocal" >/dev/null 2>&1 && \
         check "autoMemoryDirectory configured" "pass" || check "autoMemoryDirectory configured" "missing in settings.local.json"
