@@ -11,7 +11,7 @@ providers:
     label: "Claude Persona Session"
     config:
       persona_dir: "~/.personas/test-eval-persona"
-      model: "claude-sonnet-4-5-20250929"
+      # model: omitted — uses system default (avoids stale model IDs)
       timeout_ms: 300000
 
 prompts:
