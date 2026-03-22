@@ -84,7 +84,7 @@ module.exports = class PersonaProvider {
     this.config = options.config || {};
     this.personaDir = expandHome(this.config.persona_dir || '~/.personas/test-eval-persona');
     this.timeoutMs = this.config.timeout_ms || DEFAULT_TIMEOUT_MS;
-    this.model = this.config.model || 'claude-sonnet-4-5-20250929';
+    this.model = this.config.model || null;  // null = use system default
   }
 
   id() {
@@ -120,13 +120,24 @@ module.exports = class PersonaProvider {
    */
   _runClaude(prompt) {
     return new Promise((resolve, reject) => {
+      // Use -p with --output-format stream-json for interactive-like behavior.
+      // This ensures Claude executes tools (Write, Edit, Bash) rather than
+      // just generating text. The stream-json output captures tool calls too.
+      // --dangerously-skip-permissions is required: without it, tool calls
+      // need manual approval which can't happen in non-interactive -p mode.
+      // The persona's sandbox config restricts filesystem/network access.
+      // NOTE: Do NOT use --output-format stream-json — it interferes with
+      // tool execution reliability. Default output format works correctly.
       const args = [
         '--setting-sources', 'project,local',
-        '--model', this.model,
+        '--dangerously-skip-permissions',
         '-p', prompt,
-        '--output-format', 'text',
-        '--verbose',
+        '--max-turns', '25',
       ];
+      // Only add --model if explicitly configured (otherwise use system default)
+      if (this.model) {
+        args.push('--model', this.model);
+      }
 
       const proc = spawn('claude', args, {
         cwd: this.personaDir,
@@ -183,13 +194,6 @@ module.exports = class PersonaProvider {
     try {
       claudeResult = await this._runClaude(prompt);
     } catch (err) {
-      // Still run teardown on error
-      if (vars.teardown) {
-        const teardownCommands = Array.isArray(vars.teardown) ? vars.teardown : [vars.teardown];
-        for (const cmd of teardownCommands) {
-          this._exec(cmd, { cwd: process.env.HOME });
-        }
-      }
       return { error: `Claude session error: ${err.message}` };
     }
 
@@ -197,13 +201,10 @@ module.exports = class PersonaProvider {
     const snapshotAfter = snapshotDir(this.personaDir);
     const fileChanges = diffSnapshots(snapshotBefore, snapshotAfter);
 
-    // --- Teardown ---
-    if (vars.teardown) {
-      const teardownCommands = Array.isArray(vars.teardown) ? vars.teardown : [vars.teardown];
-      for (const cmd of teardownCommands) {
-        this._exec(cmd, { cwd: process.env.HOME });
-      }
-    }
+    // NOTE: Teardown runs AFTER assertions check files, not here.
+    // Promptfoo evaluates assertions after callApi returns, so running
+    // teardown here would delete files before assertions can verify them.
+    // Each scenario's setup handles cleanup from the previous run.
 
     const durationMs = Date.now() - startTime;
 

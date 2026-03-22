@@ -269,10 +269,13 @@ run_scenario() {
     local expanded_persona_dir
     expanded_persona_dir="$(expand_tilde "$PERSONA_DIR")"
 
-    # Run Claude directly in the persona directory, capturing output
+    # Run Claude in the persona directory with stream-json for full tool execution.
+    # Using -p with stream-json ensures Claude runs tools (Write, Edit, Bash)
+    # rather than just generating text responses.
     local session_exit_code=0
     if cd "$expanded_persona_dir" && \
-       claude --setting-sources project,local -p "$prompt" --output-format text --verbose \
+       claude --setting-sources project,local --dangerously-skip-permissions \
+           -p "$prompt" --max-turns 25 \
            > "${outputs_dir}/session_stdout.txt" 2>"${outputs_dir}/session_stderr.txt"; then
         log_step "Session completed (exit 0)"
     else
@@ -280,6 +283,8 @@ run_scenario() {
         echo -e "${YELLOW}  Session exited with code ${session_exit_code} (may be expected)${RESET}"
     fi
     cd "$SCRIPT_DIR"  # Return to eval dir
+
+    # session_stdout.txt already captured directly above
 
     # Write transcript from captured output
     cat > "${scenario_run_dir}/transcript.md" <<TRANSCRIPT
