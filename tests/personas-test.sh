@@ -134,6 +134,19 @@ if [[ -d "$PERSONAS_DIR" ]]; then
     [[ -f "$persona_dir/.gitignore" ]] && \
       check ".gitignore exists" "pass" || check ".gitignore exists" "missing"
 
+    # Framework version stamp
+    fwversion="$persona_dir/.framework-version"
+    if [[ -f "$fwversion" ]]; then
+      fv=$(cat "$fwversion" | tr -d '[:space:]')
+      if [[ "$fv" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        check ".framework-version valid ($fv)" "pass"
+      else
+        check ".framework-version valid" "invalid format: $fv"
+      fi
+    else
+      echo "    ℹ .framework-version not found (run persona-update to add)"
+    fi
+
     # No secrets in committed files
     psecret_hits=""
     while IFS= read -r -d '' f; do
