@@ -190,7 +190,7 @@ All lifecycle operations use native Claude Code features or persona-manager skil
 | Install persona-manager | `/plugin marketplace add kickinrad/personas` then `/plugin install persona-manager@personas` (first time only — each persona auto-installs it via `enabledPlugins` in settings.json) |
 | Create persona | `Skill('persona-manager:persona-dev')` — scaffolds to `~/.personas/` |
 | Add dashboard | `Skill('persona-dashboard:install')` — expansion pack |
-| Deploy remotely | `Skill('persona-remote:install')` — expansion pack |
+| Deploy remotely | `Skill('bridgey-deploy:deploy')` — from kickinrad/bridgey marketplace |
 | Push to GitHub | `gh repo create` during scaffolding, or `git push` anytime |
 | Daily use | Shell alias (`{name}`, `{name} "prompt"`) |
 
