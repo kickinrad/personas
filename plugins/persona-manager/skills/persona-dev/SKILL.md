@@ -32,6 +32,7 @@ Each persona contains:
 │       └── public-repo-guard.sh   # Blocks personal data in public repos (committed)
 ├── .gitignore                     # Secrets exclusion
 ├── hooks.json                     # SessionStart + Stop + StopFailure + PreCompact + PostCompact + PreToolUse hooks
+├── .framework-version             # Framework version stamp (committed)
 ├── CLAUDE.md                      # Personality + rules
 ├── docs/                          # Reference materials, plans
 ├── .mcp.json                      # MCP server config (gitignored)
@@ -240,8 +241,13 @@ Before proceeding, verify all required files exist:
 - [ ] `.claude/settings.json`
 - [ ] `skills/self-improve/SKILL.md`
 - [ ] At least one domain skill in `skills/`
+- [ ] `.framework-version` (stamped with current plugin version)
 
 If anything is missing, fix it now — don't proceed with gaps.
+
+**4k. Stamp framework version**
+
+Write the current plugin version to `.framework-version` in the persona root. Read the version from this plugin's `.claude-plugin/plugin.json`. This single-line file tracks which framework version the persona was built with — persona-update uses it to detect drift.
 
 ### Phase 5: Configure integrations
 
