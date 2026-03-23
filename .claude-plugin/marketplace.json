@@ -3,7 +3,7 @@
   "owner": { "name": "kickinrad", "url": "https://github.com/kickinrad" },
   "metadata": {
     "description": "Framework for self-evolving AI personas on Claude Code",
-    "version": "1.3.0",
+    "version": "1.6.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -11,7 +11,7 @@
       "name": "persona-manager",
       "source": "./plugins/persona-manager",
       "description": "Scaffolds and manages AI personas in ~/.personas/",
-      "version": "1.5.1",
+      "version": "1.6.0",
       "category": "management"
     },
     {
