@@ -1,13 +1,6 @@
 ---
 name: persona-update
-description: Detect drift between an existing persona and the current framework version. Diffs persona files against current templates and lets you (the AI) apply changes intelligently. Use when a persona seems outdated, after framework updates, or for periodic maintenance.
-triggers:
-  - update persona
-  - check for updates
-  - persona drift
-  - sync with framework
-  - update hooks
-  - persona maintenance
+description: This skill should be used when the user asks to "update persona", "check for updates", "sync with framework", "persona maintenance", or mentions "persona drift", "persona outdated", or "update hooks". Detects drift between an existing persona and the current framework version, diffs persona files against current templates, and applies changes intelligently.
 ---
 
 # Persona Update
