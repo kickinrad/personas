@@ -17,6 +17,11 @@
         "type": "command",
         "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"Read user/profile.md now. If it contains unfilled template placeholders, use AskUserQuestion to interview the user section by section and populate each section (see Session Start in CLAUDE.md). If already filled out but incomplete, ask the user to fill in the gaps before proceeding. Then check MCP tool availability.\"}}'",
         "timeout": 5000
+      },
+      {
+        "type": "command",
+        "command": "FW=$(cat .framework-version 2>/dev/null); [ -z \"$FW\" ] && exit 0; PV=$(jq -r '.version' ~/.claude/plugins/marketplaces/personas/plugins/persona-manager/.claude-plugin/plugin.json 2>/dev/null); [ -z \"$PV\" ] && exit 0; [ \"$FW\" = \"$PV\" ] && exit 0; echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"Framework update available ('\"$FW\"' -> '\"$PV\"'). Say update persona to sync.\"}}'",
+        "timeout": 5000
       }
     ],
     "Stop": [
