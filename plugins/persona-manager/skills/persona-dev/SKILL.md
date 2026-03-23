@@ -1,17 +1,6 @@
 ---
 name: persona-dev
-description: Create, update, and evolve personas. Use this when the user asks to create a new persona, add a skill to an existing persona, update a persona's CLAUDE.md or profile, set up hooks or self-improvement, document a new MCP tool in a persona, or improve how a persona works over time. Also triggers when the user says things like "my persona should remember this", "this keeps happening, make it a skill", "create a persona for", or "build me a persona".
-triggers:
-  - create a persona
-  - new persona
-  - add a persona
-  - build a persona
-  - persona development
-  - add a skill to
-  - my persona should
-  - make it a skill
-  - persona self-improvement
-  - persona evolution
+description: This skill should be used when the user asks to "create a new persona", "build me a persona", "add a skill to an existing persona", "update a persona's CLAUDE.md or profile", "set up hooks or self-improvement", "document a new MCP tool in a persona", or improve how a persona works over time. Also triggers when the user says "my persona should remember this", "this keeps happening, make it a skill", "create a persona for", or "persona evolution".
 ---
 
 # Persona Development

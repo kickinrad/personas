@@ -1,5 +1,5 @@
 {
-  "description": "Activation rules for persona-manager skills",
+  "description": "Activation rules for persona-manager skills and agents",
   "rules": {
     "persona-dev": {
       "kind": "skill",
