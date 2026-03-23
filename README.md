@@ -77,7 +77,7 @@ Once running, personas extend themselves. They learn with native auto-memory, sc
 The base plugin is intentionally focused and simple. Expansion packs add optional functionality — they're just plugins you install alongside persona-manager via the `/plugin` menu while talking to your persona.
 
 - **persona-dashboard** — an HTML playground based on the dashboard from the official Claude Cowork Productivity plugin. Useful for visualizing data, tracking memory, task lists, and more. Interactive and customizable
-- **persona-remote** — guided remote deployment with Tailscale. Running cron schedules and need to turn your PC off? Want a remote cloud of personas that plan your life? This walks you through server setup, Tailscale, Docker deployment, and security — all in one go
+- **[bridgey-deploy](https://github.com/kickinrad/bridgey)** — remote agent deployment via the bridgey marketplace. Docker containers, Tailscale SSH, Coolify integration, and bidirectional sync. Install from `kickinrad/bridgey` marketplace
 - **[bridgey](https://github.com/kickinrad/bridgey)** — inter-agent communication via A2A protocol. Let your personas discover each other, send messages, and collaborate across machines. Works locally and over Tailscale/Docker networks
 
 You can also use ANY other Claude Code plugin or skill with a persona. They're just folders.
@@ -233,7 +233,7 @@ This repo ships **persona-manager** — the meta-tool that scaffolds and manages
 | Pack | What it does |
 |------|-------------|
 | **persona-dashboard** | Adds an HTML dashboard with task tracking, profile viewer, memory browser, and system overview. Single-file app served locally on ports 7300-7399. |
-| **persona-remote** | Deploys a persona to a remote server as a Docker container with Tailscale SSH access and bidirectional sync. Guided 7-phase walkthrough covers server setup, hardening, Tailscale, Docker, deployment, and post-install tooling (`/sync`, `/remote-status`, remote shell alias). |
+| **[bridgey-deploy](https://github.com/kickinrad/bridgey)** | Remote agent deployment — Docker containers, Tailscale SSH, Coolify integration, bidirectional sync. Install from `kickinrad/bridgey` marketplace: `/plugin marketplace add kickinrad/bridgey` then `/plugin install bridgey-deploy@bridgey` |
 | **[bridgey](https://github.com/kickinrad/bridgey)** | Inter-agent communication via Google's A2A protocol. Personas discover each other automatically on the same machine; remote agents connect over Tailscale or Docker networks with bearer token auth. |
 
 Every scaffolded persona includes:
@@ -254,7 +254,7 @@ All documentation lives in the persona-manager skill system — install the plug
 |-------|---------------|
 | `persona-dev` | Creating, updating, and evolving personas — discovery, scaffolding, shell setup, testing, troubleshooting |
 | `persona-dashboard:install` | Expansion pack — adds HTML dashboard with task tracking and status overview |
-| `persona-remote:install` | Expansion pack — deploys persona to a remote server with Docker, Tailscale SSH, and bidirectional sync |
+| `bridgey-deploy:deploy` | Remote deployment — from `kickinrad/bridgey` marketplace. Docker containers, Tailscale SSH, Coolify integration |
 
 ## Contributing
 

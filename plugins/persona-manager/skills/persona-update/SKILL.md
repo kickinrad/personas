@@ -134,7 +134,7 @@ All 6 hooks must be present:
 **Settings checks:**
 - `extraKnownMarketplaces` must exist (added in framework v1.4.0 — enables auto-install of persona-manager)
 - `enabledPlugins` must include `persona-manager@personas`
-- `enabledPlugins` must NOT contain `remote-deploy@personas` (renamed to `persona-remote@personas`)
+- `enabledPlugins` must NOT contain `remote-deploy@personas` or `persona-remote@personas` (migrated to `bridgey-deploy@bridgey`)
 - `sandbox.enabled` must be `true`
 - `sandbox.autoAllowBashIfSandboxed` must be `true`
 - `sandbox.filesystem.denyRead` must include `"../"` (sandbox escape prevention)
@@ -223,7 +223,7 @@ Read: $PERSONA_DIR/.claude/settings.json
 Check for:
 - **Missing `extraKnownMarketplaces`**: Added in v1.4.0 for auto-install
 - **Missing `enabledPlugins`**: Must include `persona-manager@personas`
-- **Old plugin name `remote-deploy@personas`**: Renamed to `persona-remote@personas`
+- **Old plugin name `remote-deploy@personas` or `persona-remote@personas`**: Migrated to `bridgey-deploy@bridgey` (from kickinrad/bridgey marketplace)
 - **Missing sandbox keys**: Check for `enabled`, `autoAllowBashIfSandboxed`, `filesystem.denyRead` containing `"../"`
 - **DO NOT touch `allowedDomains`**: These are persona-specific
 
@@ -431,7 +431,7 @@ Based on real deployed personas, these are the most common issues:
 | Old SessionStart (cat\|jq) | All pre-v1.4.0 personas | Replace with echo-based command |
 | Missing --name flag | All pre-v1.4.0 personas | Prepend to .claude-flags |
 | Missing extraKnownMarketplaces | All pre-v1.4.0 personas | Add to settings.json |
-| Old plugin name remote-deploy | Personas with remote deploy | Rename to persona-remote in enabledPlugins |
+| Old plugin name remote-deploy or persona-remote | Personas with remote deploy | Migrate to bridgey-deploy@bridgey in enabledPlugins + add bridgey marketplace to extraKnownMarketplaces |
 | Missing .DS_Store / Thumbs.db in gitignore | Some personas | Append to .gitignore |
 | Stale self-improve skill | Personas created before v1.3.0 | Update from current template (preserve persona name) |
 
