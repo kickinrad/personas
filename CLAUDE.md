@@ -25,6 +25,7 @@ personas/                                 # Framework repo
     │   │   └── public-repo-guard.sh     # Blocks personal data in public repos (committed)
     │   └── settings.local.json          # (always gitignored)
     ├── hooks.json                        # SessionStart + Stop + StopFailure + PreCompact + PostCompact + PreToolUse hooks (committed)
+    ├── .framework-version                # Framework version stamp (committed)
     ├── .claude-flags                     # Per-persona CLI launch flags (committed)
     ├── docs/                              # Reference materials, plans (committed)
     ├── .mcp.json                         # MCP server config (gitignored)
@@ -191,6 +192,7 @@ All lifecycle operations use native Claude Code features or persona-manager skil
 | Create persona | `Skill('persona-manager:persona-dev')` — scaffolds to `~/.personas/` |
 | Add dashboard | `Skill('persona-dashboard:install')` — expansion pack |
 | Deploy remotely | `Skill('bridgey-deploy:deploy')` — from kickinrad/bridgey marketplace |
+| Update persona | `Skill('persona-manager:persona-update')` — diffs against templates, persona applies changes |
 | Push to GitHub | `gh repo create` during scaffolding, or `git push` anytime |
 | Daily use | Shell alias (`{name}`, `{name} "prompt"`) |
 
