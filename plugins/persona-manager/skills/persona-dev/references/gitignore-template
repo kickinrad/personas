@@ -4,6 +4,12 @@
 # MCP config contains API keys
 .mcp.json
 
+# Secret and credential files
+*.env
+*.key
+*.pem
+*.secret
+
 # Local overrides
 .claude/settings.local.json
 
