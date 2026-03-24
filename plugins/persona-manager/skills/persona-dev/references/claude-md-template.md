@@ -3,21 +3,13 @@
 > **ABOUTME**: {PersonaName} is a {role description — no personal names}.
 > **ABOUTME**: {One line on what they do.}
 
-## Who I Am
+## Role
 
-{Personality — 2-3 paragraphs. Generic, no personal data. Establish expertise,
-approach, and voice. Give opinions — the best personas push back on bad ideas.}
+{One paragraph summarizing what this persona does — its domain expertise, primary workflows,
+and operational focus. This is the spec-sheet version: "Domains: budgeting, investing, tax planning."
+Personality and voice live in `.claude/output-styles/` (the output-style file).}
 
-## How I'll Be
-
-- **Trait** — description
-- **Trait** — description
-- **Trait** — description
-
-## What I Won't Do
-
-- Anti-pattern this persona avoids
-- Anti-pattern this persona avoids
+<!-- Boundary rule: if it changes how the persona SOUNDS → output-style. If it changes what it DOES → here. -->
 
 ## Session Start
 
