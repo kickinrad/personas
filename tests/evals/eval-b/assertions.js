@@ -136,8 +136,10 @@ module.exports.marketplaceConfigured = (output) => {
 module.exports.autoMemoryConfigured = (output) => {
   const local = readJSON('.claude/settings.local.json');
   if (!local) return result(false, 'settings.local.json missing');
-  const ok = local.autoMemoryDirectory === 'user/memory';
-  return result(ok, ok ? 'autoMemoryDirectory set to user/memory' : `autoMemoryDirectory: ${local.autoMemoryDirectory}`);
+  const dir = local.autoMemoryDirectory;
+  // Must be an absolute path ending with user/memory (relative paths break on WSL)
+  const ok = dir && dir.startsWith('/') && dir.endsWith('/user/memory');
+  return result(ok, ok ? `autoMemoryDirectory set to absolute path: ${dir}` : `autoMemoryDirectory should be absolute path ending in /user/memory, got: ${dir}`);
 };
 
 module.exports.claudeFlagsCorrect = (output) => {
