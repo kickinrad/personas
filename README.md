@@ -240,7 +240,7 @@ Every scaffolded persona includes:
 - `CLAUDE.md` with role, rules, session start, skills table
 - `.claude/output-styles/{name}.md` with personality and tone
 - `user/profile.md` as interview template (filled in during first session, read every session after)
-- `hooks.json` with SessionStart, Stop, PreCompact, and public repo guard hooks
+- `hooks.json` with SessionStart, Stop, StopFailure, PreCompact, PostCompact, and public repo guard hooks
 - `.claude/hooks/public-repo-guard.sh` — blocks commits/pushes that would expose personal data in public repos
 - `self-improve` skill for the evolution engine
 - `.claude/settings.json` with sandbox config + `.claude/settings.local.json` with `autoMemoryDirectory`
