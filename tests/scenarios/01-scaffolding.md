@@ -52,7 +52,7 @@ Create a persona named "test-eval-persona" with these specs:
 - [ ] `.claude/settings.json` has `sandbox.enabled: true`
 - [ ] `.claude/settings.json` has `extraKnownMarketplaces.personas` entry
 - [ ] `.claude/settings.json` has `enabledPlugins["persona-manager@personas"]: true`
-- [ ] `.claude/settings.local.json` has `autoMemoryDirectory: "user/memory"`
+- [ ] `.claude/settings.local.json` has `autoMemoryDirectory` set to an absolute path ending in `/user/memory`
 - [ ] `.claude-flags` exists and contains `--name test-eval-persona`
 - [ ] `.claude-flags` contains `--setting-sources project,local`
 - [ ] `.gitignore` includes `.mcp.json`

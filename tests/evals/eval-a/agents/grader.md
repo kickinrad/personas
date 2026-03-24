@@ -52,6 +52,7 @@ For each entry in `code_assertions`, evaluate programmatically:
 | `json_valid` | Parse file as JSON and verify it's valid |
 | `json_has_key` | Verify JSON file has the key at `key` (dot-notation for nested: `sandbox.enabled`) |
 | `json_key_equals` | Verify JSON key at `key` equals `value` |
+| `json_key_endswith` | Verify JSON string at `key` ends with `value` |
 | `json_array_length` | Verify JSON array at `key` has `expected` number of elements |
 | `glob_has_results` | Verify glob pattern matches at least `min_count` files, optionally excluding `exclude` |
 | `files_have_frontmatter` | Verify files matching `glob` (excluding `exclude`) have YAML frontmatter with `required_fields` |

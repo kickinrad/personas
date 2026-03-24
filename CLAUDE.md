@@ -173,7 +173,7 @@ Each persona customizes allowed domains for its MCP servers and APIs. Personas c
 Every persona ships with a `self-improve` skill that drives evolution:
 
 - **SessionStart hook** (`hooks.json`): Instructs the persona to read `user/profile.md` on every session (or triggers the first-session interview if unfilled)
-- **Native auto-memory** (`user/memory/`): Redirected via `autoMemoryDirectory` in `.claude/settings.local.json` (not settings.json — Claude ignores it there as a security measure). Stop, StopFailure, PreCompact, and PostCompact hooks also manage session learnings and crash recovery
+- **Native auto-memory** (`user/memory/`): Redirected via `autoMemoryDirectory` in `.claude/settings.local.json` (not settings.json — Claude ignores it there as a security measure). Must use an **absolute path** (relative paths break on WSL). Stop, StopFailure, PreCompact, and PostCompact hooks also manage session learnings and crash recovery
 - **Self-improve skill** (`skills/self-improve/SKILL.md`): Handles rule promotion, skill creation, tool & integration discovery, workspace hygiene, and periodic audits
 
 The four levels: memory (automatic/native), rule promotion (propose), skill creation (propose), tool & integration discovery (research existing MCP servers, CLI tools, APIs, then propose skills, agents, hooks, or scripts as needed). Periodic audits include workspace hygiene — cleaning stale files, pruning unused tools, keeping the persona lean. See the self-improve skill for the full workflow.
