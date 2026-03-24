@@ -6,22 +6,22 @@
   <a href="LICENSE"><img src="https://img.shields.io/github/license/kickinrad/personas?style=flat" alt="License"></a>
 </p>
 
-Independent, self-contained AI agent personas built with native Claude features first. Accessible from CLI, Claude Cowork, and remote servers.
+Independent, self-contained AI agent personas built with native Claude features first. Accessible from CLI and Claude Cowork.
 
 Hello! Personas are my take on a simple and elegant Claw-like (lol) framework using native abilities for Claude.
 
 ```
-$ chef "what should I make tonight?"
+$ warren "how am I doing this month?"
 
-🍳 Based on what's in your pantry + this week's goals:
+📊 Through March 22:
 
-You have chicken thighs defrosting, plus rice and that gochujang
-from last week. Let's do dakgalbi (spicy Korean chicken stir-fry).
+You're at $4,280 of your $5,500 monthly spend target — 78%, with
+8 days left. Dining is the outlier again: $620 vs $400 budget.
 
-  Prep: 15 min  Cook: 20 min  Calories: ~480
+  Savings rate: 31%  Net worth: +2.1% MoM  Emergency fund: 5.8 months
 
-I'll skip the cabbage since you mentioned hating it last time.
-Want the shopping list for sides, or just rolling with what you have?
+That Vanguard rebalance we talked about last week — rates moved
+enough that it's worth doing now. Want me to draft the trades?
 ```
 
 ### What's a persona?
@@ -29,7 +29,7 @@ Want the shopping list for sides, or just rolling with what you have?
 A persona is simply a folder. Isolated from your global Claude config, backed by git, and ready to launch from any terminal. Inside:
 
 ```
-~/.personas/chef/
+~/.personas/warren/
 ├── CLAUDE.md                     # what the persona does, knows, and how it behaves
 ├── .claude/
 │   ├── settings.json             # sandbox, permissions, memory config
@@ -48,7 +48,7 @@ A persona is simply a folder. Isolated from your global Claude config, backed by
 └── .gitignore                    # protects secrets; optionally ignores user/ for public sharing
 ```
 
-Everything is created with you during setup — persona-dev interviews you, researches your domain, and scaffolds the whole thing. Keep it local, connect it to GitHub for backup, or deploy it to a remote server.
+Everything is created with you during setup — persona-dev interviews you, researches your domain, and scaffolds the whole thing. Keep it local, connect it to GitHub for backup, or deploy it to a remote server. Launch
 
 <!-- TODO: ![Creating a persona with persona-dev](assets/create-persona.gif) -->
 
@@ -63,30 +63,32 @@ Once running, personas extend themselves. They learn with native auto-memory, sc
 
 <!-- TODO: ![Self-improvement in action](assets/self-improve.gif) -->
 
-### Real personas and their tools
+> [!TIP]
+> Want your personas to talk to each other or run on remote servers? [Bridgey](https://github.com/kickinrad/bridgey) adds inter-agent communication via A2A protocol and optional remote deployment with Docker, Tailscale, and Coolify.
+
+### Example personas
+
+These are all examples of actual personas I created and use to help organize my busy life. In theory, a persona could be an expert assistant with pretty much whatever you want. 
 
 | Persona | Role | MCP Servers | Skills |
 |---------|------|-------------|--------|
-| **warren** | Personal CFO — sharp, data-driven, Buffett-esque | Monarch (finances), Google Workspace, Scheduler | `finance`, `self-improve` |
-| **julia** | Personal Chef — warm, encouraging, Julia Child vibes | Mealie (recipes & meal plans), Google Workspace, Scheduler | `personal-chef`, `self-improve` |
-| **bob** | Home Repair Expert — Norm Abram meets project manager | BuildCAD AI (3D modeling), Excalidraw (diagrams), Google Workspace | `home-repair`, `calculators`, `self-improve` |
-| **nara** | Health & Wellness Coach — holistic, evidence-based | Consensus (research papers), HealthEx (health data) | `wellness`, `self-improve` |
+| **warren** | Personal CFO — sharp, data-driven, Buffett-esque | Monarch (finances), Google Workspace | `finance`, `self-improve` |
+| **julia** | Personal Chef — warm, encouraging, meal planning pro | Mealie (recipes & meal plans), Google Workspace | `personal-chef`, `self-improve` |
+| **nara** | Health & Wellness Coach — holistic, evidence-based | Consensus (research papers), HealthEx (health data), Google Workspace | `wellness`, `self-improve` |
+| **bob** | Home Repair Expert — project scoping + how-to guides | Excalidraw (diagrams), Google Workspace | `home-repair`, `calculators`, `self-improve` |
 
-### Expansion packs
-
-The base plugin is intentionally focused and simple. Expansion packs add optional functionality — they're just plugins you install alongside persona-manager via the `/plugin` menu while talking to your persona.
-
-- **persona-dashboard** — an HTML playground based on the dashboard from the official Claude Cowork Productivity plugin. Useful for visualizing data, tracking memory, task lists, and more. Interactive and customizable
-- **[bridgey-deploy](https://github.com/kickinrad/bridgey)** — remote agent deployment via the bridgey marketplace. Docker containers, Tailscale SSH, Coolify integration, and bidirectional sync. Install from `kickinrad/bridgey` marketplace
-- **[bridgey](https://github.com/kickinrad/bridgey)** — inter-agent communication via A2A protocol. Let your personas discover each other, send messages, and collaborate across machines. Works locally and over Tailscale/Docker networks
-
-You can also use ANY other Claude Code plugin or skill with a persona. They're just folders.
-
----
-
-No complex infrastructure, no configuration servers — just native Claude Code features composed into something a bit more girthy. Linux and WSL2 users need `bubblewrap` and `socat` for sandboxing (`sudo apt install bubblewrap socat`); macOS sandboxing works out of the box.
+You can also use ANY other Claude Code plugin or skill with a persona. Just add the marketplace as you would normally, or add them directly to the persona directory.
 
 ## Quick Start
+
+### Dependencies
+
+| Dependency | Platform | Why |
+|------------|----------|-----|
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | All | Required — the foundation |
+| `bubblewrap` `socat` | Linux / WSL2 | Required — OS-level sandboxing (`sudo apt install bubblewrap socat`) |
+| [Git for Windows](https://gitforwindows.org/) | Windows | Required — provides Git Bash runtime |
+| [`gh`](https://cli.github.com/) | All | Optional — repo creation during setup + public repo safety checks |
 
 ### Step 1: Install the plugin and create a persona
 
@@ -116,10 +118,10 @@ Alternatively, navigate to the "Customize" menu, select the Persona Manager pers
 Then ask Claude to create your persona: 
 
 ```
-create a personal chef persona called chef
+create a personal finance persona called warren
 ```
 
-The `persona-dev` skill activates automatically — it scaffolds everything to `~/.personas/chef/` including sandbox config, hooks, output style, self-improve skill, and gitignore. It asks whether you'll use CLI, Desktop, or both, and configures paths and MCP servers accordingly.
+The `persona-dev` skill activates automatically — it scaffolds everything to `~/.personas/warren/` including sandbox config, hooks, output style, self-improve skill, and gitignore. It asks whether you'll use CLI, Desktop, or both, and configures paths and MCP servers accordingly.
 
 ### Step 2: Launch your persona
 
@@ -127,9 +129,9 @@ Once created, the persona works in any environment:
 
 | Mode | How |
 |------|-----|
-| CLI | `chef` or `chef "what should I make?"` — shell aliases set up during creation |
-| Cowork | Select `~/.personas/chef/` as project folder |
-| Desktop Chat | Select `~/.personas/chef/` as project folder |
+| CLI | `warren` or `warren "how am I doing this month?"` — shell aliases set up during creation |
+| Cowork | Select `~/.personas/warren/` as project folder |
+| Desktop Chat | Select `~/.personas/warren/` as project folder |
 
 If the persona uses MCP servers, persona-dev offers to configure them in your `claude_desktop_config.json` so Cowork and Desktop Chat can access them too.
 
@@ -140,6 +142,14 @@ On first launch, the persona interviews you to build your profile — it asks th
 - **macOS / Linux** — CLI and Desktop share `~/`, so `~/.personas/` works everywhere. No extra setup.
 - **Windows (native)** — Personas live at `%USERPROFILE%\.personas\`. No bash aliases — use PowerShell functions or launch via Desktop. No sandbox support, so `--dangerously-skip-permissions` is never used.
 - **WSL** — CLI runs in WSL (`/home/user/`) while Desktop sees `C:\Users\user\`. If you use both, persona-dev creates personas on the Windows side and symlinks `~/.personas/` in WSL so both environments see the same files. If you only use CLI, personas stay in WSL for better I/O performance.
+
+### Expansion packs
+
+The base plugin is intentionally focused and simple. Expansion packs add optional functionality — install them via the `/plugin` menu while talking to your persona.
+
+| Pack | What it does |
+|------|-------------|
+| **persona-dashboard** | HTML dashboard with task tracking, profile viewer, memory browser, and system overview |
 
 ## How It Works
 
@@ -221,20 +231,13 @@ When a persona goes public, it handles the transition itself — updating `.giti
 
 ## What's Included
 
-This repo ships **persona-manager** — the meta-tool that scaffolds and manages personas.
+This repo ships **persona-manager** — the meta-tool that scaffolds and manages personas — plus optional expansion packs.
 
-| Skill | What it does |
-|-------|-------------|
-| **persona-dev** | Scaffolds a new persona with CLAUDE.md, output style, profile template, sandbox config, hooks, self-improve skill, gitignore, and optional GitHub repo. Also handles persona updates and evolution. |
+| Component | What it does |
+|-----------|-------------|
+| **persona-dev** (skill) | Scaffolds a new persona with CLAUDE.md, output style, profile template, sandbox config, hooks, self-improve skill, gitignore, and optional GitHub repo. Also handles persona updates and evolution. |
+| **persona-dashboard** (expansion pack) | Adds an HTML dashboard with task tracking, profile viewer, memory browser, and system overview. Single-file app served locally on ports 7300-7399. |
 
-
-## Expansion Packs
-
-| Pack | What it does |
-|------|-------------|
-| **persona-dashboard** | Adds an HTML dashboard with task tracking, profile viewer, memory browser, and system overview. Single-file app served locally on ports 7300-7399. |
-| **[bridgey-deploy](https://github.com/kickinrad/bridgey)** | Remote agent deployment — Docker containers, Tailscale SSH, Coolify integration, bidirectional sync. Install from `kickinrad/bridgey` marketplace: `/plugin marketplace add kickinrad/bridgey` then `/plugin install bridgey-deploy@bridgey` |
-| **[bridgey](https://github.com/kickinrad/bridgey)** | Inter-agent communication via Google's A2A protocol. Personas discover each other automatically on the same machine; remote agents connect over Tailscale or Docker networks with bearer token auth. |
 
 Every scaffolded persona includes:
 - `CLAUDE.md` with role, rules, session start, skills table
@@ -254,7 +257,6 @@ All documentation lives in the persona-manager skill system — install the plug
 |-------|---------------|
 | `persona-dev` | Creating, updating, and evolving personas — discovery, scaffolding, shell setup, testing, troubleshooting |
 | `persona-dashboard:install` | Expansion pack — adds HTML dashboard with task tracking and status overview |
-| `bridgey-deploy:deploy` | Remote deployment — from `kickinrad/bridgey` marketplace. Docker containers, Tailscale SSH, Coolify integration |
 
 ## Contributing
 
