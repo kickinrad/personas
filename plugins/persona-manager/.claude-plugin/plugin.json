@@ -1,7 +1,7 @@
 {
   "name": "persona-manager",
   "description": "Scaffolds and evolves self-improving AI personas in ~/.personas/",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "author": { "name": "kickinrad", "url": "https://github.com/kickinrad" },
   "repository": "https://github.com/kickinrad/personas",
   "license": "MIT"
