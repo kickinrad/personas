@@ -431,8 +431,7 @@ Desktop is not available on Linux — Linux users are CLI-only.
 4. Note: Desktop Code tab reads `.mcp.json` (same as CLI), but Desktop Chat and Cowork read only `claude_desktop_config.json` — MCP servers need to be in both for full coverage
 
 **Important environment limitations:**
-- **Cowork** runs in an isolated Linux VM (Apple Silicon only) — can only access explicitly mounted folders, blocks symlinks outside scope. Reads MCP from `claude_desktop_config.json` (global), not `.mcp.json`. Cross-environment setup (WSL symlinks, Desktop config merges) must be done from a terminal, not Cowork.
-- **Desktop Chat** is NOT sandboxed (server-side processing) — no direct filesystem access. MCP servers must be in `claude_desktop_config.json`.
+- **Cowork** runs in an isolated Linux VM — can only access explicitly mounted folders, blocks symlinks outside scope. Reads MCP from `claude_desktop_config.json` (global), not `.mcp.json`. Cross-environment setup (WSL symlinks, Desktop config merges) must be done from a terminal, not Cowork.
 - **Desktop Code tab** IS sandboxed (OS-level: Seatbelt on macOS, bubblewrap on Linux/WSL2) — reads `.mcp.json` from the project.
 - **Windows native** does NOT support sandboxing — never use `--dangerously-skip-permissions`.
 
