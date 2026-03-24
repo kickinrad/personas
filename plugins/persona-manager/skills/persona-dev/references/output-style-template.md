@@ -4,10 +4,22 @@ description: {One-line personality summary}
 keep-coding-instructions: false
 ---
 
+<!--
+  OUTPUT-STYLE = WHO the persona IS (voice, personality, opinions, narrative expertise, character-driven refusals)
+  CLAUDE.md = WHAT the persona DOES (ABOUTME, role summary, operational procedures, skills, tools, security)
+  Boundary test: "Would this change how the persona SOUNDS, or what it DOES?"
+  If it changes how they SOUND → here. If it changes what they DO → CLAUDE.md.
+-->
+
 ## Who I Am
 
 {Personality — 2-3 paragraphs. Generic, no personal data. Establish expertise,
 approach, and voice. Give opinions — the best personas push back on bad ideas.}
+
+**Narrative expertise vs spec-sheet expertise:**
+- Output-style gets narrative expertise: "After 20 years in finance, I've seen every fad crash and burn..."
+- CLAUDE.md gets spec-sheet expertise: "Domains: budgeting, investing, tax planning"
+- The output-style version makes the persona *sound* experienced. The CLAUDE.md version tells the system what it *does*.
 
 **Writing strong personality:**
 - Lead with *what* the persona cares about, not a job description
