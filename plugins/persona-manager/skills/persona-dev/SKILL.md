@@ -137,7 +137,7 @@ mkdir -p ~/.personas/{name}/{.claude/output-styles,.claude/hooks,skills,tools,do
 
 Use the template from `references/claude-md-template.md`. Key decisions:
 
-- **Personality**: Be specific about traits and anti-patterns. Give it opinions
+- **Role summary**: One paragraph of spec-sheet expertise and operational focus. Personality and voice go in the output-style (`.claude/output-styles/`), NOT here. Boundary test: "Would this change how the persona SOUNDS, or what it DOES?" If SOUNDS → output-style. If DOES → CLAUDE.md
 - **Workspace Hygiene section**: Include it — every persona must maintain its own workspace
 - **Self-Improvement**: Point to the self-improve skill (one line, not inline)
 
@@ -156,18 +156,30 @@ Use AskUserQuestion to ask each section's questions — one section at a time.
 Present what you're asking about and why, then let the user respond.
 ```
 
-**4d. Create first domain skill(s)**
+**4c. Create output-style**
+
+Create `.claude/output-styles/{name}.md` using `references/output-style-template.md`. This file defines WHO the persona IS:
+
+- **Who I Am** — personality, narrative expertise, voice, opinions
+- **How I'll Be** — behavioral traits (how the persona operates, not what it knows)
+- **What I Won't Do** — character-driven refusals and anti-patterns (NOT operational rules — those go in CLAUDE.md)
+
+The boundary rule: voice and personality go here; operational procedures, skills, tools, and security go in CLAUDE.md. Narrative expertise ("After 20 years in finance, I've seen every fad crash and burn...") goes here. Spec-sheet expertise ("Domains: budgeting, investing, tax planning") goes in CLAUDE.md's Role section.
+
+Use the strong/weak examples from the template as guidance. The persona should have opinions and a point of view — bland personas get ignored.
+
+**4e. Create first domain skill(s)**
 
 Write at least one skill under `skills/{domain}/{skill-name}/SKILL.md` with:
 - YAML frontmatter (name, description, triggers)
 - Step-by-step workflow
 - Expected output format
 
-**4e. Copy self-improve skill**
+**4f. Copy self-improve skill**
 
 Copy `references/self-improve-skill.md` to `skills/self-improve/SKILL.md`. Replace `{name}` with the persona name. This ships with every persona — it handles memory management, rule promotion, skill creation, tool discovery, and periodic audits.
 
-**4f. Set up hooks**
+**4g. Set up hooks**
 
 Copy `references/hooks-template.json` to `hooks.json` in the persona root. Copy `references/public-repo-guard.sh` to `.claude/hooks/public-repo-guard.sh` and make it executable (`chmod +x`). These hooks:
 - **PreToolUse** (command, matcher: Bash): Runs `public-repo-guard.sh` before git commit/push — checks if the repo is public and blocks if personal data (`user/`, `.mcp.json`, secrets) would be exposed. Every persona gets this by default
@@ -177,11 +189,11 @@ Copy `references/hooks-template.json` to `hooks.json` in the persona root. Copy 
 - **PreCompact** (prompt): Saves session context to memory before compaction
 - **PostCompact** (command): After compaction, checks for the crash marker and reminds the persona to review what may have been lost
 
-**4g. Create .gitignore**
+**4h. Create .gitignore**
 
 Copy `references/gitignore-template` to `.gitignore`.
 
-**4h. Configure sandbox**
+**4i. Configure sandbox**
 
 Copy `references/settings-template.json` to `.claude/settings.json`. Add any persona-specific network domains for MCP servers to `allowedDomains`. The template includes `extraKnownMarketplaces` and `enabledPlugins` to auto-install persona-manager — this gives every persona access to persona-dev for self-evolution without manual plugin installation.
 
@@ -193,7 +205,7 @@ Also create `.claude/settings.local.json` with the memory directory setting:
 ```
 **Important:** `autoMemoryDirectory` must be in `settings.local.json`, not `settings.json`. Claude Code ignores this setting in project settings (`.claude/settings.json`) as a security measure — it only works from local or user settings. The `settings.local.json` file is gitignored, so persona-dev must create it during setup on each machine.
 
-**4i. Create README.md**
+**4j. Create README.md**
 
 Every persona repo gets a short README. Keep it minimal — this isn't a library, it's a personal assistant:
 
@@ -218,23 +230,25 @@ See the [personas framework](https://github.com/kickinrad/personas) for installa
 
 For **public repos**, consider adding a brief "What it does" section describing the persona's domain and skills.
 
-**4j. Validate scaffold**
+**4k. Validate scaffold**
 
 Before proceeding, verify all required files exist:
 - [ ] `README.md`
 - [ ] `CLAUDE.md`
+- [ ] `.claude/output-styles/{name}.md` (voice and personality)
 - [ ] `user/profile.md` (template with placeholders, ready for first-session interview)
 - [ ] `hooks.json`
 - [ ] `.claude/hooks/public-repo-guard.sh` (executable)
 - [ ] `.gitignore`
 - [ ] `.claude/settings.json`
+- [ ] `.claude/settings.local.json` (autoMemoryDirectory configured)
 - [ ] `skills/self-improve/SKILL.md`
 - [ ] At least one domain skill in `skills/`
 - [ ] `.framework-version` (stamped with current plugin version)
 
 If anything is missing, fix it now — don't proceed with gaps.
 
-**4k. Stamp framework version**
+**4l. Stamp framework version**
 
 Write the current plugin version to `.framework-version` in the persona root. Read the version from this plugin's `.claude-plugin/plugin.json`. This single-line file tracks which framework version the persona was built with — persona-update uses it to detect drift.
 
