@@ -90,9 +90,9 @@ You can also use ANY other Claude Code plugin or skill with a persona. Just add 
 | [Git for Windows](https://gitforwindows.org/) | Windows | Required — provides Git Bash runtime |
 | [`gh`](https://cli.github.com/) | All | Optional — repo creation during setup + public repo safety checks |
 
-### Step 1: Install the plugin and create a persona
+### Step 1: Install the plugin
 
-Persona creation requires the persona-manager plugin. Install it once — after setup, the persona works everywhere.
+Install persona-manager once — after that, every persona you create auto-installs it.
 
 <details open>
 <summary><strong>Claude Code (CLI)</strong></summary>
@@ -102,28 +102,48 @@ Persona creation requires the persona-manager plugin. Install it once — after 
 /plugin install persona-manager@personas
 ```
 
-Launch Claude Code as normal and get your ideas ready. 
+</details>
+
+<details open>
+<summary><strong>Claude Cowork</strong></summary>
+
+1. **Customize** → **Personal Plugins +** → **Browse Plugins**
+2. **+ Add Marketplace from GitHub** → enter `kickinrad/personas`
+3. Install and enable **persona-manager** (and any expansion packs you want)
 
 </details>
 
-<details>
-<summary><strong>Claude Desktop</strong></summary>
+### Step 2: Create a persona
 
-Open Claude Desktop and navigate to Customize pane→ **Personal Plugins +** → **Browse Plugins** -> Personal ->  + Add Marketplace from Github,  enter `kickinrad/personas` and install **persona-manager** and any desired expansion packs. Create a new Cowork instance starting in your default user directory, and invoke the plugin to begin. 
+Describe the persona you want — a role, a name, and optionally a personality. The `persona-dev` skill activates automatically.
 
-Alternatively, navigate to the "Customize" menu, select the Persona Manager personal plugin, the select the Persona Dev skill and use the three dot menu to copy the skill or run it in Claude Desktop Chat. Because of CoWork's sandboxing, this can be preferable for setting up WSL compatibility, aliases, and advanced configs.
+<details open>
+<summary><strong>Claude Code (CLI)</strong></summary>
+
+1. Start a Claude Code session in any directory
+2. Type your persona description in the prompt:
+
+```
+create a personal finance persona named warren
+```
 
 </details>
 
-Then ask Claude to create your persona: 
+<details open>
+<summary><strong>Claude Cowork</strong></summary>
+
+1. Create a new Cowork instance starting in your home directory
+2. Type your persona description in the prompt:
 
 ```
-create a personal finance persona called warren
+create a personal finance persona named warren
 ```
 
-The `persona-dev` skill activates automatically — it scaffolds everything to `~/.personas/warren/` including sandbox config, hooks, output style, self-improve skill, and gitignore. It asks whether you'll use CLI, Desktop, or both, and configures paths and MCP servers accordingly.
+</details>
 
-### Step 2: Launch your persona
+persona-dev scaffolds everything to `~/.personas/warren/` — sandbox config, hooks, output style, self-improve skill, and gitignore. It asks whether you'll use CLI, Cowork, or both, and configures paths, aliases, and MCP servers accordingly.
+
+### Step 3: Launch your persona
 
 Once created, the persona works in any environment:
 
@@ -131,11 +151,11 @@ Once created, the persona works in any environment:
 |------|-----|
 | CLI | `warren` or `warren "how am I doing this month?"` — shell aliases set up during creation |
 | Cowork | Select `~/.personas/warren/` as project folder |
-| Desktop Chat | Select `~/.personas/warren/` as project folder |
+
 
 If the persona uses MCP servers, persona-dev offers to configure them in your `claude_desktop_config.json` so Cowork and Desktop Chat can access them too.
 
-On first launch, the persona interviews you to build your profile — it asks the right questions based on its role, then writes `user/profile.md` from your answers. Every session after that, it reads your profile and picks up where you left off.
+On first launch, the persona interviews you to build your profile — it asks the right questions based on its role, then writes `user/profile.md` from your answers. Every session after that, it reads your profile and memory and picks up where you left off.
 
 ### Cross-platform notes
 
@@ -153,20 +173,36 @@ The base plugin is intentionally focused and simple. Expansion packs add optiona
 
 ## How It Works
 
-Personas interview you on first launch, remember what they learn across sessions, propose new rules when patterns emerge, draft reusable skills when workflows repeat, and discover tools and integrations for their domain. They run from your terminal, live in git, and are sandboxed at the OS level so they can't touch anything outside their own directory.
+Under the hood, personas use six hooks, a self-improve skill, OS-level sandboxing, and native auto-memory to stay useful without staying stupid. Here's what's going on.
 
-**A persona is a self-contained AI assistant.** It combines standard Claude Code features — identity (CLAUDE.md), output style (`.claude/output-styles/`), user context (`user/profile.md`), skills, hooks, MCP tools, sandbox settings, scheduled tasks, and native auto-memory (`user/memory/`) — into a specialized agent that evolves over time. The persona maintains all of these itself; identity changes require human approval, everything else evolves automatically.
+### Profile & First Session
+
+On first launch, the SessionStart hook detects an unfilled `user/profile.md` and kicks off an interview. The persona asks structured questions based on its role — a finance persona asks about accounts and goals, a chef asks about dietary preferences and kitchen setup. Answers are written to `user/profile.md` in place. Every session after that, the hook reads the populated profile so the persona has full context from the start.
+
+### Memory
+
+Personas remember things between sessions using native auto-memory in `user/memory/`:
+
+- **Auto-capture** — Claude's built-in memory writes to `user/memory/` via `autoMemoryDirectory` in `settings.local.json`
+- **Session persistence** — Stop and PreCompact hooks remind the persona to save meaningful learnings before the session ends or context compacts
+- **Crash recovery** — StopFailure hook writes a crash marker (`.last-crash`); PostCompact hook checks for it on the next session so lost context can be recovered
+- **Index** — `MEMORY.md` acts as an index pointing to topic-specific memory files, loaded at the start of every session
+
+Memory is local, git-tracked, and lives inside the persona's sandbox. No external services involved.
+
+### Output Styles
+
+Personality and tone live in `.claude/output-styles/`, separate from the rules in CLAUDE.md. This is a deliberate split — CLAUDE.md defines *what the persona does* (role, procedures, skills, security rules), while the output style defines *who the persona is* (voice, opinions, humor, character). Changing how a persona sounds doesn't touch its operational config, and vice versa.
 
 ### Self-Improvement
 
-Personas ship with a `self-improve` skill and a SessionStart hook that drive automatic evolution:
+Personas ship with a `self-improve` skill that drives evolution beyond memory:
 
-1. **Memory** — native auto-memory via `autoMemoryDirectory` (in `settings.local.json`) captures learnings automatically; Stop and PreCompact hooks write session context as backup; SessionStart hook reads profile context
-2. **Rule promotion** — after a pattern appears 3+ times in memory, the persona proposes a permanent rule in CLAUDE.md
-3. **Skill creation** — after an ad-hoc workflow repeats 3+ times, the persona drafts a reusable skill
-4. **Tool & integration discovery** — researches MCP servers, CLI tools, APIs, and expansion packs; creates skills to wrap them, agents for autonomous subtasks, hooks for behavioral automation, and scripts for data processing — always preferring existing solutions over custom builds
+1. **Rule promotion** — after a pattern appears 3+ times in memory, the persona proposes a permanent rule in CLAUDE.md
+2. **Skill creation** — after an ad-hoc workflow repeats 3+ times, the persona drafts a reusable skill
+3. **Tool & integration discovery** — researches MCP servers, CLI tools, APIs, and expansion packs; creates skills to wrap them, agents for autonomous subtasks, hooks for behavioral automation, and scripts for data processing — always preferring existing solutions over custom builds
 
-Every level above memory requires your approval before changes are committed. You stay in control; the persona does the legwork.
+Every level requires your approval before changes are committed. You stay in control; the persona does the legwork.
 
 ### Sandboxing
 
@@ -216,47 +252,21 @@ For MCP servers specifically:
 Shell aliases auto-discover personas in `~/.personas/` and create callable functions. Each persona stores its launch flags in `.claude-flags` (configured during setup). During setup, persona-dev walks through each flag with the user:
 
 - `--setting-sources project,local` — isolates persona's settings from global config
-- `--dangerously-skip-permissions` — autonomous mode (only on sandboxed platforms: macOS/Linux/WSL2, never Windows)
+- `--dangerously-skip-permissions` — autonomous mode (only on sandboxed platforms: macOS/Linux/WSL2)
 - `--remote-control` — enables external tool connections
 - `--chrome` — enables Chrome browser automation (only for personas that need web interaction)
 
-### Public Repo Safety
+### Repo Safety
 
 Personas collect personal data — your profile, preferences, and session memories live in `user/`. Every persona ships with a **public repo guard** (`.claude/hooks/public-repo-guard.sh`) that automatically blocks `git commit` and `git push` if personal data would be exposed in a public repository.
 
 - **Private repos** — safe to commit everything, including `user/`. Great for backup and cross-machine sync
 - **Public repos** — the guard checks that `user/` is gitignored, no personal files are staged, and no secret patterns (`*.env`, `*.key`, `*.pem`) are being committed. If any check fails, the commit is blocked with instructions to fix it
 
-When a persona goes public, it handles the transition itself — updating `.gitignore`, removing `user/` from tracking, and creating a fresh remote so old history with personal data never reaches the public repo.
+If you decide to share your persona, it helps to handle the transition itself — updating `.gitignore`, removing `user/` from tracking, and creating a fresh remote so old history with personal data never reaches the public repo.
 
-## What's Included
-
-This repo ships **persona-manager** — the meta-tool that scaffolds and manages personas — plus optional expansion packs.
-
-| Component | What it does |
-|-----------|-------------|
-| **persona-dev** (skill) | Scaffolds a new persona with CLAUDE.md, output style, profile template, sandbox config, hooks, self-improve skill, gitignore, and optional GitHub repo. Also handles persona updates and evolution. |
-| **persona-dashboard** (expansion pack) | Adds an HTML dashboard with task tracking, profile viewer, memory browser, and system overview. Single-file app served locally on ports 7300-7399. |
-
-
-Every scaffolded persona includes:
-- `CLAUDE.md` with role, rules, session start, skills table
-- `.claude/output-styles/{name}.md` with personality and tone
-- `user/profile.md` as interview template (filled in during first session, read every session after)
-- `hooks.json` with SessionStart, Stop, StopFailure, PreCompact, PostCompact, and public repo guard hooks
-- `.claude/hooks/public-repo-guard.sh` — blocks commits/pushes that would expose personal data in public repos
-- `self-improve` skill for the evolution engine
-- `.claude/settings.json` with sandbox config + `.claude/settings.local.json` with `autoMemoryDirectory`
-- `.gitignore` protecting secrets (`.mcp.json` always ignored; `user/` optionally ignored for public sharing)
-
-## Documentation
-
-All documentation lives in the persona-manager skill system — install the plugin and the skills guide you through everything:
-
-| Skill | What it covers |
-|-------|---------------|
-| `persona-dev` | Creating, updating, and evolving personas — discovery, scaffolding, shell setup, testing, troubleshooting |
-| `persona-dashboard:install` | Expansion pack — adds HTML dashboard with task tracking and status overview |
+> [!WARNING]
+> The public repo guard is a best-effort safety net, not a guarantee. Always review what you commit and push — especially when sharing a persona publicly for the first time. You are responsible for ensuring your personal data, API keys, and credentials are not exposed. When in doubt, start with a fresh remote and never force-push history that may contain sensitive information.
 
 ## Contributing
 
