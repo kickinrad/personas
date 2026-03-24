@@ -30,8 +30,11 @@ Templates live in the `persona-dev` skill's `references/` directory (sibling ski
 | `.gitignore` | `references/gitignore-template` |
 | `.claude/hooks/public-repo-guard.sh` | `references/public-repo-guard.sh` |
 | `skills/self-improve/SKILL.md` | `references/self-improve-skill.md` |
+| `.claude/output-styles/*.md` | `references/output-style-template.md` |
 
 `CLAUDE.md` and `.claude-flags` are too customized for template diffing — handle these conversationally (Step 5).
+
+**Output-style diffs:** The output-style template provides structural guidance (sections, boundary rule). Persona customization in output-style files (personality, voice, specific opinions) must always be preserved — personality is unique to each persona. Only check for missing structural sections, not content alignment.
 
 ---
 
@@ -101,6 +104,12 @@ These files are too customized for diffing. Check them conversationally:
 - Built-in Tools (Claude Code native capabilities)
 
 If any are missing, read `references/claude-md-template.md` for the canonical version and propose additions that fit the persona's style. Never rewrite personality or rules.
+
+**Output-style** — Read `.claude/output-styles/` files and verify:
+- Has "Who I Am", "How I'll Be", "What I Won't Do" sections
+- `keep-coding-instructions: false` in frontmatter
+- No operational content that belongs in CLAUDE.md (skills, tools, security rules)
+- Boundary rule: voice/personality here, operational content in CLAUDE.md
 
 **.claude-flags** — Read and verify:
 - `--name {persona}` is present (use directory name)
