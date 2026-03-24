@@ -21,9 +21,8 @@ personas/                                 # Framework repo
     │   ├── settings.json                 # Sandbox config (committed)
     │   ├── settings.local.json          # autoMemoryDirectory (gitignored, created during setup)
     │   ├── output-styles/               # Personality, tone, style (committed)
-    │   ├── hooks/
-    │   │   └── public-repo-guard.sh     # Blocks personal data in public repos (committed)
-    │   └── settings.local.json          # (always gitignored)
+    │   └── hooks/
+    │       └── public-repo-guard.sh     # Blocks personal data in public repos (committed)
     ├── hooks.json                        # SessionStart + Stop + StopFailure + PreCompact + PostCompact + PreToolUse hooks (committed)
     ├── .framework-version                # Framework version stamp (committed)
     ├── .claude-flags                     # Per-persona CLI launch flags (committed)
@@ -33,7 +32,6 @@ personas/                                 # Framework repo
     │   ├── {domain}/{skill}/SKILL.md     # Domain skills (committed)
     │   └── self-improve/SKILL.md         # Ships with every persona
     ├── tools/                            # Utilities, scripts, pipelines (committed)
-    ├── docs/                             # Reference docs, plans (committed)
     └── user/                             # Personal data silo (optionally gitignored)
         ├── profile.md                    # User's personal data (filled from interview)
         └── memory/                       # Native auto-memory
@@ -44,6 +42,8 @@ personas/                                 # Framework repo
 ## What Is a Persona?
 
 **A persona is a self-contained AI assistant.** It combines standard Claude Code features — identity (CLAUDE.md), output style (`.claude/output-styles/`), user context (`user/profile.md`), skills, hooks, MCP tools, sandbox settings, scheduled tasks, and native auto-memory (`user/memory/`) — into a specialized agent that evolves over time. The persona maintains all of these itself; identity changes require human approval, everything else evolves automatically.
+
+The persona's content splits between two files: **output-style** (`.claude/output-styles/`) defines WHO the persona IS — voice, personality, opinions, narrative expertise, character-driven refusals. **CLAUDE.md** defines WHAT the persona DOES — role summary, operational procedures, skills, tools, security rules. Boundary test: "Would this change how the persona SOUNDS, or what it DOES?"
 
 ## Running Personas
 
@@ -193,6 +193,7 @@ All lifecycle operations use native Claude Code features or persona-manager skil
 | Add dashboard | `Skill('persona-dashboard:install')` — expansion pack |
 | Deploy remotely | `Skill('bridgey-deploy:deploy')` — from kickinrad/bridgey marketplace |
 | Update persona | `Skill('persona-manager:persona-update')` — diffs against templates, persona applies changes |
+| Validate persona | `persona-validator` agent — checks scaffold completeness and framework compliance |
 | Push to GitHub | `gh repo create` during scaffolding, or `git push` anytime |
 | Daily use | Shell alias (`{name}`, `{name} "prompt"`) |
 
