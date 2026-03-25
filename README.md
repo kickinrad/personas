@@ -86,9 +86,9 @@ You can also use ANY other Claude Code plugin or skill with a persona. Just add 
 | Dependency | Platform | Why |
 |------------|----------|-----|
 | [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | All | Required — the foundation |
-| `bubblewrap` `socat` | Linux / WSL2 | Required — OS-level sandboxing (`sudo apt install bubblewrap socat`) |
+| [bubblewrap](https://github.com/containers/bubblewrap) + [socat](http://www.dest-unreach.org/socat/) | Linux / WSL2 | Required — OS-level sandboxing (`sudo apt install bubblewrap socat`) |
 | [Git for Windows](https://gitforwindows.org/) | Windows | Required — provides Git Bash runtime |
-| [`gh`](https://cli.github.com/) | All | Optional — repo creation during setup + public repo safety checks |
+| [gh](https://cli.github.com/) | All | Optional — repo creation during setup + public repo safety checks |
 
 ### Step 1: Install the plugin
 
@@ -224,7 +224,12 @@ Each persona runs in a native OS sandbox (bubblewrap on Linux, Seatbelt on macOS
 }
 ```
 
-Personas can only write to their own directory, can't read parent directories or other personas' files, and can only reach whitelisted network domains. Each persona customizes `allowedDomains` for its own MCP servers. Sandboxing not available on Windows Claude Code CLI. 
+Personas can only write to their own directory, can't read parent directories or other personas' files, and can only reach whitelisted network domains. Each persona customizes `allowedDomains` for its own MCP servers.
+
+> [!IMPORTANT]
+> Sandboxing is not available on Windows Claude Code CLI. Windows personas run with standard permission prompts — `--dangerously-skip-permissions` is never used.
+
+Personas accessed in Claude Desktop Cowork use Cowork's native sandboxing by default. 
 
 ### Tools & Integrations
 
@@ -241,7 +246,10 @@ Personas have a full toolkit available — not just MCP servers. During setup, p
 | Scripts | `tools/` | Data pipelines, formatters, utilities |
 | Scheduled tasks | Natural language or `CronCreate` | Timed reminders, delayed checks |
 
-Scheduled tasks are session-scoped — they run while the persona session is active and vanish on exit. Use natural language ("remind me at 3pm to...", "in 45 minutes, check X"). For durable scheduling, use Desktop scheduled tasks or GitHub Actions.
+> [!NOTE]
+> Scheduled tasks are session-scoped — they run while the persona session is active and vanish on exit. For durable scheduling, use Desktop scheduled tasks or GitHub Actions.
+
+Use natural language ("remind me at 3pm to...", "in 45 minutes, check X").
 
 For MCP servers specifically:
 - **CLI + Code tab** — config lives in the persona's `.mcp.json` (gitignored)
@@ -253,6 +261,9 @@ Shell aliases auto-discover personas in `~/.personas/` and create callable funct
 
 - `--setting-sources project,local` — isolates persona's settings from global config
 - `--dangerously-skip-permissions` — autonomous mode (only on sandboxed platforms: macOS/Linux/WSL2)
+
+> [!CAUTION]
+> Never use `--dangerously-skip-permissions` on Windows CLI without supervision — there is no OS-level sandbox to contain it. persona-dev enforces this during setup.
 - `--remote-control` — enables external tool connections
 - `--chrome` — enables Chrome browser automation (only for personas that need web interaction)
 
