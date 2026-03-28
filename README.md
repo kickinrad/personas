@@ -246,10 +246,21 @@ Personas have a full toolkit available — not just MCP servers. During setup, p
 | Scripts | `tools/` | Data pipelines, formatters, utilities |
 | Scheduled tasks | Natural language or `CronCreate` | Timed reminders, delayed checks |
 
-> [!NOTE]
-> Scheduled tasks are session-scoped — they run while the persona session is active and vanish on exit. For durable scheduling, use Desktop scheduled tasks or GitHub Actions.
+#### Scheduling options
 
-Use natural language ("remind me at 3pm to...", "in 45 minutes, check X").
+**In-session (CLI/Desktop)** — use natural language ("remind me at 3pm to...", "every 30 minutes, check X") or `CronCreate` directly. These are session-scoped and vanish when you exit.
+
+**Web scheduled tasks (durable)** — create persistent, recurring tasks at [claude.ai/code](https://claude.ai/code) → **Scheduled**. Set a name, prompt, frequency, and select the persona's repo as the project. Tasks run server-side on schedule — no active session needed.
+
+> [!IMPORTANT]
+> Web scheduled tasks can only access **connected integrations** (Gmail, Calendar, etc. configured at [claude.ai/settings/connectors](https://claude.ai/settings/connectors)) — not the persona's `.mcp.json`. If your persona needs external services in scheduled runs, connect them there.
+
+| | In-session (`CronCreate`) | Web scheduled tasks |
+|---|---|---|
+| Persistence | Session-scoped | Durable — survives restarts |
+| MCP access | `.mcp.json` (project) | Connected integrations only |
+| Platform | CLI, Desktop | Web ([claude.ai/code](https://claude.ai/code)) |
+| Branch pushes | N/A | Configurable |
 
 For MCP servers specifically:
 - **CLI + Code tab** — config lives in the persona's `.mcp.json` (gitignored)
