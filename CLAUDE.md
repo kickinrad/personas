@@ -278,7 +278,7 @@ Every persona ships six hooks in `hooks.json`:
 
 Claude Code has built-in scheduling via `CronCreate`, `CronList`, and `CronDelete` tools. Any persona can use these — scheduling is a core capability, not tied to any expansion pack.
 
-**Session-scoped:** Tasks live in the current Claude Code process and are gone when you exit. For durable scheduling that survives restarts, use Desktop scheduled tasks or GitHub Actions.
+**Session-scoped:** Tasks live in the current Claude Code process and are gone when you exit. For durable scheduling that survives restarts, use [web scheduled tasks](#web-scheduled-tasks-durable).
 
 ### How personas use scheduling
 
@@ -300,6 +300,31 @@ Personas can schedule tasks using natural language — Claude handles the cron e
 - Tasks fire between turns (not mid-response). If Claude is busy, the task waits
 - **Disable** with `CLAUDE_CODE_DISABLE_CRON=1`
 
+### Web scheduled tasks (durable)
+
+For scheduling that survives session restarts, use **scheduled tasks on claude.ai/code**. These are persistent, project-scoped tasks that run on a cron-like frequency (daily, weekly, etc.) without an active session.
+
+**How it works:**
+1. Open [claude.ai/code](https://claude.ai/code) and click **Scheduled** in the sidebar
+2. Create a new task: name, prompt, frequency, time, and select the persona's repo as the project
+3. The task runs server-side at the scheduled time — the persona's CLAUDE.md and project context load automatically
+
+**Key differences from session-scoped scheduling:**
+
+| | `CronCreate` (CLI) | Web scheduled tasks |
+|---|---|---|
+| Persistence | Session-scoped — gone on exit | Durable — survives restarts |
+| MCP access | `.mcp.json` (project-scoped) | **Connected integrations only** (Gmail, Calendar, etc. from [claude.ai/settings/connectors](https://claude.ai/settings/connectors)) |
+| Platform | CLI, Desktop | Web (claude.ai/code) |
+| Branch pushes | N/A | Configurable — can allow unrestricted pushes |
+
+**Important:** Web scheduled tasks can only use **connected integrations** (cloud-configured MCP servers), not the persona's `.mcp.json`. If a persona needs external service access in scheduled tasks, those services must be connected at [claude.ai/settings/connectors](https://claude.ai/settings/connectors).
+
+**Persona use cases:**
+- Daily self-improvement audits (memory cleanup, skill gap checks)
+- Recurring domain tasks (morning briefings, PR reviews, report generation)
+- Autonomous commits to the persona's own repo (with unrestricted branch pushes enabled)
+
 ## Gotchas
 
 - Personas activate only when CWD is the persona's directory — `--setting-sources project,local` isolates settings.json, settings.local.json, AND CLAUDE.md (global `~/.claude/CLAUDE.md` does NOT load)
@@ -311,7 +336,7 @@ Personas can schedule tasks using natural language — Claude handles the cron e
 - Desktop app is macOS + Windows only — Linux users are CLI-only
 - Cowork is macOS Apple Silicon only — cannot create symlinks outside mounted folders
 - Per-persona launch flags live in `.claude-flags` (read by `.aliases.sh`)
-- Scheduled tasks (`CronCreate`) are session-scoped — they vanish when the session exits. For durable scheduling, use Desktop scheduled tasks or GitHub Actions
+- Scheduled tasks (`CronCreate`) are session-scoped — they vanish when the session exits. For durable scheduling, use [web scheduled tasks](#web-scheduled-tasks-durable)
 
 ## Testing
 
