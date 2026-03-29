@@ -12,7 +12,7 @@ Create a deliberately outdated test persona with these drift points:
 - `hooks.json` missing `PostCompact` and `PreCompact` hooks (only has 4 of 6)
 - `.claude-flags` missing `--name` flag (old format without it)
 - `.claude/settings.json` missing `enabledPlugins` entry (old format)
-- `.claude/settings.json` using old plugin name (e.g., `remote-deploy` or `persona-remote` instead of `bridgey-deploy@bridgey`)
+- `.claude/settings.json` using old plugin name format
 - `skills/self-improve/SKILL.md` has outdated content (missing workspace hygiene section)
 - `.gitignore` missing `*.local.json` pattern
 

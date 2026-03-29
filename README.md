@@ -48,7 +48,7 @@ A persona is simply a folder. Isolated from your global Claude config, backed by
 └── .gitignore                    # protects secrets; optionally ignores user/ for public sharing
 ```
 
-Everything is created with you during setup — persona-dev interviews you, researches your domain, and scaffolds the whole thing. Keep it local, connect it to GitHub for backup, or deploy it to a remote server. Launch
+Everything is created with you during setup — persona-dev interviews you, researches your domain, and scaffolds the whole thing. Keep it local or connect it to GitHub for backup. Launch
 
 <!-- TODO: ![Creating a persona with persona-dev](assets/create-persona.gif) -->
 
@@ -62,9 +62,6 @@ Each persona stores its launch flags in `.claude-flags`, configured during setup
 Once running, personas extend themselves. They learn with native auto-memory, schedule reminders and timed checks with natural language ("remind me at 3pm to..."), and may ask to create additional files to track data or workflows. Every persona ships with a self-improvement skill — it can develop new skills, create tools, and keep itself organized with periodic audits.
 
 <!-- TODO: ![Self-improvement in action](assets/self-improve.gif) -->
-
-> [!TIP]
-> Want your personas to talk to each other or run on remote servers? [Bridgey](https://github.com/kickinrad/bridgey) adds inter-agent communication via A2A protocol and optional remote deployment with Docker, Tailscale, and Coolify.
 
 ### Example personas
 
