@@ -93,6 +93,15 @@ For `hooks.json` specifically, verify all 6 expected hook events are present:
 - `PreCompact` — context save
 - `PostCompact` — crash recovery check
 
+Additionally, validate hook structure for each event:
+- Each hook entry must have a `type` field (`"command"` or `"prompt"`)
+- Command hooks must have a non-empty `command` field
+- Prompt hooks must have a non-empty `prompt` field
+- If `timeout` is present, verify it's a number between 1000 and 30000
+- `PreToolUse` must have a `matcher` field (expected: `"Bash"`)
+- `SessionStart` should have exactly 2 command hooks (profile read + version check)
+- WARN if any unexpected hook events are present beyond the 6 standard ones (could indicate corruption or manual injection)
+
 For `.claude/settings.json`, verify:
 - `sandbox.enabled` is `true`
 - `sandbox.autoAllowBashIfSandboxed` is `true`
@@ -115,7 +124,20 @@ Read `.framework-version` and compare against the current persona-manager plugin
 
 Do NOT perform the full template diff — that's persona-update's job. Just flag whether drift is likely.
 
-## 5. Security Checks
+## 5. MCP Configuration Check
+
+If `.mcp.json` exists in the persona directory:
+- Parse with `jq` to verify valid JSON
+- Extract server configurations and identify any referenced domains
+- Cross-reference against `allowedDomains` in `.claude/settings.json`:
+  - WARN if a server likely connects to a domain not in `allowedDomains` (network requests will be silently blocked by the sandbox)
+  - Suggest adding missing domains to `allowedDomains`
+- Scan for hardcoded secrets in `.mcp.json` values — flag strings matching API key patterns (`sk-`, `eyJ`, `GOCSPX-`, `Bearer `, `token`) as CRITICAL
+- WARN if `.mcp.json` uses inline secrets instead of environment variable expansion (`${VAR}`) or command substitution (`$(...)`) for credential handling
+
+If `.mcp.json` does not exist, skip with a note (persona may not use MCP servers).
+
+## 6. Security Checks
 
 Check gitignore coverage:
 - `.mcp.json` must be in `.gitignore` (if `.mcp.json` exists)

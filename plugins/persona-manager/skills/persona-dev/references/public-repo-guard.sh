@@ -72,6 +72,31 @@ if echo "$COMMAND" | grep -qE '^\s*git\s+commit'; then
   fi
 fi
 
+# Check 5: For push — check all commits being pushed for personal data in history
+if echo "$COMMAND" | grep -qE '^\s*git\s+push'; then
+  DIFF_BASE=$(git rev-parse --abbrev-ref '@{upstream}' 2>/dev/null || \
+    git rev-parse --verify origin/main 2>/dev/null || \
+    git rev-parse --verify origin/master 2>/dev/null || echo "")
+
+  if [[ -n "$DIFF_BASE" ]]; then
+    HISTORY_USER_FILES=$(git diff --name-only "$DIFF_BASE"...HEAD 2>/dev/null | grep -E '^user/' || true)
+    if [[ -n "$HISTORY_USER_FILES" ]]; then
+      ISSUES+=("Commits being pushed contain personal data files:")
+      while IFS= read -r f; do
+        ISSUES+=("  - $f")
+      done <<< "$HISTORY_USER_FILES"
+    fi
+
+    HISTORY_SECRET_FILES=$(git diff --name-only "$DIFF_BASE"...HEAD 2>/dev/null | grep -iE '\.(env|secret|key|pem|p12|pfx|credentials)$' || true)
+    if [[ -n "$HISTORY_SECRET_FILES" ]]; then
+      ISSUES+=("Commits being pushed contain secret files:")
+      while IFS= read -r f; do
+        ISSUES+=("  - $f")
+      done <<< "$HISTORY_SECRET_FILES"
+    fi
+  fi
+fi
+
 # If no issues, allow
 if [[ ${#ISSUES[@]} -eq 0 ]]; then
   exit 0
