@@ -509,12 +509,13 @@ for _persona_dir in "$HOME/.personas"/*/; do
     _flags="--setting-sources project,local --remote-control"
   fi
 
+  # Flags expand at eval-time into literal tokens in the function body.
+  # Do NOT store in a local variable — zsh won't word-split it.
   eval "${_persona_name}() {
-    local _f=\"${_flags}\"
     if [ \$# -gt 0 ]; then
-      (cd \"${_persona_dir}\" && claude \$_f -p \"\$*\")
+      (cd \"${_persona_dir}\" && claude ${_flags} -p \"\$*\")
     else
-      (cd \"${_persona_dir}\" && claude \$_f)
+      (cd \"${_persona_dir}\" && claude ${_flags})
     fi
   }"
 done
