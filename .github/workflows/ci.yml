@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get install -y jq
+
+      - name: Run tests
+        run: bash tests/personas-test.sh
+
+  validate-json:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get install -y jq
+
+      - name: Validate plugin.json files
+        run: |
+          find plugins -name "plugin.json" -exec sh -c 'echo "Checking $1..." && jq . "$1" > /dev/null' _ {} \;
+
+      - name: Validate hooks template
+        run: jq . plugins/persona-manager/skills/persona-dev/references/hooks-template.json > /dev/null
+
+      - name: Validate settings template
+        run: jq . plugins/persona-manager/skills/persona-dev/references/settings-template.json > /dev/null
+
+      - name: Validate marketplace.json
+        run: jq . .claude-plugin/marketplace.json > /dev/null
+
+  check-secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan for hardcoded secrets
+        env:
+          SECRET_PATTERN: "(eyJ[A-Za-z0-9_-]{10,}|GOCSPX-|sk-[A-Za-z0-9]{20,}|BEGIN PRIVATE KEY)"
+        run: |
+          FOUND=0
+          while IFS= read -r -d '' f; do
+            if grep -qE "$SECRET_PATTERN" "$f" 2>/dev/null; then
+              echo "SECRET FOUND: $f"
+              FOUND=1
+            fi
+          done < <(find . \( -name "*.md" -o -name "*.json" -o -name "*.sh" \) -not -path "./.git/*" -print0)
+          if [[ $FOUND -eq 1 ]]; then
+            echo "::error::Hardcoded secrets detected in committed files"
+            exit 1
+          fi
+          echo "No secrets found"

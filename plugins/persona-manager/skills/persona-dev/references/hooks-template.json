@@ -34,7 +34,7 @@
       {
         "type": "command",
         "command": "date -Iseconds > user/memory/.last-crash 2>/dev/null; exit 0",
-        "timeout": 3000
+        "timeout": 5000
       }
     ],
     "PreCompact": [

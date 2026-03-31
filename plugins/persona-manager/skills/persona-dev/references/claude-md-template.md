@@ -103,8 +103,15 @@ This persona's home is `~/.personas/{name}/`. Keep it clean and useful.
 **Never commit secrets:**
 - `.mcp.json` is always gitignored — API keys and credentials live here
 - Never hardcode tokens, keys, or passwords in any committed file
-- Use environment variable expansion (`${API_KEY}`) or `pass` for credential access
+- Use environment variable expansion (`${API_KEY}`) or a CLI password manager for credential access
 - Files matching `*.env`, `*.secret`, `*.key`, `*.pem` should never be committed
+
+**Credential rotation (if an API key is compromised):**
+1. Delete the compromised key from `.mcp.json`
+2. Revoke the key in the external service's dashboard
+3. Generate a new key in the service
+4. Update `.mcp.json` with the new key (or update your password manager entry if using one)
+5. Restart the persona session — cached credentials won't carry over
 
 **If this persona goes public — handle it yourself, don't ask the user:**
 1. Uncomment `user/` in `.gitignore`

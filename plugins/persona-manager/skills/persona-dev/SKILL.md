@@ -104,7 +104,15 @@ Present findings to the user: "Here's what I found that could enhance this perso
 
 ### Phase 3: Scaffold
 
-**First, check if the persona already exists:**
+**First, validate the persona name:**
+- Must match `^[a-z][a-z0-9-]*$` — lowercase letters, numbers, and hyphens only
+- Must start with a letter (not a number or hyphen)
+- No dots, slashes, spaces, or special characters — these break shell aliases and directory paths
+- Maximum 30 characters — keeps paths manageable
+- Reject immediately if the name contains `.`, `..`, `/`, `\`, spaces, or shell metacharacters (`$`, `` ` ``, `!`, `;`, `&`, `|`, etc.) — these could cause path traversal or command injection
+- If invalid, explain why and suggest a corrected version (e.g., "My Finance Bot" → "finance-bot")
+
+**Then check if the persona already exists:**
 - If `~/.personas/{name}/CLAUDE.md` exists, stop and ask: "A persona named `{name}` already exists. Update it, or pick a different name?"
 - Don't proceed with scaffolding if it would overwrite an existing persona
 
@@ -124,6 +132,15 @@ Present findings to the user: "Here's what I found that could enhance this perso
 ```bash
 ln -s /mnt/c/Users/{WINUSER}/.personas ~/.personas
 ```
+
+**Check sandbox prerequisites before scaffolding:**
+- On Linux/WSL2: verify `bwrap` (bubblewrap) is installed: `command -v bwrap`
+- If missing, warn the user and offer the install command before proceeding:
+  - Ubuntu/Debian: `sudo apt-get install bubblewrap socat`
+  - Fedora: `sudo dnf install bubblewrap socat`
+- Don't block scaffolding — the persona will work without sandbox (with permission prompts instead). But warn clearly: "Without bubblewrap, the sandbox won't work and `--dangerously-skip-permissions` won't be safe to use. You'll get permission prompts for every action."
+- On macOS: Seatbelt is built-in, no check needed
+- On Windows native: no sandbox available, this is expected — flag it and move on
 
 Create the directory structure:
 

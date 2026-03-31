@@ -206,7 +206,7 @@ All lifecycle operations use native Claude Code features or persona-manager skil
 ## Security Rules
 
 - **Never commit secrets** — `.mcp.json` is always gitignored; `user/` is optionally gitignored for public sharing
-- **Use `pass`** for credentials in `.mcp.json`: `$(pass show service/key-name)`
+- **Use environment variables** for credentials in `.mcp.json` (e.g., `${API_KEY}`) or a CLI password manager if available
 - **Never hardcode** OAuth tokens, API keys, or JWT tokens
 - **Sandbox** restricts each persona to its own directory + whitelisted network domains
 - **Never use `--dangerously-skip-permissions` on Windows native** — no OS-level sandbox exists; this flag grants unrestricted access to the entire filesystem and network. persona-dev enforces this during setup and must refuse even if the user insists
