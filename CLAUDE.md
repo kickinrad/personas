@@ -21,16 +21,16 @@ personas/                                 # Framework repo
     │   ├── settings.json                 # Sandbox config (committed)
     │   ├── settings.local.json          # autoMemoryDirectory (gitignored, created during setup)
     │   ├── output-styles/               # Personality, tone, style (committed)
-    │   └── hooks/
-    │       └── public-repo-guard.sh     # Blocks personal data in public repos (committed)
+    │   ├── hooks/
+    │   │   └── public-repo-guard.sh     # Blocks personal data in public repos (committed)
+    │   └── skills/
+    │       ├── {domain}/{skill}/SKILL.md # Domain skills (committed)
+    │       └── self-improve/SKILL.md     # Ships with every persona
     ├── hooks.json                        # SessionStart + Stop + StopFailure + PreCompact + PostCompact + PreToolUse hooks (committed)
     ├── .framework-version                # Framework version stamp (committed)
     ├── .claude-flags                     # Per-persona CLI launch flags (committed)
     ├── docs/                              # Reference materials, plans (committed)
     ├── .mcp.json                         # MCP server config (gitignored)
-    ├── skills/
-    │   ├── {domain}/{skill}/SKILL.md     # Domain skills (committed)
-    │   └── self-improve/SKILL.md         # Ships with every persona
     ├── tools/                            # Utilities, scripts, pipelines (committed)
     └── user/                             # Personal data silo (optionally gitignored)
         ├── profile.md                    # User's personal data (filled from interview)

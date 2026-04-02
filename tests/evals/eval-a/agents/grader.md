@@ -188,7 +188,7 @@ Write a JSON file with this structure:
     {
       "text": "The persona activated the self-improve skill",
       "passed": true,
-      "evidence": "Transcript shows: 'Reading skills/self-improve/SKILL.md' at step 2, followed by structured audit workflow"
+      "evidence": "Transcript shows: 'Reading .claude/skills/self-improve/SKILL.md' at step 2, followed by structured audit workflow"
     }
   ],
   "persona_dimensions": {

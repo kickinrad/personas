@@ -9,7 +9,7 @@ LLM-judge
 ## Setup
 
 - Test persona exists with filled-in profile and some memory entries
-- `skills/self-improve/SKILL.md` exists
+- `.claude/skills/self-improve/SKILL.md` exists
 - At least one domain skill exists
 
 ## Prompt

@@ -13,7 +13,7 @@ Create a deliberately outdated test persona with these drift points:
 - `.claude-flags` missing `--name` flag (old format without it)
 - `.claude/settings.json` missing `enabledPlugins` entry (old format)
 - `.claude/settings.json` using old plugin name format
-- `skills/self-improve/SKILL.md` has outdated content (missing workspace hygiene section)
+- `.claude/skills/self-improve/SKILL.md` has outdated content (missing workspace hygiene section)
 - `.gitignore` missing `*.local.json` pattern
 
 ## Prompt

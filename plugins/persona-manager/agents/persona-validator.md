@@ -58,7 +58,7 @@ You are an expert persona validator. You perform comprehensive health checks on 
 Verify all required directories exist:
 - `user/`
 - `user/memory/`
-- `skills/self-improve/`
+- `.claude/skills/self-improve/`
 - `.claude/`
 - `.claude/output-styles/`
 - `.claude/hooks/`
@@ -74,7 +74,7 @@ Verify all required files exist:
 - `.claude/hooks/public-repo-guard.sh` — commit safety hook
 - `.claude-flags` — CLI launch flags
 - `.framework-version` — framework version stamp
-- `skills/self-improve/SKILL.md` — self-improvement workflow
+- `.claude/skills/self-improve/SKILL.md` — self-improvement workflow
 - `README.md` — persona documentation
 
 Report each as PASS or FAIL with the expected path.
