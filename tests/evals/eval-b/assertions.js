@@ -70,7 +70,7 @@ module.exports.requiredFilesExist = (output) => {
   const checks = [
     'user/profile.md', 'user/memory/MEMORY.md', '.gitignore',
     '.claude/settings.json', '.claude/settings.local.json',
-    'hooks.json', 'skills/self-improve/SKILL.md'
+    'hooks.json', '.claude/skills/self-improve/SKILL.md'
   ];
   const missing = checks.filter(f => !fileExists(f));
   return result(missing.length === 0, missing.length === 0 ? 'All required files present' : `Missing: ${missing.join(', ')}`);
@@ -165,10 +165,10 @@ module.exports.gitInitialized = (output) => {
 
 module.exports.domainSkillExists = (output) => {
   // Check for any skill directory besides self-improve
-  const skillsDir = personaPath('skills');
-  if (!fs.existsSync(skillsDir)) return result(false, 'skills/ directory missing');
+  const skillsDir = personaPath('.claude', 'skills');
+  if (!fs.existsSync(skillsDir)) return result(false, '.claude/skills/ directory missing');
   const entries = fs.readdirSync(skillsDir);
-  const domainSkills = entries.filter(e => e !== 'self-improve' && fs.statSync(personaPath('skills', e)).isDirectory());
+  const domainSkills = entries.filter(e => e !== 'self-improve' && fs.statSync(personaPath('.claude', 'skills', e)).isDirectory());
   return result(domainSkills.length > 0, domainSkills.length > 0 ? `Domain skills: ${domainSkills.join(', ')}` : 'No domain skills found');
 };
 

@@ -17,17 +17,17 @@ Each persona contains:
 │   ├── settings.json              # Sandbox config (committed)
 │   ├── settings.local.json        # autoMemoryDirectory (gitignored, created during setup)
 │   ├── output-styles/             # Personality, tone, style (committed)
-│   └── hooks/
-│       └── public-repo-guard.sh   # Blocks personal data in public repos (committed)
+│   ├── hooks/
+│   │   └── public-repo-guard.sh   # Blocks personal data in public repos (committed)
+│   └── skills/
+│       ├── {domain}/{skill}/SKILL.md  # Domain skills
+│       └── self-improve/SKILL.md      # Ships with every persona
 ├── .gitignore                     # Secrets exclusion
 ├── hooks.json                     # SessionStart + Stop + StopFailure + PreCompact + PostCompact + PreToolUse hooks
 ├── .framework-version             # Framework version stamp (committed)
 ├── CLAUDE.md                      # Personality + rules
 ├── docs/                          # Reference materials, plans
 ├── .mcp.json                      # MCP server config (gitignored)
-├── skills/
-│   ├── {domain}/{skill}/SKILL.md  # Domain skills
-│   └── self-improve/SKILL.md      # Ships with every persona
 ├── tools/                         # Utilities, scripts, pipelines (committed)
 ├── docs/                          # Reference materials, plans (committed)
 └── user/                          # Personal data silo (gitignored for public sharing)
@@ -40,7 +40,7 @@ Each persona contains:
 **Workspace organization:**
 - `docs/` — domain knowledge, reference materials, plans. Use subdirs for categories (`docs/reference/`)
 - `tools/` — executable tools, utilities, data pipelines. Each tool gets its own subdir if non-trivial
-- `skills/` — reusable multi-step workflows (SKILL.md files)
+- `.claude/skills/` — reusable multi-step workflows (SKILL.md files)
 - `user/` — personal data silo, ensure ALL personal data lands here: profile.md and auto-memory. Gitignored for public sharing
 - Root — only framework files. Don't dump loose files here
 
@@ -50,25 +50,39 @@ Each persona contains:
 
 ### Phase 1: Discovery
 
-Before building anything, understand what this persona needs to be. Ask the user:
+Before building anything, understand what this persona needs to be. **Use `AskUserQuestion` for ALL discovery questions** — not conversational prompting. This gives the user structured input fields instead of a wall of text. Ask one topic at a time, with follow-ups as needed.
 
-**Required:**
+**Step 1: Domain & Name** — `AskUserQuestion`
 - What domain or role? (finance advisor, personal chef, brand strategist, etc.)
-- What's the persona's expertise, personality, and voice? (casual vs formal, opinionated vs neutral, proactive vs reactive, present fun and effective personalities that fit the role and ask for preferences)
-- What workflows will it handle? (weekly reviews, meal planning, code review, etc.)
-- What does the user need the persona to know about them? (info, accounts, preferences, constraints — this shapes `user/profile.md`)
-- What is the personas name? (suggest a selection of fun, memorable first names that fits the role, and ask the user if they have any preferences or want to choose their own)
+- Suggest 4-5 fun, memorable first names that fit the role
+- Let the user pick or propose their own
+- Use `multiSelect: false` with name options + a "Something else" option
 
-**Explore based on domain:**
-- What external services or APIs does the persona need? (→ MCP server research in Phase 2)
+**Step 2: Personality & Voice** — `AskUserQuestion`
+- Present 3-4 personality archetypes that fit the domain (e.g., "Enthusiastic mentor", "Dry-witted expert", "Patient teacher", "Opinionated veteran")
+- Include a brief preview of each (1-2 sentences showing how it would sound)
+- Ask for preferences: casual vs formal, opinionated vs neutral, proactive vs reactive
+
+**Step 3: Workflows & Capabilities** — `AskUserQuestion`
+- What key workflows will it handle? (weekly reviews, meal planning, code review, etc.)
 - Are there recurring multi-step tasks? (→ skill planning)
 - What kind of data does it work with? (→ tool/script needs)
 - What should the persona push back on? (→ anti-patterns in CLAUDE.md)
 
-**Environment detection (ask early):**
+**Step 4: User Context** — `AskUserQuestion`
+- What does the user need the persona to know about them? (info, accounts, preferences, constraints)
+- This shapes `user/profile.md` — ask what sections matter for this domain
+
+**Step 5: Environment** — `AskUserQuestion`
 - What environment? (CLI only, Desktop only, or both)
-- What OS? Detect automatically when possible (`uname`, check for WSL, check for Windows paths)
-- This determines Phase 7 setup (aliases, Desktop config, or both)
+- Autodetect OS when possible (`uname`, check for WSL, check for Windows paths)
+- Present detected config and confirm
+- This determines Phase 9 setup (aliases, Desktop config, or both)
+
+**Step 6: External Services** — `AskUserQuestion`
+- What external services or APIs does the persona need?
+- Present common integrations for the domain as options
+- This feeds directly into Phase 2 research
 
 Don't rush this. A well-understood persona is easier to build and evolves better. Ask follow-up questions — domain expertise matters.
 
@@ -93,7 +107,7 @@ Before writing a single file, research what tools and integrations could enhance
 | MCP server | `.mcp.json` + sandbox allowlist | Persistent connection to an external service |
 | CLI tool | Document in CLAUDE.md or wrap in a skill | Mature tool already exists for the job |
 | API (direct) | `tools/` script or skill instructions | Simple HTTP calls, no persistent connection needed |
-| Skill | `skills/{domain}/{name}/SKILL.md` | Multi-step workflow the persona will repeat |
+| Skill | `.claude/skills/{domain}/{name}/SKILL.md` | Multi-step workflow the persona will repeat |
 | Agent | `.claude/agents/{name}.md` | Autonomous subtask needing its own context |
 | Hook | `hooks.json` | Behavioral automation tied to session events |
 | Script | `tools/{name}` | Data processing, automation, one-off utilities |
@@ -102,7 +116,27 @@ Before writing a single file, research what tools and integrations could enhance
 
 Present findings to the user: "Here's what I found that could enhance this persona: [list]. Which of these should we include?"
 
-### Phase 3: Scaffold
+### Phase 3: Plan Review
+
+Before touching the filesystem, present the complete persona plan to the user for approval using `AskUserQuestion`. This is the gate — nothing gets built until the user says go.
+
+**Include in the plan summary:**
+1. **Identity** — name, role, personality archetype chosen in Phase 1
+2. **Integrations** — every MCP server, CLI tool, API, and script from Phase 2 research, with status (found / needs setup / custom build)
+3. **Skills** — planned domain skills with trigger phrases and brief descriptions
+4. **Hooks** — standard 6 + any domain-specific hooks identified
+5. **Sandbox** — network domains to allowlist for MCP servers and APIs
+6. **File inventory** — complete list of files and directories that will be created
+7. **Environment** — CLI/Desktop/both, OS detected, proposed launch flags
+
+Present this as a single `AskUserQuestion` with options:
+- "Looks good — build it" → proceed to Phase 4
+- "I want to change something" → discuss and loop back
+- "Start over" → return to Phase 1
+
+**Do NOT proceed to scaffolding until the user approves the plan.** This prevents the assistant from barreling through file creation without alignment on what's being built.
+
+### Phase 4: Scaffold
 
 **First, validate the persona name:**
 - Must match `^[a-z][a-z0-9-]*$` — lowercase letters, numbers, and hyphens only
@@ -145,12 +179,12 @@ ln -s /mnt/c/Users/{WINUSER}/.personas ~/.personas
 Create the directory structure:
 
 ```bash
-mkdir -p ~/.personas/{name}/{.claude/output-styles,.claude/hooks,skills,tools,docs,user/memory}
+mkdir -p ~/.personas/{name}/{.claude/output-styles,.claude/hooks,.claude/skills,tools,docs,user/memory}
 ```
 
-### Phase 4: Build core files
+### Phase 5: Build core files
 
-**4a. Write CLAUDE.md**
+**5a. Write CLAUDE.md**
 
 Use the template from `references/claude-md-template.md`. Key decisions:
 
@@ -158,7 +192,7 @@ Use the template from `references/claude-md-template.md`. Key decisions:
 - **Workspace Hygiene section**: Include it — every persona must maintain its own workspace
 - **Self-Improvement**: Point to the self-improve skill (one line, not inline)
 
-**4b. Create user/profile.md**
+**5b. Create user/profile.md**
 
 Use `references/profile-template.md` as a starting point and customize it for this persona's domain:
 - Rename/add/remove sections to fit the domain (e.g., a finance persona needs "Accounts & Assets", a chef persona needs "Dietary Restrictions")
@@ -173,7 +207,7 @@ Use AskUserQuestion to ask each section's questions — one section at a time.
 Present what you're asking about and why, then let the user respond.
 ```
 
-**4c. Create output-style**
+**5c. Create output-style**
 
 Create `.claude/output-styles/{name}.md` using `references/output-style-template.md`. This file defines WHO the persona IS:
 
@@ -185,18 +219,18 @@ The boundary rule: voice and personality go here; operational procedures, skills
 
 Use the strong/weak examples from the template as guidance. The persona should have opinions and a point of view — bland personas get ignored.
 
-**4e. Create first domain skill(s)**
+**5d. Create first domain skill(s)**
 
-Write at least one skill under `skills/{domain}/{skill-name}/SKILL.md` with:
+Write at least one skill under `.claude/skills/{domain}/{skill-name}/SKILL.md` with:
 - YAML frontmatter (name, description, triggers)
 - Step-by-step workflow
 - Expected output format
 
-**4f. Copy self-improve skill**
+**5e. Copy self-improve skill**
 
-Copy `references/self-improve-skill.md` to `skills/self-improve/SKILL.md`. Replace `{name}` with the persona name. This ships with every persona — it handles memory management, rule promotion, skill creation, tool discovery, and periodic audits.
+Copy `references/self-improve-skill.md` to `.claude/skills/self-improve/SKILL.md`. Replace `{name}` with the persona name. This ships with every persona — it handles memory management, rule promotion, skill creation, tool discovery, and periodic audits.
 
-**4g. Set up hooks**
+**5f. Set up hooks**
 
 Copy `references/hooks-template.json` to `hooks.json` in the persona root. Copy `references/public-repo-guard.sh` to `.claude/hooks/public-repo-guard.sh` and make it executable (`chmod +x`). These hooks:
 - **PreToolUse** (command, matcher: Bash): Runs `public-repo-guard.sh` before git commit/push — checks if the repo is public and blocks if personal data (`user/`, `.mcp.json`, secrets) would be exposed. Every persona gets this by default
@@ -206,11 +240,11 @@ Copy `references/hooks-template.json` to `hooks.json` in the persona root. Copy 
 - **PreCompact** (prompt): Saves session context to memory before compaction
 - **PostCompact** (command): After compaction, checks for the crash marker and reminds the persona to review what may have been lost
 
-**4h. Create .gitignore**
+**5g. Create .gitignore**
 
 Copy `references/gitignore-template` to `.gitignore`.
 
-**4i. Configure sandbox**
+**5h. Configure sandbox**
 
 Copy `references/settings-template.json` to `.claude/settings.json`. Add any persona-specific network domains for MCP servers to `allowedDomains`. The template includes `extraKnownMarketplaces` and `enabledPlugins` to auto-install persona-manager — this gives every persona access to persona-dev for self-evolution without manual plugin installation.
 
@@ -224,7 +258,7 @@ For example, if the persona lives at `~/.personas/warren/`, the value would be `
 
 **Important:** `autoMemoryDirectory` must be in `settings.local.json`, not `settings.json`. Claude Code ignores this setting in project settings (`.claude/settings.json`) as a security measure — it only works from local or user settings. The `settings.local.json` file is gitignored, so persona-dev must create it during setup on each machine.
 
-**4j. Create README.md**
+**5i. Create README.md**
 
 Every persona repo gets a short README. Keep it minimal — this isn't a library, it's a personal assistant:
 
@@ -249,7 +283,7 @@ See the [personas framework](https://github.com/kickinrad/personas) for installa
 
 For **public repos**, consider adding a brief "What it does" section describing the persona's domain and skills.
 
-**4k. Validate scaffold**
+**5j. Validate scaffold**
 
 Before proceeding, verify all required files exist:
 - [ ] `README.md`
@@ -261,17 +295,17 @@ Before proceeding, verify all required files exist:
 - [ ] `.gitignore`
 - [ ] `.claude/settings.json`
 - [ ] `.claude/settings.local.json` (autoMemoryDirectory configured)
-- [ ] `skills/self-improve/SKILL.md`
-- [ ] At least one domain skill in `skills/`
+- [ ] `.claude/skills/self-improve/SKILL.md`
+- [ ] At least one domain skill in `.claude/skills/`
 - [ ] `.framework-version` (stamped with current plugin version)
 
 If anything is missing, fix it now — don't proceed with gaps.
 
-**4l. Stamp framework version**
+**5k. Stamp framework version**
 
 Write the current plugin version to `.framework-version` in the persona root. Read the version from this plugin's `.claude-plugin/plugin.json`. This single-line file tracks which framework version the persona was built with — persona-update uses it to detect drift.
 
-### Phase 5: Configure integrations
+### Phase 6: Configure integrations
 
 If Phase 2 identified useful tools and integrations:
 
@@ -285,7 +319,7 @@ If Phase 2 identified useful tools and integrations:
 8. For scripts: write to `tools/`, make executable, add brief comment header
 9. For expansion packs: ask the user if they want to install them now
 
-### Phase 6: Initialize git + GitHub sync
+### Phase 7: Initialize git + GitHub sync
 
 ```bash
 cd ~/.personas/{name}
@@ -320,7 +354,7 @@ Add 1-2 domain-specific topics too (e.g., `finance`, `cooking`, `fitness`).
 - `.mcp.json` — contains API keys and secrets (always gitignored)
 - Files matching `*.env`, `*.secret`, `*.key`, `*.pem` — credential files
 
-### Phase 7: Configure launch flags
+### Phase 8: Configure launch flags
 
 Before setting up aliases or Desktop access, determine the right CLI flags for this persona. Autodetect the environment, present defaults, and walk the user through customization.
 
@@ -403,7 +437,7 @@ echo '--name {name} --setting-sources project,local --dangerously-skip-permissio
 
 This file is read by `.aliases.sh` so each persona can have its own flag configuration.
 
-### Phase 8: Configure access + verify
+### Phase 9: Configure access + verify
 
 Setup depends on the environment detected in Phase 1:
 
@@ -534,7 +568,7 @@ After creating or updating a persona: `source ~/.personas/.aliases.sh` or restar
 - `{name}` — interactive session
 - `{name} "do weekly review"` — one-shot prompt
 
-**Per-persona flags:** Each persona stores its flags in `.claude-flags` (a single line). This is configured during Phase 7 (flag setup). If the file is missing, the alias falls back to safe defaults (no `--dangerously-skip-permissions`).
+**Per-persona flags:** Each persona stores its flags in `.claude-flags` (a single line). This is configured during Phase 8 (flag setup). If the file is missing, the alias falls back to safe defaults (no `--dangerously-skip-permissions`).
 
 **What the flags do:**
 - `--name {name}` — labels the session in the terminal title and prompt bar so you know which persona is running

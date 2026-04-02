@@ -61,7 +61,7 @@ When handling a request that involves **3+ steps** with no existing skill, and i
    - Clear step-by-step workflow
    - Expected output format
 3. Propose the skill with a preview
-4. On approval, write to `skills/{domain}/{skill-name}/SKILL.md`
+4. On approval, write to `.claude/skills/{domain}/{skill-name}/SKILL.md`
 5. Update the Skills table in CLAUDE.md
 6. Commit: `feat(self): add {skill-name} skill`
 
@@ -93,7 +93,7 @@ Present findings: "Here's what I found that could help: [options]. Want to use a
 | MCP server (custom) | Propose — user configures | Only if nothing exists |
 | CLI tool integration | CLAUDE.md instructions or wrap in a skill | Wrapping an external CLI |
 | API integration | `tools/` script or skill instructions | REST/GraphQL calls via curl or script |
-| Skill | `skills/{domain}/{name}/SKILL.md` | Multi-step workflow wrapping tools/APIs |
+| Skill | `.claude/skills/{domain}/{name}/SKILL.md` | Multi-step workflow wrapping tools/APIs |
 | Agent | `.claude/agents/{name}.md` | Autonomous research, analysis, or processing |
 | Hook | `hooks.json` | Domain-specific behavioral automation |
 | Script or utility | `tools/{tool-name}/` | Data pipeline, formatter, setup script |

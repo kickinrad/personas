@@ -11,7 +11,7 @@ Diffs persona files against the current framework templates. You — the persona
 
 These are persona-specific and must never be overwritten:
 - `CLAUDE.md` personality, rules, skills table (only CHECK for missing framework sections)
-- Custom skills in `skills/{domain}/`
+- Custom skills in `.claude/skills/{domain}/`
 - `user/profile.md`, `user/memory/`
 - `.mcp.json`
 - `.claude/output-styles/`
@@ -29,7 +29,7 @@ Templates live in the `persona-dev` skill's `references/` directory (sibling ski
 | `.claude/settings.json` | `references/settings-template.json` |
 | `.gitignore` | `references/gitignore-template` |
 | `.claude/hooks/public-repo-guard.sh` | `references/public-repo-guard.sh` |
-| `skills/self-improve/SKILL.md` | `references/self-improve-skill.md` |
+| `.claude/skills/self-improve/SKILL.md` | `references/self-improve-skill.md` |
 | `.claude/output-styles/*.md` | `references/output-style-template.md` |
 
 `CLAUDE.md` and `.claude-flags` are too customized for template diffing — handle these conversationally (Step 5).

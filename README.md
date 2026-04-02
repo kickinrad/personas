@@ -34,11 +34,11 @@ A persona is simply a folder. Isolated from your global Claude config, backed by
 ├── .claude/
 │   ├── settings.json             # sandbox, permissions, memory config
 │   ├── output-styles/            # personality and tone (replaces default Claude prompt)
-│   └── hooks/
-│       └── public-repo-guard.sh  # blocks personal data leaks in public repos
+│   ├── hooks/
+│   │   └── public-repo-guard.sh  # blocks personal data leaks in public repos
+│   └── skills/                   # reusable workflows (self-improve ships with every persona)
 ├── hooks.json                    # session lifecycle: start, stop, compaction, git guard
 ├── docs/                         # reference materials, plans, domain knowledge
-├── skills/                       # reusable workflows (self-improve ships with every persona)
 ├── tools/                        # scripts, utilities, data pipelines
 ├── user/
 │   ├── profile.md                # your personal context (filled during first session)
@@ -237,7 +237,7 @@ Personas have a full toolkit available — not just MCP servers. During setup, p
 | MCP servers | `.mcp.json` + sandbox allowlist | Persistent connections to external services |
 | CLI tools | Documented in CLAUDE.md or wrapped in skills | Leveraging mature existing tools |
 | APIs | `tools/` scripts or skill instructions | Direct HTTP calls without an MCP server |
-| Skills | `skills/{domain}/{name}/SKILL.md` | Reusable workflows wrapping any of the above |
+| Skills | `.claude/skills/{domain}/{name}/SKILL.md` | Reusable workflows wrapping any of the above |
 | Agents | `.claude/agents/{name}.md` | Autonomous subtasks needing their own context |
 | Hooks | `hooks.json` | Behavioral automation tied to session events |
 | Scripts | `tools/` | Data pipelines, formatters, utilities |
