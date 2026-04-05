@@ -180,10 +180,12 @@ On first launch, the SessionStart hook detects an unfilled `user/profile.md` and
 
 Personas remember things between sessions using native auto-memory in `user/memory/`:
 
-- **Auto-capture** — Claude's built-in memory writes to `user/memory/` via `autoMemoryDirectory` in `settings.local.json`
-- **Session persistence** — Stop and PreCompact hooks remind the persona to save meaningful learnings before the session ends or context compacts
+- **Auto-capture** — Claude Code's native auto-memory writes to `user/memory/` via `autoMemoryDirectory` in `settings.local.json`. Personas never manually create or edit files there
+- **Session reflection** — Stop and PreCompact hooks prompt the persona to reflect on session insights. Auto-memory captures them automatically — no manual file writes
 - **Crash recovery** — StopFailure hook writes a crash marker (`.last-crash`); PostCompact hook checks for it on the next session so lost context can be recovered
 - **Index** — `MEMORY.md` acts as an index pointing to topic-specific memory files, loaded at the start of every session
+
+**Memory vs knowledge docs:** `user/memory/` is owned by auto-memory (hands off). Deliberate knowledge documents (domain context, plans, research) go in `docs/`.
 
 Memory is local, git-tracked, and lives inside the persona's sandbox. No external services involved.
 

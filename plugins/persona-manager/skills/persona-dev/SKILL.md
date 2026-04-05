@@ -228,16 +228,16 @@ Write at least one skill under `.claude/skills/{domain}/{skill-name}/SKILL.md` w
 
 **5e. Copy self-improve skill**
 
-Copy `references/self-improve-skill.md` to `.claude/skills/self-improve/SKILL.md`. Replace `{name}` with the persona name. This ships with every persona — it handles memory management, rule promotion, skill creation, tool discovery, and periodic audits.
+Copy `references/self-improve-skill.md` to `.claude/skills/self-improve/SKILL.md`. Replace `{name}` with the persona name. This ships with every persona — it handles rule promotion, skill creation, tool discovery, and periodic audits. (Memory is handled by Claude Code's native auto-memory system, not by the self-improve skill.)
 
 **5f. Set up hooks**
 
 Copy `references/hooks-template.json` to `hooks.json` in the persona root. Copy `references/public-repo-guard.sh` to `.claude/hooks/public-repo-guard.sh` and make it executable (`chmod +x`). These hooks:
 - **PreToolUse** (command, matcher: Bash): Runs `public-repo-guard.sh` before git commit/push — checks if the repo is public and blocks if personal data (`user/`, `.mcp.json`, secrets) would be exposed. Every persona gets this by default
 - **SessionStart** (command): Injects instruction to read `user/profile.md` and interview the user if unfilled. No dependencies — just echoes a JSON instruction for Claude to act on. Must be `type: "command"` (SessionStart only supports command hooks)
-- **Stop** (prompt): Reminds the persona to update memory before ending
+- **Stop** (prompt): Prompts the persona to reflect on session insights — native auto-memory captures them automatically. Does NOT instruct manual file writes
 - **StopFailure** (command): Writes a crash marker to `user/memory/.last-crash` when a session dies from an API error. PostCompact and the next SessionStart can detect this and offer to recover lost context
-- **PreCompact** (prompt): Saves session context to memory before compaction
+- **PreCompact** (prompt): Prompts reflection before compaction — auto-memory handles persistence. Does NOT instruct manual file writes
 - **PostCompact** (command): After compaction, checks for the crash marker and reminds the persona to review what may have been lost
 
 **5g. Create .gitignore**
@@ -500,7 +500,7 @@ Every persona uses three layers — never mix them:
 |-------|------|-----------|---------|
 | **Personality** | `CLAUDE.md` | Human (Claude proposes) | Role, rules, skills, communication style |
 | **Context** | `user/profile.md` | Claude (from user interview, via AskUserQuestion) | Personal data, accounts, preferences |
-| **Memory** | `user/memory/` | Claude (automatic via autoMemoryDirectory in settings.local.json) + Stop/PreCompact hooks | Session outcomes, learnings, patterns |
+| **Memory** | `user/memory/` | Native auto-memory (automatic via autoMemoryDirectory in settings.local.json). Stop/PreCompact hooks trigger reflection only — never manual file writes | Session outcomes, learnings, patterns |
 
 ---
 
@@ -625,7 +625,7 @@ After creation, verify:
 - [ ] Run `{name}` — does the SessionStart hook read `user/profile.md` (or trigger the interview if unfilled)?
 - [ ] Try each skill trigger — does the right skill activate?
 - [ ] Ask something outside its domain — does it redirect gracefully?
-- [ ] End a session — does it write meaningful learnings to `user/memory/`?
+- [ ] End a session — does native auto-memory capture session learnings (check `user/memory/MEMORY.md` for new entries)?
 - [ ] Check sandbox — `ls ../` from within the persona should fail
 
 Test with adversarial prompts too — ask the persona to do something it shouldn't. A good persona redirects gracefully rather than blindly complying.
@@ -656,8 +656,8 @@ Test with adversarial prompts too — ask the persona to do something it shouldn
 Tips for users to get the most out of persona evolution:
 
 **Do:**
-- Correct the persona explicitly — "no, always do X instead" creates clear memory entries that can be promoted to rules
-- Review memory periodically — read `user/memory/MEMORY.md`, delete entries that are wrong
+- Correct the persona explicitly — "no, always do X instead" creates clear auto-memory entries that can be promoted to rules
+- Review memory periodically — read `user/memory/MEMORY.md`, clean up entries that are wrong or stale
 - Approve good promotions — when the persona proposes a rule or skill that fits, approve it
 - Use trigger phrases consistently — this trains both you and the persona
 
