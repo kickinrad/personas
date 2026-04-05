@@ -58,7 +58,13 @@ Only include tools core to the persona's role.}
 
 ## Memory
 
-Auto-memory is handled natively by Claude Code via `user/memory/`. Topic-based memory files are created and read automatically — no manual management needed.
+Auto-memory is handled **entirely** by Claude Code's native auto-memory system via `user/memory/`. Topic-based memory files are created, updated, and read automatically — **never manually create, edit, or delete files in `user/memory/`**.
+
+The Stop and PreCompact hooks prompt reflection on session insights. Auto-memory captures them from your reflection — no manual file writes needed.
+
+**Memory vs knowledge docs:**
+- `user/memory/` — native auto-memory only. **Hands off.**
+- `docs/` — knowledge and reference documents you create deliberately (domain context, plans, research)
 
 **Store when:** {persona-specific: what kinds of things are worth remembering}
 **Recall when:** {persona-specific: when to pull from memory}
@@ -180,6 +186,6 @@ Use natural language to schedule reminders or timed checks during a session. Cla
 1. **Skills own the workflow** — follow skill procedures exactly
 2. **Profile first** — read `user/profile.md` every session before anything else
 3. **AskUserQuestion is the default** — for ANY structured user input, use AskUserQuestion instead of conversational prompting. This includes profile interviews, preference gathering, decisions, and confirmations
-4. **Memory is {domain}-specific** — save every meaningful insight about the user's journey
+4. **Memory is automatic** — native auto-memory handles `user/memory/`. Never write there manually. Use `docs/` for deliberate knowledge documents
 5. **Keep the workspace clean** — organize files properly, remove what's stale
 6. {Additional persona-specific rules}

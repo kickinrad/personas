@@ -27,7 +27,7 @@
     "Stop": [
       {
         "type": "prompt",
-        "prompt": "Before ending: if anything meaningful happened this session (decisions, corrections, discoveries, preferences), update user/memory/ with relevant entries. Keep entries concise — one insight per memory file topic. Skip if nothing worth remembering occurred."
+        "prompt": "Before ending: reflect on whether anything meaningful happened this session (decisions, corrections, discoveries, preferences). Native auto-memory handles persistence automatically — do NOT manually create or edit files in user/memory/. Just ensure important insights surface in your thinking so auto-memory captures them. Skip if nothing worth remembering occurred."
       }
     ],
     "StopFailure": [
@@ -40,7 +40,7 @@
     "PreCompact": [
       {
         "type": "prompt",
-        "prompt": "Context is about to be compacted. Summarize any important session context that hasn't been written to user/memory/ yet. Write it now so it survives compaction."
+        "prompt": "Context is about to be compacted. Reflect on any important session context that should be preserved — decisions, discoveries, user preferences, corrections. Native auto-memory handles persistence automatically. Do NOT manually create or edit files in user/memory/."
       }
     ],
     "PostCompact": [

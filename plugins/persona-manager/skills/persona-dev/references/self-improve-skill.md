@@ -27,9 +27,15 @@ This persona lives at `~/.personas/{name}/`. All files are immediately live — 
 | `docs/*.md` | Stable domain context too long for profile.md | Write with approval |
 | Remove files | Stale docs, unused tools, dead skills | Propose removal in audit |
 
-## Level 1: Memory Management (Native Auto-Memory)
+## Level 1: Memory (Native Auto-Memory — Hands Off)
 
-Memory is handled natively by Claude Code via `user/memory/`. The system automatically creates topic-based memory files and reads them when relevant.
+Memory is handled **entirely** by Claude Code's native auto-memory system via `autoMemoryDirectory` in `settings.local.json`. The system automatically creates, reads, and manages topic-based memory files in `user/memory/`.
+
+**Do NOT manually create, edit, or delete files in `user/memory/`.** Native auto-memory owns that directory. The Stop and PreCompact hooks prompt you to *reflect* on session insights — auto-memory captures them automatically from your reflection. No manual file writes needed.
+
+**Memory vs knowledge docs:**
+- `user/memory/` — native auto-memory only. Session learnings, preferences, patterns. **Never write here manually.**
+- `docs/` — knowledge and reference documents you create deliberately. Domain context, plans, research, checklists. **Write here when needed.**
 
 During self-audits, review `user/memory/MEMORY.md` and topic files for:
 - Recurring patterns worth promoting to rules

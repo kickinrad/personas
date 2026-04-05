@@ -173,7 +173,7 @@ Each persona customizes allowed domains for its MCP servers and APIs. Personas c
 Every persona ships with a `self-improve` skill that drives evolution:
 
 - **SessionStart hook** (`hooks.json`): Instructs the persona to read `user/profile.md` on every session (or triggers the first-session interview if unfilled)
-- **Native auto-memory** (`user/memory/`): Redirected via `autoMemoryDirectory` in `.claude/settings.local.json` (not settings.json — Claude ignores it there as a security measure). Must use an **absolute path** (relative paths break on WSL). Stop, StopFailure, PreCompact, and PostCompact hooks also manage session learnings and crash recovery
+- **Native auto-memory** (`user/memory/`): Redirected via `autoMemoryDirectory` in `.claude/settings.local.json` (not settings.json — Claude ignores it there as a security measure). Must use an **absolute path** (relative paths break on WSL). Personas never manually write to `user/memory/` — auto-memory owns that directory entirely. Stop and PreCompact hooks prompt reflection (not file writes); StopFailure and PostCompact hooks handle crash recovery
 - **Self-improve skill** (`skills/self-improve/SKILL.md`): Handles rule promotion, skill creation, tool & integration discovery, workspace hygiene, and periodic audits
 
 The four levels: memory (automatic/native), rule promotion (propose), skill creation (propose), tool & integration discovery (research existing MCP servers, CLI tools, APIs, then propose skills, agents, hooks, or scripts as needed). Periodic audits include workspace hygiene — cleaning stale files, pruning unused tools, keeping the persona lean. See the self-improve skill for the full workflow.
@@ -268,9 +268,9 @@ During persona setup, persona-dev offers to merge MCP servers into `claude_deskt
 Every persona ships six hooks in `hooks.json`:
 - **PreToolUse** (command, matcher: Bash): Runs `public-repo-guard.sh` before git commit/push — blocks personal data exposure in public repos
 - **SessionStart** (command): Instructs the persona to read `user/profile.md` and interview if unfilled. Dependency-free — just echoes a JSON instruction
-- **Stop** (prompt): Reminds persona to persist meaningful learnings to `user/memory/` before ending
+- **Stop** (prompt): Prompts the persona to reflect on session insights — native auto-memory captures them automatically. No manual file writes
 - **StopFailure** (command): Writes a crash marker (`user/memory/.last-crash`) when a session dies from an API error — enables crash recovery on next session
-- **PreCompact** (prompt): Saves session context to memory before compaction
+- **PreCompact** (prompt): Prompts reflection before compaction — auto-memory handles persistence. No manual file writes
 - **PostCompact** (command): After compaction, checks for the crash marker and reminds the persona to review lost context
 
 ## Scheduled Tasks
