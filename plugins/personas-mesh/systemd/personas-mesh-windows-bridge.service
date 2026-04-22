@@ -8,10 +8,6 @@ Documentation=https://github.com/kickinrad/personas
 [Service]
 Type=oneshot
 Nice=10
-ExecStart=/bin/bash -c '\
-  for d in /mnt/c/Users/*/.personas; do \
-    [ -d "$d" ] || continue; \
-    %h/.local/bin/personas-mesh-sync-all "$d"; \
-  done'
+ExecStart=%h/.local/bin/personas-mesh-sync-all /mnt/c/Users/wilst/.personas
 StandardOutput=journal
 StandardError=journal
