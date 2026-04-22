@@ -1,0 +1,12 @@
+[Unit]
+Description=personas-mesh WSL watchdog — sync all personas under ~/.personas/
+Documentation=https://github.com/kickinrad/personas
+
+[Service]
+Type=oneshot
+Nice=10
+# {BIN_DIR} is substituted at install time by `personas-mesh:setup`.
+# Default after install: %h/.local/bin/personas-mesh-sync-all
+ExecStart=%h/.local/bin/personas-mesh-sync-all %h/.personas
+StandardOutput=journal
+StandardError=journal

@@ -1,0 +1,17 @@
+[Unit]
+Description=personas-mesh Windows-FS bridge — sync /mnt/c/Users/*/.personas/*
+Documentation=https://github.com/kickinrad/personas
+# This unit is installed but NOT enabled until Phase 4 of the rollout
+# (after ~/.personas is no longer a symlink to /mnt/c/...). Until then,
+# running both bridges against the same inode would produce no-op churn.
+
+[Service]
+Type=oneshot
+Nice=10
+ExecStart=/bin/bash -c '\
+  for d in /mnt/c/Users/*/.personas; do \
+    [ -d "$d" ] || continue; \
+    %h/.local/bin/personas-mesh-sync-all "$d"; \
+  done'
+StandardOutput=journal
+StandardError=journal

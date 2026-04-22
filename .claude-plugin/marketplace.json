@@ -3,7 +3,7 @@
   "owner": { "name": "kickinrad", "url": "https://github.com/kickinrad" },
   "metadata": {
     "description": "Framework for self-evolving AI personas on Claude Code",
-    "version": "1.9.1",
+    "version": "1.10.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -19,6 +19,13 @@
       "source": "./plugins/persona-dashboard",
       "description": "Expansion pack — adds a visual HTML dashboard with task tracking to any persona",
       "version": "1.0.0",
+      "category": "expansion"
+    },
+    {
+      "name": "personas-mesh",
+      "source": "./plugins/personas-mesh",
+      "description": "State sync for personas across WSL/Windows/Hetzner via a Tailscale-private git hub",
+      "version": "0.1.0",
       "category": "expansion"
     }
   ]

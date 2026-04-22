@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# render-config: substitute ${VARS} in a template into a rendered file.
+#
+# Usage: render-config <template-file> <output-file> [persona-name]
+#
+# Substitutes:
+#   ${AUTO_MEMORY_DIR}                  — from ~/.personas-node.env (with {persona} expanded)
+#   ${BRIDGEY_TOKEN_<UPPERPERSONA>}     — from `pass show bridgey/token-<persona>`
+#   ${DISCORD_BOT_<UPPERPERSONA>_TOKEN} — from `pass show discord/<persona>-bot-token`
+#   ${ANTHROPIC_API_KEY}                — from `pass show anthropic/api-key` (optional)
+#
+# Fails loudly (exit 1, stderr) on any missing pass secret — never renders partial.
+
+set -euo pipefail
+
+die() { printf 'render-config: %s\n' "$*" >&2; exit 1; }
+
+[ $# -ge 2 ] || die "usage: render-config <template> <output> [persona]"
+
+template="$1"
+output="$2"
+persona="${3:-$(basename "$(realpath "$(dirname "$output")/..")")}"
+
+[ -f "$template" ] || die "template not found: $template"
+[ -n "$persona" ] || die "persona name empty; pass explicitly as third arg"
+
+# Per-node env — absolute paths, per persona name substitution happens after sourcing.
+node_env="${HOME}/.personas-node.env"
+if [ -f "$node_env" ]; then
+  # shellcheck disable=SC1090
+  . "$node_env"
+fi
+
+# Substitute literal {persona} in any values that contain it.
+: "${AUTO_MEMORY_DIR:=}"
+AUTO_MEMORY_DIR="${AUTO_MEMORY_DIR//\{persona\}/$persona}"
+
+upper_persona=$(printf '%s' "$persona" | tr '[:lower:]' '[:upper:]')
+
+pass_or_die() {
+  local path="$1"
+  pass show "$path" 2>/dev/null | head -1 \
+    || die "required secret missing: pass show '$path' failed; run: pass insert $path"
+}
+
+tmp=$(mktemp)
+trap 'rm -f "$tmp"' EXIT
+
+cp "$template" "$tmp"
+
+# Walk placeholders that appear in the template, fetch just those secrets.
+if grep -q "\${BRIDGEY_TOKEN_${upper_persona}}" "$tmp"; then
+  token=$(pass_or_die "bridgey/token-${persona}")
+  # escape any / & \ for sed replacement
+  esc=$(printf '%s' "$token" | sed -e 's/[\/&]/\\&/g')
+  sed -i "s|\${BRIDGEY_TOKEN_${upper_persona}}|${esc}|g" "$tmp"
+fi
+
+if grep -q "\${DISCORD_BOT_${upper_persona}_TOKEN}" "$tmp"; then
+  token=$(pass_or_die "discord/${persona}-bot-token")
+  esc=$(printf '%s' "$token" | sed -e 's/[\/&]/\\&/g')
+  sed -i "s|\${DISCORD_BOT_${upper_persona}_TOKEN}|${esc}|g" "$tmp"
+fi
+
+if grep -q "\${ANTHROPIC_API_KEY}" "$tmp"; then
+  token=$(pass_or_die "anthropic/api-key")
+  esc=$(printf '%s' "$token" | sed -e 's/[\/&]/\\&/g')
+  sed -i "s|\${ANTHROPIC_API_KEY}|${esc}|g" "$tmp"
+fi
+
+if grep -q "\${AUTO_MEMORY_DIR}" "$tmp"; then
+  [ -n "$AUTO_MEMORY_DIR" ] || die "AUTO_MEMORY_DIR not set; edit ~/.personas-node.env"
+  esc=$(printf '%s' "$AUTO_MEMORY_DIR" | sed -e 's/[\/&]/\\&/g')
+  sed -i "s|\${AUTO_MEMORY_DIR}|${esc}|g" "$tmp"
+fi
+
+# Refuse to write if any ${...} placeholder is still unresolved — fail loud.
+if grep -qE '\$\{[A-Z_]+\}' "$tmp"; then
+  unresolved=$(grep -oE '\$\{[A-Z_]+\}' "$tmp" | sort -u | tr '\n' ' ')
+  die "unresolved placeholder(s) in $template: $unresolved"
+fi
+
+mv "$tmp" "$output"
+trap - EXIT
+chmod 600 "$output"

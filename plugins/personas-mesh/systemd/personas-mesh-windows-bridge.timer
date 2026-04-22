@@ -1,0 +1,11 @@
+[Unit]
+Description=personas-mesh Windows-FS bridge timer — runs every 3 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=3min
+AccuracySec=15s
+Persistent=true
+
+[Install]
+WantedBy=timers.target
