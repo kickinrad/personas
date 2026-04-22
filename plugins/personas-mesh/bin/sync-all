@@ -14,7 +14,12 @@
 set -uo pipefail
 
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-SYNC_ONE="$SCRIPT_DIR/sync-persona"
+# Sibling script is named either `sync-persona` (running from the plugin's bin/)
+# or `personas-mesh-sync-persona` (installed to /usr/local/bin with prefix).
+# Derive from our own basename so both layouts work.
+SCRIPT_NAME=$(basename "$0")
+SIBLING_NAME="${SCRIPT_NAME/sync-all/sync-persona}"
+SYNC_ONE="$SCRIPT_DIR/$SIBLING_NAME"
 [ -x "$SYNC_ONE" ] || { printf 'sync-all: %s not executable\n' "$SYNC_ONE" >&2; exit 1; }
 
 VERBOSE=0
