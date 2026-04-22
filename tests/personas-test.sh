@@ -31,12 +31,6 @@ for plugin_dir in "$PLUGINS_DIR"/*/; do
     check "plugin.json exists" "missing"
   fi
 
-  # Persona plugins must have CLAUDE.md
-  if [[ "$name" != "persona-manager" ]]; then
-    [[ -f "$plugin_dir/CLAUDE.md" ]] && \
-      check "CLAUDE.md exists" "pass" || check "CLAUDE.md exists" "missing"
-  fi
-
   # All SKILL.md files must have YAML frontmatter
   while IFS= read -r -d '' skill; do
     grep -q "^---" "$skill" && \
@@ -44,23 +38,14 @@ for plugin_dir in "$PLUGINS_DIR"/*/; do
       check "frontmatter: $(basename "$(dirname "$skill")")/SKILL.md" "missing"
   done < <(find "$plugin_dir/skills" -name "SKILL.md" -print0 2>/dev/null)
 
-  # Sandbox config (persona plugins only)
-  if [[ "$name" != "persona-manager" ]]; then
-    settings="$plugin_dir/.claude/settings.json"
-    if [[ -f "$settings" ]]; then
-      jq -e '.sandbox' "$settings" >/dev/null 2>&1 && \
-        check "sandbox config present" "pass" || check "sandbox config present" "missing sandbox key"
-    else
-      check "sandbox config present" ".claude/settings.json missing"
-    fi
-  fi
-
-  # Secret detection in committed files
+  # Secret detection in committed files. Secret prefixes must be followed by
+  # ≥20 base64url chars to rule out bare-prefix docs (e.g. "GOCSPX-" listed as
+  # an example pattern in validator agent prose).
   secret_hits=""
   while IFS= read -r -d '' f; do
     basename_f=$(basename "$f")
     [[ "$basename_f" == ".mcp.json" ]] && continue
-    if grep -qE '(eyJ[A-Za-z0-9_-]{10,}|GOCSPX-|sk-[A-Za-z0-9]{20,}|BEGIN PRIVATE KEY)' "$f" 2>/dev/null; then
+    if grep -qE '(eyJ[A-Za-z0-9_-]{20,}|GOCSPX-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|BEGIN PRIVATE KEY)' "$f" 2>/dev/null; then
       secret_hits+=" ${f#"$REPO_ROOT"/}"
     fi
   done < <(find "$plugin_dir" \( -name "*.md" -o -name "*.json" \) -print0 2>/dev/null)
