@@ -1,0 +1,13 @@
+[Unit]
+Description=personas-mesh Hetzner host — sync /srv/personas-work/* with bare hub
+Documentation=https://github.com/kickinrad/personas
+# Installed as a user unit under `wils@cloud`. Runs sync-all against the
+# bind-mount source directory that bridgey-* containers mount as /workspace.
+
+[Service]
+Type=oneshot
+Nice=10
+Environment=PERSONAS_MESH_ROOT=/srv/personas-work
+ExecStart=%h/.local/bin/personas-mesh-sync-all /srv/personas-work
+StandardOutput=journal
+StandardError=journal

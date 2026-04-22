@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# sync-persona: pull → commit-if-dirty → push, for one persona repo.
+#
+# Usage: sync-persona <persona-repo-dir> [--verbose]
+#
+# Commit-noise control: if the previous commit is `auto-sync: <hostname>` and
+# was made within the last 10 minutes, amend it instead of making a new one.
+#
+# Exit codes:
+#   0  clean sync (nothing to push, or push succeeded)
+#   1  usage / precondition error
+#   2  real conflict — state stashed to sync-conflict/<host>-<ts>, marker written
+#   3  transient network error — retry later
+#
+# On conflict: stashes the diverging state into branch sync-conflict/<host>-<ts>,
+# writes a marker file at ~/.personas/.sync-conflicts/<persona>.log, continues.
+
+set -euo pipefail
+
+die() { printf 'sync-persona: %s\n' "$*" >&2; exit 1; }
+log() { [ "${VERBOSE:-0}" = "1" ] && printf '[sync-persona %s] %s\n' "$(basename "$repo")" "$*" >&2; :; }
+
+VERBOSE=0
+repo=""
+for arg in "$@"; do
+  case "$arg" in
+    --verbose|-v) VERBOSE=1 ;;
+    -*) die "unknown flag: $arg" ;;
+    *) repo="$arg" ;;
+  esac
+done
+
+[ -n "$repo" ] || die "usage: sync-persona <persona-repo-dir>"
+repo=$(realpath "$repo")
+[ -d "$repo/.git" ] || die "not a git repo: $repo"
+
+cd "$repo"
+
+persona=$(basename "$repo")
+host=$(hostname -s)
+now_epoch=$(date +%s)
+conflict_root="${HOME}/.personas/.sync-conflicts"
+mkdir -p "$conflict_root"
+
+# 1. Pull with rebase + autostash. Network errors → exit 3.
+if ! out=$(git pull --rebase --autostash origin HEAD 2>&1); then
+  echo "$out" >&2
+  if echo "$out" | grep -qiE 'could not resolve host|connection refused|timed out|network is unreachable'; then
+    exit 3
+  fi
+  # Rebase conflict — stash it and bail.
+  branch="sync-conflict/${host}-$(date +%Y%m%d-%H%M%S)"
+  git rebase --abort 2>/dev/null || true
+  git checkout -b "$branch" 2>/dev/null || git checkout "$branch"
+  git add -A
+  git commit -m "sync-conflict: stashed divergent state on ${host}" 2>/dev/null || true
+  git checkout -
+  {
+    echo "[$(date -Is)] rebase failed on $host; state preserved in $branch"
+    echo "  resolve with: cd $repo && git diff $branch"
+  } >> "$conflict_root/$persona.log"
+  exit 2
+fi
+log "pulled: $out"
+
+# 2. Commit-if-dirty.
+if ! git diff --quiet HEAD 2>/dev/null || [ -n "$(git ls-files --others --exclude-standard)" ]; then
+  git add -A
+
+  commit_msg="auto-sync: ${host}"
+  last_subject=$(git log -1 --pretty=%s 2>/dev/null || echo "")
+  last_epoch=$(git log -1 --pretty=%ct 2>/dev/null || echo "0")
+  age=$((now_epoch - last_epoch))
+
+  if [ "$last_subject" = "$commit_msg" ] && [ "$age" -lt 600 ]; then
+    # Within 10 min, same host → amend (avoids commit spam).
+    git commit --amend --no-edit >/dev/null
+    log "amended recent auto-sync commit (age=${age}s)"
+  else
+    git commit -m "$commit_msg" >/dev/null
+    log "new commit: $commit_msg"
+  fi
+fi
+
+# 3. Push. Network errors → exit 3.
+if ! out=$(git push origin HEAD 2>&1); then
+  echo "$out" >&2
+  if echo "$out" | grep -qiE 'could not resolve host|connection refused|timed out|network is unreachable|broken pipe'; then
+    exit 3
+  fi
+  die "push failed: $out"
+fi
+log "pushed"
+
+exit 0

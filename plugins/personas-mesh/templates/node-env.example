@@ -1,0 +1,16 @@
+# Per-node env for personas-mesh template rendering.
+# Copy to ~/.personas-node.env on each node and edit values.
+# `bin/render-config` sources this before substituting into templates.
+
+# Absolute path to this persona's memory dir (use {persona} literal; render-config substitutes).
+# WSL-native (post-Phase-4):
+AUTO_MEMORY_DIR=/home/wilst/.personas/{persona}/user/memory
+
+# Windows-native CoWork side:
+# AUTO_MEMORY_DIR=/mnt/c/Users/wilst/.personas/{persona}/user/memory
+
+# Hetzner container (rw-workspace variant):
+# AUTO_MEMORY_DIR=/workspace/user/memory
+
+# Hetzner container (sidecar-rsync variant):
+# AUTO_MEMORY_DIR=/data/bridgey/memory

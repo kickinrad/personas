@@ -3,4 +3,6 @@
 *.log
 *.local.json
 *.local.md
-docs/
+
+# Top-level docs/ only — plugin-internal docs (e.g. plugins/*/docs/) stay tracked.
+/docs/

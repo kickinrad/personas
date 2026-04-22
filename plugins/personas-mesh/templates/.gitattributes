@@ -1,0 +1,6 @@
+# personas-mesh — append-safe concurrent-write paths
+# Applied per-persona by `personas-mesh:setup`; merges become unions of both sides
+# instead of conflict markers. Correct semantics for an index + append-only journal.
+
+user/memory/MEMORY.md merge=union
+user/profile.md merge=union

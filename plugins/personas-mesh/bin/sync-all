@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# sync-all: iterate a directory of persona repos and sync-persona each.
+#
+# Usage: sync-all [<root-dir>] [--verbose]
+#
+# Default root: $PERSONAS_MESH_ROOT or first of:
+#   /srv/personas-work            (Hetzner host)
+#   /home/$(whoami)/.personas     (WSL-native)
+#   /mnt/c/Users/*/.personas      (Windows FS bridge node)
+#
+# Skips entries that aren't git repos. Collects exit codes, exits non-zero if any
+# persona exited non-zero. Network errors (exit 3) count as warnings, not failures.
+
+set -uo pipefail
+
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+SYNC_ONE="$SCRIPT_DIR/sync-persona"
+[ -x "$SYNC_ONE" ] || { printf 'sync-all: %s not executable\n' "$SYNC_ONE" >&2; exit 1; }
+
+VERBOSE=0
+root=""
+for arg in "$@"; do
+  case "$arg" in
+    --verbose|-v) VERBOSE=1 ;;
+    -*) printf 'sync-all: unknown flag: %s\n' "$arg" >&2; exit 1 ;;
+    *) root="$arg" ;;
+  esac
+done
+
+if [ -z "$root" ]; then
+  if [ -n "${PERSONAS_MESH_ROOT:-}" ]; then
+    root="$PERSONAS_MESH_ROOT"
+  elif [ -d /srv/personas-work ]; then
+    root=/srv/personas-work
+  elif [ -d "$HOME/.personas" ]; then
+    root="$HOME/.personas"
+  else
+    printf 'sync-all: no root provided and no default found\n' >&2
+    exit 1
+  fi
+fi
+
+verbose_flag=()
+[ "$VERBOSE" = "1" ] && verbose_flag=(--verbose)
+
+any_fail=0
+any_warn=0
+for dir in "$root"/*/; do
+  [ -d "$dir/.git" ] || continue
+  persona=$(basename "$dir")
+  rc=0
+  "$SYNC_ONE" "${verbose_flag[@]}" "$dir" || rc=$?
+  case $rc in
+    0) [ "$VERBOSE" = "1" ] && printf '  %s: ok\n' "$persona" ;;
+    2) printf '  %s: CONFLICT (see ~/.personas/.sync-conflicts/%s.log)\n' "$persona" "$persona" >&2
+       any_fail=1 ;;
+    3) printf '  %s: network error (will retry next run)\n' "$persona" >&2
+       any_warn=1 ;;
+    *) printf '  %s: failed (exit %d)\n' "$persona" "$rc" >&2
+       any_fail=1 ;;
+  esac
+done
+
+[ "$any_fail" = "1" ] && exit 2
+[ "$any_warn" = "1" ] && exit 3
+exit 0

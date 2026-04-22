@@ -1,0 +1,18 @@
+# personas-mesh additions — append to each persona's .gitignore via `personas-mesh:setup`
+# (Most entries already present in the default persona .gitignore; this is the canonical set.)
+
+# Rendered config — templates live in git, rendered output stays per-node
+.mcp.json
+.claude/settings.local.json
+
+# Runtime state — per-node, never synced
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite
+*.log
+scheduler.*
+
+# Sync conflict surface — surfaced to the user, not synced
+.sync-conflicts/

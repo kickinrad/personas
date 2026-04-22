@@ -1,0 +1,15 @@
+[Unit]
+Description=personas-mesh GitHub mirror — push each bare repo on the hub to its GitHub origin
+Documentation=https://github.com/kickinrad/personas
+# Hetzner host only. Async backup path — not on the sync critical path.
+
+[Service]
+Type=oneshot
+Nice=15
+ExecStart=/bin/bash -c '\
+  for repo in /srv/personas/*.git; do \
+    [ -d "$repo" ] || continue; \
+    git -C "$repo" push --mirror github 2>&1 || echo "mirror failed: $repo"; \
+  done'
+StandardOutput=journal
+StandardError=journal
