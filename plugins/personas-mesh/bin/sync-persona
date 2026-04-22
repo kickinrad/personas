@@ -72,8 +72,16 @@ if ! git diff --quiet HEAD 2>/dev/null || [ -n "$(git ls-files --others --exclud
   last_epoch=$(git log -1 --pretty=%ct 2>/dev/null || echo "0")
   age=$((now_epoch - last_epoch))
 
-  if [ "$last_subject" = "$commit_msg" ] && [ "$age" -lt 600 ]; then
-    # Within 10 min, same host → amend (avoids commit spam).
+  # Only amend if the previous commit is still local (not yet on the hub).
+  # Amending an already-pushed commit would rewrite shared history and cause
+  # a non-fast-forward push rejection on the next run inside the 10-min window.
+  unpushed=""
+  if git rev-parse '@{u}' >/dev/null 2>&1; then
+    unpushed=$(git log '@{u}..HEAD' --oneline 2>/dev/null || echo "")
+  fi
+
+  if [ "$last_subject" = "$commit_msg" ] && [ "$age" -lt 600 ] && [ -n "$unpushed" ]; then
+    # Within 10 min, same host, not yet pushed → amend (avoids commit spam).
     git commit --amend --no-edit >/dev/null
     log "amended recent auto-sync commit (age=${age}s)"
   else
