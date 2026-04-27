@@ -248,15 +248,18 @@ Copy `references/gitignore-template` to `.gitignore`.
 
 Copy `references/settings-template.json` to `.claude/settings.json`. Add any persona-specific network domains for MCP servers to `allowedDomains`. The template includes `extraKnownMarketplaces` and `enabledPlugins` to auto-install persona-manager — this gives every persona access to persona-dev for self-evolution without manual plugin installation.
 
-Also create `.claude/settings.local.json` with the memory directory setting. **Use the absolute path** to the persona's memory directory — relative paths break on WSL where the project root is on `/mnt/c/` but Claude resolves relative paths from the Linux side:
+Also create `.claude/settings.local.json` with the memory directory and output-style setting. **Use the absolute path** to the persona's memory directory — relative paths break on WSL where the project root is on `/mnt/c/` but Claude resolves relative paths from the Linux side:
 ```json
 {
-  "autoMemoryDirectory": "/absolute/path/to/.personas/{name}/user/memory"
+  "autoMemoryDirectory": "/absolute/path/to/.personas/{name}/user/memory",
+  "outputStyle": "{PersonaName}"
 }
 ```
 For example, if the persona lives at `~/.personas/warren/`, the value would be `/home/username/.personas/warren/user/memory` (Linux/WSL) or `/Users/username/.personas/warren/user/memory` (macOS). Use the actual resolved path, not `~`.
 
-**Important:** `autoMemoryDirectory` must be in `settings.local.json`, not `settings.json`. Claude Code ignores this setting in project settings (`.claude/settings.json`) as a security measure — it only works from local or user settings. The `settings.local.json` file is gitignored, so persona-dev must create it during setup on each machine.
+**`outputStyle` must match the `name:` field in `.claude/output-styles/{name}.md` exactly** (case-sensitive). The convention is Capitalized — `Warren`, `Piper`, `Mila`. Without this, the persona boots in default Claude voice and the user has to run `/output-style {PersonaName}` manually each session.
+
+**Important:** `autoMemoryDirectory` and `outputStyle` must be in `settings.local.json`, not `settings.json`. Claude Code ignores `autoMemoryDirectory` in project settings (`.claude/settings.json`) as a security measure — it only works from local or user settings. The `settings.local.json` file is gitignored, so persona-dev must create it during setup on each machine.
 
 **5i. Create README.md**
 
