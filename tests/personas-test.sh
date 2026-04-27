@@ -93,31 +93,43 @@ if [[ -d "$PERSONAS_DIR" ]]; then
     [[ -f "$persona_dir/CLAUDE.md" ]] && \
       check "CLAUDE.md exists" "pass" || check "CLAUDE.md exists" "missing"
 
-    # Must have sandbox config
-    psettings="$persona_dir/.claude/settings.json"
-    if [[ -f "$psettings" ]]; then
-      jq -e '.sandbox' "$psettings" >/dev/null 2>&1 && \
-        check "sandbox config present" "pass" || check "sandbox config present" "missing sandbox key"
+    # Stub-mode: persona lives elsewhere via .persona-cwd redirect.
+    # Skip structural checks (sandbox / user / settings.local / .gitignore) — those live at the redirect target.
+    if [[ -f "$persona_dir/.persona-cwd" ]]; then
+      pcwd=$(tr -d '[:space:]' < "$persona_dir/.persona-cwd")
+      if [[ -d "$pcwd" ]]; then
+        check ".persona-cwd resolves ($pcwd)" "pass"
+      else
+        check ".persona-cwd resolves" "target does not exist: $pcwd"
+      fi
     else
-      check "sandbox config present" ".claude/settings.json missing"
+      # Standard persona — full structural checks
+      # Must have sandbox config
+      psettings="$persona_dir/.claude/settings.json"
+      if [[ -f "$psettings" ]]; then
+        jq -e '.sandbox' "$psettings" >/dev/null 2>&1 && \
+          check "sandbox config present" "pass" || check "sandbox config present" "missing sandbox key"
+      else
+        check "sandbox config present" ".claude/settings.json missing"
+      fi
+
+      # Must have user/ directory
+      [[ -d "$persona_dir/user" ]] && \
+        check "user/ directory exists" "pass" || check "user/ directory exists" "missing"
+
+      # Must have autoMemoryDirectory in settings.local.json (not settings.json — Claude ignores it there)
+      plocal="$persona_dir/.claude/settings.local.json"
+      if [[ -f "$plocal" ]]; then
+        jq -e '.autoMemoryDirectory' "$plocal" >/dev/null 2>&1 && \
+          check "autoMemoryDirectory configured" "pass" || check "autoMemoryDirectory configured" "missing in settings.local.json"
+      else
+        check "autoMemoryDirectory configured" "settings.local.json not found"
+      fi
+
+      # Must have .gitignore
+      [[ -f "$persona_dir/.gitignore" ]] && \
+        check ".gitignore exists" "pass" || check ".gitignore exists" "missing"
     fi
-
-    # Must have user/ directory
-    [[ -d "$persona_dir/user" ]] && \
-      check "user/ directory exists" "pass" || check "user/ directory exists" "missing"
-
-    # Must have autoMemoryDirectory in settings.local.json (not settings.json — Claude ignores it there)
-    plocal="$persona_dir/.claude/settings.local.json"
-    if [[ -f "$plocal" ]]; then
-      jq -e '.autoMemoryDirectory' "$plocal" >/dev/null 2>&1 && \
-        check "autoMemoryDirectory configured" "pass" || check "autoMemoryDirectory configured" "missing in settings.local.json"
-    else
-      check "autoMemoryDirectory configured" "settings.local.json not found"
-    fi
-
-    # Must have .gitignore
-    [[ -f "$persona_dir/.gitignore" ]] && \
-      check ".gitignore exists" "pass" || check ".gitignore exists" "missing"
 
     # Framework version stamp
     fwversion="$persona_dir/.framework-version"
