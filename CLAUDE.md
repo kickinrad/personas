@@ -19,7 +19,7 @@ personas/                                 # Framework repo
     ├── CLAUDE.md                         # Role, rules, skill refs (committed)
     ├── .claude/
     │   ├── settings.json                 # Sandbox config (committed)
-    │   ├── settings.local.json          # autoMemoryDirectory (gitignored, created during setup)
+    │   ├── settings.local.json          # autoMemoryDirectory + outputStyle (gitignored, created during setup)
     │   ├── output-styles/               # Personality, tone, style (committed)
     │   ├── hooks/
     │   │   └── public-repo-guard.sh     # Blocks personal data in public repos (committed)
@@ -29,6 +29,7 @@ personas/                                 # Framework repo
     ├── hooks.json                        # SessionStart + Stop + StopFailure + PreCompact + PostCompact + PreToolUse hooks (committed)
     ├── .framework-version                # Framework version stamp (committed)
     ├── .claude-flags                     # Per-persona CLI launch flags (committed)
+    ├── .persona-cwd                      # Optional: redirect cwd to another path (stub-mode personas only)
     ├── docs/                              # Reference materials, plans (committed)
     ├── .mcp.json                         # MCP server config (gitignored)
     ├── tools/                            # Utilities, scripts, pipelines (committed)
@@ -84,6 +85,8 @@ Each alias reads per-persona flags from `~/.personas/{name}/.claude-flags` (conf
 - `--chrome` — enables Claude in Chrome browser automation (requires extension install). Only add for personas that need web interaction
 
 If `.claude-flags` is missing, the alias falls back to safe defaults (no `--dangerously-skip-permissions`).
+
+**Optional `.persona-cwd` redirect.** A persona can live somewhere other than `~/.personas/{name}/` by making that directory a stub: keep `CLAUDE.md`, `.claude-flags`, `.framework-version`, plus a single-line `.persona-cwd` file containing the absolute target path. The alias loader reads `.persona-cwd` and `cd`s into that path before launching `claude`. Used for personas that share a working directory with another tool (e.g. Piper lives at the Obsidian vault root, `/mnt/c/Users/wilst/Vault/`). The stub still appears under `Areas/Personas/{name}/` when the vault uses Folder Bridge to surface `~/.personas/`, which avoids recursing into the redirect target. Without `.persona-cwd`, the alias `cd`s into `${_persona_dir}` as before — fully backwards-compatible.
 
 ### Desktop
 
