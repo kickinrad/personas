@@ -25,6 +25,12 @@ Key sub-areas: `plugins/persona-manager/` (persona-dev and persona-update skills
 - [[Resources/Repos/personal/personas/README|README]] — public overview
 - [[Resources/Repos/personal/personas/TROUBLESHOOTING|TROUBLESHOOTING]] — troubleshooting guide
 
+## Plugins
+
+- [[Resources/Repos/personal/personas/plugins/persona-dashboard/persona-dashboard|persona-dashboard]]
+- [[Resources/Repos/personal/personas/plugins/persona-manager/persona-manager|persona-manager]]
+- [[Resources/Repos/personal/personas/plugins/personas-mesh/personas-mesh|personas-mesh]]
+
 ## Knowledge map
 
 ```folder-overview
