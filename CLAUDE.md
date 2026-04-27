@@ -1,3 +1,7 @@
+---
+title: personas
+---
+
 # Personas
 
 Public framework for self-evolving AI assistants built on Claude Code. The framework repo contains persona-manager (the meta-tool); individual personas live in `~/.personas/{name}/` as independent git-tracked directories with sandbox isolation.
