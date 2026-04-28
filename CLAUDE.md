@@ -22,7 +22,7 @@ personas/                                 # Framework repo
 └── {persona}/                            # Each persona is its own git-tracked directory
     ├── CLAUDE.md                         # Role, rules, skill refs (committed)
     ├── .claude/
-    │   ├── settings.json                 # Sandbox config (committed)
+    │   ├── settings.json                 # Sandbox + statusLine config (committed)
     │   ├── settings.local.json          # autoMemoryDirectory + outputStyle (gitignored, created during setup)
     │   ├── output-styles/               # Personality, tone, style (committed)
     │   ├── hooks/
@@ -46,7 +46,7 @@ personas/                                 # Framework repo
 
 ## What Is a Persona?
 
-**A persona is a self-contained AI assistant.** It combines standard Claude Code features — identity (CLAUDE.md), output style (`.claude/output-styles/`), user context (`user/profile.md`), skills, hooks, MCP tools, sandbox settings, scheduled tasks, and native auto-memory (`user/memory/`) — into a specialized agent that evolves over time. The persona maintains all of these itself; identity changes require human approval, everything else evolves automatically.
+**A persona is a self-contained AI assistant.** It combines standard Claude Code features — identity (CLAUDE.md), output style (`.claude/output-styles/`), user context (`user/profile.md`), skills, hooks, MCP tools, sandbox settings, statusline, scheduled tasks, and native auto-memory (`user/memory/`) — into a specialized agent that evolves over time. The persona maintains all of these itself; identity changes require human approval, everything else evolves automatically.
 
 The persona's content splits between two files: **output-style** (`.claude/output-styles/`) defines WHO the persona IS — voice, personality, opinions, narrative expertise, character-driven refusals. **CLAUDE.md** defines WHAT the persona DOES — role summary, operational procedures, skills, tools, security rules. Boundary test: "Would this change how the persona SOUNDS, or what it DOES?"
 
@@ -279,6 +279,10 @@ Every persona ships six hooks in `hooks.json`:
 - **StopFailure** (command): Writes a crash marker (`user/memory/.last-crash`) when a session dies from an API error — enables crash recovery on next session
 - **PreCompact** (prompt): Prompts reflection before compaction — auto-memory handles persistence. No manual file writes
 - **PostCompact** (command): After compaction, checks for the crash marker and reminds the persona to review lost context
+
+## Statusline
+
+Every persona's `.claude/settings.json` wires `statusLine` to `~/.claude/statusline.sh` — the user's machine-level statusline script. The path uses `~` expansion (no hardcoded home dir), so the same committed setting works for any user. If the script doesn't exist on a host, the statusline silently no-ops (cosmetic only — no functional impact). Personas don't ship the script itself; that lives at the user level so a single source of truth styles every Claude Code session including all personas.
 
 ## Scheduled Tasks
 

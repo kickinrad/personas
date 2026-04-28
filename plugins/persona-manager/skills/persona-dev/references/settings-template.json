@@ -1,4 +1,8 @@
 {
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
+  },
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
