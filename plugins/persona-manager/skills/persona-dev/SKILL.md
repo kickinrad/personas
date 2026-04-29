@@ -184,6 +184,12 @@ mkdir -p ~/.personas/{name}/{.claude/output-styles,.claude/hooks,.claude/skills,
 
 ### Phase 5: Build core files
 
+> **🛑 Sacred rule for `user/` — never overwrite existing files.**
+>
+> Anything under `~/.personas/{name}/user/` is the user's personal data: profile, memory pages, MEMORY index. These accrue value over time and CANNOT be regenerated from a template. Before writing any file under `user/`, check whether it already exists. If it does, **skip the write and report what was preserved** ("preserved existing user/profile.md"). Only write if the file is missing — i.e., this is a true first scaffold.
+>
+> This rule applies whether persona-dev is being run on a fresh persona or invoked again on an existing one to apply framework scaffold updates. The framework's templates are bootstrap material, not source-of-truth. If you find yourself about to clobber a populated `user/profile.md` or `user/memory/MEMORY.md`, **stop and ask the user** — never assume regeneration is safe.
+
 **5a. Write CLAUDE.md**
 
 Use the template from `references/claude-md-template.md`. Key decisions:
@@ -192,9 +198,11 @@ Use the template from `references/claude-md-template.md`. Key decisions:
 - **Workspace Hygiene section**: Include it — every persona must maintain its own workspace
 - **Self-Improvement**: Point to the self-improve skill (one line, not inline)
 
-**5b. Create user/profile.md**
+**5b. Create user/profile.md** *(only if it does not already exist — see sacred rule above)*
 
-Use `references/profile-template.md` as a starting point and customize it for this persona's domain:
+**Guard first:** if `~/.personas/{name}/user/profile.md` already exists, skip this entire step and report "preserved existing user/profile.md". Do not read the template, do not customize, do not write. The existing profile is the user's personal data and is not yours to regenerate.
+
+If the file is missing, use `references/profile-template.md` as a starting point and customize it for this persona's domain:
 - Rename/add/remove sections to fit the domain (e.g., a finance persona needs "Accounts & Assets", a chef persona needs "Dietary Restrictions")
 - Update placeholders to be domain-specific
 - Update the interview instructions comment with persona-specific guidance on what to ask and how to probe deeper
@@ -668,3 +676,14 @@ Tips for users to get the most out of persona evolution:
 - Vague feedback — "be better at this" gives the persona nothing actionable
 - Editing persona files directly — tell the persona to make changes so it creates proper memory/commits
 - Skipping the approval step — the propose/approve pattern exists to prevent drift
+
+---
+
+## References
+
+Templates and helper files used by the scaffolding phases above. All live in `references/` alongside this SKILL.md.
+
+- [[Resources/Repos/personal/personas/plugins/persona-manager/skills/persona-dev/references/claude-md-template|claude-md-template]] — CLAUDE.md skeleton written in Phase 5a
+- [[Resources/Repos/personal/personas/plugins/persona-manager/skills/persona-dev/references/output-style-template|output-style-template]] — `.claude/output-styles/{name}.md` skeleton written in Phase 5c
+- [[Resources/Repos/personal/personas/plugins/persona-manager/skills/persona-dev/references/profile-template|profile-template]] — `user/profile.md` skeleton written in Phase 5b
+- [[Resources/Repos/personal/personas/plugins/persona-manager/skills/persona-dev/references/self-improve-skill|self-improve-skill]] — self-improve SKILL.md copied into every persona in Phase 5e
