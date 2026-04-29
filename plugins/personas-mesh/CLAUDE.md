@@ -1,3 +1,7 @@
+---
+title: personas-mesh
+---
+
 # personas-mesh
 
 Sync personas across WSL / Windows / Hetzner through a Tailscale-private git hub.
@@ -8,7 +12,7 @@ Sync personas across WSL / Windows / Hetzner through a Tailscale-private git hub
 |---|---|
 | `bin/` | `render-config`, `sync-persona`, `sync-all` — node-agnostic sync and template-render logic |
 | `hooks/` | `session-start.sh`, `stop.sh` — injected into each persona's `hooks.json` during `personas-mesh:setup` |
-| `skills/` | `setup`, `doctor`, `status` — human-invoked workflows |
+| `skills/` | `setup`, `mesh-doctor`, `status` — human-invoked workflows |
 | `systemd/` | User-unit files for WSL watchdog, WSL Windows-bridge (disabled until Phase 4), Hetzner host |
 | `templates/` | `.gitattributes` (merge=union rules), `.gitignore.additions`, `.mcp.json.template`, `settings.local.json.template` |
 | `docs/` | `hetzner-bootstrap.md`, `migration-symlink-to-mesh.md` — runbooks for steps requiring interactive sudo |

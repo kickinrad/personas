@@ -12,7 +12,7 @@ Keeps every persona's state in sync across WSL, Windows, and Hetzner without man
 ## Skills
 
 - **`setup`** — bootstrap personas-mesh on the current node (WSL / Hetzner host auto-detect).
-- **`doctor`** — diagnose sync issues (remote reachability, divergent commits, conflict branches).
+- **`mesh-doctor`** — diagnose sync issues (remote reachability, divergent commits, conflict branches). Namespaced to avoid collision with Claude Code's built-in `/doctor`.
 - **`status`** — show per-persona sync state across nodes.
 
 ## Topology

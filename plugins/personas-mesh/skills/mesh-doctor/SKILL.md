@@ -1,9 +1,9 @@
 ---
-name: doctor
+name: mesh-doctor
 description: Diagnose and resolve personas-mesh sync problems. This skill should be used when the user asks to "why isn't my persona syncing", "fix the mesh", "mesh is broken", "sync conflict", "personas-mesh not working", "check why memory isn't propagating", or when personas-mesh:status flagged an issue. Walks through remote reachability, divergent commits, stash-branch resolution for conflicts, and the rarer cases (hub disk full, GitHub token expired).
 ---
 
-# personas-mesh:doctor
+# personas-mesh:mesh-doctor
 
 Interactive diagnostic for one persona (or all).
 
