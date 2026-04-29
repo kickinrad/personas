@@ -36,7 +36,7 @@ emit_ctx() {
 
 case "$rc" in
   0) : ;; # clean — no news
-  2) emit_ctx "personas-mesh: sync conflict on persona ${persona}. See ~/.personas/.sync-conflicts/${persona}.log and resolve with the personas-mesh:doctor skill." ;;
+  2) emit_ctx "personas-mesh: sync conflict on persona ${persona}. See ~/.personas/.sync-conflicts/${persona}.log and resolve with the personas-mesh:mesh-doctor skill." ;;
   3) emit_ctx "personas-mesh: sync hub unreachable at session start — working from local state for ${persona}." ;;
   *) emit_ctx "personas-mesh: sync failed for ${persona} (exit ${rc}). Output: ${out}" ;;
 esac

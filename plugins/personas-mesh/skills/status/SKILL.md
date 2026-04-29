@@ -33,7 +33,7 @@ Archer, Kai, Piper, Reed, Urza are not deployed on Hetzner — mark their Hetzne
 
 ## Conflict badge
 
-If `git branch --list 'sync-conflict/*'` returns anything on any node for that persona, mark Status as `CONFLICT` and point the user at `personas-mesh:doctor`.
+If `git branch --list 'sync-conflict/*'` returns anything on any node for that persona, mark Status as `CONFLICT` and point the user at `personas-mesh:mesh-doctor`.
 
 ## Output style
 

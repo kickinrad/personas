@@ -21,6 +21,6 @@ tags:
 
 ### Skills
 
-- [[Resources/Repos/personal/personas/plugins/personas-mesh/skills/doctor/SKILL|doctor]]
+- [[Resources/Repos/personal/personas/plugins/personas-mesh/skills/mesh-doctor/SKILL|mesh-doctor]]
 - [[Resources/Repos/personal/personas/plugins/personas-mesh/skills/setup/SKILL|setup]]
 - [[Resources/Repos/personal/personas/plugins/personas-mesh/skills/status/SKILL|status]]

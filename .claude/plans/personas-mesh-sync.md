@@ -121,7 +121,7 @@ All triggers use the same core script (`bin/sync-persona`) — different invoker
 
 **When a real conflict occurs** (rare — e.g. same line edited by two nodes):
 - The sync script does not silently fail. It stashes the conflicting state into a `sync-conflict/{hostname}-{timestamp}` branch, surfaces a marker file at `~/.personas/.sync-conflicts/{persona}.log`, and continues.
-- A `personas-mesh:doctor` skill walks the user through `git diff sync-conflict/...` and helps resolve.
+- A `personas-mesh:mesh-doctor` skill walks the user through `git diff sync-conflict/...` and helps resolve.
 
 ## Commit noise control
 
@@ -148,7 +148,7 @@ personas/plugins/personas-mesh/
 │   └── stop.sh                 # commit + push with amend-if-recent logic
 ├── skills/
 │   ├── setup/                  # one-shot bootstrap for a new node
-│   ├── doctor/                 # diagnose + resolve sync conflicts
+│   ├── mesh-doctor/            # diagnose + resolve sync conflicts
 │   └── status/                 # show per-persona sync state across nodes
 ├── systemd/
 │   ├── personas-mesh-wsl.service
@@ -166,7 +166,7 @@ personas/plugins/personas-mesh/
 
 Skills overview:
 - **`setup`** — install personas-mesh on the current node. WSL/Windows-bridge/Hetzner-host variants detected automatically. Sets origin remotes, installs hooks into each persona, installs systemd units, renders configs first time.
-- **`doctor`** — diagnose a sync issue: check remote reachability, show divergent commits, walk through conflict resolution.
+- **`mesh-doctor`** — diagnose a sync issue: check remote reachability, show divergent commits, walk through conflict resolution. (Namespaced to avoid collision with Claude Code's built-in `/doctor`.)
 - **`status`** — quick table: per-persona, last-sync-ts from WSL / Windows / Hetzner, pending commits, dirty files.
 
 ## Prerequisites (verify before step 1)
