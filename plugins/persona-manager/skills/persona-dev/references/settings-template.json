@@ -3,6 +3,9 @@
     "type": "command",
     "command": "~/.claude/statusline.sh"
   },
+  "claudeMdExcludes": [
+    "**/.claude/CLAUDE.md"
+  ],
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,

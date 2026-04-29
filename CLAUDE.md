@@ -83,7 +83,7 @@ Each alias reads per-persona flags from `~/.personas/{name}/.claude-flags` (conf
 
 **Available flags:**
 - `--name {name}` — labels the session in the terminal title and prompt bar with the persona's name
-- `--setting-sources project,local` — loads only persona's settings.json and settings.local.json (ignores global `~/.claude/settings.json`). Keeps permissions, sandbox, MCP config, and memory config isolated
+- `--setting-sources project,local` — loads only persona's `settings.json` and `settings.local.json`, ignoring `~/.claude/settings.json`. Keeps permissions, sandbox, MCP config, and memory config isolated. **Note:** this flag does NOT affect `CLAUDE.md` loading — `~/.claude/CLAUDE.md` is blocked separately via `claudeMdExcludes` in the persona's `.claude/settings.json` (see [Inheritance & Isolation Matrix](#inheritance--isolation-matrix))
 - `--dangerously-skip-permissions` — skips permission prompts. **Only safe when OS-level sandbox is available** (macOS/Linux/WSL2). **⚠ NEVER use on Windows native** — no sandbox means unrestricted filesystem + network access
 - `--remote-control` — enables browser extension and external tool integration
 - `--chrome` — enables Claude in Chrome browser automation (requires extension install). Only add for personas that need web interaction
@@ -174,6 +174,23 @@ Each persona ships `.claude/settings.json` with sandbox config. No Docker requir
 Each persona customizes allowed domains for its MCP servers and APIs. Personas cannot read parent directories or other personas' files. The `extraKnownMarketplaces` and `enabledPlugins` entries auto-install persona-manager, giving every persona access to persona-dev for self-evolution.
 
 **Windows native caveat:** Since sandbox is not available, `--dangerously-skip-permissions` must never be used. Windows personas run with standard permission prompts. The `.claude-flags` file for Windows personas omits this flag.
+
+## Inheritance & Isolation Matrix
+
+What persona sessions inherit from `~/.claude/` and how to control it. The framework picks isolation defaults, but the user can adjust per-persona.
+
+| Surface | User-level location | Default in personas | Control mechanism |
+|---------|---------------------|---------------------|-------------------|
+| `settings.json` | `~/.claude/settings.json` | **Isolated** | `--setting-sources project,local` (in `.claude-flags`) |
+| `CLAUDE.md` | `~/.claude/CLAUDE.md` | **Isolated** | `claudeMdExcludes: ["**/.claude/CLAUDE.md"]` in persona's `.claude/settings.json` |
+| Plugins | `~/.claude/plugins/marketplaces/` | **Opt-in only** — persona declares which plugins to load | `enabledPlugins` map in persona's `.claude/settings.json` |
+| Hooks | declared in plugins or persona's `hooks.json` | Persona-controlled | Plugin's `hooks.json` (loads with the plugin) + persona's `hooks.json` |
+| MCPs (CLI / Desktop Code tab) | (none — project-scoped) | Per-persona | `.mcp.json` in persona root (gitignored) |
+| MCPs (Desktop Chat / Cowork) | `claude_desktop_config.json` | Shared globally | Edit Desktop config — out of band |
+| Loose skills/agents/commands | `~/.claude/{skills,agents,commands}/` | Anthropic docs are silent on `--setting-sources` interaction. Surface is minimal in practice — most components ship via plugins | None documented (no `skillExcludes` etc.) |
+| Statusline | `~/.claude/statusline.sh` | **Deliberately shared** | Persona's `settings.json` references `~/.claude/statusline.sh` so all sessions render consistently |
+
+**Granularity model:** Each persona's `.claude/settings.json` is the granularity surface. Edit `enabledPlugins` to add/remove plugin inheritance; edit `claudeMdExcludes` to add/remove path exclusions; remove the statusLine entry to drop the shared statusline. The scaffold (`persona-dev`) asks about inheritance posture during creation.
 
 ## Self-Improvement (Core Feature)
 
@@ -337,7 +354,7 @@ For scheduling that survives session restarts, use **scheduled tasks on claude.a
 
 ## Gotchas
 
-- Personas activate only when CWD is the persona's directory — `--setting-sources project,local` isolates settings.json, settings.local.json, AND CLAUDE.md (global `~/.claude/CLAUDE.md` does NOT load)
+- Personas activate only when CWD is the persona's directory — `--setting-sources project,local` isolates `settings.json` only; CLAUDE.md isolation requires `claudeMdExcludes` in the persona's `.claude/settings.json`
 - MCP servers need to be in both `.mcp.json` (CLI/Code tab) and `claude_desktop_config.json` (Desktop Chat/Cowork) — persona-dev handles this
 - `.claude/settings.json` (sandbox config) IS committed — `.claude/settings.local.json` is gitignored
 - Personas live in `~/.personas/`, NOT in this framework repo

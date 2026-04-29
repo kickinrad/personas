@@ -84,6 +84,32 @@ Before building anything, understand what this persona needs to be. **Use `AskUs
 - Present common integrations for the domain as options
 - This feeds directly into Phase 2 research
 
+**Step 7: Inheritance Posture** — `AskUserQuestion`
+
+Personas inherit some things from the user's `~/.claude/` directory by default. Ask which posture the user wants for this persona — high-level first, then drill down if they want granular control.
+
+**Initial question** (single-select):
+- **Strict isolation** — block global CLAUDE.md, no extra plugins. The persona only sees its own scaffold + the framework defaults (persona-manager, personas-mesh)
+- **Selective inheritance (Recommended)** — block global CLAUDE.md, but choose plugins explicitly from `~/.claude/plugins/marketplaces/`. Default for most personas
+- **Open inheritance** — inherit Wils's global CLAUDE.md too (for personas that want the user's voice/style/red-lines applied). Rare; only choose if the persona is meant to *be* an extension of the user
+
+**If "Selective inheritance":** drill down with up to two follow-up `AskUserQuestion` calls:
+
+1. *Block global CLAUDE.md?* — yes (default) writes `claudeMdExcludes: ["**/.claude/CLAUDE.md"]` to the persona's `.claude/settings.json`. No keeps the leak
+2. *Which plugins to enable?* — multi-select from the available plugins. Discover them via:
+   ```bash
+   for mp in ~/.claude/plugins/marketplaces/*/plugins/*/.claude-plugin/plugin.json; do
+     jq -r '.name' "$mp"
+   done
+   ```
+   Default-checked: `persona-manager@personas`, `personas-mesh@personas` (every persona needs these). User adds domain-relevant plugins beyond those
+
+**If "Strict isolation":** apply the same as Selective with claudeMdExcludes ON and only the two framework plugins enabled. No drill-down.
+
+**If "Open inheritance":** skip `claudeMdExcludes`. Still ask which plugins to enable (the global plugin set doesn't auto-merge — the persona's settings.json explicitly lists them).
+
+Store the chosen posture (and chosen plugin list) so Phase 5h can apply them.
+
 Don't rush this. A well-understood persona is easier to build and evolves better. Ask follow-up questions — domain expertise matters.
 
 ### Phase 2: Research
@@ -252,9 +278,15 @@ Copy `references/hooks-template.json` to `hooks.json` in the persona root. Copy 
 
 Copy `references/gitignore-template` to `.gitignore`.
 
-**5h. Configure sandbox**
+**5h. Configure sandbox + inheritance**
 
-Copy `references/settings-template.json` to `.claude/settings.json`. Add any persona-specific network domains for MCP servers to `allowedDomains`. The template includes `extraKnownMarketplaces` and `enabledPlugins` to auto-install persona-manager — this gives every persona access to persona-dev for self-evolution without manual plugin installation.
+Copy `references/settings-template.json` to `.claude/settings.json`, then apply the inheritance posture chosen in Phase 1 Step 7:
+
+- If posture is Strict or Selective with "block global CLAUDE.md = yes" → keep the `claudeMdExcludes: ["**/.claude/CLAUDE.md"]` from the template
+- If posture is Open or Selective with "block global CLAUDE.md = no" → remove the `claudeMdExcludes` key
+- Set `enabledPlugins` to the user's chosen plugin list (always include `persona-manager@personas` and `personas-mesh@personas` as the framework minimum)
+
+Add any persona-specific network domains for MCP servers to `allowedDomains`. The template includes `extraKnownMarketplaces` and `enabledPlugins` to auto-install persona-manager — this gives every persona access to persona-dev for self-evolution without manual plugin installation.
 
 Also create `.claude/settings.local.json` with the memory directory and output-style setting. **Use the absolute path** to the persona's memory directory — relative paths break on WSL where the project root is on `/mnt/c/` but Claude resolves relative paths from the Linux side:
 ```json
@@ -401,7 +433,7 @@ Present the detected config and walk the user through each flag using `AskUserQu
 | Flag | What it does | Ask the user |
 |------|-------------|--------------|
 | `--name {name}` | Sets the session display name in the terminal title and prompt bar. Makes it easy to identify which persona is running | Always include — uses the persona name. No need to ask |
-| `--setting-sources project,local` | Loads only this persona's settings.json, ignoring global `~/.claude/settings.json`. Keeps permissions, sandbox, and MCP config isolated to this persona | "This keeps your persona isolated from your global Claude config. Recommended ON unless you want global settings to merge in. Enable?" |
+| `--setting-sources project,local` | Loads only this persona's `settings.json` and `settings.local.json`, ignoring `~/.claude/settings.json`. Keeps permissions, sandbox, and MCP config isolated. **Note:** does NOT affect `CLAUDE.md` loading — for that, the persona's `.claude/settings.json` uses `claudeMdExcludes` to block `~/.claude/CLAUDE.md` from auto-discovery | "This keeps your persona's settings isolated from your global Claude config. Recommended ON unless you want global settings to merge in. Enable?" |
 | `--dangerously-skip-permissions` | Skips permission prompts for every tool use. **Only safe when OS-level sandbox is active** (macOS/Linux/WSL2) — the sandbox restricts filesystem + network even without prompts. **NEVER on Windows** | "This lets the persona work without asking permission for every action. It's safe because the sandbox restricts what it can access. Want autonomous mode, or prefer to approve actions manually?" |
 | `--remote-control` | Enables browser extension integration and external tool connections | "This allows tools like the Chrome extension to connect to your persona. Enable?" |
 | `--chrome` | Enables Claude in Chrome browser automation. Gives the persona access to your Chrome browser for web interaction, form filling, screenshots, and debugging | "This lets the persona interact with your Chrome browser (requires the Claude in Chrome extension). Does this persona need browser access?" |
@@ -583,7 +615,7 @@ After creating or updating a persona: `source ~/.personas/.aliases.sh` or restar
 
 **What the flags do:**
 - `--name {name}` — labels the session in the terminal title and prompt bar so you know which persona is running
-- `--setting-sources project,local` — loads only the persona's CLAUDE.md and .claude/settings.json (ignores global config)
+- `--setting-sources project,local` — loads only the persona's `settings.json` and `settings.local.json` (ignores `~/.claude/settings.json`). Note: does NOT affect `CLAUDE.md` loading — that's blocked separately via `claudeMdExcludes` in the persona's `.claude/settings.json`
 - `--dangerously-skip-permissions` — skips permission prompts. **Only safe when sandbox is enabled** (macOS/Linux/WSL2). Never use on Windows native
 - `--remote-control` — enables browser extension and external tool integration (Claude in Chrome, etc.)
 
