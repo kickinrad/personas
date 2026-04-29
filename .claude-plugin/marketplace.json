@@ -28,7 +28,7 @@
       "name": "personas-mesh",
       "source": "./plugins/personas-mesh",
       "description": "State sync for personas across WSL/Windows/Hetzner via a Tailscale-private git hub",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "category": "expansion"
     }
   ]

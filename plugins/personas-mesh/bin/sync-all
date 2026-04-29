@@ -53,6 +53,13 @@ any_warn=0
 for dir in "$root"/*/; do
   [ -d "$dir/.git" ] || continue
   persona=$(basename "$dir")
+  # Skip personas that have moved to a different home and should not sync.
+  # piper now lives in the Obsidian vault (see ~/.personas/piper/.persona-cwd
+  # on the WSL side); the historical ~/.personas/piper/ git repo on the
+  # Windows-bridge node is archive-only and must not push to the hub.
+  case "$persona" in
+    piper) continue ;;
+  esac
   rc=0
   "$SYNC_ONE" "${verbose_flag[@]}" "$dir" || rc=$?
   case $rc in
