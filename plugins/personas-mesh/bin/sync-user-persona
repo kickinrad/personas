@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# sync-user-persona: bidirectional rsync of user/ between WSL ↔ Windows for one persona.
+#
+# Usage: sync-user-persona <persona-name> [--verbose]
+#
+# Why this exists: user/ is gitignored (privacy for public personas), so the
+# git mesh doesn't carry it across hosts. On a single machine with both WSL
+# (~/.personas/) and Windows (/mnt/c/Users/$WIN_USER/.personas/) persona dirs,
+# user/ silently drifts unless reconciled separately.
+#
+# Strategy: two passes of `rsync -a --update` (mtime newer-wins). Deletes do
+# NOT propagate — by design. Auto-memory writes per-file pages so file-level
+# rsync handles everything cleanly except MEMORY.md (the index), where
+# latest-mtime wins; auto-memory rebuilds that index on the next session.
+#
+# Exit codes:
+#   0  synced (or one side missing — nothing to do)
+#   1  usage error
+#   >1 rsync error
+
+set -euo pipefail
+
+WIN_USER="${WIN_USER:-wilst}"
+
+VERBOSE=0
+persona=""
+for arg in "$@"; do
+  case "$arg" in
+    --verbose|-v) VERBOSE=1 ;;
+    -*) printf 'sync-user-persona: unknown flag: %s\n' "$arg" >&2; exit 1 ;;
+    *) persona="$arg" ;;
+  esac
+done
+
+[ -n "$persona" ] || { printf 'usage: sync-user-persona <persona> [--verbose]\n' >&2; exit 1; }
+
+wsl_dir="${HOME}/.personas/${persona}/user"
+win_dir="/mnt/c/Users/${WIN_USER}/.personas/${persona}/user"
+
+# Both sides must exist for sync to be meaningful. If one side is missing,
+# the persona only lives on one filesystem — nothing to reconcile.
+[ -d "$wsl_dir" ] || exit 0
+[ -d "$win_dir" ] || exit 0
+
+verbose_flag=()
+[ "$VERBOSE" = "1" ] && verbose_flag=(-v)
+
+# Direction 1: WSL → Win (copies only files where WSL is newer)
+rsync -a --update "${verbose_flag[@]}" "${wsl_dir}/" "${win_dir}/" >&2
+# Direction 2: Win → WSL (copies only files where Win is newer)
+rsync -a --update "${verbose_flag[@]}" "${win_dir}/" "${wsl_dir}/" >&2
+
+[ "$VERBOSE" = "1" ] && printf '  %s: synced\n' "$persona" >&2 || true
+exit 0
