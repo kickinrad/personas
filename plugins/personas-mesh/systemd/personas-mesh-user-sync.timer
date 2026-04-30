@@ -1,0 +1,10 @@
+[Unit]
+Description=Run personas-mesh user/ rsync every 5 minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Unit=personas-mesh-user-sync.service
+
+[Install]
+WantedBy=timers.target

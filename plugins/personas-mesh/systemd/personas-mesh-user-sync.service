@@ -1,0 +1,14 @@
+[Unit]
+Description=personas-mesh user/ rsync — reconcile gitignored user/ between WSL and Windows persona dirs
+Documentation=https://github.com/kickinrad/personas
+
+[Service]
+Type=oneshot
+Nice=10
+# Points directly at the framework repo path. No install step required:
+# editing the script in the repo is picked up on the next firing.
+# Tradeoff: this unit assumes the personas repo lives at the path below.
+# If you move the repo, edit ExecStart and run: systemctl --user daemon-reload.
+ExecStart=%h/projects/personal/personas/plugins/personas-mesh/bin/sync-user-all
+StandardOutput=journal
+StandardError=journal
