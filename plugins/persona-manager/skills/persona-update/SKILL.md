@@ -117,7 +117,17 @@ If any are missing, read `references/claude-md-template.md` for the canonical ve
 - `--dangerously-skip-permissions` is NOT present on Windows native
 - Don't add or remove optional flags (--remote-control, --chrome) — those are persona-specific
 
-### Step 6: Finalize
+### Step 6: After applying drift fixes
+
+Once all merges and conversational adjustments have landed, dispatch the `@persona-validator` agent against the persona directory before stamping the version. The validator is the structural counterpart to this skill — it checks scaffold completeness and framework compliance (file presence, frontmatter shape, hook wiring, settings keys) so drift fixes don't silently leave the persona in a half-updated state.
+
+```
+Agent('persona-validator', 'validate ~/.personas/{name}/')
+```
+
+If the validator surfaces failures, treat them as part of this update cycle: fix in place, re-run the validator, only stamp the version once it returns clean. Don't paper over a validator concern by stamping the version anyway — the next `persona-update` run will see the version match and skip the diff entirely.
+
+### Step 7: Finalize
 
 1. **Validate JSON:** `jq . hooks.json && jq . .claude/settings.json`
 2. **Check permissions:** `test -x .claude/hooks/public-repo-guard.sh`
