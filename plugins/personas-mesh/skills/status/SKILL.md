@@ -48,3 +48,13 @@ julia    ●3 dirty   —          1m ago ✓    1m ago      CONFLICT
 ## Fast path
 
 Run `ssh wils@cloud 'for r in /srv/personas/*.git; do echo "$(basename "$r") $(git -C "$r" log -1 --format=%ct 2>/dev/null)"; done'` once, parse, combine with local reads — one ssh round trip for all personas.
+
+## When sync is red
+
+`status` is the runner — it tells you which personas are unhealthy, but it does not diagnose root cause or apply fixes. As soon as the dashboard shows any of the following, hand off to `Skill('personas-mesh:mesh-doctor')`:
+
+- Status column reads `CONFLICT`, `DIVERGED`, or persistent `N behind` / `N ahead` that doesn't resolve on its own
+- A node column shows `●` (dirty) for more than one cycle
+- Hetzner or Hub column reports a stale timestamp relative to WSL/Windows on a persona that should be deployed there
+
+`mesh-doctor` owns the diagnosis-and-repair flow (sync-conflict branch resolution, hub re-push, rsync reconciliation between WSL and Windows). Don't try to repair from inside `status` — keep the runner read-only and let the doctor write.
