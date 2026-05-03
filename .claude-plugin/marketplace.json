@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Framework for self-evolving AI personas on Claude Code",
-    "version": "1.10.1",
+    "version": "1.10.3",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -14,21 +14,18 @@
       "name": "persona-manager",
       "source": "./plugins/persona-manager",
       "description": "Scaffolds and manages AI personas in ~/.personas/",
-      "version": "1.10.3",
       "category": "management"
     },
     {
       "name": "persona-dashboard",
       "source": "./plugins/persona-dashboard",
       "description": "Expansion pack — adds a visual HTML dashboard with task tracking to any persona",
-      "version": "1.0.0",
       "category": "expansion"
     },
     {
       "name": "personas-mesh",
       "source": "./plugins/personas-mesh",
       "description": "State sync for personas across WSL/Windows/Hetzner via a Tailscale-private git hub",
-      "version": "0.2.0",
       "category": "expansion"
     }
   ]
