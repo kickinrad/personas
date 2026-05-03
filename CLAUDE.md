@@ -261,7 +261,7 @@ Each persona's `.gitignore` handles its own secrets:
 
 Commits: `type(scope): description` — scope is `framework` for this repo, persona name for persona repos
 
-**Version bumping:** Bump `plugins/persona-manager/.claude-plugin/plugin.json` AND `.claude-plugin/marketplace.json` version fields together on every feature or fix commit to persona-manager. Use semver — patch for fixes, minor for features, major for breaking changes.
+**Version bumping:** Bump `version` in `plugins/persona-manager/.claude-plugin/plugin.json` on every feature or fix commit to persona-manager. Plugin.json is the single source of truth for version. Never add a `version` field to `marketplace.json` `plugins[]` entries — that field belongs in plugin.json only. Separately, `.claude-plugin/marketplace.json#metadata.version` is the marketplace's own structural version and bumps only when the marketplace itself changes. Use semver: patch for fixes, minor for features, major for breaking changes.
 
 ## MCP Server Configuration
 
