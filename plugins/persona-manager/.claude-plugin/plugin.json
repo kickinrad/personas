@@ -1,7 +1,7 @@
 {
   "name": "persona-manager",
   "description": "Scaffolds and evolves self-improving AI personas in ~/.personas/",
-  "version": "1.10.4",
+  "version": "1.10.5",
   "author": {
     "name": "kickinrad",
     "url": "https://github.com/kickinrad"
