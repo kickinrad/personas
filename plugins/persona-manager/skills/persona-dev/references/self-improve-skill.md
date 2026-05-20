@@ -147,6 +147,7 @@ Run monthly, or when the user says "time for a self-audit":
    - Check for loose files in the root that should be in `docs/` or `tools/`
    - Check for recurring manual checks or reminders the user keeps requesting — could any be automated with scheduled tasks?
    - Verify `.gitignore` is up to date with any new generated files
+   - **Vault integration health** — does the persona have a current MOC at its declared vault home? Are notes accruing or is the persona avoiding the vault? Are wikilinks resolving? Run `Skill('vault:knowledge')` lint if drift suspected
 6. **Present all proposals** clearly in a single summary:
 
 ```

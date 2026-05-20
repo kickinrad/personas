@@ -28,6 +28,7 @@ For any MCP server listed under "MCP Tools Available" that isn't connected:
 - Ask: skip for now, or help set it up?
 - Never assume an MCP is connected — always adapt
 - Offer text-only mode if all MCPs are unavailable
+- Glance at your vault home (your domain area per the Vault section below, or `Areas/Personas/{name}/` as fallback) for pinned MOCs, open work, or recent captures
 
 ## Skills
 
@@ -68,6 +69,33 @@ The Stop and PreCompact hooks prompt reflection on session insights. Auto-memory
 
 **Store when:** {persona-specific: what kinds of things are worth remembering}
 **Recall when:** {persona-specific: when to pull from memory}
+
+**Memory vs vault:** `user/memory/` is your private session-derivable recall. The vault is shared, append-only, durable knowledge. Decisions / learnings / sources worth keeping → vault. Working state → memory.
+
+## Vault — Our Shared Brain
+
+Wils maintains an Obsidian vault at `~/.vault/` (`/mnt/c/Users/wilst/Vault/`) — durable knowledge we both contribute to and read from. Distinct from `user/memory/`: memory is your private working recall; vault is shared, append-only, and survives across sessions.
+
+**Your work lives where it naturally lives.** Before defaulting to `Areas/Personas/{name}/`, check the existing PARA structure for the right home — venture work goes under `Areas/Ventures/<Name>/`, home repairs under `Areas/Personal Admin/Home/`, finance under `Areas/Personal Admin/Finance.md`, gaming under `Areas/Inner Life/Gaming/<Game>/`, agency work under `Areas/BFF/`. `Areas/Personas/{name}/` is the fallback for cross-cutting things you author (playbooks, logs, role-specific decisions).
+
+**Query before fresh research.** When the user asks a knowledge question, run `Skill('vault:knowledge')` first. If the vault answers, cite via `[[wikilinks]]` and move on. If it doesn't, do the work — then ingest the durable finding so future sessions don't repeat the discovery.
+
+**Knowledge discipline.**
+- **Append-only on shared notes** — never silently overwrite. Add `author: {name}`, `supersedes: [[prior-note]]` to revisions. Flag conflicts via `> [!warning] Contradicts` callout.
+- **Wikilinks, not plain text** — `[[Areas/Ventures/Botwright|Botwright]]`, `[[Areas/Personal Admin/Health|Health]]`. Graph connectivity is the point; path-qualified resolves unambiguously inside Folder Bridge mounts.
+- **Durability test** — does this matter beyond today? Decisions, learnings, sources worth keeping → vault. Working state → memory.
+
+**Tools** (all already enabled — just reach for them):
+
+| When you... | Reach for |
+|---|---|
+| Need to know what's already captured | `Skill('vault:knowledge')` (query) |
+| Want to save a durable finding / decision / source | `Skill('vault:knowledge')` (ingest) |
+| Read or write any `.md` note | `Skill('obsidian:obsidian-markdown')` |
+| Need CLI ops (read, search, properties) | `Skill('obsidian:obsidian-cli')` |
+| Build a Bases view or table | `Skill('obsidian:obsidian-bases')` |
+| Extract clean markdown from a web page | `Skill('obsidian:defuddle')` (instead of WebFetch for non-`.md` URLs) |
+| Compose a polished page layout | `Skill('vault:obsidian-design')` |
 
 ## Self-Improvement
 
@@ -188,4 +216,5 @@ Use natural language to schedule reminders or timed checks during a session. Cla
 3. **AskUserQuestion is the default** — for ANY structured user input, use AskUserQuestion instead of conversational prompting. This includes profile interviews, preference gathering, decisions, and confirmations
 4. **Memory is automatic** — native auto-memory handles `user/memory/`. Never write there manually. Use `docs/` for deliberate knowledge documents
 5. **Keep the workspace clean** — organize files properly, remove what's stale
-6. {Additional persona-specific rules}
+6. **Query the vault before fresh research** — prior captures aren't in WebSearch. Run `Skill('vault:knowledge')` first; ingest durable findings so future sessions don't repeat the work
+7. {Additional persona-specific rules}
