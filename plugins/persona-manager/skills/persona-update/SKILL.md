@@ -18,6 +18,7 @@ These are persona-specific and must never be overwritten:
 - Persona-specific `allowedDomains` in settings.json
 - Persona-specific `enabledPlugins` beyond `persona-manager@personas`
 - Custom Stop hook prompt additions (domain-specific context)
+- Persona-specific vault notes anywhere in the vault — user content, never modified by drift fix
 
 ## File-to-Template Mapping
 
@@ -102,8 +103,18 @@ These files are too customized for diffing. Check them conversationally:
 - Workspace Hygiene (file organization, cleanup habits)
 - Security (personal data handling, secret management)
 - Built-in Tools (Claude Code native capabilities)
+- `## Vault — Our Shared Brain` section (or equivalent vault-aware section)
+- Important Rules contains the "Query the vault before fresh research" bullet
+- Skills/Tools section references at least `vault:knowledge` + `obsidian:obsidian-cli`
 
 If any are missing, read `references/claude-md-template.md` for the canonical version and propose additions that fit the persona's style. Never rewrite personality or rules.
+
+**`.claude/settings.json`** — Read and verify:
+- `enabledPlugins` contains `vault@core` (not `vault@toolbox` — that's stale; propose a rewrite if found)
+- `enabledPlugins` contains `obsidian@obsidian-skills`
+- `extraKnownMarketplaces` contains `core` (directory source pointing at `/home/wilst/projects/markets/core`)
+
+If any are missing, merge from `references/settings-template.json` while preserving persona-specific `allowedDomains` and any extra plugins the persona enabled beyond the framework baseline.
 
 **Output-style** — Read `.claude/output-styles/` files and verify:
 - Has "Who I Am", "How I'll Be", "What I Won't Do" sections

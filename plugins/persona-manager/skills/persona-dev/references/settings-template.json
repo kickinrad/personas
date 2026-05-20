@@ -25,9 +25,24 @@
         "source": "github",
         "repo": "kickinrad/personas"
       }
+    },
+    "core": {
+      "source": {
+        "source": "directory",
+        "path": "/home/wilst/projects/markets/core"
+      },
+      "autoUpdate": true
+    },
+    "obsidian-skills": {
+      "source": {
+        "source": "github",
+        "repo": "kepano/obsidian-skills"
+      }
     }
   },
   "enabledPlugins": {
-    "persona-manager@personas": true
+    "persona-manager@personas": true,
+    "vault@core": true,
+    "obsidian@obsidian-skills": true
   }
 }

@@ -102,7 +102,7 @@ Personas inherit some things from the user's `~/.claude/` directory by default. 
      jq -r '.name' "$mp"
    done
    ```
-   Default-checked: `persona-manager@personas`, `personas-mesh@personas` (every persona needs these). User adds domain-relevant plugins beyond those
+   Default-checked: `persona-manager@personas`, `personas-mesh@personas`, `vault@core`, `obsidian@obsidian-skills` (every persona needs the framework pair plus vault + obsidian for the shared-brain integration baked into CLAUDE.md). User adds domain-relevant plugins beyond those
 
 **If "Strict isolation":** apply the same as Selective with claudeMdExcludes ON and only the two framework plugins enabled. No drill-down.
 
@@ -326,6 +326,15 @@ See the [personas framework](https://github.com/kickinrad/personas) for installa
 
 For **public repos**, consider adding a brief "What it does" section describing the persona's domain and skills.
 
+**5L. Scaffold the vault home**
+
+The persona's vault home is where its durable knowledge accrues (decisions, playbooks, captures). Bootstrap it now so the persona has a MOC to land work in from session one.
+
+1. Check whether `~/.vault/Areas/Personas/{name}/` exists.
+2. If missing, invoke `Skill('vault:knowledge')` MOC scaffold (or call the `/vault:repo-moc init Areas/Personas/{name}` slash command) to create the folder note. **Do not write new Python — use existing vault:knowledge capability.**
+3. The MOC stub should have proper frontmatter (`author: {name}`, `type: persona-moc`, `created: <date>`), an "Open work" section, a "Recent captures" section, and link back to the persona's natural domain area if one applies (e.g., `[[Areas/Personal Admin/Home|Home]]` for a home-repair persona, `[[Areas/Ventures/Botwright|Botwright]]` for a venture-focused persona).
+4. Skip Phase 5L with a clear warning if `~/.vault/` is unreachable (machine without WSL mount).
+
 **5j. Validate scaffold**
 
 Before proceeding, verify all required files exist:
@@ -341,6 +350,7 @@ Before proceeding, verify all required files exist:
 - [ ] `.claude/skills/self-improve/SKILL.md`
 - [ ] At least one domain skill in `.claude/skills/`
 - [ ] `.framework-version` (stamped with current plugin version)
+- [ ] `~/.vault/Areas/Personas/{name}/{Name}.md` MOC exists (skipped if Phase 5L unavailable)
 
 If anything is missing, fix it now — don't proceed with gaps.
 

@@ -15,7 +15,7 @@
     "SessionStart": [
       {
         "type": "command",
-        "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"Read user/profile.md now. If it contains unfilled template placeholders, use AskUserQuestion to interview the user section by section and populate each section (see Session Start in CLAUDE.md). If already filled out but incomplete, ask the user to fill in the gaps before proceeding. Then check MCP tool availability.\"}}'",
+        "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"Read user/profile.md now. If it contains unfilled template placeholders, use AskUserQuestion to interview the user section by section and populate each section (see Session Start in CLAUDE.md). If already filled out but incomplete, ask the user to fill in the gaps before proceeding. Then check MCP tool availability. Then glance at your vault home (your domain area per CLAUDE.md Vault section, or Areas/Personas/{name}/ as fallback) for pinned MOCs or recent captures.\"}}'",
         "timeout": 5000
       },
       {
@@ -27,7 +27,7 @@
     "Stop": [
       {
         "type": "prompt",
-        "prompt": "Before ending: reflect on whether anything meaningful happened this session (decisions, corrections, discoveries, preferences). Native auto-memory handles persistence automatically — do NOT manually create or edit files in user/memory/. Just ensure important insights surface in your thinking so auto-memory captures them. Skip if nothing worth remembering occurred."
+        "prompt": "Before ending: reflect on whether anything meaningful happened this session (decisions, corrections, discoveries, preferences). Native auto-memory handles persistence automatically — do NOT manually create or edit files in user/memory/. Just ensure important insights surface in your thinking so auto-memory captures them. Skip if nothing worth remembering occurred. Separately: did anything cross the durability bar this session — a decision, a learning, a source worth keeping? If yes, propose ingesting it via Skill('vault:knowledge') (don't silent-write; surface for approval). Auto-memory and vault ingest are different surfaces with different audiences."
       }
     ],
     "StopFailure": [
@@ -40,7 +40,7 @@
     "PreCompact": [
       {
         "type": "prompt",
-        "prompt": "Context is about to be compacted. Reflect on any important session context that should be preserved — decisions, discoveries, user preferences, corrections. Native auto-memory handles persistence automatically. Do NOT manually create or edit files in user/memory/."
+        "prompt": "Context is about to be compacted. Reflect on any important session context that should be preserved — decisions, discoveries, user preferences, corrections. Native auto-memory handles persistence automatically. Do NOT manually create or edit files in user/memory/. Separately: did anything cross the durability bar this session — a decision, a learning, a source worth keeping? If yes, propose ingesting it via Skill('vault:knowledge') (don't silent-write; surface for approval). Auto-memory and vault ingest are different surfaces with different audiences."
       }
     ],
     "PostCompact": [
