@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Framework for self-evolving AI personas on Claude Code",
-    "version": "1.10.4",
+    "version": "1.11.1",
     "pluginRoot": "./plugins"
   },
   "plugins": [
