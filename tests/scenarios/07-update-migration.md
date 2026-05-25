@@ -10,7 +10,6 @@ LLM-judge + Code-based
 
 Create a deliberately outdated test persona with these drift points:
 - `hooks.json` missing `PostCompact` and `PreCompact` hooks (only has 4 of 6)
-- `.claude-flags` missing `--name` flag (old format without it)
 - `.claude/settings.json` missing `enabledPlugins` entry (old format)
 - `.claude/settings.json` using old plugin name format
 - `.claude/skills/self-improve/SKILL.md` has outdated content (missing workspace hygiene section)
@@ -26,7 +25,6 @@ Run persona-dev update to check this persona for drift against the latest framew
 
 ### LLM-judge
 - [ ] The update skill detected the missing `PostCompact` and `PreCompact` hooks
-- [ ] The update skill detected the missing `--name` flag in `.claude-flags`
 - [ ] The update skill detected the missing/outdated `enabledPlugins` in settings.json
 - [ ] The update skill explained WHY each change matters (not just "this is missing")
 - [ ] The update skill proposed changes one at a time (not a bulk "fix everything")
@@ -34,7 +32,6 @@ Run persona-dev update to check this persona for drift against the latest framew
 
 ### Code-based (after applying all proposed changes)
 - [ ] `hooks.json` now has all 6 hook types
-- [ ] `.claude-flags` contains `--name` flag with persona name
 - [ ] `.claude/settings.json` has `enabledPlugins["persona-manager@personas"]: true`
 - [ ] `.gitignore` includes `*.local.json`
 - [ ] All JSON files are still valid JSON after modifications

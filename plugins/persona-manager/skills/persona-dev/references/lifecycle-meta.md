@@ -83,7 +83,6 @@ After creating or updating a persona: `source ~/.personas/.aliases.sh` or restar
 **Per-persona flags:** Each persona stores its flags in `.claude-flags` (a single line). This is configured during Phase 8 (flag setup). If the file is missing, the alias falls back to safe defaults (no `--dangerously-skip-permissions`).
 
 **What the flags do:**
-- `--name {name}` — labels the session in the terminal title and prompt bar so you know which persona is running
 - `--setting-sources project,local` — loads only the persona's `settings.json` and `settings.local.json` (ignores `~/.claude/settings.json`). Note: does NOT affect `CLAUDE.md` loading — that's blocked separately via `claudeMdExcludes` in the persona's `.claude/settings.json`
 - `--dangerously-skip-permissions` — skips permission prompts. **Only safe when sandbox is enabled** (macOS/Linux/WSL2). Never use on Windows native
 - `--remote-control` — enables browser extension and external tool integration (Claude in Chrome, etc.)

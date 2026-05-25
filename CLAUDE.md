@@ -78,11 +78,10 @@ Each alias reads per-persona flags from `~/.personas/{name}/.claude-flags` (conf
 
 | Platform | Default flags |
 |----------|---------------|
-| macOS / Linux / WSL2 | `--name {name} --setting-sources project,local --dangerously-skip-permissions --remote-control` |
-| Windows native | `--name {name} --setting-sources project,local --remote-control` |
+| macOS / Linux / WSL2 | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
+| Windows native | `--setting-sources project,local --remote-control` |
 
 **Available flags:**
-- `--name {name}` — labels the session in the terminal title and prompt bar with the persona's name
 - `--setting-sources project,local` — loads only persona's `settings.json` and `settings.local.json`, ignoring `~/.claude/settings.json`. Keeps permissions, sandbox, MCP config, and memory config isolated. **Note:** this flag does NOT affect `CLAUDE.md` loading — `~/.claude/CLAUDE.md` is blocked separately via `claudeMdExcludes` in the persona's `.claude/settings.json` (see [Inheritance & Isolation Matrix](#inheritance--isolation-matrix))
 - `--dangerously-skip-permissions` — skips permission prompts. **Only safe when OS-level sandbox is available** (macOS/Linux/WSL2). **⚠ NEVER use on Windows native** — no sandbox means unrestricted filesystem + network access
 - `--remote-control` — enables browser extension and external tool integration
