@@ -110,7 +110,6 @@ For `.claude/settings.json`, verify:
 - `enabledPlugins` includes `persona-manager@personas`
 
 For `.claude-flags`, verify:
-- Contains `--name` flag
 - Contains `--setting-sources project,local`
 - If OS is Windows native (check via `uname`): must NOT contain `--dangerously-skip-permissions`
 

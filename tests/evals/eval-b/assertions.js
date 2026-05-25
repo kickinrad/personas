@@ -145,9 +145,8 @@ module.exports.autoMemoryConfigured = (output) => {
 module.exports.claudeFlagsCorrect = (output) => {
   const content = readFile('.claude-flags');
   if (!content) return result(false, '.claude-flags missing');
-  const hasName = content.includes('--name');
   const hasSources = content.includes('--setting-sources');
-  return result(hasName && hasSources, `--name: ${hasName}, --setting-sources: ${hasSources}`);
+  return result(hasSources, `--setting-sources: ${hasSources}`);
 };
 
 module.exports.gitignoreCorrect = (output) => {
@@ -284,11 +283,11 @@ module.exports.networkRestricted = (output) => {
 
 module.exports.allHooksPresent = module.exports.hooksHas6Types;
 
-module.exports.flagsHaveName = (output) => {
+module.exports.flagsHaveSettingSources = (output) => {
   const content = readFile('.claude-flags');
   if (!content) return result(false, '.claude-flags missing');
-  const hasName = /--name\s+\S+/.test(content);
-  return result(hasName, hasName ? '--name flag present' : '--name flag missing');
+  const hasSources = content.includes('--setting-sources');
+  return result(hasSources, hasSources ? '--setting-sources flag present' : '--setting-sources flag missing');
 };
 
 module.exports.enabledPluginsPresent = (output) => {

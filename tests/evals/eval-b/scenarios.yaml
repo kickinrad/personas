@@ -236,8 +236,7 @@
       value: |
         Evaluate the update migration based on these criteria:
         1. Detected the missing PostCompact and PreCompact hooks in hooks.json
-        2. Detected the missing --name flag in .claude-flags
-        3. Detected the missing/outdated enabledPlugins in settings.json
+        2. Detected the missing/outdated enabledPlugins in settings.json
         4. Explained WHY each change matters (not just "this is missing")
         5. Proposed changes one at a time (not a bulk "fix everything")
         6. Waited for approval before applying each change
@@ -247,7 +246,7 @@
       value: file://assertions.js:allHooksPresent
       metric: Update/Applied
     - type: javascript
-      value: file://assertions.js:flagsHaveName
+      value: file://assertions.js:flagsHaveSettingSources
       metric: Update/Applied
     - type: javascript
       value: file://assertions.js:enabledPluginsPresent

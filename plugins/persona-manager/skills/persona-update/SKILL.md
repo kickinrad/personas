@@ -123,7 +123,6 @@ If any are missing, merge from `references/settings-template.json` while preserv
 - Boundary rule: voice/personality here, operational content in CLAUDE.md
 
 **.claude-flags** — Read and verify:
-- `--name {persona}` is present (use directory name)
 - `--setting-sources project,local` is present
 - `--dangerously-skip-permissions` is NOT present on Windows native
 - Don't add or remove optional flags (--remote-control, --chrome) — those are persona-specific

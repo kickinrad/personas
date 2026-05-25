@@ -442,7 +442,6 @@ Present the detected config and walk the user through each flag using `AskUserQu
 
 | Flag | What it does | Ask the user |
 |------|-------------|--------------|
-| `--name {name}` | Sets the session display name in the terminal title and prompt bar. Makes it easy to identify which persona is running | Always include — uses the persona name. No need to ask |
 | `--setting-sources project,local` | Loads only this persona's `settings.json` and `settings.local.json`, ignoring `~/.claude/settings.json`. Keeps permissions, sandbox, and MCP config isolated. **Note:** does NOT affect `CLAUDE.md` loading — for that, the persona's `.claude/settings.json` uses `claudeMdExcludes` to block `~/.claude/CLAUDE.md` from auto-discovery | "This keeps your persona's settings isolated from your global Claude config. Recommended ON unless you want global settings to merge in. Enable?" |
 | `--dangerously-skip-permissions` | Skips permission prompts for every tool use. **Only safe when OS-level sandbox is active** (macOS/Linux/WSL2) — the sandbox restricts filesystem + network even without prompts. **NEVER on Windows** | "This lets the persona work without asking permission for every action. It's safe because the sandbox restricts what it can access. Want autonomous mode, or prefer to approve actions manually?" |
 | `--remote-control` | Enables browser extension integration and external tool connections | "This allows tools like the Chrome extension to connect to your persona. Enable?" |
@@ -452,12 +451,12 @@ Present the detected config and walk the user through each flag using `AskUserQu
 
 | Environment | Sandbox? | Default flags |
 |-------------|----------|---------------|
-| macOS | Yes (Seatbelt) | `--name {name} --setting-sources project,local --dangerously-skip-permissions --remote-control` |
-| Linux | Yes (bubblewrap) | `--name {name} --setting-sources project,local --dangerously-skip-permissions --remote-control` |
-| WSL2 | Yes (bubblewrap) | `--name {name} --setting-sources project,local --dangerously-skip-permissions --remote-control` |
-| Windows native | **No** | `--name {name} --setting-sources project,local --remote-control` |
+| macOS | Yes (Seatbelt) | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
+| Linux | Yes (bubblewrap) | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
+| WSL2 | Yes (bubblewrap) | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
+| Windows native | **No** | `--setting-sources project,local --remote-control` |
 
-`--name` is always included with the persona's name — it labels the session in the terminal title and prompt bar. `--chrome` is not in the defaults but is always offered as an optional addition during the walkthrough.
+`--chrome` is not in the defaults but is always offered as an optional addition during the walkthrough.
 
 ---
 
@@ -485,7 +484,7 @@ Present defaults first, then offer customization via `AskUserQuestion`:
 Write the chosen flags into `~/.personas/{name}/.claude-flags` (a single line, sourced by the alias):
 
 ```bash
-echo '--name {name} --setting-sources project,local --dangerously-skip-permissions --remote-control' > ~/.personas/{name}/.claude-flags
+echo '--setting-sources project,local --dangerously-skip-permissions --remote-control' > ~/.personas/{name}/.claude-flags
 ```
 
 This file is read by `.aliases.sh` so each persona can have its own flag configuration.
@@ -515,9 +514,9 @@ function {name} {
     param([Parameter(ValueFromRemainingArguments)]$args)
     Push-Location "$env:USERPROFILE\.personas\{name}"
     if ($args) {
-        claude --name {name} --setting-sources project,local --remote-control -p ($args -join ' ')
+        claude --setting-sources project,local --remote-control -p ($args -join ' ')
     } else {
-        claude --name {name} --setting-sources project,local --remote-control
+        claude --setting-sources project,local --remote-control
     }
     Pop-Location
 }

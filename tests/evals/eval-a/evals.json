@@ -38,8 +38,7 @@
         ".claude/settings.json has extraKnownMarketplaces.personas entry",
         ".claude/settings.json has enabledPlugins persona-manager@personas: true",
         ".claude/settings.local.json has autoMemoryDirectory set to an absolute path ending in /user/memory",
-        ".claude-flags exists and contains --name test-eval-persona",
-        ".claude-flags contains --setting-sources project,local",
+        ".claude-flags exists and contains --setting-sources project,local",
         ".gitignore includes .mcp.json",
         ".gitignore includes .claude/settings.local.json",
         "Git repo is initialized (.git/ directory exists)"
@@ -82,7 +81,6 @@
         { "check": "json_key_equals", "path": "~/.personas/test-eval-persona/.claude/settings.json", "key": "sandbox.enabled", "value": true },
         { "check": "json_has_key", "path": "~/.personas/test-eval-persona/.claude/settings.json", "key": "extraKnownMarketplaces.personas" },
         { "check": "json_key_equals", "path": "~/.personas/test-eval-persona/.claude/settings.json", "key": "enabledPlugins.persona-manager@personas", "value": true },
-        { "check": "file_contains", "path": "~/.personas/test-eval-persona/.claude-flags", "content": "--name test-eval-persona" },
         { "check": "file_contains", "path": "~/.personas/test-eval-persona/.claude-flags", "content": "--setting-sources project,local" },
         { "check": "file_contains", "path": "~/.personas/test-eval-persona/.gitignore", "content": ".mcp.json" },
         { "check": "file_contains", "path": "~/.personas/test-eval-persona/.gitignore", "content": ".claude/settings.local.json" },
@@ -269,7 +267,7 @@
       "grader_type": "hybrid",
       "setup": {
         "description": "Create deliberately outdated persona with drift points",
-        "script": "cd ~/.personas/test-eval-persona && cp hooks.json hooks.json.bak && cp .claude-flags .claude-flags.bak && cp .claude/settings.json .claude/settings.json.bak && cp .gitignore .gitignore.bak && jq 'del(.hooks[] | select(.type == \"PostCompact\" or .type == \"PreCompact\"))' hooks.json > hooks.json.tmp && mv hooks.json.tmp hooks.json && sed -i 's/--name test-eval-persona//' .claude-flags && jq 'del(.enabledPlugins)' .claude/settings.json > .claude/settings.json.tmp && mv .claude/settings.json.tmp .claude/settings.json && sed -i '/\\.local\\.json/d' .gitignore"
+        "script": "cd ~/.personas/test-eval-persona && cp hooks.json hooks.json.bak && cp .claude-flags .claude-flags.bak && cp .claude/settings.json .claude/settings.json.bak && cp .gitignore .gitignore.bak && jq 'del(.hooks[] | select(.type == \"PostCompact\" or .type == \"PreCompact\"))' hooks.json > hooks.json.tmp && mv hooks.json.tmp hooks.json && jq 'del(.enabledPlugins)' .claude/settings.json > .claude/settings.json.tmp && mv .claude/settings.json.tmp .claude/settings.json && sed -i '/\\.local\\.json/d' .gitignore"
       },
       "teardown": {
         "script": "cd ~/.personas/test-eval-persona && for f in hooks.json .claude-flags .claude/settings.json .gitignore; do [ -f \"${f}.bak\" ] && mv \"${f}.bak\" \"$f\"; done"
@@ -280,13 +278,11 @@
       },
       "expectations": [
         "The update skill detected the missing PostCompact and PreCompact hooks",
-        "The update skill detected the missing --name flag in .claude-flags",
         "The update skill detected the missing/outdated enabledPlugins in settings.json",
         "The update skill explained WHY each change matters",
         "The update skill proposed changes one at a time (not bulk)",
         "The update skill waited for approval before applying each change",
         "hooks.json now has all 6 hook types after updates",
-        ".claude-flags contains --name flag with persona name after updates",
         ".claude/settings.json has enabledPlugins after updates",
         ".gitignore includes *.local.json after updates",
         "All JSON files are still valid JSON after modifications",
@@ -296,7 +292,7 @@
         { "check": "json_array_length", "path": "~/.personas/test-eval-persona/hooks.json", "key": "hooks", "expected": 6 },
         { "check": "file_contains", "path": "~/.personas/test-eval-persona/hooks.json", "content": "PreCompact" },
         { "check": "file_contains", "path": "~/.personas/test-eval-persona/hooks.json", "content": "PostCompact" },
-        { "check": "file_contains", "path": "~/.personas/test-eval-persona/.claude-flags", "content": "--name" },
+        { "check": "file_contains", "path": "~/.personas/test-eval-persona/.claude-flags", "content": "--setting-sources" },
         { "check": "json_has_key", "path": "~/.personas/test-eval-persona/.claude/settings.json", "key": "enabledPlugins" },
         { "check": "file_contains", "path": "~/.personas/test-eval-persona/.gitignore", "content": "*.local.json" },
         { "check": "json_valid", "path": "~/.personas/test-eval-persona/hooks.json" },
@@ -306,7 +302,6 @@
       ],
       "llm_assertions": [
         "The update skill detected the missing PostCompact and PreCompact hooks",
-        "The update skill detected the missing --name flag in .claude-flags",
         "The update skill detected the missing/outdated enabledPlugins in settings.json",
         "The update skill explained WHY each change matters (not just 'this is missing')",
         "The update skill proposed changes one at a time (not a bulk 'fix everything')",
