@@ -1,6 +1,6 @@
 ---
 name: persona-dev
-description: This skill should be used when the user asks to "create a new persona", "build me a persona", "add a skill to an existing persona", "update a persona's CLAUDE.md or profile", "set up hooks or self-improvement", "document a new MCP tool in a persona", or improve how a persona works over time. Also triggers when the user says "my persona should remember this", "this keeps happening, make it a skill", "create a persona for", or "persona evolution".
+description: This skill should be used when the user asks to "create a new persona", "build me a persona", "add a skill to an existing persona", "wire a plugin into a persona", "enable a plugin for a persona", "update a persona's CLAUDE.md or profile", "set up hooks or self-improvement", "document a new MCP tool in a persona", or improve how a persona works over time. Also triggers when the user says "my persona should remember this", "this keeps happening, make it a skill", "create a persona for", or "persona evolution".
 ---
 
 # Persona Development
@@ -26,7 +26,6 @@ Each persona contains:
 ├── hooks.json                     # SessionStart + Stop + StopFailure + PreCompact + PostCompact + PreToolUse hooks
 ├── .framework-version             # Framework version stamp (committed)
 ├── CLAUDE.md                      # Personality + rules
-├── docs/                          # Reference materials, plans
 ├── .mcp.json                      # MCP server config (gitignored)
 ├── tools/                         # Utilities, scripts, pipelines (committed)
 ├── docs/                          # Reference materials, plans (committed)
@@ -541,6 +540,23 @@ Desktop is not available on Linux — Linux users are CLI-only.
 - **Windows native** does NOT support sandboxing — never use `--dangerously-skip-permissions`.
 
 Then verify the persona works — run through the [Testing a Persona](#testing-a-persona) checklist.
+
+---
+
+## Wiring a Plugin into an Existing Persona
+
+To give an existing persona a capability that ships as a Claude Code plugin, wire it in this order — each step gates the next:
+
+1. **Register the marketplace** — if the plugin's marketplace isn't in the persona's `.claude/settings.json` → `extraKnownMarketplaces`, add it:
+   ```json
+   "extraKnownMarketplaces": {
+     "{marketplace}": { "source": { "source": "github", "repo": "{owner}/{repo}" } }
+   }
+   ```
+2. **Enable the plugin** — add `"{plugin}@{marketplace}": true` to `enabledPlugins` in the same file. The plugin auto-installs on next launch — no manual `/plugin install`.
+3. **Scope sandbox + permissions** — add any domains the plugin's tools call to `network.allowedDomains`. If the plugin needs writes outside the persona's directory (e.g., a token-refresh file), extend `filesystem.allowWrite` to exactly those paths — no broader.
+4. **Document in CLAUDE.md** — add the plugin's skills to the persona's Skills table (trigger phrase, skill name, what happens), plus a usage-posture line under Tools & Integrations stating how this persona uses the capability (e.g., read-only queries for coaching context, never writes). An enabled plugin the CLAUDE.md never mentions won't be reached for — and a posture narrower than what the plugin allows must be stated explicitly.
+5. **Verify** — restart the persona session, confirm the plugin's skills are listed, and run one trigger phrase end-to-end.
 
 ---
 
