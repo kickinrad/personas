@@ -113,6 +113,13 @@ For `.claude-flags`, verify:
 - Contains `--setting-sources project,local`
 - If OS is Windows native (check via `uname`): must NOT contain `--dangerously-skip-permissions`
 
+For memory configuration, verify exactly one `autoMemoryDirectory` is configured:
+- `autoMemoryDirectory` lives in `.claude/settings.local.json` (Claude ignores it in `settings.json` as a security measure)
+- Confirm exactly one persona memory store is wired: a single `autoMemoryDirectory` key resolving to an absolute path under the persona's `user/memory/`
+- FAIL if more than one config surface declares `autoMemoryDirectory` (e.g. both `settings.json` and `settings.local.json`, or a duplicate key) — duplicate stores create parallel memory with orphaned knowledge; report each declaring file and point at the orphaned store
+- WARN if the path is relative (relative paths break on WSL) or points outside `user/memory/`
+- WARN if `autoMemoryDirectory` is absent (memory persistence is disabled)
+
 ## 4. Drift Detection
 
 Read `.framework-version` and compare against the current persona-manager plugin version:
