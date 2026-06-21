@@ -1,9 +1,14 @@
 [Unit]
 Description=personas-mesh Windows-FS bridge — sync /mnt/c/Users/*/.personas/*
 Documentation=https://github.com/kickinrad/personas
-# This unit is installed but NOT enabled until Phase 4 of the rollout
-# (after ~/.personas is no longer a symlink to /mnt/c/...). Until then,
-# running both bridges against the same inode would produce no-op churn.
+# DISABLED BY DESIGN — do NOT enable. `personas-mesh-wsl` is the single
+# canonical Layer-1 git-mesh path. Pre-Phase-4 (~/.personas was a symlink to
+# /mnt/c/...) this bridge would have churned the same inode; post-Phase-4 the
+# two are separate dirs holding the SAME personas, so running this alongside
+# wsl dual-pushes identical repos to the hub and causes merge conflicts.
+# Windows-side changes reach the mesh via personas-mesh-user-sync (Layer-2
+# rsync) -> ~/.personas -> wsl. Re-enable ONLY if the Windows dir ever becomes
+# a genuinely independent node (different personas than ~/.personas).
 
 [Service]
 Type=oneshot

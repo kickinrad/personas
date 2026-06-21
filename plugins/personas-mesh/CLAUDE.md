@@ -13,7 +13,7 @@ Sync personas across WSL / Windows / Hetzner through a Tailscale-private git hub
 | `bin/` | `render-config`, `sync-persona`, `sync-all` — git mesh (cross-host sync via the hub). `sync-user-persona`, `sync-user-all` — local user/ rsync (WSL ↔ Windows reconciliation for gitignored personal data) |
 | `hooks/` | `session-start.sh`, `stop.sh` — injected into each persona's `hooks.json` during `personas-mesh:setup` |
 | `skills/` | `setup`, `mesh-doctor`, `status` — human-invoked workflows |
-| `systemd/` | User-unit files for WSL watchdog, WSL Windows-bridge (disabled until Phase 4), Hetzner host, plus `personas-mesh-user-sync` (local user/ rsync, no install required — points at repo path directly) |
+| `systemd/` | User-unit files for WSL watchdog, WSL Windows-bridge (**disabled by design** — `personas-mesh-wsl` is the single canonical Layer-1 git-mesh path; enabling the bridge dual-pushes the same personas from `/mnt/c/...` and conflicts), Hetzner host, plus `personas-mesh-user-sync` (local user/ rsync, no install required — points at repo path directly) |
 | `templates/` | `.gitattributes` (merge=union rules), `.gitignore.additions`, `.mcp.json.template`, `settings.local.json.template` |
 | `docs/` | `hetzner-bootstrap.md`, `migration-symlink-to-mesh.md` — runbooks for steps requiring interactive sudo |
 
