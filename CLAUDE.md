@@ -82,7 +82,7 @@ Each alias reads per-persona flags from `~/.personas/{name}/.claude-flags` (conf
 | Windows native | `--setting-sources project,local --remote-control` |
 
 **Available flags:**
-- `--setting-sources project,local` — loads only persona's `settings.json` and `settings.local.json`, ignoring `~/.claude/settings.json`. Keeps permissions, sandbox, MCP config, and memory config isolated. **Note:** this flag does NOT affect `CLAUDE.md` loading — `~/.claude/CLAUDE.md` is blocked separately via `claudeMdExcludes` in the persona's `.claude/settings.json` (see [Inheritance & Isolation Matrix](#inheritance--isolation-matrix))
+- `--setting-sources project,local` — loads only persona's `settings.json` and `settings.local.json`, ignoring `~/.claude/settings.json`. Keeps permissions, sandbox, MCP config, and memory config isolated. **It also blocks `~/.claude/CLAUDE.md`** — the user-level memory file travels with the `user` settings source, so excluding `user` drops it (verified empirically 2026-06-23 via canary test). **Desktop/Cowork don't apply this launch flag**, so there `claudeMdExcludes` in the persona's `.claude/settings.json` is what isolates CLAUDE.md — keep both layers (see [Inheritance & Isolation Matrix](#inheritance--isolation-matrix))
 - `--dangerously-skip-permissions` — skips permission prompts. **Only safe when OS-level sandbox is available** (macOS/Linux/WSL2). **⚠ NEVER use on Windows native** — no sandbox means unrestricted filesystem + network access
 - `--remote-control` — enables browser extension and external tool integration
 - `--chrome` — enables Claude in Chrome browser automation (requires extension install). Only add for personas that need web interaction
@@ -181,7 +181,7 @@ What persona sessions inherit from `~/.claude/` and how to control it. The frame
 | Surface | User-level location | Default in personas | Control mechanism |
 |---------|---------------------|---------------------|-------------------|
 | `settings.json` | `~/.claude/settings.json` | **Isolated** | `--setting-sources project,local` (in `.claude-flags`) |
-| `CLAUDE.md` | `~/.claude/CLAUDE.md` | **Isolated** | `claudeMdExcludes: ["**/.claude/CLAUDE.md"]` in persona's `.claude/settings.json` |
+| `CLAUDE.md` | `~/.claude/CLAUDE.md` | **Isolated** | **CLI:** `--setting-sources project,local` already blocks it (the user-level `CLAUDE.md` travels with the `user` settings source). **Desktop/Cowork:** `claudeMdExcludes: ["**/.claude/CLAUDE.md"]` in persona's `.claude/settings.json` (the launch flag isn't applied there). Ship both — see note below. |
 | Plugins | `~/.claude/plugins/marketplaces/` | **Opt-in only** — persona declares which plugins to load | `enabledPlugins` map in persona's `.claude/settings.json` |
 | Hooks | declared in plugins or persona's `hooks.json` | Persona-controlled | Plugin's `hooks.json` (loads with the plugin) + persona's `hooks.json` |
 | MCPs (CLI / Desktop Code tab) | (none — project-scoped) | Per-persona | `.mcp.json` in persona root (gitignored) |
@@ -353,7 +353,7 @@ For scheduling that survives session restarts, use **scheduled tasks on claude.a
 
 ## Gotchas
 
-- Personas activate only when CWD is the persona's directory — `--setting-sources project,local` isolates `settings.json` only; CLAUDE.md isolation requires `claudeMdExcludes` in the persona's `.claude/settings.json`
+- Personas activate only when CWD is the persona's directory — in CLI, `--setting-sources project,local` isolates BOTH `settings.json` and `~/.claude/CLAUDE.md` (the user memory travels with the `user` source). `claudeMdExcludes` is still required for Desktop/Cowork, which don't apply the launch flag — keep both layers
 - MCP servers need to be in both `.mcp.json` (CLI/Code tab) and `claude_desktop_config.json` (Desktop Chat/Cowork) — persona-dev handles this
 - `.claude/settings.json` (sandbox config) IS committed — `.claude/settings.local.json` is gitignored
 - Personas live in `~/.personas/`, NOT in this framework repo
