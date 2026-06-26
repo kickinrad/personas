@@ -300,6 +300,8 @@ For example, if the persona lives at `~/.personas/warren/`, the value would be `
 
 **Important:** `autoMemoryDirectory` and `outputStyle` must be in `settings.local.json`, not `settings.json`. Claude Code ignores `autoMemoryDirectory` in project settings (`.claude/settings.json`) as a security measure — it only works from local or user settings. The `settings.local.json` file is gitignored, so persona-dev must create it during setup on each machine.
 
+**Setting-source precedence — why the persona's output-style wins.** The persona alias launches with `--setting-sources project,local` (Phase 8), which loads only the `project` source (`.claude/settings.json`) and `local` source (`.claude/settings.local.json`) — the `user` source (`~/.claude/settings.json`) is excluded entirely. Output-style resolves by source precedence `local > project > user`, so the `outputStyle` in `settings.local.json` wins and there is **no fallback to any global output-style** — a persona that omits the key boots in default Claude voice, never the user's global style. To verify which style a persona actually uses: confirm `outputStyle` in `.claude/settings.local.json` names a file that exists in `.claude/output-styles/`, check that `.claude/settings.json` doesn't set a conflicting `outputStyle`, and run `/output-style` in a live persona session to see the resolved active style.
+
 **5i. Create README.md**
 
 Every persona repo gets a short README. Keep it minimal — this isn't a library, it's a personal assistant:
