@@ -250,6 +250,8 @@ Create `.claude/output-styles/{name}.md` using `references/output-style-template
 
 The boundary rule: voice and personality go here; operational procedures, skills, tools, and security go in CLAUDE.md. Narrative expertise ("After 20 years in finance, I've seen every fad crash and burn...") goes here. Spec-sheet expertise ("Domains: budgeting, investing, tax planning") goes in CLAUDE.md's Role section.
 
+The same split governs rule changes after scaffolding: when a shared rule propagates across personas, its invariant core lands in each persona independently while the warmth — the voice and framing in files like this one — stays untouched. See "Propagating a Shared Rule Across Personas" in the sibling `persona-update` skill.
+
 Use the strong/weak examples from the template as guidance. The persona should have opinions and a point of view — bland personas get ignored.
 
 **5d. Create first domain skill(s)**

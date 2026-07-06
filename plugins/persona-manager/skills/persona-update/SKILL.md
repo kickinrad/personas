@@ -20,6 +20,17 @@ These are persona-specific and must never be overwritten:
 - Custom Stop hook prompt additions (domain-specific context)
 - Persona-specific vault notes anywhere in the vault — user content, never modified by drift fix
 
+## Propagating a Shared Rule Across Personas
+
+When a rule or principle changes for every persona — a framework behavioral standard, a shared operating rule — split it into two parts before touching any files:
+
+- **Core** — the invariant rule text: what the rule requires. Identical in meaning across all personas.
+- **Warmth** — each persona's expression of that rule: the voice, framing, and examples it wears in that persona's CLAUDE.md or output-style.
+
+Propagate the core by editing each persona's surface independently. Read how the persona expresses the current rule, then rewrite that passage so it carries the new core in the persona's existing voice. Never paste identical text into every persona, and never flatten or homogenize the warmth to make the edit easier — a rule that arrives in the wrong voice erodes the personality the persona was built around. If a persona's existing expression conflicts with the new core in a way that can't be resolved without changing the voice, surface it with `AskUserQuestion` instead of averaging the two.
+
+This governs Step 4 merges, the Step 5 conversational checks (CLAUDE.md and output-style), and especially Batch mode, where the temptation to copy one merged result across all personas is strongest.
+
 ## File-to-Template Mapping
 
 Templates live in the `persona-dev` skill's `references/` directory (sibling skill in this plugin). Find them at `~/.claude/plugins/marketplaces/personas/plugins/persona-manager/skills/persona-dev/references/`.
@@ -152,4 +163,4 @@ If the validator surfaces failures, treat them as part of this update cycle: fix
 
 **Cross-update:** CWD is elsewhere — ask which persona: `ls ~/.personas/`, then operate on `~/.personas/{name}/`.
 
-**Batch:** Update all personas — `ls ~/.personas/`, run on each sequentially, present a combined report.
+**Batch:** Update all personas — `ls ~/.personas/`, run on each sequentially, present a combined report. When the batch carries a shared rule change, apply the core/warmth split above: one core, per-persona expression, no copy-pasted merged text.
