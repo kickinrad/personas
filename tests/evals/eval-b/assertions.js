@@ -70,7 +70,7 @@ module.exports.requiredFilesExist = (output) => {
   const checks = [
     'user/profile.md', 'user/memory/MEMORY.md', '.gitignore',
     '.claude/settings.json', '.claude/settings.local.json',
-    'hooks.json', '.claude/skills/self-improve/SKILL.md'
+    'hooks.json'
   ];
   const missing = checks.filter(f => !fileExists(f));
   return result(missing.length === 0, missing.length === 0 ? 'All required files present' : `Missing: ${missing.join(', ')}`);

@@ -41,8 +41,9 @@ Templates live in the `persona-dev` skill's `references/` directory (sibling ski
 | `.claude/settings.json` | `references/settings-template.json` |
 | `.gitignore` | `references/gitignore-template` |
 | `.claude/hooks/public-repo-guard.sh` | `references/public-repo-guard.sh` |
-| `.claude/skills/self-improve/SKILL.md` | `references/self-improve-skill.md` |
 | `.claude/output-styles/*.md` | `references/output-style-template.md` |
+
+**Self-improve is not diffed** — it ships via the persona-manager plugin (every persona enables `persona-manager@personas`), so the plugin's `skills/self-improve/SKILL.md` is always current. If the persona still has a legacy local copy at `.claude/skills/self-improve/`, flag it in the drift report and propose deleting it — the local copy duplicates the plugin skill and drifts.
 
 `CLAUDE.md` and `.claude-flags` are too customized for template diffing — handle these conversationally (Step 5).
 
@@ -91,7 +92,10 @@ Show a grouped summary:
 ### .gitignore
 - Missing: .DS_Store, Thumbs.db patterns
 
-### No drift: public-repo-guard.sh, self-improve skill
+### Legacy
+- Local self-improve copy at .claude/skills/self-improve/ — plugin ships it now; propose removal
+
+### No drift: public-repo-guard.sh
 ```
 
 ### Step 4: Apply Changes
@@ -101,7 +105,7 @@ Apply using your judgment:
 - **JSON files** (hooks.json, settings.json): Merge missing keys and update changed values. Use `jq` for safe JSON manipulation. Always preserve persona-specific content.
 - **Text files** (.gitignore): Append missing entries. Never reorder or remove existing ones.
 - **Script files** (public-repo-guard.sh): Replace from template if outdated. Ensure executable: `chmod +x`.
-- **Skill files** (self-improve): Update framework content, preserve persona-specific first line (persona name/path).
+- **Legacy self-improve copies**: If `.claude/skills/self-improve/` exists, propose deleting it — the plugin-shipped skill supersedes it. Never update the local copy in place.
 - **Ambiguous changes**: Use `AskUserQuestion` — show both versions, explain the conflict, let the user decide.
 
 ### Step 5: Conversational Checks

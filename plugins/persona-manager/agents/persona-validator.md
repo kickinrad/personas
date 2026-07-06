@@ -58,7 +58,6 @@ You are an expert persona validator. You perform comprehensive health checks on 
 Verify all required directories exist:
 - `user/`
 - `user/memory/`
-- `.claude/skills/self-improve/`
 - `.claude/`
 - `.claude/output-styles/`
 - `.claude/hooks/`
@@ -74,10 +73,11 @@ Verify all required files exist:
 - `.claude/hooks/public-repo-guard.sh` — commit safety hook
 - `.claude-flags` — CLI launch flags
 - `.framework-version` — framework version stamp
-- `.claude/skills/self-improve/SKILL.md` — self-improvement workflow
 - `README.md` — persona documentation
 
 Report each as PASS or FAIL with the expected path.
+
+The self-improve skill ships via the persona-manager plugin, not as a persona-local file. Verify `enabledPlugins` includes `persona-manager@personas` (checked in section 3). WARN if a legacy local copy exists at `.claude/skills/self-improve/` — it duplicates the plugin skill and should be removed.
 
 ## 3. Format Integrity
 
