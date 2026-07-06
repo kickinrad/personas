@@ -56,7 +56,7 @@ for plugin_dir in "$PLUGINS_DIR"/*/; do
 done
 
 # Marketplace checks: plugin.json#version is the single source of truth
-# (forge §5 dual-write ban — plugins[] entries must NOT carry a version field;
+# (forge §Version bumping dual-write ban — plugins[] entries must NOT carry a version field;
 # stripped in "wave 2", commit 07bd5bc). Each entry must map to a real plugin
 # dir whose plugin.json has a version.
 echo "Marketplace checks"
