@@ -59,12 +59,12 @@ cp /mnt/c/Users/wilst/.personas/.aliases.sh ~/.personas/.aliases.sh
 for p in archer bob julia kai mila nara piper reed urza warren; do
   cd ~/.personas/${p}
   personas-mesh-render-config \
-    ~/projects/personal/personas/plugins/personas-mesh/templates/.mcp.json.template \
+    ~/projects/markets/personas/plugins/personas-mesh/templates/.mcp.json.template \
     .mcp.json \
     "${p}"
   mkdir -p .claude
   personas-mesh-render-config \
-    ~/projects/personal/personas/plugins/personas-mesh/templates/settings.local.json.template \
+    ~/projects/markets/personas/plugins/personas-mesh/templates/settings.local.json.template \
     .claude/settings.local.json \
     "${p}"
 done

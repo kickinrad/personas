@@ -9,6 +9,6 @@ Nice=10
 # editing the script in the repo is picked up on the next firing.
 # Tradeoff: this unit assumes the personas repo lives at the path below.
 # If you move the repo, edit ExecStart and run: systemctl --user daemon-reload.
-ExecStart=%h/projects/personal/personas/plugins/personas-mesh/bin/sync-user-all
+ExecStart=%h/projects/markets/personas/plugins/personas-mesh/bin/sync-user-all
 StandardOutput=journal
 StandardError=journal

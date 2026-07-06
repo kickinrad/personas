@@ -44,7 +44,7 @@ From WSL (one-liner to copy from the plugin cache):
 
 ```bash
 rsync -av --chmod=u+x \
-  ~/projects/personal/personas/plugins/personas-mesh/bin/ \
+  ~/projects/markets/personas/plugins/personas-mesh/bin/ \
   wils@cloud:/tmp/personas-mesh-bin/
 ssh wils@cloud 'sudo install -m 755 -o root -g root \
   /tmp/personas-mesh-bin/sync-persona \
@@ -70,8 +70,8 @@ From WSL:
 
 ```bash
 rsync -av \
-  ~/projects/personal/personas/plugins/personas-mesh/systemd/personas-mesh-hetzner.{service,timer} \
-  ~/projects/personal/personas/plugins/personas-mesh/systemd/personas-mesh-github-mirror.{service,timer} \
+  ~/projects/markets/personas/plugins/personas-mesh/systemd/personas-mesh-hetzner.{service,timer} \
+  ~/projects/markets/personas/plugins/personas-mesh/systemd/personas-mesh-github-mirror.{service,timer} \
   wils@cloud:~/.config/systemd/user/
 ```
 
