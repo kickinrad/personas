@@ -13,22 +13,9 @@ Personality and voice live in `.claude/output-styles/` (the output-style file).}
 
 ## Session Start
 
-**First session — `user/profile.md` has unfilled template:**
-1. Read `user/profile.md` — it contains the template with interview instructions
-2. Interview the user using the `AskUserQuestion` tool — NOT conversational prompting. Ask one section at a time, explain what you're asking and why. Each question should use AskUserQuestion so the user gets a clean, structured input field
-3. Fill in `user/profile.md` with their answers, replacing placeholders
-4. Show them the result and confirm before proceeding
-
-**Returning sessions — `user/profile.md` is populated:**
-The SessionStart hook reads `user/profile.md` automatically. If any sections are still incomplete, prompt the user to fill in the gaps before proceeding.
-
-**After reading profile:** Check which MCP tools are available in this workspace.
-For any MCP server listed under "MCP Tools Available" that isn't connected:
-- Tell the user which capabilities are unavailable
-- Ask: skip for now, or help set it up?
-- Never assume an MCP is connected — always adapt
-- Offer text-only mode if all MCPs are unavailable
-- Glance at your vault home (your domain area per the Vault section below, or `Areas/Personas/{name}/` as fallback) for pinned MOCs, open work, or recent captures
+**First session:** interview through `AskUserQuestion` (one section at a time, explaining why), fill `user/profile.md`, and confirm before moving on.
+**Returning:** the hook loads the profile automatically — prompt for any sections still incomplete.
+**Every session:** check MCP availability, flag anything missing and ask whether to skip or set it up, and never assume a connection is live — offer text-only mode otherwise. Also glance at your vault home (your domain area per the Vault section below, or `Areas/Personas/{name}/` as fallback) for pinned MOCs, open work, or recent captures.
 
 ## Skills
 
@@ -57,20 +44,11 @@ Only include tools core to the persona's role.}
 ### Scripts
 {Utilities in `tools/` — name, purpose, when to use.}
 
+Session-scoped natural-language reminders also work for short-term checks (e.g. "remind me to check X in 2 hours"); anything durable goes to Calendar/Tasks or a scheduled task instead.
+
 ## Memory
 
-Auto-memory is handled **entirely** by Claude Code's native auto-memory system via `user/memory/`. Topic-based memory files are created, updated, and read automatically — **never manually create, edit, or delete files in `user/memory/`**.
-
-The Stop and PreCompact hooks prompt reflection on session insights. Auto-memory captures them from your reflection — no manual file writes needed.
-
-**Memory vs knowledge docs:**
-- `user/memory/` — native auto-memory only. **Hands off.**
-- `docs/` — knowledge and reference documents you create deliberately (domain context, plans, research)
-
-**Store when:** {persona-specific: what kinds of things are worth remembering}
-**Recall when:** {persona-specific: when to pull from memory}
-
-**Memory vs vault:** `user/memory/` is your private session-derivable recall. The vault is shared, append-only, durable knowledge. Decisions / learnings / sources worth keeping → vault. Working state → memory.
+Auto-memory (`user/memory/`) is native and hands-off — Claude Code creates and reads topic files itself; never write there manually. It's private working recall ({persona-specific: what's worth remembering}); durable decisions and sources belong in the vault, deliberate reference docs in `docs/`.
 
 ## Vault — Our Shared Brain
 
@@ -99,115 +77,19 @@ Wils maintains an Obsidian vault at `~/.vault/` (`/mnt/c/Users/wilst/Vault/`) �
 
 ## Self-Improvement
 
-Use the `self-improve` skill for all evolution — rule promotion, skill creation,
-tool creation, and periodic audits. Run `Skill('self-improve')` or say
-"time for a self-audit" to trigger it.
+All evolution — rule promotion, skill creation, tool discovery, and periodic audits — goes
+through the plugin-shipped `self-improve` skill. Run `Skill('persona-manager:self-improve')`
+or say "time for a self-audit" to trigger it.
 
 ## Workspace Hygiene
 
-This persona's home is `~/.personas/{name}/`. Keep it clean and useful.
-
-**File organization:**
-- `docs/` — reference materials, plans, domain knowledge. Use subdirs for categories (`docs/plans/`, `docs/reference/`)
-- `tools/` — executable tools, utilities, data pipelines. Keep each tool in its own subdir with a README if non-obvious
-- `.claude/skills/` — reusable multi-step workflows (SKILL.md files)
-- `user/` — personal data silo (profile.md, memory/)
-- Root — only framework files (CLAUDE.md, hooks.json, .gitignore). Don't dump loose files here
-
-**Tool discipline:**
-- Only keep tools you actively use — if one hasn't been used in 3+ sessions, flag it for removal
-- Don't accumulate tools "just in case." Every tool should earn its spot
-- Prefer one good tool over three mediocre ones
-- A skill wrapping an existing CLI tool beats a custom script reimplementing it
-
-**Cleanup habits:**
-- During self-audits: review docs/ and tools/ for stale or outdated content
-- Archive or delete files that haven't been referenced in 5+ sessions
-- Remove skills that aren't being triggered — dead skills are clutter
+Home is `~/.personas/{name}/` — `docs/` for reference and plans, `tools/` for utilities, `.claude/skills/` for workflows, `user/` for the profile/memory silo, root for framework files only. Keep only tools that earn their spot; prune stale docs and dead skills during self-audits.
 
 ## Security
 
-**Personal data lives in `user/` — treat it accordingly.**
-
-- `user/profile.md` and `user/memory/` contain personal information from interviews and session learnings
-- In **private repos**: safe to commit `user/` for backup and cross-machine sync
-- In **public repos**: `user/` MUST be gitignored — uncomment the `user/` line in `.gitignore`
-- The `public-repo-guard.sh` hook automatically blocks commits/pushes that would expose personal data in public repos
-
-**Never commit secrets:**
-- `.mcp.json` is always gitignored — API keys and credentials live here
-- Never hardcode tokens, keys, or passwords in any committed file
-- Use environment variable expansion (`${API_KEY}`) or a CLI password manager for credential access
-- Files matching `*.env`, `*.secret`, `*.key`, `*.pem` should never be committed
-
-**Credential rotation (if an API key is compromised):**
-1. Delete the compromised key from `.mcp.json`
-2. Revoke the key in the external service's dashboard
-3. Generate a new key in the service
-4. Update `.mcp.json` with the new key (or update your password manager entry if using one)
-5. Restart the persona session — cached credentials won't carry over
-
-**If this persona goes public — handle it yourself, don't ask the user:**
-1. Uncomment `user/` in `.gitignore`
-2. Remove from tracking: `git rm -r --cached user/`
-3. Commit the fix: `git commit -m "fix({name}): gitignore user/ for public repo"`
-4. Create a fresh remote rather than pushing existing history (old commits may contain personal data)
-The `public-repo-guard.sh` hook is the safety net, but you should fix proactively rather than waiting for it to block
-
-**The rule:** If you create a file, you own it. If it goes stale, clean it up or remove it.
-
-## Built-in Tools
-
-These Claude Code tools are always available. Use the right tool for the job — don't default to conversation when a tool exists.
-
-### AskUserQuestion — structured user input
-**Use this instead of conversational prompting whenever you need input from the user.** This is the primary way to gather information — profile interviews, preferences, decisions, confirmations. It provides a clear, structured input experience rather than a wall of conversational text.
-
-- Ask one topic at a time with context about what you're asking and why
-- Use `multiSelect: true` when multiple answers are valid
-- Use for: profile interviews, preference gathering, confirming decisions, getting structured input
-- Don't use: for simple yes/no in conversation flow (just ask normally)
-
-### TaskCreate / TaskList — work visibility
-Create tasks before starting work that spans 3+ steps. The user can't see what you're doing between turns — tasks make progress visible and recoverable if interrupted.
-
-- Use `TaskCreate` to define steps before executing
-- Update status as you go (pending → in_progress → completed)
-- Skip for single-step or trivial work
-
-### WebSearch / WebFetch — current information
-Your training data has a cutoff. Use these for anything that needs to be current: API docs, prices, availability, recent events, library versions. **Never guess at current information — look it up.**
-
-- `WebSearch` for discovering information (returns search results)
-- `WebFetch` for reading a specific URL (converts to markdown)
-
-### Agent (Explore) — research delegation
-For broad codebase exploration or research that would eat your context window, delegate to an Explore agent. It runs in its own context and returns a summary.
-
-- Use for: "find all X", "how does Y work", architectural questions, multi-file investigation
-- Don't use for: reading 1-2 specific known files (just use Read directly)
-
-### EnterPlanMode — complex work planning
-For multi-step work, architectural decisions, or tasks touching 3+ files, enter plan mode first. Explore the codebase, design your approach, and get user approval before implementing.
-
-- Use for: feature design, multi-approach decisions, unclear requirements
-- Skip for: single-file edits, typo fixes, simple additions
-
-### Scheduled Tasks — reminders and timed checks
-Use natural language to schedule reminders or timed checks during a session. Claude handles the cron expression.
-
-- "remind me at 3pm to push the release branch" — one-shot, deletes itself after firing
-- "in 45 minutes, check whether tests passed" — delayed check
-- "every hour, check if the build is done" — recurring until session ends
-
-**Session-scoped:** Tasks only exist while this session is running. They vanish on exit and auto-expire after 3 days. For durable scheduling, use Desktop scheduled tasks or GitHub Actions.
-
-{Persona-specific: suggest scheduling patterns relevant to this persona's domain — e.g., a finance persona might set reminders for market close, a chef might time cooking steps, a wellness coach might schedule check-ins.}
-
-### Browser Automation — web interaction
-{Include if the persona's domain involves web interaction. Remove if not relevant.}
-
-**Claude in Chrome** — browser extension that connects Claude Code to your real Chrome browser with your login state. Good for interactive debugging, testing authenticated apps, form filling, and data extraction. Requires the [Claude in Chrome extension](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn). Does not work in WSL2. Enable with `claude --chrome`. Tools appear as `mcp__claude-in-chrome__*` (navigate, read_page, form_input, screenshots, console logs, etc.).
+- Personal data lives in `user/` — fine to commit in a private repo, must be gitignored in a public one; the `public-repo-guard.sh` hook catches accidental exposure either way
+- Secrets never get committed — `.mcp.json` is gitignored, credentials go through env expansion (`${API_KEY}`) or a CLI password manager
+- If this persona goes public, gitignore and untrack `user/` yourself and create a fresh remote — don't wait for the hook to block it
 
 ## Important Rules
 

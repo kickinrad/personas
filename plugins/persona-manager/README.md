@@ -20,6 +20,12 @@ Every persona auto-installs persona-manager via `enabledPlugins` in its settings
 
 ## Skills
 
+### self-improve
+
+The persona evolution workflow, served to every persona by this plugin (no local copy needed). Four levels: native auto-memory (hands-off), rule promotion, skill creation, and tool & integration discovery — plus a periodic workspace-hygiene audit.
+
+**Trigger examples:** "self-improve", "time for a self-audit", "promote this to a rule", "this should be a skill"
+
 ### persona-dev
 
 Guided 8-phase persona creation workflow:
@@ -39,7 +45,7 @@ Guided 8-phase persona creation workflow:
 
 Template-diffing update system that detects drift between a persona and the current framework version:
 
-- Compares hooks, settings, gitignore, guard script, and self-improve skill against templates
+- Compares hooks, settings, gitignore, and guard script against templates; flags legacy local self-improve copies for removal
 - Classifies differences as framework additions, changes, or persona customizations
 - Merges intelligently — never overwrites personality, custom skills, or user data
 - Stamps `.framework-version` after applying changes
@@ -71,7 +77,6 @@ Each persona is a self-contained directory with:
 | `.claude/output-styles/` | Voice and tone |
 | `user/profile.md` | User context (filled via interview) |
 | `user/memory/` | Native auto-memory |
-| `skills/self-improve/` | 4-level evolution workflow |
 | `hooks.json` | SessionStart, Stop, crash recovery, public repo guard |
 | `.mcp.json` | External service integrations |
 | `.claude-flags` | Per-persona CLI launch flags |
@@ -95,6 +100,5 @@ Located in `skills/persona-dev/references/`:
 | `hooks-template.json` | 6 lifecycle hooks |
 | `settings-template.json` | Sandbox + marketplace config |
 | `output-style-template.md` | Voice/personality style |
-| `self-improve-skill.md` | Self-improvement workflow |
 | `public-repo-guard.sh` | Git commit/push safety hook |
 | `gitignore-template` | Standard .gitignore entries |

@@ -1,19 +1,11 @@
 ---
 name: self-improve
-description: Self-improvement workflow for evolving this persona — rule promotion, skill creation, tool & integration discovery, workspace hygiene, and periodic audits. Triggers when you notice recurring patterns, want to propose a new rule or skill, need a new tool, or it's time for a self-audit.
-triggers:
-  - self-improve
-  - self-audit
-  - time for a self-audit
-  - promote this to a rule
-  - this should be a skill
-  - update my rules
-  - improve yourself
+description: This skill should be used when a persona wants to evolve itself — the user says "self-improve", "self-audit", "time for a self-audit", "promote this to a rule", "this should be a skill", "update my rules", or "improve yourself", or the persona notices a recurring pattern worth promoting. Covers rule promotion, skill creation, tool & integration discovery, workspace hygiene, and periodic audits. Ships with the persona-manager plugin so every persona shares one canonical workflow.
 ---
 
 # Self-Improvement
 
-This persona lives at `~/.personas/{name}/`. All files are immediately live — no reinstall needed.
+Your persona home is your working directory (`~/.personas/<name>/`). All persona files are immediately live — no reinstall needed.
 
 ## When to Update What
 
@@ -86,7 +78,7 @@ Before creating anything custom, investigate what already exists. Think broadly 
 - **Agents** — would a specialized subagent handle this better? Agents are good for autonomous multi-step tasks that need their own context
 - **Hooks** — is this a behavioral pattern that should trigger automatically? Hooks automate responses to session events
 - **Scheduled tasks** — does the user keep asking for reminders or timed checks? Claude Code has built-in scheduling via `CronCreate` — natural language like "remind me at 3pm" or "in 45 minutes, check X" just works. Session-scoped only — suggest Desktop scheduled tasks or GitHub Actions for durable scheduling
-- **Expansion packs** — check if a persona-manager expansion pack covers it (e.g., `persona-manager:persona-dashboard` for task tracking and visual status)
+- **Expansion packs** — check if a personas-framework expansion pack covers it (e.g., `persona-dashboard:install` for task tracking and visual status)
 - **Reference docs** — sometimes the "tool" you need is just good documentation in `docs/`
 
 Present findings: "Here's what I found that could help: [options]. Want to use an existing solution, or should I build something?"
@@ -105,7 +97,7 @@ Present findings: "Here's what I found that could help: [options]. Want to use a
 | Script or utility | `tools/{tool-name}/` | Data pipeline, formatter, setup script |
 | Scheduled task | Scheduling patterns in CLAUDE.md | Timed reminder, delayed check |
 | Reference doc | `docs/` | Domain knowledge, checklists, templates |
-| Expansion pack | Invoke the persona-manager skill | Dashboard, future packs |
+| Expansion pack | Invoke the expansion pack's install skill | Dashboard, future packs |
 
 ### Step 3: Keep custom builds simple
 

@@ -16,6 +16,21 @@
         "contentPatterns": []
       }
     },
+    "self-improve": {
+      "kind": "skill",
+      "type": "process",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "activationHint": "Skill('persona-manager:self-improve')",
+      "promptTriggers": {
+        "keywords": ["self-improve", "self-audit", "time for a self-audit", "promote this to a rule", "this should be a skill", "update my rules", "improve yourself"],
+        "intentPatterns": ["self.?(improve|audit)", "promote.*?(rule|to a rule)", "(this|it) should be a skill", "update my rules", "improve yourself"]
+      },
+      "fileTriggers": {
+        "pathPatterns": ["**/.personas/**/user/memory/MEMORY.md"],
+        "contentPatterns": []
+      }
+    },
     "persona-update": {
       "kind": "skill",
       "type": "process",

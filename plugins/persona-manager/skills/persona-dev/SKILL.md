@@ -20,8 +20,7 @@ Each persona contains:
 │   ├── hooks/
 │   │   └── public-repo-guard.sh   # Blocks personal data in public repos (committed)
 │   └── skills/
-│       ├── {domain}/{skill}/SKILL.md  # Domain skills
-│       └── self-improve/SKILL.md      # Ships with every persona
+│       └── {domain}/{skill}/SKILL.md  # Domain skills (self-improve ships via the persona-manager plugin, not locally)
 ├── .gitignore                     # Secrets exclusion
 ├── hooks.json                     # SessionStart + Stop + StopFailure + PreCompact + PostCompact + PreToolUse hooks
 ├── .framework-version             # Framework version stamp (committed)
@@ -221,7 +220,7 @@ Use the template from `references/claude-md-template.md`. Key decisions:
 
 - **Role summary**: One paragraph of spec-sheet expertise and operational focus. Personality and voice go in the output-style (`.claude/output-styles/`), NOT here. Boundary test: "Would this change how the persona SOUNDS, or what it DOES?" If SOUNDS → output-style. If DOES → CLAUDE.md
 - **Workspace Hygiene section**: Include it — every persona must maintain its own workspace
-- **Self-Improvement**: Point to the self-improve skill (one line, not inline)
+- **Self-Improvement**: Point to the plugin-shipped self-improve skill — `Skill('persona-manager:self-improve')` — one line, not inline
 
 **5b. Create user/profile.md** *(only if it does not already exist — see sacred rule above)*
 
@@ -261,9 +260,9 @@ Write at least one skill under `.claude/skills/{domain}/{skill-name}/SKILL.md` w
 - Step-by-step workflow
 - Expected output format
 
-**5e. Copy self-improve skill**
+**5e. Self-improve skill — ships via the plugin, nothing to copy**
 
-Copy `references/self-improve-skill.md` to `.claude/skills/self-improve/SKILL.md`. Replace `{name}` with the persona name. This ships with every persona — it handles rule promotion, skill creation, tool discovery, and periodic audits. (Memory is handled by Claude Code's native auto-memory system, not by the self-improve skill.)
+The `self-improve` skill (rule promotion, skill creation, tool discovery, periodic audits) is served by the persona-manager plugin itself, which every persona enables through `enabledPlugins` in Phase 5h. Do NOT scaffold a local copy at `.claude/skills/self-improve/` — a local copy duplicates the plugin skill and drifts. (Memory is handled by Claude Code's native auto-memory system, not by the self-improve skill.)
 
 **5f. Set up hooks**
 
@@ -350,7 +349,7 @@ Before proceeding, verify all required files exist:
 - [ ] `.gitignore`
 - [ ] `.claude/settings.json`
 - [ ] `.claude/settings.local.json` (autoMemoryDirectory configured)
-- [ ] `.claude/skills/self-improve/SKILL.md`
+- [ ] `enabledPlugins` in `.claude/settings.json` includes `persona-manager@personas` (ships the self-improve skill)
 - [ ] At least one domain skill in `.claude/skills/`
 - [ ] `.framework-version` (stamped with current plugin version)
 - [ ] `~/.vault/Areas/Personas/{name}/{Name}.md` MOC exists (skipped if Phase 5L unavailable)
@@ -574,7 +573,6 @@ For the meta-context around the 9-phase scaffold above (three-layer model, profi
 
 Templates and helper files used by the scaffolding phases above. All live in `references/` alongside this SKILL.md.
 
-- [[Resources/Repos/personal/personas/plugins/persona-manager/skills/persona-dev/references/claude-md-template|claude-md-template]] — CLAUDE.md skeleton written in Phase 5a
-- [[Resources/Repos/personal/personas/plugins/persona-manager/skills/persona-dev/references/output-style-template|output-style-template]] — `.claude/output-styles/{name}.md` skeleton written in Phase 5c
-- [[Resources/Repos/personal/personas/plugins/persona-manager/skills/persona-dev/references/profile-template|profile-template]] — `user/profile.md` skeleton written in Phase 5b
-- [[Resources/Repos/personal/personas/plugins/persona-manager/skills/persona-dev/references/self-improve-skill|self-improve-skill]] — self-improve SKILL.md copied into every persona in Phase 5e
+- [claude-md-template](./references/claude-md-template.md) — CLAUDE.md skeleton written in Phase 5a
+- [output-style-template](./references/output-style-template.md) — `.claude/output-styles/{name}.md` skeleton written in Phase 5c
+- [profile-template](./references/profile-template.md) — `user/profile.md` skeleton written in Phase 5b

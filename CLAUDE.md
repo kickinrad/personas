@@ -28,8 +28,7 @@ personas/                                 # Framework repo
     │   ├── hooks/
     │   │   └── public-repo-guard.sh     # Blocks personal data in public repos (committed)
     │   └── skills/
-    │       ├── {domain}/{skill}/SKILL.md # Domain skills (committed)
-    │       └── self-improve/SKILL.md     # Ships with every persona
+    │       └── {domain}/{skill}/SKILL.md # Domain skills (committed; self-improve ships via the persona-manager plugin)
     ├── hooks.json                        # SessionStart + Stop + StopFailure + PreCompact + PostCompact + PreToolUse hooks (committed)
     ├── .framework-version                # Framework version stamp (committed)
     ├── .claude-flags                     # Per-persona CLI launch flags (committed)
@@ -193,11 +192,11 @@ What persona sessions inherit from `~/.claude/` and how to control it. The frame
 
 ## Self-Improvement (Core Feature)
 
-Every persona ships with a `self-improve` skill that drives evolution:
+Every persona gets the `self-improve` skill through the persona-manager plugin — it drives evolution alongside two persona-local pieces:
 
 - **SessionStart hook** (`hooks.json`): Instructs the persona to read `user/profile.md` on every session (or triggers the first-session interview if unfilled)
 - **Native auto-memory** (`user/memory/`): Redirected via `autoMemoryDirectory` in `.claude/settings.local.json` (not settings.json — Claude ignores it there as a security measure). Must use an **absolute path** (relative paths break on WSL). Personas never manually write to `user/memory/` — auto-memory owns that directory entirely. Stop and PreCompact hooks prompt reflection (not file writes); StopFailure and PostCompact hooks handle crash recovery
-- **Self-improve skill** (`skills/self-improve/SKILL.md`): Handles rule promotion, skill creation, tool & integration discovery, workspace hygiene, and periodic audits
+- **Self-improve skill** (plugin-shipped — `plugins/persona-manager/skills/self-improve/SKILL.md`, available in every persona via `enabledPlugins: persona-manager@personas`): Handles rule promotion, skill creation, tool & integration discovery, workspace hygiene, and periodic audits
 
 The four levels: memory (automatic/native), rule promotion (propose), skill creation (propose), tool & integration discovery (research existing MCP servers, CLI tools, APIs, then propose skills, agents, hooks, or scripts as needed). Periodic audits include workspace hygiene — cleaning stale files, pruning unused tools, keeping the persona lean. See the self-improve skill for the full workflow.
 
