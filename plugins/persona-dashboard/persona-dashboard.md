@@ -21,4 +21,4 @@ tags:
 
 ### Skills
 
-- [[Resources/Repos/personal/personas/plugins/persona-dashboard/skills/install/SKILL|install]]
+- [[Resources/Repos/markets/personas/plugins/persona-dashboard/skills/install/SKILL|install]]

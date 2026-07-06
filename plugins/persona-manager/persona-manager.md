@@ -21,9 +21,9 @@ tags:
 
 ### Skills
 
-- [[Resources/Repos/personal/personas/plugins/persona-manager/skills/persona-dev/SKILL|persona-dev]]
-- [[Resources/Repos/personal/personas/plugins/persona-manager/skills/persona-update/SKILL|persona-update]]
+- [[Resources/Repos/markets/personas/plugins/persona-manager/skills/persona-dev/SKILL|persona-dev]]
+- [[Resources/Repos/markets/personas/plugins/persona-manager/skills/persona-update/SKILL|persona-update]]
 
 ### Agents
 
-- [[Resources/Repos/personal/personas/plugins/persona-manager/agents/persona-validator|persona-validator]]
+- [[Resources/Repos/markets/personas/plugins/persona-manager/agents/persona-validator|persona-validator]]
