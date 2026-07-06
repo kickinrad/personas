@@ -46,7 +46,10 @@ jobs:
 
       - name: Scan for hardcoded secrets
         env:
-          SECRET_PATTERN: "(eyJ[A-Za-z0-9_-]{10,}|GOCSPX-|sk-[A-Za-z0-9]{20,}|BEGIN PRIVATE KEY)"
+          # Secret prefixes must be followed by >=20 base64url chars so that files
+          # which merely *reference* the patterns (test script, validator agent
+          # prose) don't self-match. Mirrors tests/personas-test.sh.
+          SECRET_PATTERN: "(eyJ[A-Za-z0-9_-]{20,}|GOCSPX-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|BEGIN[ ]PRIVATE[ ]KEY)"
         run: |
           FOUND=0
           while IFS= read -r -d '' f; do
