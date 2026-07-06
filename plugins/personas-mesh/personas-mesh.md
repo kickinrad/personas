@@ -1,7 +1,7 @@
 ---
 title: personas-mesh
 type: moc
-area: "[[personas]]"
+area: "[[Areas/Claude Ecosystem/Marketplaces/personas/personas|personas]]"
 author: wils
 created: 2026-04-27
 tags:
@@ -19,17 +19,17 @@ tags:
 
 ## Plugin guide
 
-- [[Resources/Repos/markets/personas/plugins/personas-mesh/CLAUDE|CLAUDE]] — plugin-level harness rules (node detection, secrets, sync flow)
+- [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/personas-mesh/CLAUDE|CLAUDE]] — plugin-level harness rules (node detection, secrets, sync flow)
 
 ## Components
 
 ### Skills
 
-- [[Resources/Repos/markets/personas/plugins/personas-mesh/skills/mesh-doctor/SKILL|mesh-doctor]]
-- [[Resources/Repos/markets/personas/plugins/personas-mesh/skills/setup/SKILL|setup]]
-- [[Resources/Repos/markets/personas/plugins/personas-mesh/skills/status/SKILL|status]]
+- [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/personas-mesh/skills/mesh-doctor/SKILL|mesh-doctor]]
+- [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/personas-mesh/skills/setup/SKILL|setup]]
+- [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/personas-mesh/skills/status/SKILL|status]]
 
 ## Runbooks
 
-- [[Resources/Repos/markets/personas/plugins/personas-mesh/docs/hetzner-bootstrap|hetzner-bootstrap]] — interactive Hetzner host bootstrap
-- [[Resources/Repos/markets/personas/plugins/personas-mesh/docs/migration-symlink-to-mesh|migration-symlink-to-mesh]] — migrating from local symlink layout to mesh sync
+- [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/personas-mesh/docs/hetzner-bootstrap|hetzner-bootstrap]] — interactive Hetzner host bootstrap
+- [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/personas-mesh/docs/migration-symlink-to-mesh|migration-symlink-to-mesh]] — migrating from local symlink layout to mesh sync

@@ -1,7 +1,7 @@
 ---
 title: persona-dashboard
 type: moc
-area: "[[personas]]"
+area: "[[Areas/Claude Ecosystem/Marketplaces/personas/personas|personas]]"
 author: wils
 created: 2026-04-27
 tags:
@@ -21,4 +21,4 @@ tags:
 
 ### Skills
 
-- [[Resources/Repos/markets/personas/plugins/persona-dashboard/skills/install/SKILL|install]]
+- [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/persona-dashboard/skills/install/SKILL|install]]
