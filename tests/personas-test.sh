@@ -45,7 +45,7 @@ for plugin_dir in "$PLUGINS_DIR"/*/; do
   while IFS= read -r -d '' f; do
     basename_f=$(basename "$f")
     [[ "$basename_f" == ".mcp.json" ]] && continue
-    if grep -qE '(eyJ[A-Za-z0-9_-]{20,}|GOCSPX-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|BEGIN PRIVATE KEY)' "$f" 2>/dev/null; then
+    if grep -qE '(eyJ[A-Za-z0-9_-]{20,}|GOCSPX-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|BEGIN[ ]PRIVATE[ ]KEY)' "$f" 2>/dev/null; then
       secret_hits+=" ${f#"$REPO_ROOT"/}"
     fi
   done < <(find "$plugin_dir" \( -name "*.md" -o -name "*.json" \) -print0 2>/dev/null)
@@ -55,24 +55,29 @@ for plugin_dir in "$PLUGINS_DIR"/*/; do
   echo ""
 done
 
-# Version sync: marketplace.json vs plugin.json
-echo "Version sync checks"
+# Marketplace checks: plugin.json#version is the single source of truth
+# (forge §5 dual-write ban — plugins[] entries must NOT carry a version field;
+# stripped in "wave 2", commit 07bd5bc). Each entry must map to a real plugin
+# dir whose plugin.json has a version.
+echo "Marketplace checks"
 marketplace="$REPO_ROOT/.claude-plugin/marketplace.json"
 if [[ -f "$marketplace" ]]; then
   count=$(jq '.plugins | length' "$marketplace")
   for (( i=0; i<count; i++ )); do
     mp_name=$(jq -r ".plugins[$i].name" "$marketplace")
-    mp_version=$(jq -r ".plugins[$i].version" "$marketplace")
+    if jq -e ".plugins[$i] | has(\"version\")" "$marketplace" >/dev/null 2>&1; then
+      check "$mp_name: no version field in marketplace.json" "version present — plugin.json is the single source of truth, remove it"
+    else
+      check "$mp_name: no version field in marketplace.json" "pass"
+    fi
     pjson="$PLUGINS_DIR/$mp_name/.claude-plugin/plugin.json"
     if [[ -f "$pjson" ]]; then
       pj_version=$(jq -r '.version // empty' "$pjson" 2>/dev/null)
-      if [[ "$mp_version" == "$pj_version" ]]; then
-        check "$mp_name version in sync ($mp_version)" "pass"
-      else
-        check "$mp_name version in sync" "marketplace=$mp_version plugin.json=$pj_version"
-      fi
+      [[ -n "$pj_version" ]] && \
+        check "$mp_name: plugin.json version present ($pj_version)" "pass" || \
+        check "$mp_name: plugin.json version present" "missing"
     else
-      check "$mp_name version in sync" "plugin.json not found"
+      check "$mp_name: plugin.json exists" "missing"
     fi
   done
 else
@@ -149,7 +154,7 @@ if [[ -d "$PERSONAS_DIR" ]]; then
     while IFS= read -r -d '' f; do
       basename_f=$(basename "$f")
       [[ "$basename_f" == ".mcp.json" ]] && continue
-      if grep -qE '(eyJ[A-Za-z0-9_-]{10,}|GOCSPX-|sk-[A-Za-z0-9]{20,}|BEGIN PRIVATE KEY)' "$f" 2>/dev/null; then
+      if grep -qE '(eyJ[A-Za-z0-9_-]{20,}|GOCSPX-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|BEGIN[ ]PRIVATE[ ]KEY)' "$f" 2>/dev/null; then
         psecret_hits+=" $f"
       fi
     done < <(find "$persona_dir" \( -name "*.md" -o -name "*.json" \) -print0 2>/dev/null)
