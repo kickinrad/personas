@@ -78,8 +78,13 @@ if ! grep -q '^\[ -f "$HOME/.personas/.aliases.sh" \]' ~/.zshrc; then
 EOF
 fi
 
-# 6. Activate the Windows-bridge timer (was installed disabled in Phase 1).
-systemctl --user enable --now personas-mesh-windows-bridge.timer
+# 6. The Windows-bridge timer stays disabled — personas-mesh-wsl is the single
+#    canonical Layer-1 git-mesh path (enabling the bridge would dual-push the
+#    same repos from /mnt/c/... and cause merge conflicts). Windows-side
+#    changes reach the mesh via personas-mesh-user-sync (Layer-2 rsync)
+#    -> ~/.personas -> the wsl timer.
+systemctl --user is-enabled personas-mesh-windows-bridge.timer 2>/dev/null | grep -q enabled \
+  && systemctl --user disable --now personas-mesh-windows-bridge.timer
 
 # 7. Verify both paths sync to the hub.
 personas-mesh-sync-all --verbose ~/.personas
