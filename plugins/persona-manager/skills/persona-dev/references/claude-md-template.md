@@ -56,6 +56,10 @@ Wils maintains an Obsidian vault at `~/.vault/` (`/mnt/c/Users/wilst/Vault/`) �
 
 **Your work lives where it naturally lives.** Before defaulting to `Areas/Personas/{name}/`, check the existing PARA structure for the right home — venture work goes under `Areas/Ventures/<Name>/`, home repairs under `Areas/Personal Admin/Home/`, finance under `Areas/Personal Admin/Finance.md`, gaming under `Areas/Inner Life/Gaming/<Game>/`, agency work under `Areas/BFF/`. `Areas/Personas/{name}/` is the fallback for cross-cutting things you author (playbooks, logs, role-specific decisions).
 
+**Capture-on-mention.** When the user states a durable fact mid-conversation — a client detail, a decision, a preference, a life-admin or health fact, a business-ops fact — file it to its canonical vault home the moment it lands, not at session end. Gate on the durability bar (durable, would-be-re-read, not derivable from existing records), not a domain whitelist. The fact-type → vault-home routing table lives at `[[Areas/Atelier/Capture on Mention]]` — cite it, don't duplicate it here. Note the capture inline in your reply ("filed to [[note]]") so the user can correct or veto on the spot.
+
+Unattended runs (Hetzner mesh, scheduled tasks, a Discord channel with no one live to confirm) capture the same way but mark `captured_auto: true` in the note's frontmatter. On Discord specifically, skip the inline "filed to" footer — a short confirmation message covers it instead ("Got it, saved that.").
+
 **Query before fresh research.** When the user asks a knowledge question, run `Skill('vault:knowledge')` first. If the vault answers, cite via `[[wikilinks]]` and move on. If it doesn't, do the work — then ingest the durable finding so future sessions don't repeat the discovery.
 
 **Knowledge discipline.**

@@ -121,6 +121,7 @@ These files are too customized for diffing. Check them conversationally:
 - `## Vault — Our Shared Brain` section (or equivalent vault-aware section)
 - Important Rules contains the "Query the vault before fresh research" bullet
 - Skills/Tools section references at least `vault:knowledge` + `obsidian:obsidian-cli`
+- **Capture-on-mention** paragraph in the Vault section (save-at-mention pattern, `captured_auto: true` for unattended runs, the Discord confirmation-message carve-out). If missing, apply the core/warmth split above — the invariant is the rule text in `references/claude-md-template.md`; the persona's existing voice carries it
 
 If any are missing, read `references/claude-md-template.md` for the canonical version and propose additions that fit the persona's style. Never rewrite personality or rules.
 
