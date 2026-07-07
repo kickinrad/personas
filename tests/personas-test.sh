@@ -91,6 +91,14 @@ if [[ -d "$PERSONAS_DIR" ]]; then
   echo "Persona directory checks (~/.personas/)"
   for persona_dir in "$PERSONAS_DIR"/*/; do
     [[ -d "$persona_dir" ]] || continue
+
+    # Persona homes are identified by a positive marker (CLAUDE.md and/or .claude/),
+    # not by enumerating every top-level directory. This excludes non-persona folders
+    # (e.g. issues/, a mount-source vault folder) without a hardcoded name list.
+    if [[ ! -f "$persona_dir/CLAUDE.md" && ! -d "$persona_dir/.claude" ]]; then
+      continue
+    fi
+
     pname=$(basename "$persona_dir")
     echo "  Checking: $pname"
 
