@@ -117,7 +117,9 @@ diff -r /tmp/recovery/.personas/{persona}/user/memory ~/.personas/{persona}/user
 # cherry-pick the new files across, commit, push
 ```
 
-**The Windows-bridge timer isn't firing.** Check `systemctl --user status personas-mesh-windows-bridge.timer`. Common issue: WSL user services need `loginctl enable-linger wils` to run without an active WSL shell (same as Hetzner). Since you're typically in a WSL shell when personas run, this is usually fine; enable lingering only if you leave WSL closed overnight and still expect sync.
+**The Windows-bridge timer is enabled.** It should never be — `personas-mesh-wsl` is the single canonical Layer-1 git-mesh path, and an enabled bridge dual-pushes the same repos from `/mnt/c/...`, causing merge conflicts on the hub. Disable it: `systemctl --user disable --now personas-mesh-windows-bridge.timer`. Windows-side changes reach the mesh via `personas-mesh-user-sync` (Layer-2 rsync) → `~/.personas` → the wsl timer.
+
+**The wsl timer isn't firing.** Check `systemctl --user status personas-mesh-wsl.timer`. Common issue: WSL user services need `loginctl enable-linger wils` to run without an active WSL shell (same as Hetzner). Since you're typically in a WSL shell when personas run, this is usually fine; enable lingering only if you leave WSL closed overnight and still expect sync.
 
 ## Rollback
 
@@ -126,7 +128,6 @@ Within the first few hours, if the new arrangement proves problematic, the symli
 ```bash
 rm -rf ~/.personas
 ln -s /mnt/c/Users/wilst/.personas ~/.personas
-systemctl --user disable --now personas-mesh-windows-bridge.timer
 ```
 
-Commits made to the WSL-native copy between migration and rollback would be lost from the laptop — check the hub remote to retrieve them (`ssh wils@cloud git -C /srv/personas/{p}.git log`).
+The bridge timer stays disabled either way — with the symlink restored, `personas-mesh-wsl.timer` syncs `~/.personas` (now resolving to the Windows tree) through the same single Layer-1 path. Commits made to the WSL-native copy between migration and rollback would be lost from the laptop — check the hub remote to retrieve them (`ssh wils@cloud git -C /srv/personas/{p}.git log`).
