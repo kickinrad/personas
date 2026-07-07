@@ -7,6 +7,8 @@ description: This skill should be used when the user asks to "create a new perso
 
 Personas live in `~/.personas/{name}/`, each as its own git-tracked directory with sandbox isolation.
 
+> **Running from outside a persona home.** `persona-manager` is enabled only inside each persona's own `.claude/settings.json`, so from the main `/home/wilst` workspace — where persona-creation handoffs naturally land — `Skill('persona-manager:persona-dev')` won't resolve. Since this skill's job is scaffolding NEW persona homes, it must be reachable from outside them: read the cached copy at `~/.claude/plugins/cache/personas/persona-manager/<version>/skills/persona-dev/SKILL.md` and execute the procedure manually.
+
 ## Persona Structure
 
 Each persona contains:
