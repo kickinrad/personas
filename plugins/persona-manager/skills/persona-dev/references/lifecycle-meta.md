@@ -1,6 +1,6 @@
-# Persona lifecycle meta — three-layer model, aliases, expansion, testing
+# Persona lifecycle meta — three-layer model, aliases, access setup, expansion, testing
 
-Reference for the meta-context around the 9-phase scaffold in `SKILL.md`. Loaded on demand when answering questions about how personas work, not when scaffolding.
+Reference for the meta-context around the 9-phase scaffold in `SKILL.md`, plus the full Phase 9 access-setup procedure. Loaded on demand when answering questions about how personas work, and by Phase 9 when configuring access.
 
 ---
 
@@ -82,10 +82,62 @@ After creating or updating a persona: `source ~/.personas/.aliases.sh` or restar
 
 **Per-persona flags:** Each persona stores its flags in `.claude-flags` (a single line). This is configured during Phase 8 (flag setup). If the file is missing, the alias falls back to safe defaults (no `--dangerously-skip-permissions`).
 
-**What the flags do:**
-- `--setting-sources project,local` — loads only the persona's `settings.json` and `settings.local.json` (ignores `~/.claude/settings.json`). Note: does NOT affect `CLAUDE.md` loading — that's blocked separately via `claudeMdExcludes` in the persona's `.claude/settings.json`
-- `--dangerously-skip-permissions` — skips permission prompts. **Only safe when sandbox is enabled** (macOS/Linux/WSL2). Never use on Windows native
-- `--remote-control` — enables browser extension and external tool integration (Claude in Chrome, etc.)
+**What the flags do:** see [launch-flags.md](./launch-flags.md) — the canonical flag reference, including the Windows `--dangerously-skip-permissions` prohibition.
+
+---
+
+## Configure Access (Phase 9 detail)
+
+Setup depends on the environment detected in Phase 1:
+
+**CLI (macOS / Linux / WSL2) — shell aliases:**
+
+1. **Create `~/.personas/.aliases.sh`** if it doesn't exist (see [CLI Aliases](#cli-aliases) above for the template)
+2. **Add source line to the user's shell config** if not already present:
+   - Detect the user's shell from `$SHELL`
+   - For zsh: append to `~/.zshrc`
+   - For bash: append to `~/.bashrc`
+   - The line to add: `[ -f "$HOME/.personas/.aliases.sh" ] && source "$HOME/.personas/.aliases.sh"`
+   - **Check first** — only add if the line isn't already there
+3. **Tell the user** to restart their shell or run `source ~/.personas/.aliases.sh` to activate immediately
+
+**Windows native (no WSL) — PowerShell function:**
+
+Windows users without WSL can't use bash aliases. Create a PowerShell function instead:
+
+```powershell
+# Add to $PROFILE (e.g., ~\Documents\PowerShell\Microsoft.PowerShell_profile.ps1)
+function {name} {
+    param([Parameter(ValueFromRemainingArguments)]$args)
+    Push-Location "$env:USERPROFILE\.personas\{name}"
+    if ($args) {
+        claude --setting-sources project,local --remote-control -p ($args -join ' ')
+    } else {
+        claude --setting-sources project,local --remote-control
+    }
+    Pop-Location
+}
+```
+
+Note: no `--dangerously-skip-permissions` — Windows has no sandbox (see [launch-flags.md](./launch-flags.md)).
+
+**Desktop (macOS + Windows only):**
+
+Desktop is not available on Linux — Linux users are CLI-only.
+
+1. Tell the user to select `~/.personas/{name}/` as their project folder in Claude Desktop
+2. If MCP servers were configured in `.mcp.json`, offer to merge them into `claude_desktop_config.json`:
+   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+3. Remind user to restart Claude Desktop after config changes
+4. Note: Desktop Code tab reads `.mcp.json` (same as CLI), but Desktop Chat and Cowork read only `claude_desktop_config.json` — MCP servers need to be in both for full coverage
+
+**Important environment limitations:**
+- **Cowork** runs in an isolated Linux VM — can only access explicitly mounted folders, blocks symlinks outside scope. Reads MCP from `claude_desktop_config.json` (global), not `.mcp.json`. Cross-environment setup (WSL symlinks, Desktop config merges) must be done from a terminal, not Cowork.
+- **Desktop Code tab** IS sandboxed (OS-level: Seatbelt on macOS, bubblewrap on Linux/WSL2) — reads `.mcp.json` from the project.
+- **Windows native** does NOT support sandboxing — never use `--dangerously-skip-permissions` (canonical warning in [launch-flags.md](./launch-flags.md)).
+
+Then verify the persona works — run through the [Testing a Persona](#testing-a-persona) checklist below.
 
 ---
 
@@ -121,9 +173,9 @@ Optional capabilities that can be installed into personas after creation:
 
 | Pack | Skill | What it adds | Good for |
 |------|-------|-------------|----------|
-| Dashboard | `persona-manager:persona-dashboard` | Visual dashboard (HTML), task tracking, open.sh | Personas with ongoing work, reviews, regular check-ins |
+| Dashboard | `persona-dashboard:install` | Visual dashboard (HTML), task tracking, open.sh | Personas with ongoing work, reviews, regular check-ins |
 
-These are separate skills in persona-manager — invoke them when the user asks for the capability, or suggest them during Phase 2 (Research) when creating a persona.
+These ship as separate expansion-pack plugins — invoke their install skill when the user asks for the capability, or suggest them during Phase 2 (Research) when creating a persona.
 
 During self-audits, personas can also discover expansion packs that would help with recurring needs.
 

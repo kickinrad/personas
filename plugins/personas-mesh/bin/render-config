@@ -10,6 +10,8 @@
 #   ${ANTHROPIC_API_KEY}                — from `pass show anthropic/api-key` (optional)
 #
 # Fails loudly (exit 1, stderr) on any missing pass secret — never renders partial.
+# If the output file already exists and is valid JSON, the rendered template is
+# deep-merged into it (rendered keys win; existing extra keys are preserved).
 
 set -euo pipefail
 
@@ -80,6 +82,17 @@ if grep -qE '\$\{[A-Z_]+\}' "$tmp"; then
   die "unresolved placeholder(s) in $template: $unresolved"
 fi
 
-mv "$tmp" "$output"
+# Merge, don't clobber: if the target already exists and both sides are valid
+# JSON, deep-merge the rendered template into it (rendered keys win, existing
+# keys the template doesn't define — e.g. outputStyle in settings.local.json —
+# are preserved). Non-JSON or fresh targets fall back to a plain move.
+if [ -f "$output" ] && jq -e . "$output" >/dev/null 2>&1 && jq -e . "$tmp" >/dev/null 2>&1; then
+  merged=$(mktemp)
+  jq -s '.[0] * .[1]' "$output" "$tmp" > "$merged" || { rm -f "$merged"; die "jq merge failed for $output"; }
+  mv "$merged" "$output"
+  rm -f "$tmp"
+else
+  mv "$tmp" "$output"
+fi
 trap - EXIT
 chmod 600 "$output"

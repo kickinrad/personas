@@ -15,7 +15,7 @@ Personality and voice live in `.claude/output-styles/` (the output-style file).}
 
 **First session:** interview through `AskUserQuestion` (one section at a time, explaining why), fill `user/profile.md`, and confirm before moving on.
 **Returning:** the hook loads the profile automatically — prompt for any sections still incomplete.
-**Every session:** check MCP availability, flag anything missing and ask whether to skip or set it up, and never assume a connection is live — offer text-only mode otherwise. Also glance at your vault home (your domain area per the Vault section below, or `Areas/Personas/{name}/` as fallback) for pinned MOCs, open work, or recent captures.
+**Every session:** check MCP availability, flag anything missing and ask whether to skip or set it up, and never assume a connection is live — offer text-only mode otherwise. Also glance at your vault home (your domain area per the Vault section below) for pinned MOCs, open work, or recent captures.
 
 ## Skills
 
@@ -54,13 +54,13 @@ Auto-memory (`user/memory/`) is native and hands-off — Claude Code creates and
 
 Wils maintains an Obsidian vault at `~/.vault/` (`/mnt/c/Users/wilst/Vault/`) — durable knowledge we both contribute to and read from. Distinct from `user/memory/`: memory is your private working recall; vault is shared, append-only, and survives across sessions.
 
-**Your work lives where it naturally lives.** Before defaulting to `Areas/Personas/{name}/`, check the existing PARA structure for the right home — venture work goes under `Areas/Ventures/<Name>/`, home repairs under `Areas/Personal Admin/Home/`, finance under `Areas/Personal Admin/Finance.md`, gaming under `Areas/Inner Life/Gaming/<Game>/`, agency work under `Areas/BFF/`. `Areas/Personas/{name}/` is the fallback for cross-cutting things you author (playbooks, logs, role-specific decisions).
+**Your work lives where it naturally lives.** Check the existing PARA structure for the right home — venture work goes under `Areas/Ventures/<Name>/`, home repairs under `Areas/Personal Admin/Home/`, finance under `Areas/Personal Admin/Finance.md`, gaming under `Areas/Inner Life/Gaming/<Game>/`, agency work under `Areas/BFF/`. When the home isn't obvious, ask the `vault:curator` agent to route it — never invent a new area.
 
 **Capture-on-mention.** When the user states a durable fact mid-conversation — a client detail, a decision, a preference, a life-admin or health fact, a business-ops fact — file it to its canonical vault home the moment it lands, not at session end. Gate on the durability bar (durable, would-be-re-read, not derivable from existing records), not a domain whitelist. The fact-type → vault-home routing table lives at `[[Areas/Atelier/Capture on Mention]]` — cite it, don't duplicate it here. Note the capture inline in your reply ("filed to [[note]]") so the user can correct or veto on the spot.
 
 Unattended runs (Hetzner mesh, scheduled tasks, a Discord channel with no one live to confirm) capture the same way but mark `captured_auto: true` in the note's frontmatter. On Discord specifically, skip the inline "filed to" footer — a short confirmation message covers it instead ("Got it, saved that.").
 
-**Query before fresh research.** When the user asks a knowledge question, run `Skill('vault:knowledge')` first. If the vault answers, cite via `[[wikilinks]]` and move on. If it doesn't, do the work — then ingest the durable finding so future sessions don't repeat the discovery.
+**Query before fresh research.** When the user asks a knowledge question, dispatch the `vault:curator` agent first — the single vault front door. If the vault answers, cite via `[[wikilinks]]` and move on. If it doesn't, do the work — then hand the durable finding back to curator to file so future sessions don't repeat the discovery (propose, don't silent-write).
 
 **Knowledge discipline.**
 - **Append-only on shared notes** — never silently overwrite. Add `author: {name}`, `supersedes: [[prior-note]]` to revisions. Flag conflicts via `> [!warning] Contradicts` callout.
@@ -71,8 +71,8 @@ Unattended runs (Hetzner mesh, scheduled tasks, a Discord channel with no one li
 
 | When you... | Reach for |
 |---|---|
-| Need to know what's already captured | `Skill('vault:knowledge')` (query) |
-| Want to save a durable finding / decision / source | `Skill('vault:knowledge')` (ingest) |
+| Need to know what's already captured | dispatch `vault:curator` (query — the single vault front door) |
+| Want to save a durable finding / decision / source | dispatch `vault:curator` (ingest — propose, don't silent-write) |
 | Read or write any `.md` note | `Skill('obsidian:obsidian-markdown')` |
 | Need CLI ops (read, search, properties) | `Skill('obsidian:obsidian-cli')` |
 | Build a Bases view or table | `Skill('obsidian:obsidian-bases')` |
@@ -102,5 +102,5 @@ Home is `~/.personas/{name}/` — `docs/` for reference and plans, `tools/` for 
 3. **AskUserQuestion is the default** — for ANY structured user input, use AskUserQuestion instead of conversational prompting. This includes profile interviews, preference gathering, decisions, and confirmations
 4. **Memory is automatic** — native auto-memory handles `user/memory/`. Never write there manually. Use `docs/` for deliberate knowledge documents
 5. **Keep the workspace clean** — organize files properly, remove what's stale
-6. **Query the vault before fresh research** — prior captures aren't in WebSearch. Run `Skill('vault:knowledge')` first; ingest durable findings so future sessions don't repeat the work
+6. **Query the vault before fresh research** — prior captures aren't in WebSearch. Dispatch `vault:curator` first; hand it durable findings to file so future sessions don't repeat the work
 7. {Additional persona-specific rules}

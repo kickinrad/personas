@@ -28,18 +28,19 @@ The persona evolution workflow, served to every persona by this plugin (no local
 
 ### persona-dev
 
-Guided 8-phase persona creation workflow:
+Guided 9-phase persona creation workflow:
 
 1. **Discovery** — role, personality, voice, workflows, environment
 2. **Research** — MCP servers, CLI tools, APIs, integrations
-3. **Scaffold** — directory structure with cross-platform detection
-4. **Build Core Files** — CLAUDE.md, profile, hooks, sandbox, skills
-5. **Configure Integrations** — MCP, tools, expansion packs
-6. **Initialize Git** — repo setup, optional GitHub sync
-7. **Configure Launch Flags** — OS-aware flag selection (sandbox safety)
-8. **Configure Access** — shell aliases, Desktop setup, verification
+3. **Plan Review** — approval gate before anything gets built
+4. **Scaffold** — directory structure with cross-platform detection
+5. **Build Core Files** — CLAUDE.md, profile, hooks, sandbox, skills
+6. **Configure Integrations** — MCP, tools, expansion packs
+7. **Initialize Git** — repo setup, optional GitHub sync, mesh joining
+8. **Configure Launch Flags** — OS-aware flag selection (sandbox safety)
+9. **Configure Access** — shell aliases, Desktop setup, verification
 
-**Trigger examples:** "create a persona", "build me a persona for finance", "add a skill to my persona", "my persona should remember this"
+**Trigger examples:** "create a persona", "build me a persona for finance", "add a skill to my persona", "wire a plugin into my persona"
 
 ### persona-update
 

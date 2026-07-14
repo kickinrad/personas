@@ -42,6 +42,7 @@
   },
   "enabledPlugins": {
     "persona-manager@personas": true,
+    "personas-mesh@personas": true,
     "vault@core": true,
     "obsidian@obsidian-skills": true
   }

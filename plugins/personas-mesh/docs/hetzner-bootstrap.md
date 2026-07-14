@@ -29,7 +29,9 @@ sudo chown wils:wils /srv/personas /srv/personas-work
 
 ### 2. Clone bare repos from GitHub
 
-For each of the 10 personas:
+> [!note] The persona name lists in the loops below are a **point-in-time snapshot** from the original bootstrap. Derive the current roster from `ls ~/.personas` before running any of them.
+
+For each persona:
 
 ```bash
 cd /srv/personas

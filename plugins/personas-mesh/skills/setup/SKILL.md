@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Bootstrap personas-mesh on the current node (WSL / Hetzner host). This skill should be used when the user asks to "install personas-mesh", "set up persona sync", "bootstrap the mesh", "wire up sync on this machine", or after pulling personas-mesh for the first time on any node. Installs bin/ scripts to ~/.local/bin, copies systemd units, renders the per-node env file, wires each persona's hooks.json with the sync hooks, adds .gitattributes, and verifies by running one sync loop. Does not modify persona-manager or any persona CLAUDE.md.
+description: Bootstrap personas-mesh on the current node (WSL / Hetzner host). This skill should be used when the user asks to "install personas-mesh", "set up persona sync", "bootstrap the mesh", "wire up sync on this machine", or after pulling personas-mesh for the first time on any node.
 ---
 
 # personas-mesh:setup
@@ -18,7 +18,7 @@ One-shot bootstrap per node. Run after installing the plugin on a fresh machine.
    - Copy `${CLAUDE_PLUGIN_ROOT}/templates/.gitattributes` into the persona (merge only — don't clobber existing rules).
    - Append the entries from `templates/.gitignore.additions` to the persona's `.gitignore`, dedup.
    - Patch the persona's `hooks.json` to add SessionStart + Stop command hooks pointing at `${CLAUDE_PLUGIN_ROOT}/hooks/{session-start,stop}.sh`. Do not replace existing hooks; append to the existing arrays.
-   - Render `.mcp.json` and `.claude/settings.local.json` from templates via `render-config`.
+   - Render `.mcp.json` and `.claude/settings.local.json` from templates via `render-config`. Rendering **merges into an existing JSON target instead of clobbering it** — keys the template doesn't define (e.g. `outputStyle` in `settings.local.json`) are preserved; rendered keys win.
 6. **Smoke test** — run `personas-mesh-sync-all` once with `--verbose`; show result.
 7. **Summary** — print what was installed and the one remaining action (Hetzner host bootstrap or symlink break) if applicable.
 
