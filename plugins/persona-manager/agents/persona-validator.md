@@ -99,7 +99,7 @@ Additionally, validate hook structure for each event:
 - Prompt hooks must have a non-empty `prompt` field
 - If `timeout` is present, verify it's a number between 1000 and 30000
 - `PreToolUse` must have a `matcher` field (expected: `"Bash"`)
-- `SessionStart` should have exactly 2 command hooks (profile read + version check)
+- `SessionStart` must include at least the 2 framework command hooks (profile read + version check); personas-mesh hooks pointing at `${CLAUDE_PLUGIN_ROOT}/hooks/` are expected additions, not corruption
 - WARN if any unexpected hook events are present beyond the 6 standard ones (could indicate corruption or manual injection)
 
 For `.claude/settings.json`, verify:
@@ -107,11 +107,11 @@ For `.claude/settings.json`, verify:
 - `sandbox.autoAllowBashIfSandboxed` is `true`
 - `filesystem.denyRead` includes `"~/.aws"`, `"~/.ssh"`, `"~/.gnupg"`, `"../"`
 - `extraKnownMarketplaces` has personas entry
-- `enabledPlugins` includes `persona-manager@personas`
+- `enabledPlugins` includes BOTH framework plugins: `persona-manager@personas` and `personas-mesh@personas`
 
 For `.claude-flags`, verify:
 - Contains `--setting-sources project,local`
-- If OS is Windows native (check via `uname`): must NOT contain `--dangerously-skip-permissions`
+- If OS is Windows native (check via `uname`): must NOT contain `--dangerously-skip-permissions` (canonical rationale: persona-dev `references/launch-flags.md`)
 
 For memory configuration, verify exactly one `autoMemoryDirectory` is configured:
 - `autoMemoryDirectory` lives in `.claude/settings.local.json` (Claude ignores it in `settings.json` as a security measure)

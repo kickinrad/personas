@@ -1,15 +1,6 @@
 ---
 name: install
 description: Add a visual dashboard to a persona — HTML dashboard, task tracking, and browser launcher. Use when the user asks to add a dashboard, set up a dashboard, create a task board, or wants visual status for a persona.
-disable-model-invocation: true
-triggers:
-  - dashboard
-  - add a dashboard
-  - set up dashboard
-  - create a dashboard
-  - persona dashboard
-  - task board
-  - visual status
 ---
 
 # Persona Dashboard (Expansion Pack)

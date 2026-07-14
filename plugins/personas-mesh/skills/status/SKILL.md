@@ -9,7 +9,7 @@ One-screen dashboard of per-persona sync health.
 
 ## What to show
 
-For each of the 10 personas (Archer, Bob, Julia, Kai, Mila, Nara, Piper, Reed, Urza, Warren), a row with:
+Derive the roster live — never from a hardcoded list: union of `ls ~/.personas` (local nodes) and `ssh wils@cloud ls /srv/personas` (hub bare repos, strip `.git`). For each persona in the roster, a row with:
 
 - **Persona** — name
 - **WSL** — last commit ts (relative), `✓` clean or `●` dirty-count
@@ -29,7 +29,7 @@ For each of the 10 personas (Archer, Bob, Julia, Kai, Mila, Nara, Piper, Reed, U
 
 ## Bot-only check (laptop-only personas skip)
 
-Archer, Kai, Piper, Reed, Urza are not deployed on Hetzner — mark their Hetzner column `—`.
+Laptop-only personas are not deployed on Hetzner — derive which by listing `ssh wils@cloud ls /srv/personas-work/` and mark the Hetzner column `—` for any persona absent there.
 
 ## Conflict badge
 

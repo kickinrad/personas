@@ -1,6 +1,6 @@
 ---
 name: persona-dev
-description: This skill should be used when the user asks to "create a new persona", "build me a persona", "add a skill to an existing persona", "wire a plugin into a persona", "enable a plugin for a persona", "update a persona's CLAUDE.md or profile", "set up hooks or self-improvement", "document a new MCP tool in a persona", or improve how a persona works over time. Also triggers when the user says "my persona should remember this", "this keeps happening, make it a skill", "create a persona for", or "persona evolution".
+description: This skill should be used when the user asks to "create a new persona", "build me a persona", "add a skill to an existing persona", "wire a plugin into a persona", "enable a plugin for a persona", "update a persona's CLAUDE.md or profile", "set up hooks or self-improvement", or "document a new MCP tool in a persona". Also triggers when the user says "create a persona for".
 ---
 
 # Persona Development
@@ -114,31 +114,7 @@ Don't rush this. A well-understood persona is easier to build and evolves better
 
 ### Phase 2: Research
 
-Before writing a single file, research what tools and integrations could enhance this persona. Think broadly — personas have a rich toolkit beyond MCP servers:
-
-1. **MCP servers** — search for community or official MCP servers relevant to the domain (recipe APIs, financial data, calendar, etc.). Existing servers beat custom solutions
-2. **CLI tools** — identify useful CLI tools already installed or easily available (`gh`, `jq`, domain-specific CLIs)
-3. **APIs** — identify REST/GraphQL APIs the persona could call directly via `curl` or scripts in `tools/`. Not everything needs an MCP server — sometimes a simple API call in a bash script is the right tool
-4. **Skills** — plan domain skills that wrap CLI tools, API workflows, or multi-step processes into reusable SKILL.md files. Skills are the persona's playbooks — they turn "I know how to use this tool" into "here's the complete workflow"
-5. **Agents** — consider whether the persona needs specialized subagents (in `.claude/agents/`) for complex autonomous tasks like research, analysis, or multi-step operations
-6. **Hooks** — beyond the standard SessionStart/Stop/PreCompact, consider domain-specific hooks (e.g., a PreToolUse hook that validates data before writes, a Stop hook that generates a summary)
-7. **Scripts** — bash or python scripts in `tools/` for data pipelines, API wrappers, formatters, or anything the persona does repeatedly
-8. **Reference material** — domain-specific best practices, checklists, templates, or frameworks that should live in `docs/`
-9. **Scheduled tasks** — identify workflows that benefit from timed reminders or delayed checks. Any persona can schedule tasks using natural language ("remind me at 3pm to...", "in 45 minutes, check whether..."). These are session-scoped — they vanish on exit. Suggest domain-specific scheduling patterns during persona setup and document them in the CLAUDE.md template
-10. **Expansion packs** — check if any persona-manager expansion packs fit:
-   - `persona-manager:persona-dashboard` — visual dashboard with task tracking (good for personas with ongoing work, reviews, or regular check-ins)
-
-| Discovery | Where it lives | When to choose it |
-|-----------|---------------|-------------------|
-| MCP server | `.mcp.json` + sandbox allowlist | Persistent connection to an external service |
-| CLI tool | Document in CLAUDE.md or wrap in a skill | Mature tool already exists for the job |
-| API (direct) | `tools/` script or skill instructions | Simple HTTP calls, no persistent connection needed |
-| Skill | `.claude/skills/{domain}/{name}/SKILL.md` | Multi-step workflow the persona will repeat |
-| Agent | `.claude/agents/{name}.md` | Autonomous subtask needing its own context |
-| Hook | `hooks.json` | Behavioral automation tied to session events |
-| Script | `tools/{name}` | Data processing, automation, one-off utilities |
-| Scheduled task | Scheduling patterns in CLAUDE.md | Timed reminders, delayed checks |
-| Reference doc | `docs/` | Domain knowledge the persona should internalize |
+Before writing a single file, research what tools and integrations could enhance this persona. Work through the discovery categories and the where-it-lives table in [references/research-toolkit.md](./references/research-toolkit.md) — MCP servers, CLI tools, APIs, skills, agents, hooks, scripts, reference material, scheduled tasks, and expansion packs (e.g., `persona-dashboard:install`).
 
 Present findings to the user: "Here's what I found that could enhance this persona: [list]. Which of these should we include?"
 
@@ -176,22 +152,7 @@ Present this as a single `AskUserQuestion` with options:
 - If `~/.personas/{name}/CLAUDE.md` exists, stop and ask: "A persona named `{name}` already exists. Update it, or pick a different name?"
 - Don't proceed with scaffolding if it would overwrite an existing persona
 
-**Determine the personas root directory:**
-
-| Environment | Personas root | Why |
-|-------------|--------------|-----|
-| macOS / Linux (native) | `~/.personas/` | Standard home directory |
-| WSL2 (CLI only) | `~/.personas/` (WSL side) | Better I/O performance |
-| WSL2 (CLI + Desktop) | `/mnt/c/Users/{WINUSER}/.personas/` + symlink from WSL `~/.personas/` | Both environments see the same files |
-| Windows native (CLI or Desktop) | `%USERPROFILE%\.personas\` | Native Windows home |
-| Cowork / Desktop session | **Workspace folder** — detect with `pwd` or workspace path, NOT `~` | `~` resolves to temp session filesystem that vanishes |
-
-**Cowork detection:** If `$HOME` starts with `/sessions/` or the CWD is inside a temp path, you're in a Cowork session. Cowork runs in an isolated Linux VM — it can only access explicitly mounted folders and resolves symlinks to real paths (blocking escape). Find the actual workspace/mounted folder and write there instead.
-
-**WSL2 + Desktop symlink:** When the user wants both CLI and Desktop, personas should live on the Windows side (`/mnt/c/Users/{WINUSER}/.personas/`) with a symlink from WSL's `~/.personas/`. **Important:** This symlink must be created from the WSL terminal, not from Cowork — Cowork cannot create symlinks to paths outside its mounted folders. Tell the user to run:
-```bash
-ln -s /mnt/c/Users/{WINUSER}/.personas ~/.personas
-```
+**Determine the personas root directory:** environment-dependent — see [references/environments.md](./references/environments.md) for the per-environment matrix (macOS / Linux / WSL2 / Windows native / Cowork), Cowork detection, and the WSL2 + Desktop symlink procedure.
 
 **Check sandbox prerequisites before scaffolding:**
 - On Linux/WSL2: verify `bwrap` (bubblewrap) is installed: `command -v bwrap`
@@ -307,39 +268,18 @@ For example, if the persona lives at `~/.personas/warren/`, the value would be `
 
 **5i. Create README.md**
 
-Every persona repo gets a short README. Keep it minimal — this isn't a library, it's a personal assistant:
+Every persona repo gets a short README — copy the skeleton from [references/readme-template.md](./references/readme-template.md) and fill in the placeholders. Keep it minimal; this isn't a library, it's a personal assistant.
 
-```markdown
-# {PersonaName} {emoji}
-
-> {One-line role description}
-
-A self-evolving AI persona built on [Claude Code](https://claude.com/claude-code) using the [personas](https://github.com/kickinrad/personas) framework.
-
-## Usage
-
-```bash
-{name}              # interactive session
-{name} "do weekly"  # one-shot prompt
-```
-
-## Setup
-
-See the [personas framework](https://github.com/kickinrad/personas) for installation and setup.
-```
-
-For **public repos**, consider adding a brief "What it does" section describing the persona's domain and skills.
-
-**5L. Scaffold the vault home**
+**5j. Scaffold the vault home**
 
 The persona's vault home is where its durable knowledge accrues (decisions, playbooks, captures). Bootstrap it now so the persona has a MOC to land work in from session one.
 
-1. Check whether `~/.vault/Areas/Personas/{name}/` exists.
-2. If missing, invoke `Skill('vault:knowledge')` MOC scaffold (or call the `/vault:repo-moc init Areas/Personas/{name}` slash command) to create the folder note. **Do not write new Python — use existing vault:knowledge capability.**
-3. The MOC stub should have proper frontmatter (`author: {name}`, `type: moc`, `tags: [personas]`, `created: <date>`), an "Open work" section, a "Recent captures" section, and link back to the persona's natural domain area if one applies (e.g., `[[Areas/Personal Admin/Home|Home]]` for a home-repair persona, `[[Areas/Ventures/Botwright|Botwright]]` for a venture-focused persona).
-4. Skip Phase 5L with a clear warning if `~/.vault/` is unreachable (machine without WSL mount).
+1. Dispatch the `vault:curator` agent — the single vault front door — to pick the persona's natural domain home per the routing paragraph in `references/claude-md-template.md` (venture work under `Areas/Ventures/<Name>/`, agency work under `Areas/BFF/`, personal-admin domains under `Areas/Personal Admin/…`, and so on).
+2. Have curator create the MOC folder note at that home — curator owns the write; don't write vault files directly.
+3. The MOC stub should have proper frontmatter (`author: {name}`, `type: moc`, `tags: [personas]`, `created: <date>`), an "Open work" section, and a "Recent captures" section.
+4. Skip Phase 5j with a clear warning if `~/.vault/` is unreachable (machine without WSL mount).
 
-**5j. Validate scaffold**
+**5k. Validate scaffold**
 
 Before proceeding, verify all required files exist:
 - [ ] `README.md`
@@ -354,11 +294,11 @@ Before proceeding, verify all required files exist:
 - [ ] `enabledPlugins` in `.claude/settings.json` includes `persona-manager@personas` (ships the self-improve skill)
 - [ ] At least one domain skill in `.claude/skills/`
 - [ ] `.framework-version` (stamped with current plugin version)
-- [ ] `~/.vault/Areas/Personas/{name}/{Name}.md` MOC exists (skipped if Phase 5L unavailable)
+- [ ] Vault-home MOC exists at the persona's natural domain home (skipped if Phase 5j unavailable)
 
 If anything is missing, fix it now — don't proceed with gaps.
 
-**5k. Stamp framework version**
+**5L. Stamp framework version**
 
 Write the current plugin version to `.framework-version` in the persona root. Read the version from this plugin's `.claude-plugin/plugin.json`. This single-line file tracks which framework version the persona was built with — persona-update uses it to detect drift.
 
@@ -411,140 +351,41 @@ Add 1-2 domain-specific topics too (e.g., `finance`, `cooking`, `fitness`).
 - `.mcp.json` — contains API keys and secrets (always gitignored)
 - Files matching `*.env`, `*.secret`, `*.key`, `*.pem` — credential files
 
+### Phase 7b: Join the meshes
+
+Wire the new persona into the two mesh layers. Keep this step thin — `personas-mesh:setup` owns the per-persona wiring detail; don't restate its procedure here.
+
+**(a) Git mesh (state sync).** Create the hub bare repo and swap the persona's origin:
+
+```bash
+ssh wils@cloud git init --bare /srv/personas/{name}.git
+cd ~/.personas/{name}
+git remote rename origin github 2>/dev/null || true   # keep GitHub as mirror if it exists
+git remote add origin ssh://wils@cloud/srv/personas/{name}.git
+git push -u origin main
+```
+
+Then run `Skill('personas-mesh:setup')` for the rest of the per-persona wiring (sync hooks, `.gitattributes`, rendered configs, timers).
+
+**(b) Bridgey spoke (agent mesh).** Give the persona an A2A endpoint:
+
+1. Pick the next free port in the 8092+ range — check the hub's `~/.bridgey/bridgey.config.json` for ports already taken
+2. Create `~/.bridgey/personas/{name}.config.json` (copy a sibling persona's config; swap name, port, token)
+3. Add the persona's entry to the hub config's agents array
+4. Install + enable a `bridgey-persona@{name}.service` unit
+5. Restart the hub so it picks up the new spoke
+
 ### Phase 8: Configure launch flags
 
-Before setting up aliases or Desktop access, determine the right CLI flags for this persona. Autodetect the environment, present defaults, and walk the user through customization.
+Autodetect the environment, present the recommended flag set, walk the user through customization via `AskUserQuestion`, then write the chosen flags to `~/.personas/{name}/.claude-flags` (a single line, sourced by the alias). The full procedure — detection script, per-flag walkthrough table, defaults by environment — lives in [references/launch-flags.md](./references/launch-flags.md).
 
-**Step 1: Autodetect environment**
-
-```bash
-# Detect OS and sandbox support
-if [[ "$(uname -s)" == "Darwin" ]]; then
-  OS="macOS"         # Seatbelt built-in, sandbox always available
-  SANDBOX_OK=true
-elif grep -qi microsoft /proc/version 2>/dev/null; then
-  OS="WSL2"          # bubblewrap needed
-  SANDBOX_OK=$(command -v bwrap &>/dev/null && echo true || echo false)
-elif [[ "$(uname -s)" == "Linux" ]]; then
-  OS="Linux"         # bubblewrap needed
-  SANDBOX_OK=$(command -v bwrap &>/dev/null && echo true || echo false)
-elif [[ "$OS" == "Windows_NT" ]] || command -v cmd.exe &>/dev/null; then
-  OS="Windows"       # No sandbox support
-  SANDBOX_OK=false
-fi
-```
-
-If sandbox prerequisites are missing on Linux/WSL2, tell the user:
-```bash
-sudo apt-get install bubblewrap socat  # Ubuntu/Debian
-sudo dnf install bubblewrap socat      # Fedora
-```
-
-**Step 2: Present default flags and walk through customization**
-
-Present the detected config and walk the user through each flag using `AskUserQuestion`. Explain what each one does, why it matters, and the tradeoff. **All flags are optional** — the user decides:
-
-| Flag | What it does | Ask the user |
-|------|-------------|--------------|
-| `--setting-sources project,local` | Loads only this persona's `settings.json` and `settings.local.json`, ignoring `~/.claude/settings.json`. Keeps permissions, sandbox, and MCP config isolated. **Note:** does NOT affect `CLAUDE.md` loading — for that, the persona's `.claude/settings.json` uses `claudeMdExcludes` to block `~/.claude/CLAUDE.md` from auto-discovery | "This keeps your persona's settings isolated from your global Claude config. Recommended ON unless you want global settings to merge in. Enable?" |
-| `--dangerously-skip-permissions` | Skips permission prompts for every tool use. **Only safe when OS-level sandbox is active** (macOS/Linux/WSL2) — the sandbox restricts filesystem + network even without prompts. **NEVER on Windows** | "This lets the persona work without asking permission for every action. It's safe because the sandbox restricts what it can access. Want autonomous mode, or prefer to approve actions manually?" |
-| `--remote-control` | Enables browser extension integration and external tool connections | "This allows tools like the Chrome extension to connect to your persona. Enable?" |
-| `--chrome` | Enables Claude in Chrome browser automation. Gives the persona access to your Chrome browser for web interaction, form filling, screenshots, and debugging | "This lets the persona interact with your Chrome browser (requires the Claude in Chrome extension). Does this persona need browser access?" |
-
-**Resulting flag sets by environment (defaults, all customizable):**
-
-| Environment | Sandbox? | Default flags |
-|-------------|----------|---------------|
-| macOS | Yes (Seatbelt) | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
-| Linux | Yes (bubblewrap) | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
-| WSL2 | Yes (bubblewrap) | `--setting-sources project,local --dangerously-skip-permissions --remote-control` |
-| Windows native | **No** | `--setting-sources project,local --remote-control` |
-
-`--chrome` is not in the defaults but is always offered as an optional addition during the walkthrough.
-
----
-
-**⚠ WINDOWS NATIVE — CRITICAL SAFETY WARNING ⚠**
-
-**NEVER use `--dangerously-skip-permissions` on Windows native.** Windows does not have OS-level sandboxing (no Seatbelt, no bubblewrap). This flag would give the persona **completely unrestricted access** to the entire filesystem and network — it could read any file, delete anything, and make arbitrary network requests with zero guardrails.
-
-On macOS/Linux/WSL2, `--dangerously-skip-permissions` is safe because the sandbox blocks dangerous operations at the OS level even when permissions are skipped. On Windows, there is no such safety net.
-
-**If the user asks to enable it on Windows, refuse and explain why.** Even if they insist. This is not a preference — it's a safety boundary. The persona-dev skill must enforce this by never writing `--dangerously-skip-permissions` to `.claude-flags` on Windows native, regardless of user request.
-
----
-
-Present defaults first, then offer customization via `AskUserQuestion`:
-1. Show the recommended flag set for the detected OS environment (from the table above)
-2. Briefly explain what each flag does in plain language
-3. Ask: "These are the recommended defaults for your {OS} setup. Look good, or want to customize?"
-4. If the user wants to customize, walk through each flag individually using `AskUserQuestion` — use the "Ask the user" column from the table above
-5. `--chrome` is always presented as an optional addition: "Want to add Chrome browser automation? This lets the persona interact with web pages in your Chrome browser (requires the Claude in Chrome extension)."
-6. On Windows, explain why `--dangerously-skip-permissions` is not available before moving on
-7. Summarize the final chosen flags before writing to `.claude-flags`
-
-**Step 3: Store the flags**
-
-Write the chosen flags into `~/.personas/{name}/.claude-flags` (a single line, sourced by the alias):
-
-```bash
-echo '--setting-sources project,local --dangerously-skip-permissions --remote-control' > ~/.personas/{name}/.claude-flags
-```
-
-This file is read by `.aliases.sh` so each persona can have its own flag configuration.
+**Windows guardrail:** never write `--dangerously-skip-permissions` to `.claude-flags` on Windows native — no OS-level sandbox exists there; refuse even if the user insists (canonical warning in [references/launch-flags.md](./references/launch-flags.md)).
 
 ### Phase 9: Configure access + verify
 
-Setup depends on the environment detected in Phase 1:
+Set up access per the environment detected in Phase 1 — shell aliases (macOS/Linux/WSL2), a PowerShell function (Windows native), or Claude Desktop project-folder + MCP config merge. The full procedure, including environment limitations, is the "Configure Access" section of [references/lifecycle-meta.md](./references/lifecycle-meta.md).
 
-**CLI (macOS / Linux / WSL2) — shell aliases:**
-
-1. **Create `~/.personas/.aliases.sh`** if it doesn't exist (see [CLI Aliases](#cli-aliases) below for the template)
-2. **Add source line to the user's shell config** if not already present:
-   - Detect the user's shell from `$SHELL`
-   - For zsh: append to `~/.zshrc`
-   - For bash: append to `~/.bashrc`
-   - The line to add: `[ -f "$HOME/.personas/.aliases.sh" ] && source "$HOME/.personas/.aliases.sh"`
-   - **Check first** — only add if the line isn't already there
-3. **Tell the user** to restart their shell or run `source ~/.personas/.aliases.sh` to activate immediately
-
-**Windows native (no WSL) — PowerShell function:**
-
-Windows users without WSL can't use bash aliases. Create a PowerShell function instead:
-
-```powershell
-# Add to $PROFILE (e.g., ~\Documents\PowerShell\Microsoft.PowerShell_profile.ps1)
-function {name} {
-    param([Parameter(ValueFromRemainingArguments)]$args)
-    Push-Location "$env:USERPROFILE\.personas\{name}"
-    if ($args) {
-        claude --setting-sources project,local --remote-control -p ($args -join ' ')
-    } else {
-        claude --setting-sources project,local --remote-control
-    }
-    Pop-Location
-}
-```
-
-Note: no `--dangerously-skip-permissions` — Windows has no sandbox.
-
-**Desktop (macOS + Windows only):**
-
-Desktop is not available on Linux — Linux users are CLI-only.
-
-1. Tell the user to select `~/.personas/{name}/` as their project folder in Claude Desktop
-2. If MCP servers were configured in `.mcp.json`, offer to merge them into `claude_desktop_config.json`:
-   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-3. Remind user to restart Claude Desktop after config changes
-4. Note: Desktop Code tab reads `.mcp.json` (same as CLI), but Desktop Chat and Cowork read only `claude_desktop_config.json` — MCP servers need to be in both for full coverage
-
-**Important environment limitations:**
-- **Cowork** runs in an isolated Linux VM — can only access explicitly mounted folders, blocks symlinks outside scope. Reads MCP from `claude_desktop_config.json` (global), not `.mcp.json`. Cross-environment setup (WSL symlinks, Desktop config merges) must be done from a terminal, not Cowork.
-- **Desktop Code tab** IS sandboxed (OS-level: Seatbelt on macOS, bubblewrap on Linux/WSL2) — reads `.mcp.json` from the project.
-- **Windows native** does NOT support sandboxing — never use `--dangerously-skip-permissions`.
-
-Then verify the persona works — run through the [Testing a Persona](#testing-a-persona) checklist.
+Then verify the persona works — run through the "Testing a Persona" checklist in the same file.
 
 ---
 
@@ -578,3 +419,8 @@ Templates and helper files used by the scaffolding phases above. All live in `re
 - [claude-md-template](./references/claude-md-template.md) — CLAUDE.md skeleton written in Phase 5a
 - [output-style-template](./references/output-style-template.md) — `.claude/output-styles/{name}.md` skeleton written in Phase 5c
 - [profile-template](./references/profile-template.md) — `user/profile.md` skeleton written in Phase 5b
+- [readme-template](./references/readme-template.md) — `README.md` skeleton written in Phase 5i
+- [research-toolkit](./references/research-toolkit.md) — Phase 2 discovery categories + where-it-lives table (shared with self-improve Level 4)
+- [environments](./references/environments.md) — Phase 4 personas-root matrix, Cowork detection, WSL2 symlink
+- [launch-flags](./references/launch-flags.md) — Phase 8 flag reference; canonical Windows `--dangerously-skip-permissions` prohibition
+- [lifecycle-meta](./references/lifecycle-meta.md) — three-layer model, CLI aliases, Phase 9 access setup, testing, troubleshooting

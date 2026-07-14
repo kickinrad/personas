@@ -2,6 +2,8 @@
 
 This is Phase 4 of the rollout. Run only after Phases 1–3 have proved the mesh is healthy for at least a week — a failing mesh during this migration is a path to lost memory files.
 
+> [!note] The persona name lists and counts in this document are a **point-in-time snapshot** from the original migration. Derive the current roster from `ls ~/.personas` (and `ssh wils@cloud ls /srv/personas` for the hub) before running any loop.
+
 ## Current state (pre-migration)
 
 ```

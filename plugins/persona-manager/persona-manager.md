@@ -23,6 +23,7 @@ tags:
 
 - [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/persona-manager/skills/persona-dev/SKILL|persona-dev]]
 - [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/persona-manager/skills/persona-update/SKILL|persona-update]]
+- [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/persona-manager/skills/self-improve/SKILL|self-improve]]
 
 ### Agents
 

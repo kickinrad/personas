@@ -1,7 +1,7 @@
 {
   "name": "personas-mesh",
   "description": "State sync for personas across WSL, Windows, and Hetzner via a Tailscale-private git hub",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "author": {
     "name": "kickinrad",
     "url": "https://github.com/kickinrad"

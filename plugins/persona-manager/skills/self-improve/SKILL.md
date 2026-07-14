@@ -21,13 +21,9 @@ Your persona home is your working directory (`~/.personas/<name>/`). All persona
 
 ## Level 1: Memory (Native Auto-Memory — Hands Off)
 
-Memory is handled **entirely** by Claude Code's native auto-memory system via `autoMemoryDirectory` in `settings.local.json`. The system automatically creates, reads, and manages topic-based memory files in `user/memory/`.
+Memory is handled **entirely** by Claude Code's native auto-memory system via `autoMemoryDirectory` in `settings.local.json` — never write to `user/memory/` manually (the canonical rule lives in each persona's CLAUDE.md Memory section). The Stop and PreCompact hooks prompt you to *reflect* on session insights — auto-memory captures them automatically from your reflection.
 
-**Do NOT manually create, edit, or delete files in `user/memory/`.** Native auto-memory owns that directory. The Stop and PreCompact hooks prompt you to *reflect* on session insights — auto-memory captures them automatically from your reflection. No manual file writes needed.
-
-**Memory vs knowledge docs:**
-- `user/memory/` — native auto-memory only. Session learnings, preferences, patterns. **Never write here manually.**
-- `docs/` — knowledge and reference documents you create deliberately. Domain context, plans, research, checklists. **Write here when needed.**
+**Memory vs knowledge docs:** `user/memory/` is auto-memory's alone; `docs/` is for knowledge and reference documents you create deliberately (domain context, plans, research, checklists).
 
 During self-audits, review `user/memory/MEMORY.md` and topic files for:
 - Recurring patterns worth promoting to rules
@@ -69,35 +65,13 @@ When a capability gap needs automation beyond conversation:
 
 ### Step 1: Research before building
 
-Before creating anything custom, investigate what already exists. Think broadly — the right solution might be an MCP server, a CLI tool, a direct API call, a skill, an agent, a hook, or just good documentation:
-
-- **MCP servers** — search for community or official MCP servers that solve the problem. A well-maintained server beats a custom tool every time
-- **CLI tools** — check if there's an existing tool (`gh`, `jq`, `fzf`, etc.) that handles it. Many problems have mature solutions
-- **APIs** — check if a REST/GraphQL API can be called directly via `curl` or a simple script. Not everything needs an MCP server
-- **Skills** — could a SKILL.md wrap an existing tool or API into a reusable workflow? Skills turn tool knowledge into repeatable playbooks
-- **Agents** — would a specialized subagent handle this better? Agents are good for autonomous multi-step tasks that need their own context
-- **Hooks** — is this a behavioral pattern that should trigger automatically? Hooks automate responses to session events
-- **Scheduled tasks** — does the user keep asking for reminders or timed checks? Claude Code has built-in scheduling via `CronCreate` — natural language like "remind me at 3pm" or "in 45 minutes, check X" just works. Session-scoped only — suggest Desktop scheduled tasks or GitHub Actions for durable scheduling
-- **Expansion packs** — check if a personas-framework expansion pack covers it (e.g., `persona-dashboard:install` for task tracking and visual status)
-- **Reference docs** — sometimes the "tool" you need is just good documentation in `docs/`
+Before creating anything custom, investigate what already exists. Work through the discovery categories in the shared research toolkit — MCP servers, CLI tools, APIs, skills, agents, hooks, scripts, reference material, scheduled tasks, and expansion packs (e.g., `persona-dashboard:install`). The canonical list lives in the persona-dev sibling skill: `~/.claude/plugins/marketplaces/personas/plugins/persona-manager/skills/persona-dev/references/research-toolkit.md`.
 
 Present findings: "Here's what I found that could help: [options]. Want to use an existing solution, or should I build something?"
 
 ### Step 2: Identify what's needed
 
-| Need | Where it goes | Example |
-|------|--------------|---------|
-| MCP server (existing) | `.mcp.json` + sandbox allowlist | Community server for a service |
-| MCP server (custom) | Propose — user configures | Only if nothing exists |
-| CLI tool integration | CLAUDE.md instructions or wrap in a skill | Wrapping an external CLI |
-| API integration | `tools/` script or skill instructions | REST/GraphQL calls via curl or script |
-| Skill | `.claude/skills/{domain}/{name}/SKILL.md` | Multi-step workflow wrapping tools/APIs |
-| Agent | `.claude/agents/{name}.md` | Autonomous research, analysis, or processing |
-| Hook | `hooks.json` | Domain-specific behavioral automation |
-| Script or utility | `tools/{tool-name}/` | Data pipeline, formatter, setup script |
-| Scheduled task | Scheduling patterns in CLAUDE.md | Timed reminder, delayed check |
-| Reference doc | `docs/` | Domain knowledge, checklists, templates |
-| Expansion pack | Invoke the expansion pack's install skill | Dashboard, future packs |
+Use the where-it-lives table in the same `research-toolkit.md` reference to place each capability (`.mcp.json`, skill, agent, hook, `tools/` script, `docs/`, expansion pack).
 
 ### Step 3: Keep custom builds simple
 
@@ -139,7 +113,7 @@ Run monthly, or when the user says "time for a self-audit":
    - Check for loose files in the root that should be in `docs/` or `tools/`
    - Check for recurring manual checks or reminders the user keeps requesting — could any be automated with scheduled tasks?
    - Verify `.gitignore` is up to date with any new generated files
-   - **Vault integration health** — does the persona have a current MOC at its declared vault home? Are notes accruing or is the persona avoiding the vault? Are wikilinks resolving? Run `Skill('vault:knowledge')` lint if drift suspected
+   - **Vault integration health** — does the persona have a current MOC at its declared vault home? Are notes accruing or is the persona avoiding the vault? Are wikilinks resolving? Dispatch the `vault:curator` agent to lint if drift suspected
 6. **Present all proposals** clearly in a single summary:
 
 ```

@@ -16,7 +16,7 @@ These are persona-specific and must never be overwritten:
 - `.mcp.json`
 - `.claude/output-styles/`
 - Persona-specific `allowedDomains` in settings.json
-- Persona-specific `enabledPlugins` beyond `persona-manager@personas`
+- Persona-specific `enabledPlugins` beyond the framework pair (`persona-manager@personas`, `personas-mesh@personas`)
 - Custom Stop hook prompt additions (domain-specific context)
 - Persona-specific vault notes anywhere in the vault — user content, never modified by drift fix
 
@@ -117,15 +117,15 @@ These files are too customized for diffing. Check them conversationally:
 - Self-Improvement (references self-improve skill)
 - Workspace Hygiene (file organization, cleanup habits)
 - Security (personal data handling, secret management)
-- Built-in Tools (Claude Code native capabilities)
 - `## Vault — Our Shared Brain` section (or equivalent vault-aware section)
 - Important Rules contains the "Query the vault before fresh research" bullet
-- Skills/Tools section references at least `vault:knowledge` + `obsidian:obsidian-cli`
+- Skills/Tools section references at least the `vault:curator` front door + `obsidian:obsidian-cli`
 - **Capture-on-mention** paragraph in the Vault section (save-at-mention pattern, `captured_auto: true` for unattended runs, the Discord confirmation-message carve-out). If missing, apply the core/warmth split above — the invariant is the rule text in `references/claude-md-template.md`; the persona's existing voice carries it
 
 If any are missing, read `references/claude-md-template.md` for the canonical version and propose additions that fit the persona's style. Never rewrite personality or rules.
 
 **`.claude/settings.json`** — Read and verify:
+- `enabledPlugins` contains BOTH framework plugins: `persona-manager@personas` and `personas-mesh@personas`
 - `enabledPlugins` contains `vault@core` (not `vault@toolbox` — that's stale; propose a rewrite if found)
 - `enabledPlugins` contains `obsidian@obsidian-skills`
 - `extraKnownMarketplaces` contains `core` (directory source pointing at `/home/wilst/projects/markets/core`)
@@ -140,7 +140,7 @@ If any are missing, merge from `references/settings-template.json` while preserv
 
 **.claude-flags** — Read and verify:
 - `--setting-sources project,local` is present
-- `--dangerously-skip-permissions` is NOT present on Windows native
+- `--dangerously-skip-permissions` is NOT present on Windows native (canonical rationale: persona-dev `references/launch-flags.md`)
 - Don't add or remove optional flags (--remote-control, --chrome) — those are persona-specific
 
 ### Step 6: After applying drift fixes

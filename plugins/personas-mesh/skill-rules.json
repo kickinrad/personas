@@ -1,0 +1,50 @@
+{
+  "description": "Activation rules for personas-mesh skills",
+  "rules": {
+    "setup": {
+      "kind": "skill",
+      "type": "process",
+      "enforcement": "must",
+      "priority": "high",
+      "activationHint": "Skill('personas-mesh:setup')",
+      "promptTriggers": {
+        "keywords": ["install personas-mesh", "set up persona sync", "bootstrap the mesh", "sync my personas", "wire up sync"],
+        "intentPatterns": ["(install|set up|bootstrap|wire up).*?(personas-mesh|persona sync|the mesh)", "sync my personas"]
+      },
+      "fileTriggers": {
+        "pathPatterns": [],
+        "contentPatterns": []
+      }
+    },
+    "status": {
+      "kind": "skill",
+      "type": "process",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "activationHint": "Skill('personas-mesh:status')",
+      "promptTriggers": {
+        "keywords": ["mesh status", "personas in sync", "mesh healthy", "personas drifting", "sync state"],
+        "intentPatterns": ["mesh.*?status", "(are|is).*?personas?.*?(in sync|syncing|drifting)", "mesh.*?health"]
+      },
+      "fileTriggers": {
+        "pathPatterns": [],
+        "contentPatterns": []
+      }
+    },
+    "mesh-doctor": {
+      "kind": "skill",
+      "type": "process",
+      "enforcement": "must",
+      "priority": "high",
+      "activationHint": "Skill('personas-mesh:mesh-doctor')",
+      "promptTriggers": {
+        "keywords": ["mesh doctor", "persona sync broken", "fix the mesh", "mesh is broken", "sync conflict", "memory isn't propagating"],
+        "intentPatterns": ["mesh.*?(doctor|broken|not working)", "(persona )?sync.*?(broken|conflict|failing)", "why isn't.*?persona.*?sync"]
+      },
+      "fileTriggers": {
+        "pathPatterns": [],
+        "contentPatterns": []
+      }
+    }
+  }
+}
