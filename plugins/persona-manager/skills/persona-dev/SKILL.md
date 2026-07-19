@@ -146,6 +146,7 @@ Present this as a single `AskUserQuestion` with options:
 - No dots, slashes, spaces, or special characters — these break shell aliases and directory paths
 - Maximum 30 characters — keeps paths manageable
 - Reject immediately if the name contains `.`, `..`, `/`, `\`, spaces, or shell metacharacters (`$`, `` ` ``, `!`, `;`, `&`, `|`, etc.) — these could cause path traversal or command injection
+- Reject bash/zsh reserved words: `case`, `esac`, `if`, `then`, `elif`, `else`, `fi`, `for`, `while`, `until`, `do`, `done`, `function`, `select`, `time`, `coproc`, `in` — the persona name becomes its launch command, and the shell parser matches keywords before any function or command lookup, so the alias would be permanently unreachable (e.g., "'case' is a shell keyword and can't be a launch command — pick another name (e.g. casey, argus)")
 - If invalid, explain why and suggest a corrected version (e.g., "My Finance Bot" → "finance-bot")
 
 **Then check if the persona already exists:**
