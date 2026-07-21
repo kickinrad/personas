@@ -74,8 +74,8 @@ systemctl --user status personas-mesh-*.timer
 ### 7. Per-node env sanity
 
 - `cat ~/.personas-node.env` should define `AUTO_MEMORY_DIR`.
-- `pass show bridgey/token-{persona}` should succeed for bot personas.
-- GPG agent unlocked? `pass ls` non-error.
+- `OP_SERVICE_ACCOUNT_TOKEN="$(cat ~/.config/op/luna.token)" op read "op://Automation/BRIDGEY_TOKEN_<PERSONA>/value" >/dev/null; echo $?` should print `0` for bot personas (never print the value itself).
+- op reachable? `test -r ~/.config/op/luna.token` — missing/unreadable token file means every secret fetch fails before 1Password is even consulted.
 
 ## Conflict resolution recipe
 

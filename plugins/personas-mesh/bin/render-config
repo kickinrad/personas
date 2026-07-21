@@ -5,11 +5,13 @@
 #
 # Substitutes:
 #   ${AUTO_MEMORY_DIR}                  — from ~/.personas-node.env (with {persona} expanded)
-#   ${BRIDGEY_TOKEN_<UPPERPERSONA>}     — from `pass show bridgey/token-<persona>`
-#   ${DISCORD_BOT_<UPPERPERSONA>_TOKEN} — from `pass show discord/<persona>-bot-token`
-#   ${ANTHROPIC_API_KEY}                — from `pass show anthropic/api-key` (optional)
+#   ${BRIDGEY_TOKEN_<UPPERPERSONA>}     — 1Password item BRIDGEY_TOKEN_<UPPERPERSONA>
+#   ${DISCORD_BOT_<UPPERPERSONA>_TOKEN} — 1Password item DISCORD_BOT_<UPPERPERSONA>_TOKEN
+#   ${ANTHROPIC_API_KEY}                — 1Password item ANTHROPIC_API_KEY (optional)
 #
-# Fails loudly (exit 1, stderr) on any missing pass secret — never renders partial.
+# Secrets come from the 1Password Automation vault via the op CLI
+# (~/.local/bin/op; service-account token at ~/.config/op/luna.token).
+# Fails loudly (exit 1, stderr) on any missing secret — never renders partial.
 # If the output file already exists and is valid JSON, the rendered template is
 # deep-merged into it (rendered keys win; existing extra keys are preserved).
 
@@ -39,10 +41,13 @@ AUTO_MEMORY_DIR="${AUTO_MEMORY_DIR//\{persona\}/$persona}"
 
 upper_persona=$(printf '%s' "$persona" | tr '[:lower:]' '[:upper:]')
 
-pass_or_die() {
-  local path="$1"
-  pass show "$path" 2>/dev/null | head -1 \
-    || die "required secret missing: pass show '$path' failed; run: pass insert $path"
+# Fetch one secret from the 1Password Automation vault by item name.
+op_or_die() {
+  local key="$1" value
+  value=$(OP_SERVICE_ACCOUNT_TOKEN="$(cat "${HOME}/.config/op/luna.token")" \
+    "${HOME}/.local/bin/op" read "op://Automation/${key}/value" 2>/dev/null) \
+    || die "required secret missing: $key in the Automation vault; run: op item create --vault Automation --category \"API Credential\" --title $key value=<value>"
+  printf '%s\n' "$value" | head -1
 }
 
 tmp=$(mktemp)
@@ -52,20 +57,20 @@ cp "$template" "$tmp"
 
 # Walk placeholders that appear in the template, fetch just those secrets.
 if grep -q "\${BRIDGEY_TOKEN_${upper_persona}}" "$tmp"; then
-  token=$(pass_or_die "bridgey/token-${persona}")
+  token=$(op_or_die "BRIDGEY_TOKEN_${upper_persona}")
   # escape any / & \ for sed replacement
   esc=$(printf '%s' "$token" | sed -e 's/[\/&]/\\&/g')
   sed -i "s|\${BRIDGEY_TOKEN_${upper_persona}}|${esc}|g" "$tmp"
 fi
 
 if grep -q "\${DISCORD_BOT_${upper_persona}_TOKEN}" "$tmp"; then
-  token=$(pass_or_die "discord/${persona}-bot-token")
+  token=$(op_or_die "DISCORD_BOT_${upper_persona}_TOKEN")
   esc=$(printf '%s' "$token" | sed -e 's/[\/&]/\\&/g')
   sed -i "s|\${DISCORD_BOT_${upper_persona}_TOKEN}|${esc}|g" "$tmp"
 fi
 
 if grep -q "\${ANTHROPIC_API_KEY}" "$tmp"; then
-  token=$(pass_or_die "anthropic/api-key")
+  token=$(op_or_die "ANTHROPIC_API_KEY")
   esc=$(printf '%s' "$token" | sed -e 's/[\/&]/\\&/g')
   sed -i "s|\${ANTHROPIC_API_KEY}|${esc}|g" "$tmp"
 fi

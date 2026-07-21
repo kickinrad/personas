@@ -10,11 +10,13 @@ From WSL:
 ssh wils@cloud 'echo ok; hostname; uname -rm'
 # expect: ok  ubuntu-4gb-ash-1  <kernel> x86_64
 
-pass ls bridgey/     # must list token-{bob,julia,mila,nara,warren}
-pass ls discord/     # must list {bob,julia,mila}-bot-token
+# secret items live in the 1Password Automation vault — probe exit codes, never print values
+op_probe() { OP_SERVICE_ACCOUNT_TOKEN="$(cat ~/.config/op/luna.token)" op read "op://Automation/$1/value" >/dev/null || echo "missing: $1"; }
+for p in BOB JULIA MILA NARA WARREN; do op_probe "BRIDGEY_TOKEN_${p}"; done
+for p in BOB JULIA MILA; do op_probe "DISCORD_BOT_${p}_TOKEN"; done
 ```
 
-If either `pass ls` fails with "gpg: decryption failed", unlock the GPG agent first: `gpg --list-secret-keys` or retry after typing your passphrase into `pass show anything`.
+If a probe fails on every item, check `~/.config/op/luna.token` exists and is readable and the service account still has Automation-vault access. A single missing item → give Wils the exact command and wait: `op item create --vault Automation --category "API Credential" --title <NAME> value=<token>`.
 
 ## Phase 0 steps
 
