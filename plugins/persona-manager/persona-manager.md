@@ -1,7 +1,7 @@
 ---
 title: persona-manager
 type: moc
-area: "[[Areas/Claude Ecosystem/Marketplaces/personas/personas|personas]]"
+area: "[[Areas/Agent Ecosystem/Marketplaces/personas/personas|personas]]"
 author: wils
 created: 2026-04-27
 tags:
@@ -21,10 +21,10 @@ tags:
 
 ### Skills
 
-- [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/persona-manager/skills/persona-dev/SKILL|persona-dev]]
-- [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/persona-manager/skills/persona-update/SKILL|persona-update]]
-- [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/persona-manager/skills/self-improve/SKILL|self-improve]]
+- [[Areas/Agent Ecosystem/Marketplaces/personas/plugins/persona-manager/skills/persona-dev/SKILL|persona-dev]]
+- [[Areas/Agent Ecosystem/Marketplaces/personas/plugins/persona-manager/skills/persona-update/SKILL|persona-update]]
+- [[Areas/Agent Ecosystem/Marketplaces/personas/plugins/persona-manager/skills/self-improve/SKILL|self-improve]]
 
 ### Agents
 
-- [[Areas/Claude Ecosystem/Marketplaces/personas/plugins/persona-manager/agents/persona-validator|persona-validator]]
+- [[Areas/Agent Ecosystem/Marketplaces/personas/plugins/persona-manager/agents/persona-validator|persona-validator]]
