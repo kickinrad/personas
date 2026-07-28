@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# Generate stable launchers backed by an immutable, versioned plugin snapshot.
+
+set -euo pipefail
+
+die() { printf 'install-launchers: %s\n' "$*" >&2; exit 1; }
+
+script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+plugin_root=$(CDPATH='' cd -- "${script_dir}/.." && pwd)
+manifest="${plugin_root}/.claude-plugin/plugin.json"
+[ -f "$manifest" ] || die "plugin manifest unavailable"
+
+version=$(jq -r '.version // empty' "$manifest")
+[[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "invalid plugin version"
+
+install_base="${PERSONAS_MESH_INSTALL_ROOT:-${HOME}/.local/lib/personas-mesh}"
+launcher_root="${PERSONAS_MESH_LAUNCHER_ROOT:-${HOME}/.local/bin}"
+snapshot="${install_base}/${version}"
+snapshot_bin="${snapshot}/bin"
+commands=(render-config sync-persona sync-all sync-user-persona sync-user-all mirror-all)
+
+verify_snapshot() {
+  [ -d "$snapshot" ] && [ ! -L "$snapshot" ] ||
+    die "version snapshot is not a real directory: $snapshot"
+  [ -d "$snapshot_bin" ] && [ ! -L "$snapshot_bin" ] ||
+    die "version snapshot bin directory unavailable"
+
+  mapfile -t actual_files < <(
+    find "$snapshot_bin" -mindepth 1 -maxdepth 1 -printf '%f\n' | LC_ALL=C sort
+  )
+  mapfile -t expected_files < <(printf '%s\n' "${commands[@]}" | LC_ALL=C sort)
+  [ "${actual_files[*]}" = "${expected_files[*]}" ] ||
+    die "version snapshot path set differs from the current release"
+
+  snapshot_manifest="${snapshot}/manifest.sha256"
+  [ -f "$snapshot_manifest" ] && [ ! -L "$snapshot_manifest" ] ||
+    die "version snapshot provenance manifest unavailable"
+  [ "$(wc -l < "$snapshot_manifest")" -eq "${#commands[@]}" ] ||
+    die "version snapshot provenance manifest has an unexpected path set"
+
+  for command_name in "${commands[@]}"; do
+    source_file="${script_dir}/${command_name}"
+    installed_file="${snapshot_bin}/${command_name}"
+    [ -x "$source_file" ] || die "source executable missing: $command_name"
+    [ -f "$installed_file" ] && [ ! -L "$installed_file" ] &&
+      [ -x "$installed_file" ] ||
+      die "version snapshot executable invalid: $command_name"
+    source_digest=$(sha256sum "$source_file" | awk '{print $1}')
+    installed_digest=$(sha256sum "$installed_file" | awk '{print $1}')
+    [ "$installed_digest" = "$source_digest" ] ||
+      die "version snapshot digest mismatch: $command_name"
+    grep -Fqx "${source_digest}  bin/${command_name}" "$snapshot_manifest" ||
+      die "version snapshot provenance mismatch: $command_name"
+  done
+}
+
+mkdir -p "$install_base" "$launcher_root"
+if mkdir "$snapshot" 2>/dev/null; then
+  mkdir "$snapshot_bin"
+  snapshot_manifest="${snapshot}/manifest.sha256"
+  for command_name in "${commands[@]}"; do
+    source_file="${script_dir}/${command_name}"
+    [ -x "$source_file" ] || die "source executable missing: $command_name"
+    install -m 0555 "$source_file" "${snapshot_bin}/${command_name}"
+    digest=$(sha256sum "$source_file" | awk '{print $1}')
+    printf '%s  bin/%s\n' "$digest" "$command_name" >> "$snapshot_manifest"
+  done
+  chmod 0444 "$snapshot_manifest"
+  chmod 0555 "$snapshot_bin" "$snapshot"
+else
+  verify_snapshot
+fi
+
+verify_snapshot
+
+for command_name in "${commands[@]}"; do
+  source_file="${script_dir}/${command_name}"
+  digest=$(sha256sum "$source_file" | awk '{print $1}')
+  launcher="${launcher_root}/personas-mesh-${command_name}"
+  launcher_temp=$(mktemp "${launcher_root}/.personas-mesh-${command_name}.XXXXXX")
+  {
+    printf '#!/usr/bin/env bash\n'
+    printf '# generated-by: personas-mesh install-launchers\n'
+    printf '# source-version: %s\n' "$version"
+    printf '# source-sha256: %s\n' "$digest"
+    printf '# installed-artifact: %s\n' "${snapshot_bin}/${command_name}"
+    printf 'exec %q "$@"\n' "${snapshot_bin}/${command_name}"
+  } > "$launcher_temp"
+  chmod 0755 "$launcher_temp"
+  mv -f -- "$launcher_temp" "$launcher"
+done
+
+printf 'installed personas-mesh %s launchers in %s\n' "$version" "$launcher_root"

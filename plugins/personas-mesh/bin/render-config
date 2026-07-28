@@ -1,103 +1,74 @@
 #!/usr/bin/env bash
-# render-config: substitute ${VARS} in a template into a rendered file.
+# Render generic 1Password templates and atomically deep-merge JSON output.
 #
-# Usage: render-config <template-file> <output-file> [persona-name]
+# Usage: render-config <template-json> <output-json> [profile-json]
 #
-# Substitutes:
-#   ${AUTO_MEMORY_DIR}                  — from ~/.personas-node.env (with {persona} expanded)
-#   ${BRIDGEY_TOKEN_<UPPERPERSONA>}     — 1Password item BRIDGEY_TOKEN_<UPPERPERSONA>
-#   ${DISCORD_BOT_<UPPERPERSONA>_TOKEN} — 1Password item DISCORD_BOT_<UPPERPERSONA>_TOKEN
-#   ${ANTHROPIC_API_KEY}                — 1Password item ANTHROPIC_API_KEY (optional)
+# Secret placeholders use 1Password's native inject syntax:
+#   {{ op://<vault>/<item>/<field> }}
 #
-# Secrets come from the 1Password Automation vault via the op CLI
-# (~/.local/bin/op; service-account token at ~/.config/op/host.token).
-# Fails loudly (exit 1, stderr) on any missing secret — never renders partial.
-# If the output file already exists and is valid JSON, the rendered template is
-# deep-merged into it (rendered keys win; existing extra keys are preserved).
+# The optional profile is a nonsecret JSON object. Merge precedence is:
+# existing output < injected template < profile.
 
 set -euo pipefail
+set +x
+umask 077
 
 die() { printf 'render-config: %s\n' "$*" >&2; exit 1; }
 
-[ $# -ge 2 ] || die "usage: render-config <template> <output> [persona]"
+[ "$#" -ge 2 ] && [ "$#" -le 3 ] || \
+  die "usage: render-config <template-json> <output-json> [profile-json]"
 
 template="$1"
 output="$2"
-persona="${3:-$(basename "$(realpath "$(dirname "$output")/..")")}"
+profile="${3:-}"
 
 [ -f "$template" ] || die "template not found: $template"
-[ -n "$persona" ] || die "persona name empty; pass explicitly as third arg"
+[ -z "$profile" ] || [ -f "$profile" ] || die "profile not found: $profile"
 
-# Per-node env — absolute paths, per persona name substitution happens after sourcing.
-node_env="${HOME}/.personas-node.env"
-if [ -f "$node_env" ]; then
-  # shellcheck disable=SC1090
-  . "$node_env"
+op_bin="${OP_BIN:-$(command -v op || true)}"
+[ -n "$op_bin" ] || die "op CLI unavailable"
+
+token="${OP_SERVICE_ACCOUNT_TOKEN:-}"
+token_file="${OP_SERVICE_ACCOUNT_TOKEN_FILE:-${HOME}/.config/op/service-account.token}"
+if [ -z "$token" ]; then
+  [ -r "$token_file" ] || die "1Password service-account token unavailable"
+  token=$(<"$token_file")
 fi
 
-# Substitute literal {persona} in any values that contain it.
-: "${AUTO_MEMORY_DIR:=}"
-AUTO_MEMORY_DIR="${AUTO_MEMORY_DIR//\{persona\}/$persona}"
-
-upper_persona=$(printf '%s' "$persona" | tr '[:lower:]' '[:upper:]')
-
-# Fetch one secret from the 1Password Automation vault by item name.
-op_or_die() {
-  local key="$1" value
-  value=$(OP_SERVICE_ACCOUNT_TOKEN="$(cat "${HOME}/.config/op/host.token")" \
-    "${HOME}/.local/bin/op" read "op://<vault>/${key}/value" 2>/dev/null) \
-    || die "required secret missing: $key in the Automation vault; run: op item create --vault Automation --category \"API Credential\" --title $key value=<value>"
-  printf '%s\n' "$value" | head -1
+output_dir=$(dirname -- "$output")
+mkdir -p "$output_dir"
+injected=$(mktemp "${output_dir}/.render-config.injected.XXXXXX")
+merged=$(mktemp "${output_dir}/.render-config.merged.XXXXXX")
+cleanup() {
+  rm -f -- "$injected" "$merged"
 }
+trap cleanup EXIT
+chmod 0600 "$injected" "$merged"
 
-tmp=$(mktemp)
-trap 'rm -f "$tmp"' EXIT
-
-cp "$template" "$tmp"
-
-# Walk placeholders that appear in the template, fetch just those secrets.
-if grep -q "\${BRIDGEY_TOKEN_${upper_persona}}" "$tmp"; then
-  token=$(op_or_die "BRIDGEY_TOKEN_${upper_persona}")
-  # escape any / & \ for sed replacement
-  esc=$(printf '%s' "$token" | sed -e 's/[\/&]/\\&/g')
-  sed -i "s|\${BRIDGEY_TOKEN_${upper_persona}}|${esc}|g" "$tmp"
+# `op inject` receives only nonsecret paths in argv. Resolved values flow from
+# the op process directly into a restrictive file and never through a shell
+# substitution, command string, logger, or child-process argument.
+if ! OP_SERVICE_ACCOUNT_TOKEN="$token" \
+  "$op_bin" inject --in-file "$template" --out-file "$injected" \
+  >/dev/null 2>&1; then
+  die "1Password template injection failed"
 fi
 
-if grep -q "\${DISCORD_BOT_${upper_persona}_TOKEN}" "$tmp"; then
-  token=$(op_or_die "DISCORD_BOT_${upper_persona}_TOKEN")
-  esc=$(printf '%s' "$token" | sed -e 's/[\/&]/\\&/g')
-  sed -i "s|\${DISCORD_BOT_${upper_persona}_TOKEN}|${esc}|g" "$tmp"
-fi
+jq -e . "$injected" >/dev/null 2>&1 || die "injected template is not valid JSON"
+[ -z "$profile" ] || jq -e . "$profile" >/dev/null 2>&1 || \
+  die "profile is not valid JSON"
 
-if grep -q "\${ANTHROPIC_API_KEY}" "$tmp"; then
-  token=$(op_or_die "ANTHROPIC_API_KEY")
-  esc=$(printf '%s' "$token" | sed -e 's/[\/&]/\\&/g')
-  sed -i "s|\${ANTHROPIC_API_KEY}|${esc}|g" "$tmp"
+inputs=()
+if [ -f "$output" ]; then
+  jq -e . "$output" >/dev/null 2>&1 || die "existing output is not valid JSON"
+  inputs+=("$output")
 fi
+inputs+=("$injected")
+[ -z "$profile" ] || inputs+=("$profile")
 
-if grep -q "\${AUTO_MEMORY_DIR}" "$tmp"; then
-  [ -n "$AUTO_MEMORY_DIR" ] || die "AUTO_MEMORY_DIR not set; edit ~/.personas-node.env"
-  esc=$(printf '%s' "$AUTO_MEMORY_DIR" | sed -e 's/[\/&]/\\&/g')
-  sed -i "s|\${AUTO_MEMORY_DIR}|${esc}|g" "$tmp"
-fi
-
-# Refuse to write if any ${...} placeholder is still unresolved — fail loud.
-if grep -qE '\$\{[A-Z_]+\}' "$tmp"; then
-  unresolved=$(grep -oE '\$\{[A-Z_]+\}' "$tmp" | sort -u | tr '\n' ' ')
-  die "unresolved placeholder(s) in $template: $unresolved"
-fi
-
-# Merge, don't clobber: if the target already exists and both sides are valid
-# JSON, deep-merge the rendered template into it (rendered keys win, existing
-# keys the template doesn't define — e.g. outputStyle in settings.local.json —
-# are preserved). Non-JSON or fresh targets fall back to a plain move.
-if [ -f "$output" ] && jq -e . "$output" >/dev/null 2>&1 && jq -e . "$tmp" >/dev/null 2>&1; then
-  merged=$(mktemp)
-  jq -s '.[0] * .[1]' "$output" "$tmp" > "$merged" || { rm -f "$merged"; die "jq merge failed for $output"; }
-  mv "$merged" "$output"
-  rm -f "$tmp"
-else
-  mv "$tmp" "$output"
-fi
+jq -s 'reduce .[] as $item ({}; . * $item)' "${inputs[@]}" > "$merged" 2>/dev/null ||
+  die "JSON deep merge failed"
+chmod 0600 "$merged"
+mv -f -- "$merged" "$output"
 trap - EXIT
-chmod 600 "$output"
+rm -f -- "$injected"

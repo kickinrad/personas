@@ -1,60 +1,22 @@
 ---
 name: status
-description: Show the per-persona sync state across all nodes. This skill should be used when the user asks "are my personas in sync", "show mesh status", "personas-mesh status", "is the mesh healthy", "which personas are drifting", or just wants a one-screen dashboard of the mesh. Reads from the local node directly and optionally SSHes to cloud for the Hetzner column.
+description: Use when the user asks whether personas are in sync, requests mesh status or health, or wants to know which configured persona repositories are ahead, behind, dirty, divergent, or conflicted. Read-only; use mesh-doctor for repair.
 ---
 
-# personas-mesh:status
+# Report mesh status
 
-One-screen dashboard of per-persona sync health.
+Read current topology and `~/.config/personas-mesh/profile.env`; fail closed if the
+configured roots or transport are unavailable.
 
-## What to show
+1. Derive the roster from configured repository roots and remotes. Never use a
+   hardcoded persona list.
+2. For each repository, collect last commit time, dirty count, upstream
+   ahead/behind counts, and `sync-conflict/*` branches.
+3. Query each configured remote endpoint once, then combine results locally.
+4. Mark missing deployments as absent rather than unhealthy. Mark dirty,
+   divergent, conflict, and unreachable states explicitly.
+5. Return one compact table with persona, endpoint observations, and status.
 
-Derive the roster live — never from a hardcoded list: union of `ls ~/.personas` (local nodes) and `ssh user@server ls /srv/personas` (hub bare repos, strip `.git`). For each persona in the roster, a row with:
-
-- **Persona** — name
-- **WSL** — last commit ts (relative), `✓` clean or `●` dirty-count
-- **Windows** — same for `/mnt/c/…` copy (or `—` if still symlinked)
-- **Hetzner** — last commit ts from `ssh user@server git -C /srv/personas-work/{p} log -1 --format=%ct` (or `—` if persona not deployed there)
-- **Hub** — last commit ts from `ssh user@server git -C /srv/personas/{p}.git log -1 --format=%ct`
-- **Status** — `in sync` / `N ahead` / `N behind` / `DIVERGED` / `CONFLICT`
-
-## Source of truth per column
-
-| Column | Source |
-|---|---|
-| WSL | `git -C ~/.personas/{p} log -1 --format=%ct`; `git status --porcelain` |
-| Windows | `git -C /mnt/c/Users/wilst/.personas/{p} ...` (or symlink-resolved) |
-| Hetzner | `ssh user@server git -C /srv/personas-work/{p} ...` |
-| Hub | `ssh user@server git -C /srv/personas/{p}.git ...` |
-
-## Bot-only check (laptop-only personas skip)
-
-Laptop-only personas are not deployed on Hetzner — derive which by listing `ssh user@server ls /srv/personas-work/` and mark the Hetzner column `—` for any persona absent there.
-
-## Conflict badge
-
-If `git branch --list 'sync-conflict/*'` returns anything on any node for that persona, mark Status as `CONFLICT` and point the user at `personas-mesh:mesh-doctor`.
-
-## Output style
-
-```
-Persona  WSL        Windows    Hetzner     Hub         Status
-archer   2m ago ✓   —          —           2m ago      in sync
-bob      12m ago ✓  —          4m ago      3m ago      1 behind
-julia    ●3 dirty   —          1m ago ✓    1m ago      CONFLICT
-…
-```
-
-## Fast path
-
-Run `ssh user@server 'for r in /srv/personas/*.git; do echo "$(basename "$r") $(git -C "$r" log -1 --format=%ct 2>/dev/null)"; done'` once, parse, combine with local reads — one ssh round trip for all personas.
-
-## When sync is red
-
-`status` is the runner — it tells you which personas are unhealthy, but it does not diagnose root cause or apply fixes. As soon as the dashboard shows any of the following, hand off to `Skill('personas-mesh:mesh-doctor')`:
-
-- Status column reads `CONFLICT`, `DIVERGED`, or persistent `N behind` / `N ahead` that doesn't resolve on its own
-- A node column shows `●` (dirty) for more than one cycle
-- Hetzner or Hub column reports a stale timestamp relative to WSL/Windows on a persona that should be deployed there
-
-`mesh-doctor` owns the diagnosis-and-repair flow (sync-conflict branch resolution, hub re-push, rsync reconciliation between WSL and Windows). Don't try to repair from inside `status` — keep the runner read-only and let the doctor write.
+Status performs no pull, commit, push, branch, unit, or config mutation. Route
+any red state to `personas-mesh:mesh-doctor` with the exact evidence already
+collected.

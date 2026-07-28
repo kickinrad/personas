@@ -1,31 +1,31 @@
 # personas-mesh
 
-Keeps every persona's state in sync across WSL, Windows, and Hetzner without manual `git push` / `git pull`. Uses a Tailscale-private bare-repo hub on `cloud` as the source of truth; GitHub is an async public mirror.
+Synchronizes persona repositories across configured profiles and reconciles
+gitignored user data between explicitly paired local roots.
 
-## What it does
+## Layers
 
-- **Per-session hook**: `git pull --rebase --autostash` on SessionStart; `git add -A && commit && push` (amend-if-recent) on Stop.
-- **Per-node systemd watchdog**: catches dirty trees between sessions, runs the same pull/commit/push loop.
-- **Template-and-render** for node-specific config (`.mcp.json`, `.claude/settings.local.json`): templates tracked in git, rendered output gitignored.
-- **Conflict-safe by construction**: auto-memory files are one-file-per-memory (naturally mergeable); `MEMORY.md` + `user/profile.md` use `merge=union`.
+- Git mesh carries committed persona state through each repository's configured
+  `origin`.
+- User-data sync uses bidirectional `rsync -a --update` between configured local
+  roots. It never propagates deletions.
+- Profile-local configuration is rendered from templates with 1Password `op`.
 
 ## Skills
 
-- **`setup`** — bootstrap personas-mesh on the current node (WSL / Hetzner host auto-detect).
-- **`mesh-doctor`** — diagnose sync issues (remote reachability, divergent commits, conflict branches). Namespaced to avoid collision with Claude Code's built-in `/doctor`.
-- **`status`** — show per-persona sync state across nodes.
+- `setup` — prepare configuration, versioned launchers, hooks, and unit
+  templates for one profile.
+- `status` — report read-only health from configured roots and remotes.
+- `mesh-doctor` — diagnose and reconcile a failed sync.
 
-## Topology
+## Installed executable contract
 
-```
-                           Hub (Hetzner `cloud`)
-                   ssh://user@server/srv/personas/*.git
-                                │
-       ┌────────────────────────┼───────────────────────────┐
-       │                        │                           │
-   WSL-native              Windows FS                 Hetzner host
-   (~/.personas/{p})       (/mnt/c/...)               (/srv/personas-work/{p})
-   interactive sessions    CoWork app                 bridgey-* containers
-```
+`bin/install-launchers` snapshots the plugin executables under
+`~/.local/lib/personas-mesh/<version>/` and generates stable launchers under
+`~/.local/bin/`. Every launcher records its source version, SHA-256, and
+installed artifact. Systemd templates invoke only those stable launchers.
 
-See `CLAUDE.md` for the full implementation plan.
+Current topology, hostnames, endpoints, deployed persona roster, and recovery
+state are external knowledge—not plugin source. See `interop/capabilities.json`
+for runtime support and `templates/profile-env.example` for the nonsecret
+profile shape.

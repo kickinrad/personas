@@ -40,7 +40,7 @@ Create a persona named "test-eval-persona" with these specs:
 - [ ] `.claude/output-styles/` directory exists
 - [ ] `.claude/hooks/public-repo-guard.sh` exists and is executable
 - [ ] `hooks.json` exists and contains valid JSON
-- [ ] `.claude/skills/self-improve/SKILL.md` exists with YAML frontmatter
+- [ ] `.claude/skills/self-improve/` is absent
 - [ ] `.claude/skills/testing/run-checks/SKILL.md` exists with YAML frontmatter (or similar domain path)
 - [ ] `docs/` directory exists
 - [ ] `tools/` directory exists

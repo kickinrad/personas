@@ -1,0 +1,26 @@
+{
+  "name": "personas-mesh",
+  "description": "Profile-driven repository and local user-data sync for personas",
+  "version": "1.0.0",
+  "author": {
+    "name": "kickinrad",
+    "url": "https://github.com/kickinrad"
+  },
+  "repository": "https://github.com/kickinrad/personas",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Personas Mesh",
+    "shortDescription": "Operate profile-driven persona synchronization",
+    "longDescription": "Profile-driven repository and local user-data sync for personas",
+    "developerName": "Wils",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use Personas Mesh for this request."
+    ]
+  }
+}

@@ -9,7 +9,8 @@ LLM-judge
 ## Setup
 
 - Test persona exists with filled-in profile and some memory entries
-- `.claude/skills/self-improve/SKILL.md` exists
+- `persona-manager@personas` is enabled and provides `persona-manager:self-improve`
+- `.claude/skills/self-improve/` is absent
 - At least one domain skill exists
 
 ## Prompt

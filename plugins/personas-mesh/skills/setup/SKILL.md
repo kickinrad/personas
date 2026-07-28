@@ -1,58 +1,32 @@
 ---
 name: setup
-description: Bootstrap personas-mesh on the current node (WSL / Hetzner host). This skill should be used when the user asks to "install personas-mesh", "set up persona sync", "bootstrap the mesh", "wire up sync on this machine", or after pulling personas-mesh for the first time on any node.
+description: Use when the user asks to install personas-mesh, bootstrap persona sync, configure a mesh profile, or wire approved persona repositories into the mesh. NOT for diagnosing an existing failure; use mesh-doctor.
 ---
 
-# personas-mesh:setup
+# Set up personas-mesh
 
-One-shot bootstrap per node. Run after installing the plugin on a fresh machine.
+Treat setup as activation. Confirm authority before mutating launchers, units,
+remotes, hooks, or persona homes.
 
-## What this does
+1. Read canonical topology/current-state knowledge and
+   `templates/profile-env.example`. Collect the primary persona root, optional peer
+   root, hub root, and mirror remote. Store only nonsecret paths in
+   `~/.config/personas-mesh/profile.env`.
+2. Confirm `git`, `jq`, `rsync`, `op`, SSH transport, and the 1Password
+   service-account lane. Probe secret items by exit status with output discarded.
+3. Run `${CLAUDE_PLUGIN_ROOT}/bin/install-launchers`. Verify each launcher
+   records the current manifest version, SHA-256, and immutable installed
+   artifact.
+4. Copy only the unit templates required for the profile to
+   `~/.config/systemd/user/`. Every `ExecStart` must target a generated stable
+   launcher; reload systemd after the complete unit set is present.
+5. For each explicitly approved persona, inspect dirty state and remotes before
+   any mutation. Merge `.gitattributes` and gitignore additions. Append mesh
+   hooks using `${CLAUDE_PLUGIN_ROOT}` without replacing persona-owned hooks.
+6. Render local JSON from templates. Rendered keys win; unrelated existing keys
+   remain. Reject unresolved placeholders and keep rendered files gitignored.
+7. Run one verbose sync, inspect status, and reconcile the observed result back
+   to the owner of current topology.
 
-1. **Detect node type** — `wsl`, `windows` (WSL process driving `/mnt/c/`), or `hetzner`. Ask the user to confirm.
-2. **Install binaries** — copy `${CLAUDE_PLUGIN_ROOT}/bin/{render-config,sync-persona,sync-all}` to `~/.local/bin/personas-mesh-*` (stable path referenced by systemd units).
-3. **Render `~/.personas-node.env`** — interactive on first install: asks for the persona-memory path template (default is the node-appropriate absolute path from `templates/node-env.example`).
-4. **Install systemd units** — copy the node-appropriate `.service` + `.timer` files to `~/.config/systemd/user/`; `systemctl --user daemon-reload`; enable + start the main timer. On WSL, install both `personas-mesh-wsl.timer` AND `personas-mesh-windows-bridge.timer` but only enable the WSL one (the bridge is **disabled by design** — `personas-mesh-wsl` is the single canonical Layer-1 git-mesh path; enabling the bridge dual-pushes the same repos from `/mnt/c/...` and causes merge conflicts. Windows-side changes reach the mesh via the Layer-2 user/ rsync → `~/.personas` → the wsl timer).
-5. **Per-persona wiring** — for each persona under `~/.personas/` (or `/srv/personas-work/` on Hetzner):
-   - Confirm the remote `origin` points at `ssh://user@server/srv/personas/{name}.git` (migrate from `https://github.com/...` if needed; keep GitHub as `github` remote).
-   - Copy `${CLAUDE_PLUGIN_ROOT}/templates/.gitattributes` into the persona (merge only — don't clobber existing rules).
-   - Append the entries from `templates/.gitignore.additions` to the persona's `.gitignore`, dedup.
-   - Patch the persona's `hooks.json` to add SessionStart + Stop command hooks pointing at `${CLAUDE_PLUGIN_ROOT}/hooks/{session-start,stop}.sh`. Do not replace existing hooks; append to the existing arrays.
-   - Render `.mcp.json` and `.claude/settings.local.json` from templates via `render-config`. Rendering **merges into an existing JSON target instead of clobbering it** — keys the template doesn't define (e.g. `outputStyle` in `settings.local.json`) are preserved; rendered keys win.
-6. **Smoke test** — run `personas-mesh-sync-all` once with `--verbose`; show result.
-7. **Summary** — print what was installed and the one remaining action (Hetzner host bootstrap or symlink break) if applicable.
-
-## Safety rails
-
-- **Never delete a persona's existing hook.** Only append command hooks and a new matcher entry.
-- **Never write a rendered `.mcp.json` that still contains `${…}`** — `render-config` already errors; the skill must verify by grepping the output.
-- **Never push** a persona repo that has uncommitted changes the user hasn't seen. If the setup run finds dirty work, show it via `git status` and ask before the first `sync-persona` pushes.
-- **Refuse to run on Hetzner host without sudo access** for `/srv/personas-work/` creation — direct the user to the runbook instead (`docs/hetzner-bootstrap.md`).
-
-## Invocation
-
-```
-Skill('personas-mesh:setup')
-# or specific node:
-Skill('personas-mesh:setup', '--node=wsl')
-Skill('personas-mesh:setup', '--node=hetzner')
-```
-
-## Depends on
-
-- `${CLAUDE_PLUGIN_ROOT}/bin/*` — executable
-- `${CLAUDE_PLUGIN_ROOT}/templates/*`
-- `${CLAUDE_PLUGIN_ROOT}/systemd/*`
-- `${CLAUDE_PLUGIN_ROOT}/hooks/*.sh`
-
-## Reversal
-
-The setup is idempotent — re-running it updates paths and re-syncs templates. To uninstall from a node:
-
-```
-systemctl --user disable --now personas-mesh-*.timer
-rm ~/.config/systemd/user/personas-mesh-*.{service,timer}
-rm ~/.local/bin/personas-mesh-*
-# Revert each persona's hooks.json by removing the added command entries
-# (hooks.json lives per-persona under ~/.personas/{name}/hooks.json)
-```
+Stop on missing configuration, credentials, approval, dirty work, or remote
+ambiguity. The plugin source is not a topology fallback.

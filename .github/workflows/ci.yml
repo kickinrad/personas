@@ -15,8 +15,8 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install -y jq
 
-      - name: Run tests
-        run: bash tests/personas-test.sh
+      - name: Run central gate
+        run: bash tests/run-tests.sh
 
   validate-json:
     runs-on: ubuntu-latest

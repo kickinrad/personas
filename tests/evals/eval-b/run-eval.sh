@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SOURCE_HOME="${HOME}"
+EVAL_HOME="${PERSONAS_EVAL_HOME:-$(mktemp -d)}"
+export CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-${SOURCE_HOME}/.claude}"
+export HOME="$EVAL_HOME"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PERSONA_DIR="${HOME}/.personas/test-eval-persona"
 CONFIG="${SCRIPT_DIR}/promptfooconfig.yaml"

@@ -1,0 +1,11 @@
+[Unit]
+Description=personas-mesh repository sync
+Documentation=https://github.com/kickinrad/personas
+
+[Service]
+Type=oneshot
+Nice=10
+EnvironmentFile=%h/.config/personas-mesh/profile.env
+ExecStart=%h/.local/bin/personas-mesh-sync-all
+StandardOutput=journal
+StandardError=journal

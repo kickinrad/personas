@@ -10,6 +10,10 @@
 set -euo pipefail
 
 # ── Constants ──────────────────────────────────────────────────────
+SOURCE_HOME="${HOME}"
+EVAL_HOME="${PERSONAS_EVAL_HOME:-$(mktemp -d)}"
+export CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-${SOURCE_HOME}/.claude}"
+export HOME="$EVAL_HOME"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 EVALS_JSON="${SCRIPT_DIR}/evals.json"
 EXECUTOR_MD="${SCRIPT_DIR}/agents/executor.md"

@@ -17,8 +17,8 @@
       - No MCP servers needed
       - Private repo, no GitHub sync
       - Accept all default flags
-    setup: "rm -rf ~/.personas/test-eval-persona"
-    teardown: "rm -rf ~/.personas/test-eval-persona"
+    setup: "find ~/.personas/test-eval-persona -depth -delete 2>/dev/null || true"
+    teardown: "find ~/.personas/test-eval-persona -depth -delete 2>/dev/null || true"
   assert:
     - type: javascript
       value: file://assertions.js:dirExists
@@ -83,8 +83,8 @@
       - For any other questions: provide reasonable default answers
       - After 3 questions answered, the user says: "That's enough for now, let's move on"]
     setup:
-      - "rm -rf ~/.personas/test-eval-persona"
-    teardown: "rm -rf ~/.personas/test-eval-persona"
+      - "find ~/.personas/test-eval-persona -depth -delete 2>/dev/null || true"
+    teardown: "find ~/.personas/test-eval-persona -depth -delete 2>/dev/null || true"
   assert:
     - type: javascript
       value: file://assertions.js:profileModified

@@ -1,0 +1,26 @@
+{
+  "name": "personas",
+  "interface": {
+    "displayName": "Wils Personas"
+  },
+  "plugins": [
+    {
+      "name": "persona-manager",
+      "source": {"source": "local", "path": "./plugins/persona-manager/.generated/persona-manager"},
+      "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+      "category": "Developer Tools"
+    },
+    {
+      "name": "persona-dashboard",
+      "source": {"source": "local", "path": "./plugins/persona-dashboard/.generated/persona-dashboard"},
+      "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+      "category": "Productivity"
+    },
+    {
+      "name": "personas-mesh",
+      "source": {"source": "local", "path": "./plugins/personas-mesh/.generated/personas-mesh"},
+      "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+      "category": "Developer Tools"
+    }
+  ]
+}

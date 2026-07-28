@@ -3,10 +3,7 @@
 #
 # Usage: sync-all [<root-dir>] [--verbose]
 #
-# Default root: $PERSONAS_MESH_ROOT or first of:
-#   /srv/personas-work            (Hetzner host)
-#   /home/$(whoami)/.personas     (WSL-native)
-#   /mnt/c/Users/*/.personas      (Windows FS bridge node)
+# Default root: $PERSONAS_MESH_ROOT or $HOME/.personas.
 #
 # Skips entries that aren't git repos. Collects exit codes, exits non-zero if any
 # persona exited non-zero. Network errors (exit 3) count as warnings, not failures.
@@ -35,8 +32,6 @@ done
 if [ -z "$root" ]; then
   if [ -n "${PERSONAS_MESH_ROOT:-}" ]; then
     root="$PERSONAS_MESH_ROOT"
-  elif [ -d /srv/personas-work ]; then
-    root=/srv/personas-work
   elif [ -d "$HOME/.personas" ]; then
     root="$HOME/.personas"
   else
@@ -53,13 +48,8 @@ any_warn=0
 for dir in "$root"/*/; do
   [ -d "$dir/.git" ] || continue
   persona=$(basename "$dir")
-  # Skip personas that have moved to a different home and should not sync.
-  # piper now lives in the Obsidian vault (see ~/.personas/piper/.persona-cwd
-  # on the WSL side); the historical ~/.personas/piper/ git repo on the
-  # Windows-bridge node is archive-only and must not push to the hub.
-  case "$persona" in
-    piper) continue ;;
-  esac
+  # Redirect stubs are identity pointers, not independent sync roots.
+  [ -f "$dir/.persona-cwd" ] && continue
   rc=0
   "$SYNC_ONE" "${verbose_flag[@]}" "$dir" || rc=$?
   case $rc in

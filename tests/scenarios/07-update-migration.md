@@ -12,7 +12,7 @@ Create a deliberately outdated test persona with these drift points:
 - `hooks.json` missing `PostCompact` and `PreCompact` hooks (only has 4 of 6)
 - `.claude/settings.json` missing `enabledPlugins` entry (old format)
 - `.claude/settings.json` using old plugin name format
-- `.claude/skills/self-improve/SKILL.md` has outdated content (missing workspace hygiene section)
+- A legacy `.claude/skills/self-improve/SKILL.md` duplicate exists
 - `.gitignore` missing `*.local.json` pattern
 
 ## Prompt
@@ -34,6 +34,7 @@ Run persona-dev update to check this persona for drift against the latest framew
 - [ ] `hooks.json` now has all 6 hook types
 - [ ] `.claude/settings.json` has `enabledPlugins["persona-manager@personas"]: true`
 - [ ] `.gitignore` includes `*.local.json`
+- [ ] The update flags the legacy local self-improve copy for explicit retirement
 - [ ] All JSON files are still valid JSON after modifications
 - [ ] No existing persona customizations were overwritten (custom skills, profile data, memory preserved)
 
@@ -41,7 +42,7 @@ Run persona-dev update to check this persona for drift against the latest framew
 
 The update must NEVER overwrite persona-specific content:
 - Custom CLAUDE.md personality/rules (only add missing framework sections)
-- Custom skills (only update self-improve)
+- Custom skills (the plugin-shipped self-improve is never copied or updated locally)
 - user/profile.md and user/memory/ (never touch)
 - .mcp.json (never touch)
 - Custom output styles (never touch)

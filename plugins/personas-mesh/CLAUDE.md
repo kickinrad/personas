@@ -4,47 +4,45 @@ title: personas-mesh
 
 # personas-mesh
 
-Sync personas across WSL / Windows / Hetzner through a Tailscale-private git hub.
+Portable sync mechanics for persona repositories and profile-local configuration.
+The plugin does not own the current deployment roster, hostnames, endpoints, deployed
+personas, or recovery state; those belong in canonical operational knowledge and
+external profile configuration.
 
-## What this plugin provides
+## Mechanics
 
-| Area | Contents |
-|---|---|
-| `bin/` | `render-config`, `sync-persona`, `sync-all` — git mesh (cross-host sync via the hub). `sync-user-persona`, `sync-user-all` — local user/ rsync (WSL ↔ Windows reconciliation for gitignored personal data) |
-| `hooks/` | `session-start.sh`, `stop.sh` — injected into each persona's `hooks.json` during `personas-mesh:setup` |
-| `skills/` | `setup`, `mesh-doctor`, `status` — human-invoked workflows |
-| `systemd/` | User-unit files for WSL watchdog, WSL Windows-bridge (**disabled by design** — `personas-mesh-wsl` is the single canonical Layer-1 git-mesh path; enabling the bridge dual-pushes the same personas from `/mnt/c/...` and conflicts), Hetzner host, plus `personas-mesh-user-sync` (local user/ rsync, no install required — points at repo path directly) |
-| `templates/` | `.gitattributes` (merge=union rules), `.gitignore.additions`, `.mcp.json.template`, `settings.local.json.template` |
-| `docs/` | `hetzner-bootstrap.md`, `migration-symlink-to-mesh.md` — runbooks for steps requiring interactive sudo |
+- `bin/sync-persona` performs pull, commit-if-dirty, and push for one repository.
+- `bin/sync-all` iterates an externally configured persona root and skips
+  redirect stubs.
+- `bin/sync-user-*` reconciles gitignored `user/` directories between two
+  explicitly configured local roots.
+- `bin/render-config` resolves caller-supplied 1Password references
+  through `op`, substitutes templates, and deep-merges JSON without printing
+  secret values.
+- `bin/install-launchers` copies executables into an immutable versioned
+  snapshot and generates stable provenance-bearing launchers.
+- `bin/mirror-all` pushes configured bare repositories to an asynchronous mirror
+  remote.
 
-## Node detection
+## Profile configuration
 
-`bin/` scripts and the `setup` skill detect the current node via a precedence:
+Local paths and topology are read from
+`~/.config/personas-mesh/profile.env`, based on `templates/profile-env.example`.
+Source defaults may identify mechanics; they may not encode Wils-specific
+hostnames, users, roots, or persona rosters.
 
-1. Explicit `PERSONAS_MESH_NODE` env (`wsl` / `windows` / `hetzner`) — override for edge cases
-2. `/srv/personas` exists AND `hostname` is `ubuntu-4gb-ash-1` → `hetzner`
-3. `/proc/sys/fs/binfmt_misc/WSLInterop` exists AND CWD starts with `/home/` → `wsl`
-4. `/proc/sys/fs/binfmt_misc/WSLInterop` exists AND CWD starts with `/mnt/c/` → `windows` (WSL process driving the Windows-native dir)
-5. Otherwise → fail loudly, print what was checked.
+## Activation
 
-## Secrets
+Source edits do not mutate installed launchers or units. An approved activation
+generates launchers, installs the appropriate unit templates, reloads user
+systemd, and verifies provenance and behavior. No unit may execute a mutable
+repository worktree.
 
-Never commit. Templates reference names only; rendering resolves via `pass`. If a referenced secret is missing, `render-config` fails loudly (non-zero exit, error to stderr, no partial file written).
+## Security
 
-## Hub endpoint
+Credential values live only in 1Password. Probe `op` with output redirected to
+`/dev/null`. Rendered files remain local and gitignored. Missing configuration,
+credentials, remotes, or roots fail closed.
 
-`ssh://user@server/srv/personas/{p}.git` — Tailscale MagicDNS, not a public hostname. All mesh-origin URLs use `user@server` literally; changing the hostname happens in one place (`bin/sync-persona`) if ever needed.
-
-## Two layers of sync
-
-The plugin handles two distinct sync problems with two separate mechanisms:
-
-**Layer 1 — git mesh (cross-host).** `sync-persona` + `sync-all` push committed persona state through the Tailscale-private hub. Carries everything in git: `CLAUDE.md`, `hooks.json`, `.claude/skills/`, `tools/`, etc. Skips `user/` (gitignored for privacy).
-
-**Layer 2 — user/ rsync (intra-host).** `sync-user-persona` + `sync-user-all` reconcile `~/.personas/{p}/user/` with `/mnt/c/Users/${WIN_USER}/.personas/{p}/user/` on a WSL+Windows machine. Uses two passes of `rsync -a --update` (mtime newer-wins, no delete propagation by design). The systemd timer points directly at the repo path — no install/copy step, edit-and-go.
-
-Why split the layers: `user/` must stay out of git for public personas, but on a single dual-filesystem machine the WSL and Windows persona dirs would silently drift if not reconciled. The git mesh can't carry it; rsync can.
-
-## Planning doc
-
-`../../.claude/plans/personas-mesh-sync.md` in the framework repo is the source of truth for scope, phases, and decisions. Keep it in sync with what this plugin actually ships.
+Runtime support and launcher provenance are declared in
+`interop/capabilities.json`.

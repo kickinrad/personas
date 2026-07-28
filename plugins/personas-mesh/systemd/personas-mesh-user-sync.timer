@@ -1,5 +1,5 @@
 [Unit]
-Description=Run personas-mesh user/ rsync every 5 minutes
+Description=personas-mesh gitignored user-data peer sync timer
 
 [Timer]
 OnBootSec=2min

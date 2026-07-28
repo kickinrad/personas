@@ -1,49 +1,30 @@
 ---
-title: personas (repo)
+title: Persona framework
 type: moc
-parent: "[[Repos]]"
-aliases: [personas repo]
+parent: "[[Agent Ecosystem/Agent Ecosystem|Agent Ecosystem]]"
+aliases: [personas framework]
 author: wils
 created: 2026-04-27
-tags:
-  - repo
-  - claude-code
+tags: [repo, agents, personas]
 ---
 
-# personas (repo)
+# Persona framework
 
-> [!abstract] What this is
-> Independent, self-contained AI agent personas built with native Claude features — scaffolding framework, plugin suite, and expansion packs.
+Framework mechanics for persona lifecycle, optional read-only review, and
+persona-state transport. Persona homes remain authoritative at their native
+workspace paths.
 
-Lives at `~/projects/markets/personas/` and surfaces into the vault via Folder Bridge at `Areas/Agent Ecosystem/Marketplaces/personas`. The `plugins/` directory contains the persona-manager (scaffolding + update skills), persona-dashboard (install skill), and personas-mesh (multi-persona mesh networking with Hetzner bootstrap support).
+## Boundary
 
-Key sub-areas: `plugins/persona-manager/` (persona-dev and persona-update skills, templates), `plugins/persona-dashboard/` (install skill), `plugins/personas-mesh/` (doctor, setup, status skills + mesh migration docs).
+Framework source owns procedure and validation. Persona homes own identity,
+voice, local role procedure, configuration, and cache. Vault notes own durable
+knowledge, topology, current state, decisions, and recovery.
 
-## Quick start
+## Orientation
 
-- [[Areas/Agent Ecosystem/Marketplaces/personas/CLAUDE|CLAUDE]] — harness rules and conventions
-- [[Areas/Agent Ecosystem/Marketplaces/personas/README|README]] — public overview
-- [[Areas/Agent Ecosystem/Marketplaces/personas/TROUBLESHOOTING|TROUBLESHOOTING]] — troubleshooting guide
+- [README](README.md)
+- [Framework contract](CLAUDE.md)
+- [Activation](ACTIVATION.md)
+- [Troubleshooting](TROUBLESHOOTING.md)
 
-## Plugins
-
-- [[Areas/Agent Ecosystem/Marketplaces/personas/plugins/persona-dashboard/persona-dashboard|persona-dashboard]]
-- [[Areas/Agent Ecosystem/Marketplaces/personas/plugins/persona-manager/persona-manager|persona-manager]]
-- [[Areas/Agent Ecosystem/Marketplaces/personas/plugins/personas-mesh/personas-mesh|personas-mesh]]
-
-## Knowledge map
-
-```folder-overview
-title: ""
-showTitle: false
-depth: 3
-includeTypes: [folder, markdown]
-style: list
-sortBy: name
-sortByAsc: true
-showFolderNotes: false
-```
-
-## See also
-
-- [[Repos]]
+Component inventory is generated from source; this MOC does not duplicate it.

@@ -1,90 +1,29 @@
 ---
 name: mesh-doctor
-description: Diagnose and resolve personas-mesh sync problems. This skill should be used when the user asks to "why isn't my persona syncing", "fix the mesh", "mesh is broken", "sync conflict", "personas-mesh not working", "check why memory isn't propagating", or when personas-mesh:status flagged an issue. Walks through remote reachability, divergent commits, stash-branch resolution for conflicts, and the rarer cases (hub disk full, GitHub token expired).
+description: Use when persona sync is broken, mesh status is red, repositories diverge, conflict branches exist, a configured remote is unreachable, or rendered profile configuration fails. NOT for first installation; use setup.
 ---
 
-# personas-mesh:mesh-doctor
+# Diagnose personas-mesh
 
-Interactive diagnostic for one persona (or all).
+Read canonical topology/current state and the configured profile before probing. Stop
+at the first failed layer so later symptoms do not hide the cause.
 
-## Diagnostic sequence
+1. Verify configured roots, required executables, stable launcher provenance,
+   and unit `ExecStart` targets.
+2. Probe SSH or the configured transport, then confirm each `origin` matches the
+   approved topology.
+3. Inspect repository status, upstream counts, rebase state, and
+   `sync-conflict/*` branches without mutating.
+4. Inspect user-unit status and recent logs for the exact failed service.
+5. Verify nonsecret profile configuration. Probe required 1Password items with
+   `op read "op://<vault>/<item>/<field>" >/dev/null`; never print values.
+6. Present the cause, evidence, proposed repair, and rollback. Ask before
+   commits, pushes, branch deletion, config writes, launcher installation, or
+   unit changes.
+7. Apply only the approved repair, rerun the failed probe, then run
+   `personas-mesh:status`.
 
-Run each check in order; bail on first failure so the user can fix it before moving on.
-
-### 1. Hub reachability
-
-```bash
-ssh -o ConnectTimeout=3 user@server 'ls /srv/personas/*.git 2>/dev/null | wc -l'
-```
-
-- Zero output or ssh error → hub unreachable. Common causes: Tailscale down on WSL, Tailscale down on `cloud`, ssh key missing.
-- Non-zero repo count → hub is up.
-
-### 2. Origin remote points at the hub
-
-For each persona under the node's root:
-
-```bash
-git -C "$dir" remote get-url origin
-```
-
-- Must match `ssh://user@server/srv/personas/{name}.git`. If it's a GitHub URL, the persona was never set up — route to `personas-mesh:setup`.
-
-### 3. Local state clean
-
-```bash
-git -C "$dir" status --porcelain
-```
-
-- Empty → clean.
-- Non-empty → show the dirty files. Ask whether to commit (auto-sync) or whether the user wants to review first.
-
-### 4. Divergence
-
-```bash
-git -C "$dir" rev-list --left-right --count HEAD...@{upstream}
-```
-
-- `0 0` → in sync. Done.
-- `N 0` → local ahead. Offer to `sync-persona` (push).
-- `0 N` → remote ahead. Offer `sync-persona` (pull).
-- `N M` → divergent. Real conflict case — go to step 5.
-
-### 5. Conflict branches
-
-```bash
-git -C "$dir" branch --list 'sync-conflict/*'
-```
-
-- If present: display each with `git log sync-conflict/... --not main --oneline`.
-- For each: offer
-  - Merge the stash back in via `git cherry-pick` of the salient commits
-  - Drop the stash branch (after user confirms)
-- Also check `~/.personas/.sync-conflicts/{persona}.log` and prune resolved entries.
-
-### 6. Systemd timer health (non-Hetzner)
-
-```bash
-systemctl --user status personas-mesh-*.timer
-```
-
-- Not running → `systemctl --user enable --now personas-mesh-wsl.timer`.
-- Running but last run failed → `journalctl --user -u personas-mesh-wsl.service --since -1h`.
-
-### 7. Per-node env sanity
-
-- `cat ~/.personas-node.env` should define `AUTO_MEMORY_DIR`.
-- `OP_SERVICE_ACCOUNT_TOKEN="$(cat ~/.config/op/host.token)" op read "op://<vault>/BRIDGEY_TOKEN_<PERSONA>/value" >/dev/null; echo $?` should print `0` for bot personas (never print the value itself).
-- op reachable? `test -r ~/.config/op/host.token` — missing/unreadable token file means every secret fetch fails before 1Password is even consulted.
-
-## Conflict resolution recipe
-
-When a conflict is surfaced (branch `sync-conflict/HOST-TIMESTAMP`):
-
-1. `git diff main..sync-conflict/HOST-TS` — see what the other node had that didn't merge.
-2. If the diff is a memory append (almost always): `git checkout sync-conflict/...` then `git diff main`, manually reconcile the `MEMORY.md` / `user/profile.md` lines, commit on `main`, delete the stash branch.
-3. If the diff is code (rare): treat like a normal merge, ask the user to pick.
-
-## Outputs
-
-End with a short status line: `personas-mesh is healthy` OR `personas-mesh has N issues — here's what's next`.
+For a conflict branch, compare it with the active branch and reconcile the
+salient commits. Delete the conflict branch only after the result is committed,
+verified, and approved. Return observed topology or recovery drift to its vault
+owner instead of copying it into plugin source.

@@ -1,0 +1,26 @@
+{
+  "name": "persona-manager",
+  "description": "Scaffolds and evolves self-improving AI personas in ~/.personas/",
+  "version": "2.0.1",
+  "author": {
+    "name": "kickinrad",
+    "url": "https://github.com/kickinrad"
+  },
+  "repository": "https://github.com/kickinrad/personas",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Persona Manager",
+    "shortDescription": "Create and evolve cross-harness personas",
+    "longDescription": "Scaffolds and evolves self-improving AI personas in ~/.personas/",
+    "developerName": "Wils",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use Persona Manager for this request."
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 3,
+  "component": "persona-manager",
+  "canonicalRuntime": "claude-code",
+  "portableSkills": ["persona-dev", "persona-update", "self-improve"],
+  "executables": ["bin/validate-persona", "scripts/public-repo-guard.sh"],
+  "knowledgeBoundary": "Framework source owns lifecycle mechanics, parity templates, validation, and runtime declarations. Persona homes own identity, voice, role procedure, configuration, and cache. Vault notes own durable Wils knowledge, topology, decisions, current state, and recovery.",
+  "executableDependencies": [
+    {
+      "id": "vault-curator",
+      "kind": "local-plugin",
+      "immutableSourcePin": "vault@core 0.19.0",
+      "capabilities": ["durable knowledge discovery and mutation"],
+      "required": "conditional"
+    }
+  ],
+  "runtimes": {
+    "claude-code": {"status": "native", "skills": true, "hooks": true, "deterministicValidation": true},
+    "codex": {
+      "status": "generated",
+      "skills": true,
+      "deterministicValidation": true,
+      "hooks": "replacement",
+      "hookReplacement": "Codex project instructions load AGENTS.md; framework drift remains an explicit persona-update check."
+    },
+    "gemini-cli": {"status": "unsupported", "reason": "No adapter is authored."},
+    "kimi-code": {"status": "unsupported", "reason": "No adapter is authored."}
+  }
+}

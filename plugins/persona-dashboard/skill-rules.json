@@ -8,8 +8,8 @@
       "priority": "medium",
       "activationHint": "Skill('persona-dashboard:install')",
       "promptTriggers": {
-        "keywords": ["dashboard", "persona dashboard", "task board", "visual status"],
-        "intentPatterns": ["(add|set up|create|build|install).*?dashboard", "dashboard.*?(for|to|persona)", "want a dashboard", "task board"]
+        "keywords": ["persona dashboard", "persona viewer", "visual persona status"],
+        "intentPatterns": ["(add|set up|create|build|install).*?persona dashboard", "persona dashboard.*?(for|to)", "browse.*?(persona profile|persona memory)"]
       },
       "fileTriggers": {
         "pathPatterns": [],

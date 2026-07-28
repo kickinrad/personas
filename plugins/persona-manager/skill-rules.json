@@ -8,8 +8,8 @@
       "priority": "high",
       "activationHint": "Skill('persona-manager:persona-dev')",
       "promptTriggers": {
-        "keywords": ["persona", "new persona", "create a persona", "add a persona", "build a persona", "design a persona", "persona for"],
-        "intentPatterns": ["(create|build|design|add|make|new).*?persona", "persona.*?(for|that|who|to)", "i want a persona", "help me.*?persona"]
+        "keywords": ["new persona", "create a persona", "add a persona", "build a persona", "design a persona", "persona for"],
+        "intentPatterns": ["(create|build|design|add|make).*?persona", "i want a persona", "help me (create|design).*?persona"]
       },
       "fileTriggers": {
         "pathPatterns": ["**/.personas/*/hooks.json", "**/.personas/*/.claude/settings.json", "**/.personas/*/CLAUDE.md"],
@@ -39,7 +39,7 @@
       "activationHint": "Skill('persona-manager:persona-update')",
       "promptTriggers": {
         "keywords": ["update persona", "persona drift", "sync with framework", "update hooks", "persona maintenance", "check for updates", "persona outdated"],
-        "intentPatterns": ["update.*?persona", "persona.*?(update|drift|sync|outdated|maintenance)", "check.*?(updates|drift)", "sync.*?framework", "update.*?hooks"]
+        "intentPatterns": ["update.*?persona", "persona.*?(update|drift|outdated|maintenance)", "check.*?(updates|drift)", "sync.*?framework", "update.*?hooks"]
       },
       "fileTriggers": {
         "pathPatterns": ["**/.personas/**/hooks.json", "**/.personas/**/.claude/settings.json"],

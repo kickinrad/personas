@@ -163,11 +163,12 @@ module.exports.gitInitialized = (output) => {
 };
 
 module.exports.domainSkillExists = (output) => {
-  // Check for any skill directory besides self-improve
+  // The plugin owns self-improve; persona homes contain domain skills only.
   const skillsDir = personaPath('.claude', 'skills');
   if (!fs.existsSync(skillsDir)) return result(false, '.claude/skills/ directory missing');
   const entries = fs.readdirSync(skillsDir);
-  const domainSkills = entries.filter(e => e !== 'self-improve' && fs.statSync(personaPath('.claude', 'skills', e)).isDirectory());
+  if (entries.includes('self-improve')) return result(false, 'Legacy local self-improve duplicate exists');
+  const domainSkills = entries.filter(e => fs.statSync(personaPath('.claude', 'skills', e)).isDirectory());
   return result(domainSkills.length > 0, domainSkills.length > 0 ? `Domain skills: ${domainSkills.join(', ')}` : 'No domain skills found');
 };
 

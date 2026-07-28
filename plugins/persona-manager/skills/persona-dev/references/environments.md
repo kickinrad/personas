@@ -1,6 +1,7 @@
 # Environments — personas root, Cowork, WSL2 symlink
 
-Reference for Phase 4 (Scaffold) of `persona-dev`. Determines where the personas root lives per environment and how cross-environment setups are wired.
+Read when `persona-dev` must choose a persona home across native, WSL, Windows,
+Desktop, or Cowork environments.
 
 ## Personas root by environment
 

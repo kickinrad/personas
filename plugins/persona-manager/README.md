@@ -1,105 +1,36 @@
 # Persona Manager
 
-Meta-tool for creating and evolving self-improving AI personas built on Claude Code. Scaffolds `~/.personas/{name}/` directories with identity, sandbox, hooks, skills, memory, and MCP config — then keeps them in sync as the framework evolves.
-
-## Quick Start
-
-```
-# First time: install from marketplace
-/plugin marketplace add kickinrad/personas
-/plugin install persona-manager@personas
-
-# Create a persona
-/persona-manager:persona-dev
-
-# Update an existing persona
-/persona-manager:persona-update
-```
-
-Every persona auto-installs persona-manager via `enabledPlugins` in its settings.json, so the skills are always available from within a persona session too.
+Claude-native lifecycle procedures plus a portable deterministic validator for
+persona homes.
 
 ## Skills
 
-### self-improve
+- `persona-dev` — discover, plan, create, or deliberately extend one persona.
+- `persona-update` — reconcile framework mechanics while preserving persona
+  identity, voice, local role procedure, configuration, and user data.
+- `self-improve` — canonical persona-local improvement procedure served by this
+  plugin. A copied `.claude/skills/self-improve/` is invalid.
 
-The persona evolution workflow, served to every persona by this plugin (no local copy needed). Four levels: native auto-memory (hands-off), rule promotion, skill creation, and tool & integration discovery — plus a periodic workspace-hygiene audit.
+## Validation
 
-**Trigger examples:** "self-improve", "time for a self-audit", "promote this to a rule", "this should be a skill"
+```bash
+${CLAUDE_PLUGIN_ROOT}/bin/validate-persona /path/to/persona
+```
 
-### persona-dev
+The validator performs read-only structural, JSON, sandbox, memory-path,
+gitignore, hook, version, duplicate-skill, and secret-pattern checks. It is a
+deterministic command, not a durable model-pinned agent identity. A runtime may
+add a fresh internal reviewer when judgment is needed.
 
-Guided 9-phase persona creation workflow:
+## Source resolution
 
-1. **Discovery** — role, personality, voice, workflows, environment
-2. **Research** — MCP servers, CLI tools, APIs, integrations
-3. **Plan Review** — approval gate before anything gets built
-4. **Scaffold** — directory structure with cross-platform detection
-5. **Build Core Files** — CLAUDE.md, profile, hooks, sandbox, skills
-6. **Configure Integrations** — MCP, tools, expansion packs
-7. **Initialize Git** — repo setup, optional GitHub sync, mesh joining
-8. **Configure Launch Flags** — OS-aware flag selection (sandbox safety)
-9. **Configure Access** — shell aliases, Desktop setup, verification
+Skills use `${CLAUDE_PLUGIN_ROOT}` and sibling references. The framework update
+notice is a plugin hook at `hooks/framework-version.sh`, which resolves its
+manifest relative to its own executable path.
 
-**Trigger examples:** "create a persona", "build me a persona for finance", "add a skill to my persona", "wire a plugin into my persona"
+## Ownership
 
-### persona-update
-
-Template-diffing update system that detects drift between a persona and the current framework version:
-
-- Compares hooks, settings, gitignore, and guard script against templates; flags legacy local self-improve copies for removal
-- Classifies differences as framework additions, changes, or persona customizations
-- Merges intelligently — never overwrites personality, custom skills, or user data
-- Stamps `.framework-version` after applying changes
-
-**Trigger examples:** "update persona", "check for updates", "persona drift", "sync with framework"
-
-## Agents
-
-### persona-validator
-
-Autonomous health checker that validates persona directories. Runs three categories of checks:
-
-- **Structure** — all required files/dirs exist, JSON parses cleanly, hooks.json has all 6 events, settings.json has correct sandbox config
-- **Drift** — `.framework-version` matches current plugin version
-- **Security** — `.mcp.json` gitignored, `user/` handling correct for repo visibility, no secrets in tracked files
-
-Triggers proactively after persona-dev scaffolds a new persona, or on demand.
-
-**Trigger examples:** "validate my persona", "check persona health", "is my persona set up correctly"
-
-## What Gets Scaffolded
-
-Each persona is a self-contained directory with:
-
-| Component | Purpose |
-|-----------|---------|
-| `CLAUDE.md` | Identity, personality, rules |
-| `.claude/settings.json` | OS-level sandbox config |
-| `.claude/output-styles/` | Voice and tone |
-| `user/profile.md` | User context (filled via interview) |
-| `user/memory/` | Native auto-memory |
-| `hooks.json` | SessionStart, Stop, crash recovery, public repo guard |
-| `.mcp.json` | External service integrations |
-| `.claude-flags` | Per-persona CLI launch flags |
-
-## Key Patterns
-
-- **Template-based scaffolding** — all persona files generated from `references/` templates
-- **Three-layer model** — Personality (CLAUDE.md) + Context (profile.md) + Memory (auto)
-- **Four-level evolution** — Memory → Rule promotion → Skill creation → Tool discovery
-- **Platform-aware** — handles macOS, Linux, WSL2, Windows native, and Cowork
-- **Safety-first** — `--dangerously-skip-permissions` never used on Windows native; public repo guard blocks personal data exposure
-
-## Reference Templates
-
-Located in `skills/persona-dev/references/`:
-
-| Template | Generates |
-|----------|-----------|
-| `claude-md-template.md` | Persona identity file |
-| `profile-template.md` | User interview template |
-| `hooks-template.json` | 6 lifecycle hooks |
-| `settings-template.json` | Sandbox + marketplace config |
-| `output-style-template.md` | Voice/personality style |
-| `public-repo-guard.sh` | Git commit/push safety hook |
-| `gitignore-template` | Standard .gitignore entries |
+This plugin owns lifecycle mechanics, templates, validation, and runtime
+declarations. It does not own persona identity or voice, user knowledge, system
+topology, or vault current state. Runtime support and gaps are declared in
+`interop/capabilities.json`.
