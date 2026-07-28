@@ -23,7 +23,7 @@
     "personas": {
       "source": {
         "source": "github",
-        "repo": "kickinrad/personas"
+        "repo": "kickinrad/personas-framework"
       }
     }
   },

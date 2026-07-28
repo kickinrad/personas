@@ -1,8 +1,8 @@
 {
   "name": "persona-dashboard",
   "description": "Optional read-only HTML viewer for a persona's profile, memory index, and operating instructions",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "author": { "name": "kickinrad", "url": "https://github.com/kickinrad" },
-  "repository": "https://github.com/kickinrad/personas",
+  "repository": "https://github.com/kickinrad/personas-framework",
   "license": "MIT"
 }

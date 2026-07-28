@@ -18,9 +18,9 @@ MANAGER = PLUGINS / "persona-manager"
 DASHBOARD = PLUGINS / "persona-dashboard"
 MESH = PLUGINS / "personas-mesh"
 EXPECTED_VERSIONS = {
-    "persona-manager": "2.0.1",
-    "persona-dashboard": "2.0.0",
-    "personas-mesh": "1.0.0",
+    "persona-manager": "2.0.2",
+    "persona-dashboard": "2.0.1",
+    "personas-mesh": "1.0.1",
 }
 def run(
     *args: str,

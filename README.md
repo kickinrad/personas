@@ -25,7 +25,7 @@ knowledge.
 Install the marketplace and manager:
 
 ```text
-/plugin marketplace add kickinrad/personas
+/plugin marketplace add kickinrad/personas-framework
 /plugin install persona-manager@personas
 ```
 

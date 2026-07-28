@@ -7,7 +7,7 @@ Every persona repo gets a short README. Keep it minimal — this isn't a library
 
 > {One-line role description}
 
-A self-evolving AI persona built on [Claude Code](https://claude.com/claude-code) using the [personas](https://github.com/kickinrad/personas) framework.
+A self-evolving AI persona built on [Claude Code](https://claude.com/claude-code) using the [personas](https://github.com/kickinrad/personas-framework) framework.
 
 ## Usage
 
@@ -18,7 +18,7 @@ A self-evolving AI persona built on [Claude Code](https://claude.com/claude-code
 
 ## Setup
 
-See the [personas framework](https://github.com/kickinrad/personas) for installation and setup.
+See the [personas framework](https://github.com/kickinrad/personas-framework) for installation and setup.
 ```
 
 For **public repos**, consider adding a brief "What it does" section describing the persona's domain and skills.

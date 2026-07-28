@@ -1,6 +1,6 @@
 [Unit]
 Description=personas-mesh gitignored user-data peer sync
-Documentation=https://github.com/kickinrad/personas
+Documentation=https://github.com/kickinrad/personas-framework
 
 [Service]
 Type=oneshot
