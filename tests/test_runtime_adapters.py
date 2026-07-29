@@ -152,7 +152,13 @@ class RuntimeAdapterTest(unittest.TestCase):
             self.assertFalse((clone / ".claude/skills/self-improve").exists())
             (clone / "README.md").write_text("# Atlas recovered\n", encoding="utf-8")
             subprocess.run(("git", "-C", str(clone), "add", "README.md"), check=True)
-            subprocess.run(("git", "-C", str(clone), "-c", "commit.gpgSign=false", "commit", "-qm", "recovery"), check=True)
+            subprocess.run((
+                "git", "-C", str(clone),
+                "-c", "user.email=fixture@example.invalid",
+                "-c", "user.name=Fixture",
+                "-c", "commit.gpgSign=false",
+                "commit", "-qm", "recovery",
+            ), check=True)
             subprocess.run(("git", "-C", str(clone), "push", "-q", "fixture", "HEAD:main"), check=True)
             public_env = os.environ.copy()
             public_env["PERSONAS_GITHUB_VISIBILITY_ADAPTER"] = str(adapter(base / "public-adapter", "PUBLIC"))
