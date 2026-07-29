@@ -68,6 +68,13 @@ is available, and the reported visibility is exactly `PRIVATE`. Then rerun the
 Cloud preflight and verification. Credentials remain forbidden from Git even in
 a private repository.
 
+Anthropic's Cloud VM does not preinstall `gh`. Configure the Claude Code Cloud
+environment setup script to install it and add a least-privilege `GH_TOKEN`
+environment variable with read access to this repository's metadata. Do not
+put the token in `.claude/settings.json`, `.mcp.json`, a prompt, or any tracked
+file. Alternatively, configure an authenticated `PERSONA_GITHUB_CLI` adapter
+that returns exact visibility evidence and fails closed.
+
 The framework repository may be public. The personalized Cloud persona
 repository is private. If you cannot prove that boundary, use Claude local or
 Codex without publishing personal state.

@@ -53,6 +53,10 @@ class PersonaCreateTest(unittest.TestCase):
             home = parent / "atlas"
             self.assertEqual(Path(report["path"]), home)
             self.assertTrue((home / "user/profile.md").is_file())
+            self.assertTrue((home / ".claude/output-styles/atlas.md").is_file())
+            self.assertFalse((home / "hooks.json").exists())
+            settings = json.loads((home / ".claude/settings.json").read_text(encoding="utf-8"))
+            self.assertIn("SessionStart", settings["hooks"])
             self.assertFalse(marker.exists())
             verified = run("verify", str(home), "--profile", "claude-local", "--json")
             self.assertEqual(verified.returncode, 0, verified.stdout)
@@ -100,7 +104,32 @@ class PersonaCreateTest(unittest.TestCase):
             ci = (home / ".github/workflows/persona-private.yml").read_text(encoding="utf-8")
             self.assertIn('"${{ github.event.repository.private }}" != "true"', ci)
             self.assertTrue((home / ".claude/hooks/public-repo-guard.sh").is_file())
+            self.assertTrue((home / ".claude/output-styles/cloud-atlas.md").is_file())
+            self.assertFalse((home / "hooks.json").exists())
             self.assertEqual((home / ".persona-cloud-repository").read_text(encoding="utf-8"), "example/cloud-atlas\n")
+            settings = json.loads((home / ".claude/settings.json").read_text(encoding="utf-8"))
+            expected_events = {"PreToolUse", "SessionStart", "StopFailure", "PostCompact"}
+            self.assertEqual(set(settings["hooks"]), expected_events)
+            for groups in settings["hooks"].values():
+                self.assertTrue(all(isinstance(group.get("hooks"), list) for group in groups))
+                self.assertTrue(
+                    all(handler.get("type") == "command" for group in groups for handler in group["hooks"])
+                )
+            session_command = settings["hooks"]["SessionStart"][0]["hooks"][0]["command"]
+            private_env["PERSONA_GITHUB_CLI"] = str(native_gh(parent / "guard-tools", "PRIVATE"))
+            session = subprocess.run(
+                ("bash", "-c", session_command),
+                cwd=home,
+                env=private_env,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+            self.assertEqual(session.returncode, 0, session.stderr)
+            context = json.loads(session.stdout)["hookSpecificOutput"]["additionalContext"]
+            self.assertIn("Repository-only Cloud persona", context)
+            self.assertNotIn("Read user/profile.md", context)
             self.assertEqual(
                 subprocess.run(("git", "-C", str(home), "remote", "get-url", "origin"), text=True, stdout=subprocess.PIPE, check=True).stdout.strip(),
                 "https://github.com/example/cloud-atlas.git",

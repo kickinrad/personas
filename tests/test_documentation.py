@@ -66,8 +66,12 @@ class DocumentationTest(unittest.TestCase):
             "credentials",
             "framework repository may be public",
             "personalized Cloud persona repository is private",
+            "GH_TOKEN",
+            "not pre-installed",
+            "least-privilege",
         ):
             self.assertIn(phrase, text)
+        self.assertIn("Cloud environment", (ROOT / "SUPPORT.md").read_text(encoding="utf-8"))
 
     def test_support_covers_expected_recovery_boundaries(self) -> None:
         text = TROUBLESHOOTING.read_text(encoding="utf-8").casefold()

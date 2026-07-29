@@ -43,6 +43,7 @@ def make_home(root: Path, *, version: str = "3.0.0") -> Path:
         "README.md": "# Atlas\n",
         "user/profile.md": "# Profile\n",
         "user/memory/MEMORY.md": "# Memory\n",
+        ".claude/output-styles/atlas.md": "---\nname: Atlas\n---\n",
         ".gitignore": ".mcp.json\n.claude/settings.local.json\n",
         ".framework-version": version + "\n",
         ".claude-flags": "--setting-sources project,local\n",
@@ -61,15 +62,14 @@ def make_home(root: Path, *, version: str = "3.0.0") -> Path:
                 "filesystem": {"denyRead": ["~/.aws", "~/.ssh", "~/.gnupg", "../"]},
             },
             "enabledPlugins": {"persona-manager@personas": True},
+            "hooks": json.loads(
+                (ROOT / "skills/persona-dev/assets/hooks-template.json").read_text(encoding="utf-8")
+            )["hooks"],
         },
     )
     write_json(
         root / ".claude/settings.local.json",
         {"autoMemoryDirectory": str((root / "user/memory").resolve())},
-    )
-    write_json(
-        root / "hooks.json",
-        {"hooks": {event: [] for event in ("PreToolUse", "SessionStart", "Stop", "StopFailure", "PreCompact", "PostCompact")}},
     )
     return root
 
@@ -166,7 +166,7 @@ class PersonaVerifyTest(unittest.TestCase):
                 env = os.environ.copy()
                 env["PERSONAS_GITHUB_VISIBILITY_ADAPTER"] = str(adapter)
                 result = run("verify", str(home), "--profile", "claude-cloud", "--json", env=env)
-                self.assertEqual(result.returncode, exit_code, result.stderr)
+                self.assertEqual(result.returncode, exit_code, result.stdout + result.stderr)
                 self.assertEqual(json.loads(result.stdout)["status"], expected)
 
     def test_cloud_fails_closed_for_ambiguous_unavailable_and_unreachable_evidence(self) -> None:

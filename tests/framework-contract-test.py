@@ -71,6 +71,9 @@ def make_persona(root: Path, *, local_self_improve: bool = False) -> None:
                 },
             },
             "enabledPlugins": {"persona-manager@personas": True},
+            "hooks": json.loads(
+                (ROOT / "skills/persona-dev/assets/hooks-template.json").read_text(encoding="utf-8")
+            )["hooks"],
         },
     )
     write_json(
@@ -78,22 +81,6 @@ def make_persona(root: Path, *, local_self_improve: bool = False) -> None:
         {
             "autoMemoryDirectory": str((root / "user/memory").resolve()),
             "outputStyle": "Atlas",
-        },
-    )
-    write_json(
-        root / "hooks.json",
-        {
-            "hooks": {
-                name: [{"type": "prompt", "prompt": "fixture"}]
-                for name in (
-                    "PreToolUse",
-                    "SessionStart",
-                    "Stop",
-                    "StopFailure",
-                    "PreCompact",
-                    "PostCompact",
-                )
-            }
         },
     )
     if local_self_improve:

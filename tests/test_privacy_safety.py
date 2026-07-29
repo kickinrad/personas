@@ -160,7 +160,7 @@ class PrivacySafetyTest(unittest.TestCase):
     def test_session_start_context_is_truthful_for_local_and_cloud(self) -> None:
         command = json.loads(
             (ROOT / "skills/persona-dev/assets/hooks-template.json").read_text(encoding="utf-8")
-        )["hooks"]["SessionStart"][0]["command"]
+        )["hooks"]["SessionStart"][0]["hooks"][0]["command"]
         guard = self.repo / ".claude/hooks/public-repo-guard.sh"
         guard.parent.mkdir(parents=True)
         guard.write_text(
@@ -173,12 +173,16 @@ class PrivacySafetyTest(unittest.TestCase):
         local = run("bash", "-c", command, cwd=self.repo, env=os.environ)
         self.assertEqual(local.returncode, 0, local.stderr)
         self.assertIn("Local persona session", json.loads(local.stdout)["hookSpecificOutput"]["additionalContext"])
-        self.assertNotIn("visibility was proven", local.stdout)
+        self.assertNotIn("visibility and repository binding were proven", local.stdout)
 
         (self.repo / ".persona-cloud-repository").write_text("owner/private-persona\n", encoding="utf-8")
         cloud = run("bash", "-c", command, cwd=self.repo, env=os.environ)
         self.assertEqual(cloud.returncode, 0, cloud.stderr)
-        self.assertIn("visibility was proven", json.loads(cloud.stdout)["hookSpecificOutput"]["additionalContext"])
+        self.assertIn(
+            "visibility and repository binding were proven",
+            json.loads(cloud.stdout)["hookSpecificOutput"]["additionalContext"],
+        )
+        self.assertNotIn("Read user/profile.md", cloud.stdout)
 
         rejected = run(
             "bash", "-c", command,
@@ -186,7 +190,7 @@ class PrivacySafetyTest(unittest.TestCase):
             env=os.environ | {"GUARD_RESULT": "fail"},
         )
         self.assertEqual(rejected.returncode, 2)
-        self.assertNotIn("visibility was proven", rejected.stdout)
+        self.assertNotIn("visibility and repository binding were proven", rejected.stdout)
 
 
 if __name__ == "__main__":

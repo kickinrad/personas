@@ -32,7 +32,13 @@ def create_persona_from_packaged_assets(product: Path, home: Path) -> None:
     for directory in ("user/memory", ".claude/output-styles", ".claude/hooks"):
         (home / directory).mkdir(parents=True, exist_ok=True)
     replacements = {"{PersonaName}": "Atlas", "{name}": "atlas", "{emoji}": "🧭", "{role description without personal facts}": "test collaborator"}
-    for source_name, destination in (("claude-md-template.md", "CLAUDE.md"), ("agents-template.md", "AGENTS.md"), ("profile-template.md", "user/profile.md"), ("readme-template.md", "README.md")):
+    for source_name, destination in (
+        ("claude-md-template.md", "CLAUDE.md"),
+        ("agents-template.md", "AGENTS.md"),
+        ("profile-template.md", "user/profile.md"),
+        ("readme-template.md", "README.md"),
+        ("output-style-template.md", ".claude/output-styles/atlas.md"),
+    ):
         text = (assets / source_name).read_text(encoding="utf-8")
         for old, new in replacements.items():
             text = text.replace(old, new)
@@ -48,9 +54,10 @@ def create_persona_from_packaged_assets(product: Path, home: Path) -> None:
     )
     (home / ".framework-version").write_text("3.0.0\n", encoding="utf-8")
     (home / ".claude-flags").write_text("--setting-sources project,local\n", encoding="utf-8")
-    write_json(home / ".claude/settings.json", json.loads((assets / "settings-template.json").read_text(encoding="utf-8")))
+    settings = json.loads((assets / "settings-template.json").read_text(encoding="utf-8"))
+    settings["hooks"] = json.loads((assets / "hooks-template.json").read_text(encoding="utf-8"))["hooks"]
+    write_json(home / ".claude/settings.json", settings)
     write_json(home / ".claude/settings.local.json", {"autoMemoryDirectory": str((home / "user/memory").resolve())})
-    write_json(home / "hooks.json", json.loads((assets / "hooks-template.json").read_text(encoding="utf-8")))
     (home / ".persona-cloud-repository").write_text("example/atlas\n", encoding="utf-8")
 
 
@@ -81,6 +88,9 @@ class RuntimeAdapterTest(unittest.TestCase):
         capabilities = json.loads((ROOT / "interop/capabilities.json").read_text(encoding="utf-8"))
         self.assertEqual(capabilities["runtimes"]["codex"]["status"], "native")
         self.assertEqual(capabilities["runtimes"]["codex"]["hooks"]["trust"], fixture["codex"]["hookTrust"])
+        claude_hooks = capabilities["runtimes"]["claude-code"]["hooks"]
+        self.assertEqual(claude_hooks["pluginPath"], "hooks/hooks.json")
+        self.assertEqual(claude_hooks["personaProjectPath"], ".claude/settings.json")
         command = json.loads((ROOT / "hooks/hooks.json").read_text(encoding="utf-8"))["hooks"]["SessionStart"][0]["hooks"][0]["command"]
         self.assertIn("PLUGIN_ROOT", command)
         self.assertIn("CLAUDE_PLUGIN_ROOT", command)

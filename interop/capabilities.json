@@ -25,7 +25,12 @@
       "status": "native",
       "profiles": {"local": "native", "cloud": "preview-private-repository-only"},
       "skills": true,
-      "hooks": {"status": "native", "path": "hooks/hooks.json"},
+      "hooks": {
+        "status": "native",
+        "pluginPath": "hooks/hooks.json",
+        "personaProjectPath": ".claude/settings.json",
+        "personaProjectStatus": "generated-native"
+      },
       "deterministicValidation": true,
       "memory": "environment-local; profile and memory transport are explicit and never implied"
     },

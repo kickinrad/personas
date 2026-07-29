@@ -27,7 +27,6 @@ CLAUDE_FILES = (
     ".claude/settings.json",
     ".claude/settings.local.json",
     ".claude-flags",
-    "hooks.json",
     ".claude/hooks/public-repo-guard.sh",
 )
 
@@ -141,6 +140,20 @@ def check_claude(home: Path, checks: dict[str, dict[str, list[str]]], *, require
             plugins = settings.get("enabledPlugins")
             if not isinstance(plugins, dict) or plugins.get("persona-manager@personas") is not True:
                 add(checks, "claude", error=".claude/settings.json: persona-manager@personas must be enabled")
+            hooks = settings.get("hooks")
+            expected = {"PreToolUse", "SessionStart", "StopFailure", "PostCompact"}
+            if not isinstance(hooks, dict):
+                add(checks, "claude", error=".claude/settings.json: hooks must be an object")
+            elif missing := expected - set(hooks):
+                add(checks, "claude", error=".claude/settings.json: missing hook events " + ", ".join(sorted(missing)))
+            else:
+                for event in expected:
+                    groups = hooks.get(event)
+                    if not isinstance(groups, list) or not groups or any(
+                        not isinstance(group, dict) or not isinstance(group.get("hooks"), list)
+                        for group in groups
+                    ):
+                        add(checks, "claude", error=f".claude/settings.json: {event} must use native matcher-group hook structure")
 
     local_path = home / ".claude/settings.local.json"
     if require_local_settings and local_path.is_file():
@@ -160,20 +173,11 @@ def check_claude(home: Path, checks: dict[str, dict[str, list[str]]], *, require
     if flags.is_file() and "--setting-sources project,local" not in flags.read_text(encoding="utf-8"):
         add(checks, "claude", error=".claude-flags: missing --setting-sources project,local")
 
-    hooks = home / "hooks.json"
-    if hooks.is_file():
-        try:
-            hook_data = json.loads(hooks.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as exc:
-            add(checks, "claude", error=f"hooks.json: invalid JSON ({exc})")
-            hook_data = None
-        if isinstance(hook_data, dict):
-            events = hook_data.get("hooks")
-            expected = {"PreToolUse", "SessionStart", "Stop", "StopFailure", "PreCompact", "PostCompact"}
-            if not isinstance(events, dict):
-                add(checks, "claude", error="hooks.json: hooks must be an object")
-            elif missing := expected - set(events):
-                add(checks, "claude", error="hooks.json: missing events " + ", ".join(sorted(missing)))
+    output_styles = sorted((home / ".claude/output-styles").glob("*.md"))
+    if output_styles:
+        add(checks, "claude", passed="at least one .claude/output-styles/*.md identity exists")
+    else:
+        add(checks, "claude", error="claude: at least one .claude/output-styles/*.md identity is required")
 
 
 def check_codex(home: Path, checks: dict[str, dict[str, list[str]]]) -> None:
@@ -326,8 +330,10 @@ def create(name: str, parent: Path, profile: str, repository: str | None) -> tup
         write(staging / ".gitignore", template("gitignore-template"))
         write(staging / ".framework-version", version(source) + "\n")
         write(staging / ".claude-flags", "--setting-sources project,local\n")
-        write(staging / ".claude/settings.json", template("settings-template.json"))
-        write(staging / "hooks.json", template("hooks-template.json"))
+        settings = json.loads(template("settings-template.json"))
+        settings["hooks"] = json.loads(template("hooks-template.json"))["hooks"]
+        write(staging / ".claude/settings.json", json.dumps(settings, indent=2) + "\n")
+        write(staging / ".claude/output-styles" / f"{name}.md", template("output-style-template.md"))
         write(staging / ".claude/hooks/public-repo-guard.sh", (source / "scripts/public-repo-guard.sh").read_text(encoding="utf-8"), executable=True)
         write(staging / "skills" / f"{name}-brief" / "SKILL.md", f"---\nname: {name}-brief\ndescription: Prepare a concise {name} role brief.\n---\n\n# {name.replace('-', ' ').title()} brief\n")
         if profile != "claude-cloud":
@@ -355,7 +361,7 @@ def create(name: str, parent: Path, profile: str, repository: str | None) -> tup
             pass
         return creation_report("FAIL", name, destination, profile, errors=[f"creation: {exc}"], staging=staging, cleaned=cleaned), 1
     report = creation_report("PASS", name, destination, profile)
-    report["created"] = ["CLAUDE.md", "AGENTS.md", "README.md", "skills/", "hooks.json"]
+    report["created"] = ["CLAUDE.md", "AGENTS.md", "README.md", ".claude/settings.json", ".claude/output-styles/", "skills/"]
     report["repositoryCreation"] = "not attempted; create or select a GitHub repository only with separate authorization" if profile == "claude-cloud" else "not requested"
     return report, 0
 

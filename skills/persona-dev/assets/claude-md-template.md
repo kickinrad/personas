@@ -9,8 +9,11 @@ Identity and voice belong in `.claude/output-styles/{name}.md`.}
 
 ## Session start
 
-Read `user/profile.md`. If it is unfilled, interview one section at a time with
-structured questions and confirm before writing. Verify required tools and
+If `user/profile.md` exists locally, read it before relying on personal context.
+If it is unfilled, interview one section at a time with structured questions
+and confirm before writing. In a repository-only Cloud clone, private profile
+and memory files are intentionally absent from Git; use only context explicitly
+supplied in the session or environment-local memory. Verify required tools and
 connections before relying on them.
 
 ## Skills
@@ -29,19 +32,20 @@ procedure that governs them. Credentials remain external.}
 
 ## Knowledge and memory
 
-Native auto-memory owns `user/memory/`; do not write it manually.
-`user/profile.md` contains the minimum stable context needed to operate this
-role. Durable shared knowledge, decisions, topology, current state, and recovery
-belong in their canonical knowledge system. If a vault connector is enabled,
-route discovery and mutation through its curator rather than copying knowledge
-into this file.
+Where available, native auto-memory owns learned runtime context; do not write
+it manually. A local `user/profile.md` contains the minimum stable private
+context needed to operate this role. Neither private profile nor memory belongs
+in Git, including private Cloud repositories. Durable shared knowledge,
+decisions, topology, current state, and recovery belong in their canonical
+knowledge system. If a vault connector is enabled, route discovery and mutation
+through its curator rather than copying knowledge into this file.
 
 ## Workspace
 
 - `docs/` — role-local reference and plans
 - `tools/` — role-local executables
 - `.claude/skills/` — role-local reusable procedure
-- `user/` — profile and native memory
+- `user/` — optional local-only profile and native memory; absent from clean Cloud clones
 - root — framework-required files only
 
 ## Security
@@ -56,7 +60,7 @@ into this file.
 ## Operating rules
 
 1. Preserve identity and voice while changing role procedure.
-2. Read the profile before acting on personal context.
+2. Read the local profile when present before acting on personal context.
 3. Use structured questions for consequential input.
 4. Verify consequential external state at its source.
 5. Keep each fact and procedure in its owning system.

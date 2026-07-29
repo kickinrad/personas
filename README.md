@@ -97,7 +97,23 @@ unavailable, or ambiguous evidence fails closed.
 
 1. With separate approval, create or select the private persona repository.
    Repository creation is deliberately not performed by Persona Manager.
-2. Authenticate the GitHub CLI (`gh`), then create only after it can prove
+2. Prepare authenticated visibility inspection in both environments:
+
+   - Locally, authenticate the GitHub CLI (`gh`).
+   - `gh` is not pre-installed in Anthropic's Cloud VM. In the Claude Code
+     Cloud environment, install it with the environment setup script and set a
+     least-privilege `GH_TOKEN` environment variable that can read repository
+     metadata for this private repository. The token belongs only in the Cloud
+     environment—not in Git, project settings, prompts, or logs. Anyone allowed
+     to edit that Cloud environment can see its variables, so keep access
+     narrow.
+
+   Persona Manager also accepts an explicitly configured
+   `PERSONA_GITHUB_CLI` adapter for SessionStart and
+   `PERSONAS_GITHUB_VISIBILITY_ADAPTER` for create/verify in controlled
+   environments. Every adapter must fail closed unless authenticated evidence
+   is exactly `PRIVATE`.
+3. Create only after local `gh` can prove
    the named repository is `PRIVATE`:
 
    ```bash
@@ -114,13 +130,13 @@ unavailable, or ambiguous evidence fails closed.
    repository with that origin only; it does not create, clone, or push a
    remote. Adopting an existing nonempty repository requires separately approved
    migration work.
-3. Commit only publishable doctrine and procedure: `CLAUDE.md`, `AGENTS.md`,
+4. Commit only publishable doctrine and procedure: `CLAUDE.md`, `AGENTS.md`,
    role-local skills, public settings, hooks, README, and the generated CI
    workflow.
-4. Keep `user/profile.md`, `user/memory/`, `.claude/settings.local.json`,
+5. Keep `user/profile.md`, `user/memory/`, `.claude/settings.local.json`,
    `.mcp.json`, and every credential out of Git. Private visibility does not
    protect committed credentials; they are always forbidden.
-5. The Cloud SessionStart hook verifies both the origin and its
+6. The native project hook in `.claude/settings.json` verifies both the origin and its
    `.persona-cloud-repository` binding before it claims personalized context
    is safe to load. Verify with the Cloud profile:
 

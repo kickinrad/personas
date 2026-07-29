@@ -1,9 +1,5 @@
 {
-  "_personaManagerPrivacy": "Copy to .claude/settings.local.json; this local file is Git-ignored and contains no credentials.",
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh"
-  },
+  "_personaManagerPrivacy": "Shared project settings only. Keep private overrides and credentials outside Git.",
   "claudeMdExcludes": [
     "**/.claude/CLAUDE.md"
   ],

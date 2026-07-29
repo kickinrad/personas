@@ -8,7 +8,7 @@ Read these files before acting:
 1. the global cross-harness doctrine configured for this environment;
 2. `CLAUDE.md` — role and operating procedure shared across harnesses;
 3. `.claude/output-styles/{name}.md` — identity, voice, and response shape;
-4. `user/memory/MEMORY.md` — durable preference index;
+4. `user/memory/MEMORY.md` when present locally — durable private preference index;
 5. any role-local file explicitly required by `CLAUDE.md`.
 
 Treat those files as source authority instead of duplicating them here.

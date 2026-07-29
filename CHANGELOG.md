@@ -18,9 +18,13 @@
   Claude local, Cloud, and Codex homes.
 - Structured `bin/personas verify`, native Codex packaging, a private
   publishing guard, and one CI-equivalent release gate.
+- Native project hooks in `.claude/settings.json` and a committed output-style
+  identity for clean Claude local and Cloud clones.
 
 ### Changed
 
 - Private profile, memory, local settings, connection configuration, and
   credentials remain local and are ignored by default.
+- Repository-only Cloud doctrine no longer assumes local profile or memory
+  files exist, and lifecycle hooks cannot replace the user's final answer.
 - The project license authority is Apache-2.0.
