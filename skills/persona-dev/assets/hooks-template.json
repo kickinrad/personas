@@ -7,7 +7,6 @@
           {
             "type": "command",
             "command": "echo 'Persona publishing reminder: run .claude/hooks/public-repo-guard.sh --check-staged at the CI/release seam; this runtime hook is advisory only.' >&2; exit 0",
-            "args": [],
             "timeout": 10000
           }
         ]

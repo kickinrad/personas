@@ -115,6 +115,10 @@ class PersonaCreateTest(unittest.TestCase):
                 self.assertTrue(
                     all(handler.get("type") == "command" for group in groups for handler in group["hooks"])
                 )
+                self.assertTrue(
+                    all("args" not in handler for group in groups for handler in group["hooks"]),
+                    "shell command hooks must not declare args; Claude otherwise treats the full command as an executable path",
+                )
             session_command = settings["hooks"]["SessionStart"][0]["hooks"][0]["command"]
             private_env["PERSONA_GITHUB_CLI"] = str(native_gh(parent / "guard-tools", "PRIVATE"))
             session = subprocess.run(
