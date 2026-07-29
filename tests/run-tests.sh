@@ -8,5 +8,21 @@ cleanup() {
 }
 trap cleanup EXIT
 
+while IFS= read -r -d '' script; do
+  bash -n "$script"
+done < <(find "$ROOT" -path "$ROOT/.git" -prune -o -name '*.sh' -type f -print0)
+
 HOME="$TEST_HOME" bash "$ROOT/tests/personas-test.sh"
 HOME="$TEST_HOME" python3 "$ROOT/tests/framework-contract-test.py"
+HOME="$TEST_HOME" python3 "$ROOT/tests/test_persona_verify.py"
+HOME="$TEST_HOME" python3 "$ROOT/tests/test_privacy_safety.py"
+HOME="$TEST_HOME" python3 "$ROOT/tests/test_runtime_adapters.py"
+HOME="$TEST_HOME" python3 "$ROOT/tests/test_persona_create.py"
+HOME="$TEST_HOME" python3 "$ROOT/tests/test_documentation.py"
+HOME="$TEST_HOME" python3 "$ROOT/tests/test_repository_inventory.py"
+HOME="$TEST_HOME" python3 "$ROOT/tests/test_release.py"
+
+if git -C "$ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  git -C "$ROOT" diff --check
+  git -C "$ROOT" diff --cached --check
+fi

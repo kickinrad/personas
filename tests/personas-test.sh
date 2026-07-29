@@ -2,7 +2,6 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PLUGINS_DIR="$REPO_ROOT/plugins"
 PASS=0
 FAIL=0
 
@@ -17,43 +16,40 @@ check() {
   fi
 }
 
-for plugin_dir in "$PLUGINS_DIR"/*/; do
-  name=$(basename "$plugin_dir")
-  echo "Testing: $name"
+echo "Testing: persona-manager"
 
-  # plugin.json exists and has version
-  pjson="$plugin_dir/.claude-plugin/plugin.json"
-  if [[ -f "$pjson" ]]; then
-    check "plugin.json exists" "pass"
-    version=$(jq -r '.version // empty' "$pjson" 2>/dev/null)
-    [[ -n "$version" ]] && check "version present ($version)" "pass" || check "version present" "missing"
-  else
-    check "plugin.json exists" "missing"
+# plugin.json exists and has version
+pjson="$REPO_ROOT/.claude-plugin/plugin.json"
+if [[ -f "$pjson" ]]; then
+  check "plugin.json exists" "pass"
+  version=$(jq -r '.version // empty' "$pjson" 2>/dev/null)
+  [[ -n "$version" ]] && check "version present ($version)" "pass" || check "version present" "missing"
+else
+  check "plugin.json exists" "missing"
+fi
+
+# All SKILL.md files must have YAML frontmatter
+while IFS= read -r -d '' skill; do
+  grep -q "^---" "$skill" && \
+    check "frontmatter: $(basename "$(dirname "$skill")")/SKILL.md" "pass" || \
+    check "frontmatter: $(basename "$(dirname "$skill")")/SKILL.md" "missing"
+done < <(find "$REPO_ROOT/skills" -name "SKILL.md" -print0 2>/dev/null)
+
+# Secret detection in source files. Secret prefixes must be followed by
+# ≥20 base64url chars to rule out bare-prefix docs (e.g. "GOCSPX-" listed as
+# an example pattern in validator agent prose).
+secret_hits=""
+while IFS= read -r -d '' f; do
+  basename_f=$(basename "$f")
+  [[ "$basename_f" == ".mcp.json" ]] && continue
+  if grep -qE '(eyJ[A-Za-z0-9_-]{20,}|GOCSPX-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|BEGIN[ ]PRIVATE[ ]KEY)' "$f" 2>/dev/null; then
+    secret_hits+=" ${f#"$REPO_ROOT"/}"
   fi
+done < <(find "$REPO_ROOT" -path "$REPO_ROOT/.git" -prune -o -path "$REPO_ROOT/.claude" -prune -o \( -name "*.md" -o -name "*.json" \) -type f -print0)
+[[ -z "$secret_hits" ]] && \
+  check "no secrets in source files" "pass" || check "no secrets in source files" "found in:$secret_hits"
 
-  # All SKILL.md files must have YAML frontmatter
-  while IFS= read -r -d '' skill; do
-    grep -q "^---" "$skill" && \
-      check "frontmatter: $(basename "$(dirname "$skill")")/SKILL.md" "pass" || \
-      check "frontmatter: $(basename "$(dirname "$skill")")/SKILL.md" "missing"
-  done < <(find "$plugin_dir/skills" -name "SKILL.md" -print0 2>/dev/null)
-
-  # Secret detection in committed files. Secret prefixes must be followed by
-  # ≥20 base64url chars to rule out bare-prefix docs (e.g. "GOCSPX-" listed as
-  # an example pattern in validator agent prose).
-  secret_hits=""
-  while IFS= read -r -d '' f; do
-    basename_f=$(basename "$f")
-    [[ "$basename_f" == ".mcp.json" ]] && continue
-    if grep -qE '(eyJ[A-Za-z0-9_-]{20,}|GOCSPX-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|BEGIN[ ]PRIVATE[ ]KEY)' "$f" 2>/dev/null; then
-      secret_hits+=" ${f#"$REPO_ROOT"/}"
-    fi
-  done < <(find "$plugin_dir" \( -name "*.md" -o -name "*.json" \) -print0 2>/dev/null)
-  [[ -z "$secret_hits" ]] && \
-    check "no secrets in committed files" "pass" || check "no secrets in committed files" "found in:$secret_hits"
-
-  echo ""
-done
+echo ""
 
 # Marketplace checks: plugin.json#version is the single source of truth
 # (forge §Version bumping dual-write ban — plugins[] entries must NOT carry a version field;
@@ -70,7 +66,7 @@ if [[ -f "$marketplace" ]]; then
     else
       check "$mp_name: no version field in marketplace.json" "pass"
     fi
-    pjson="$PLUGINS_DIR/$mp_name/.claude-plugin/plugin.json"
+    pjson="$REPO_ROOT/.claude-plugin/plugin.json"
     if [[ -f "$pjson" ]]; then
       pj_version=$(jq -r '.version // empty' "$pjson" 2>/dev/null)
       [[ -n "$pj_version" ]] && \

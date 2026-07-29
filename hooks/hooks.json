@@ -1,0 +1,16 @@
+{
+  "description": "Persona framework drift notice using the installed plugin root",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "plugin_root=\"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; [ -n \"$plugin_root\" ] && \"$plugin_root/hooks/framework-version.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

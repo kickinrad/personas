@@ -5,28 +5,16 @@
     "url": "https://github.com/kickinrad"
   },
   "metadata": {
-    "description": "Persona lifecycle framework with optional read-only dashboard and mesh sync",
-    "version": "2.0.1",
-    "pluginRoot": "./plugins"
+    "description": "Privacy-first toolkit for one durable AI collaborator",
+    "version": "3.0.0",
+    "pluginRoot": "."
   },
   "plugins": [
     {
       "name": "persona-manager",
-      "source": "./plugins/persona-manager",
-      "description": "Scaffolds and manages AI personas in ~/.personas/",
-      "category": "management"
-    },
-    {
-      "name": "persona-dashboard",
-      "source": "./plugins/persona-dashboard",
-      "description": "Optional read-only HTML viewer for persona context",
-      "category": "expansion"
-    },
-    {
-      "name": "personas-mesh",
-      "source": "./plugins/personas-mesh",
-      "description": "Profile-driven repository and local user-data sync",
-      "category": "expansion"
+      "source": ".",
+      "description": "Create and verify privacy-first Claude Code and Codex personas",
+      "category": "developer-tools"
     }
   ]
 }

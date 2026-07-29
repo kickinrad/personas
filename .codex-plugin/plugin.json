@@ -1,0 +1,21 @@
+{
+  "name": "persona-manager",
+  "description": "Privacy-first toolkit for one durable AI collaborator",
+  "version": "3.0.0",
+  "author": {
+    "name": "kickinrad",
+    "url": "https://github.com/kickinrad"
+  },
+  "repository": "https://github.com/kickinrad/personas-framework",
+  "license": "Apache-2.0",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Persona Manager",
+    "shortDescription": "Create a durable AI collaborator",
+    "longDescription": "Privacy-first creation and verification for Claude Code and Codex personas.",
+    "developerName": "Wils",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Write"],
+    "defaultPrompt": ["Use Persona Manager for this request."]
+  }
+}

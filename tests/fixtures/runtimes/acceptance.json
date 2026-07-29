@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "runtimes": ["claude-local", "claude-cloud", "codex"],
+  "cloud": {
+    "privateVisibility": "PRIVATE",
+    "publicStopsBeforeBehavior": true,
+    "autoMemory": "environment-local"
+  },
+  "codex": {
+    "marketplacePath": "./",
+    "hookTrust": "required"
+  }
+}

@@ -1,25 +1,44 @@
 # Contributing
 
-Thanks for your interest in contributing!
+Help make Persona Manager easier to trust and easier to use.
 
-## Development Setup
+## Requirements
 
-1. Fork and clone the repo
-2. Create a feature branch: `git checkout -b feat/your-feature`
+Use Python 3, Bash, and `jq`. Keep tests offline and use temporary persona
+homes; never point a test at `~/.personas` or a real repository.
 
-## Pull Request Process
+## Development procedure
 
-1. Follow existing code style
-2. Update documentation if needed
-3. Write clear commit messages: `type(scope): description`
-4. Open a PR against `main`
+1. Fork and clone the repository, then create a focused branch.
+2. Run the full gate:
 
-## DCO Sign-Off
+   ```bash
+   bash tests/run-tests.sh
+   ```
 
-All contributions must include a sign-off line in the commit message:
+3. Keep shared skills at `skills/`, runtime manifests at the root, and persona
+   fixtures sanitized. Do not add a generated skill copy or a forwarding
+   manifest.
+4. For a contract change, add an observable fixture and test. For a Cloud
+   change, use an injectable local visibility adapter; never call a real GitHub
+   repository from the test suite.
+5. Update the public quickstart and troubleshooting path when a user-visible
+   command or recovery step changes.
 
-```
+## Pull requests
+
+Explain the user outcome, privacy effect, verification evidence, and any
+unsupported capability. Do not include profiles, memory, local settings,
+credentials, or real integrations in examples, fixtures, commits, or issue
+text. Use clear commit messages and open a PR against `main`.
+
+## DCO sign-off
+
+All contributions need a sign-off line in the commit message:
+
+```text
 Signed-off-by: Your Name <your@email.com>
 ```
 
-Use `git commit -s` to add this automatically. This certifies you wrote or have the right to submit the code under the project's license ([Developer Certificate of Origin](https://developercertificate.org/)).
+Use `git commit -s` to add it. This certifies that you wrote or are authorized
+to submit the contribution under the project license.

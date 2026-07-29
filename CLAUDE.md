@@ -4,9 +4,9 @@ title: personas
 
 # Persona framework
 
-This repository contains framework mechanics for persona lifecycle, an optional
-read-only viewer, and persona-state transport. Persona homes are external,
-independent repositories and are evidence—not normalization targets.
+This repository contains Persona Manager framework mechanics for persona
+lifecycle. Persona homes are external, independent repositories and are
+evidence—not normalization targets.
 
 ## Authorities
 
@@ -20,17 +20,10 @@ independent repositories and are evidence—not normalization targets.
 Changing a framework procedure requires one source edit. Changing a durable fact
 requires one vault edit. Never copy either into persona homes as shared doctrine.
 
-## Release units
+## Release unit
 
-- `persona-manager` — create, extend, update, and validate personas. Its
-  plugin-shipped `self-improve` skill is canonical.
-- `persona-dashboard` — optional read-only HTML viewer. It creates no action or
-  knowledge record.
-- `personas-mesh` — sync mechanics, 1Password-backed configuration rendering,
-  versioned launcher generation, hooks, and unit templates.
-
-The units remain separate because their triggers, authority, dependencies, and
-activation lifecycles differ.
+`persona-manager` creates, extends, updates, and validates personas. Its
+plugin-shipped `self-improve` skill is canonical.
 
 ## Development contract
 
@@ -58,11 +51,9 @@ activation lifecycles differ.
 bash tests/run-tests.sh
 ```
 
-The gate covers the exact three-plugin boundary, final release versions, trigger
+The gate covers the Persona Manager boundary, release version, trigger
 isolation, deterministic persona validation, canonical self-improve ownership,
-dashboard read-only behavior, mesh launcher provenance, 1Password rendering,
-deep merge, export inventory, and stale paths.
+export inventory, and stale paths.
 
-Use `plugins/persona-manager/bin/validate-persona <persona-path>` for a read-only
-persona health check. Use `plugins/personas-mesh/bin/install-launchers` only
-during an approved activation.
+Use `bin/personas verify <persona-path> --profile shared` for a read-only
+persona health check.

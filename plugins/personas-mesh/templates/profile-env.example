@@ -1,7 +1,0 @@
-# Nonsecret, role-neutral personas-mesh profile.
-# Copy to ~/.config/personas-mesh/profile.env and replace every placeholder.
-
-PERSONAS_MESH_ROOT=<absolute-primary-persona-root>
-PERSONAS_MESH_PEER_ROOT=<absolute-optional-peer-persona-root>
-PERSONAS_MESH_HUB_ROOT=<absolute-optional-bare-repository-root>
-PERSONAS_MESH_MIRROR_REMOTE=<optional-git-remote-name>

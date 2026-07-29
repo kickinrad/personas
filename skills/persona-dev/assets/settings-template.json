@@ -1,0 +1,34 @@
+{
+  "_personaManagerPrivacy": "Copy to .claude/settings.local.json; this local file is Git-ignored and contains no credentials.",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
+  },
+  "claudeMdExcludes": [
+    "**/.claude/CLAUDE.md"
+  ],
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "filesystem": {
+      "allowWrite": ["."],
+      "denyRead": ["~/.aws", "~/.ssh", "~/.gnupg", "../"]
+    },
+    "network": {
+      "allowedDomains": [
+        "api.anthropic.com"
+      ]
+    }
+  },
+  "extraKnownMarketplaces": {
+    "personas": {
+      "source": {
+        "source": "github",
+        "repo": "kickinrad/personas-framework"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "persona-manager@personas": true
+  }
+}
