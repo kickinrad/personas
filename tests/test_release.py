@@ -31,20 +31,30 @@ class ReleasePreparationTest(unittest.TestCase):
         old_layout = "plugins/" + "persona-manager/"
         for phrase in (old_layout, "user/profile.md", "PRIVATE", "Codex", "Deferred work"):
             self.assertIn(phrase, migration)
-        self.assertIn("archive/pre-linear-renewal-main", rollback)
+        self.assertIn("d3a0ed1d29177f85df9cdc28f4e51378ed0da8d9", rollback)
         self.assertIn("tag", release)
         self.assertIn("Recommended GitHub topics", release)
         self.assertIn("Claude Code Cloud", support)
 
-    def test_recovery_refs_still_resolve(self) -> None:
+    def test_public_rollback_revision_resolves(self) -> None:
         if not (ROOT / ".git").exists():
             self.skipTest("source export has no Git metadata")
-        for ref in ("archive/pre-linear-renewal-main", "forge/personas-mesh-extraction"):
-            result = subprocess.run(
-                ("git", "rev-parse", "--verify", ref), cwd=ROOT, text=True,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
-            )
-            self.assertEqual(result.returncode, 0, result.stderr)
+        result = subprocess.run(
+            ("git", "rev-parse", "--verify", "d3a0ed1d29177f85df9cdc28f4e51378ed0da8d9^{commit}"),
+            cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_maintainer_local_mesh_recovery_ref_when_available(self) -> None:
+        if not (ROOT / ".git").exists():
+            self.skipTest("source export has no Git metadata")
+        result = subprocess.run(
+            ("git", "rev-parse", "--verify", "forge/personas-mesh-extraction^{commit}"),
+            cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+        )
+        if result.returncode != 0:
+            self.skipTest("maintainer-local Mesh recovery ref is deliberately unpublished")
+        self.assertEqual(result.stdout.strip(), "e1f504222883b0fb5823f6cbec2b2305336dbdd4")
 
 
 if __name__ == "__main__":
