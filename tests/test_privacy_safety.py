@@ -77,7 +77,7 @@ class PrivacySafetyTest(unittest.TestCase):
         for fixture, destination in (
             ("pii-like/profile.md", "user/profile.md"),
             ("tracked-user-state/MEMORY.md", "user/memory/MEMORY.md"),
-            ("runtime-settings/settings.local.json", ".claude/settings.local.json"),
+            ("runtime-settings/private-runtime-state.json", ".claude/settings.local.json"),
         ):
             with self.subTest(destination=destination):
                 run("git", "reset", "--quiet", cwd=self.repo)
