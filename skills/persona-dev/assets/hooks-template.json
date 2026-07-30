@@ -19,7 +19,7 @@
           {
             "type": "command",
             "command": "if [ -f .persona-cloud-repository ]; then .claude/hooks/public-repo-guard.sh --check-cloud-binding || exit $?; context='Repository-only Cloud persona: the repository binding matches this checkout. Private GitHub visibility was enforced at creation and by repository CI. Private user profile and memory are intentionally absent from Git; use only context explicitly supplied in this session or environment-local memory.'; else context='Local persona session: no GitHub visibility claim is made. Read user/profile.md and user/memory/MEMORY.md before relying on personal context; if the profile is unfilled, interview one section at a time and confirm before writing.'; fi; printf '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"%s Report any role-critical capability gap before claiming complete coverage.\"}}\\n' \"$context\"",
-            "timeout": 5
+            "timeout": 30
           }
         ]
       }

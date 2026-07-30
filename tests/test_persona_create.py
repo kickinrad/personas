@@ -120,6 +120,11 @@ class PersonaCreateTest(unittest.TestCase):
                     "shell command hooks must not declare args; Claude otherwise treats the full command as an executable path",
                 )
             session_command = settings["hooks"]["SessionStart"][0]["hooks"][0]["command"]
+            self.assertGreaterEqual(
+                settings["hooks"]["SessionStart"][0]["hooks"][0]["timeout"],
+                30,
+                "Cloud startup must allow the fresh checkout enough time to expose HEAD and origin",
+            )
             private_env["PERSONA_GITHUB_CLI"] = str(native_gh(parent / "guard-tools", "PRIVATE"))
             session = subprocess.run(
                 ("bash", "-c", session_command),
