@@ -103,10 +103,11 @@ shared skill trees are not copied.
    or removed from product source.
 9. The release has a changelog, migration note, support matrix, rollback
    procedure, and Git tag. Live personas remain unchanged.
-10. Claude Cloud readiness is granted only when authenticated GitHub evidence
-    reports repository visibility `PRIVATE`. Creation, verification, CI, and
-    cloud startup fail closed when visibility is public or cannot be proven.
-    Credentials remain forbidden from Git regardless of visibility.
+10. Claude Cloud readiness requires authenticated `PRIVATE` evidence at
+    creation/local verification and private-only CI on every push. Cloud
+    startup is zero-token and fails closed only when its committed repository
+    binding does not match the checkout. Credentials remain forbidden from Git
+    regardless of visibility.
 
 ## Rollout and dependency graph
 
@@ -352,7 +353,8 @@ depend on parsing one form of a shell command.
 3. Implement deterministic staged-tree/repository checks at a real Git or
    release seam.
 4. Treat runtime hooks as early warnings, not the security guarantee.
-5. Fail closed when repository visibility or required inspection is unknown.
+5. Fail closed at creation/local verification when repository visibility or
+   required inspection is unknown.
 6. Keep persona creation functional offline and free of listeners or telemetry.
 7. Document exactly what is read, written, ignored, or transmitted.
 8. When the user explicitly chooses Claude Cloud, create the GitHub repository
@@ -360,9 +362,9 @@ depend on parsing one form of a shell command.
    personalized context. Repository creation and GitHub connection remain
    separately authorized external actions.
 9. Install a repository CI guard that fails when
-   `github.event.repository.private` is not true, and a cloud SessionStart
-   preflight that independently proves private visibility before loading or
-   operating on personalized context.
+   `github.event.repository.private` is not true. Cloud SessionStart requires
+   no credential and verifies only that the committed repository binding
+   matches the checkout.
 10. Never describe private visibility as a substitute for secret management:
     credentials, tokens, and signing keys remain outside Git.
 

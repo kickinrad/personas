@@ -130,6 +130,26 @@ class PersonaCreateTest(unittest.TestCase):
                 stderr=subprocess.PIPE,
                 check=False,
             )
+            self.assertEqual(session.returncode, 2)
+            self.assertIn("binding marker must be tracked", session.stderr)
+            subprocess.run(("git", "-C", str(home), "add", "."), check=True)
+            subprocess.run(
+                (
+                    "git", "-C", str(home), "-c", "user.name=Persona Test",
+                    "-c", "user.email=persona@example.invalid",
+                    "-c", "commit.gpgSign=false", "commit", "-qm", "publishable persona",
+                ),
+                check=True,
+            )
+            session = subprocess.run(
+                ("bash", "-c", session_command),
+                cwd=home,
+                env=private_env,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
             self.assertEqual(session.returncode, 0, session.stderr)
             context = json.loads(session.stdout)["hookSpecificOutput"]["additionalContext"]
             self.assertIn("Repository-only Cloud persona", context)

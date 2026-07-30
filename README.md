@@ -90,29 +90,18 @@ the flow to your own work.
 
 ## Quickstart: Claude Code Cloud
 
-Cloud is for a persona repository you have deliberately made private. Before
-creation, verification, CI, and every Cloud `SessionStart`, authenticated GitHub
-evidence must report visibility exactly `PRIVATE`. Public, internal, unknown,
-unavailable, or ambiguous evidence fails closed.
+Cloud is for a persona repository you have deliberately made private. Persona
+Manager proves exact `PRIVATE` visibility at creation and local verification,
+and the generated GitHub Actions workflow enforces it on every push. Cloud
+startup needs no GitHub token: it verifies only that the committed repository
+binding matches the checkout.
 
 1. With separate approval, create or select the private persona repository.
    Repository creation is deliberately not performed by Persona Manager.
-2. Prepare authenticated visibility inspection in both environments:
-
-   - Locally, authenticate the GitHub CLI (`gh`).
-   - `gh` is not pre-installed in Anthropic's Cloud VM. In the Claude Code
-     Cloud environment, install it with the environment setup script and set a
-     least-privilege `GH_TOKEN` environment variable that can read repository
-     metadata for this private repository. The token belongs only in the Cloud
-     environment—not in Git, project settings, prompts, or logs. Anyone allowed
-     to edit that Cloud environment can see its variables, so keep access
-     narrow.
-
-   Persona Manager also accepts an explicitly configured
-   `PERSONA_GITHUB_CLI` adapter for SessionStart and
-   `PERSONAS_GITHUB_VISIBILITY_ADAPTER` for create/verify in controlled
-   environments. Every adapter must fail closed unless authenticated evidence
-   is exactly `PRIVATE`.
+2. Authenticate the GitHub CLI (`gh`) locally. Persona Manager also accepts an
+   explicitly configured `PERSONAS_GITHUB_VISIBILITY_ADAPTER` for
+   create/verify in controlled environments. Claude Cloud itself needs neither
+   `gh` nor `GH_TOKEN`.
 3. Create only after local `gh` can prove
    the named repository is `PRIVATE`:
 
@@ -124,7 +113,7 @@ unavailable, or ambiguous evidence fails closed.
    unless an explicit `PERSONAS_GITHUB_VISIBILITY_ADAPTER` is supplied for a
    controlled environment. A public, internal, unknown, unavailable, or
    ambiguous result writes neither final nor staging persona files. A `PASS`
-   home includes a private-repository CI workflow, Cloud SessionStart preflight,
+   home includes a private-repository CI workflow, offline Cloud binding check,
    and a committed `.persona-cloud-repository` marker binding the home to that
    exact GitHub repository. This path initializes a new empty local Git
    repository with that origin only; it does not create, clone, or push a
@@ -136,17 +125,18 @@ unavailable, or ambiguous evidence fails closed.
 5. Keep `user/profile.md`, `user/memory/`, `.claude/settings.local.json`,
    `.mcp.json`, and every credential out of Git. Private visibility does not
    protect committed credentials; they are always forbidden.
-6. The native project hook in `.claude/settings.json` verifies both the origin and its
-   `.persona-cloud-repository` binding before it claims personalized context
-   is safe to load. Verify with the Cloud profile:
+6. The native `SessionStart` project hook in `.claude/settings.json` verifies
+   that the origin matches `.persona-cloud-repository`. It trusts the creation
+   and CI privacy boundary and does not require a Cloud credential. Verify exact
+   visibility locally with the Cloud profile:
 
    ```bash
    bin/personas verify /path/to/persona --profile claude-cloud --json
    ```
 
-   `PASS` requires the binding to match `origin` and authenticated evidence
-   of exactly `PRIVATE`; an unavailable `gh` or adapter is a failure, not an
-   assumption of safety.
+   `PASS` requires the binding to match `origin` and authenticated evidence of
+   exactly `PRIVATE`. This stronger operator check is intentionally local; a
+   normal Cloud session performs the offline binding check only.
 
 Persona Manager does not create GitHub repositories. Keep that separately
 authorized operator action; the command receives a repository identity and
@@ -183,7 +173,7 @@ cancellation, recovery, and Cloud failure handling.
 | Surface | Status | What is supported |
 |---|---|---|
 | Claude Code local | Native | Shared skills, Claude settings, hooks, and verification |
-| Claude Code Cloud | Preview, private only | Private-visibility preflight, bound repository, public doctrine, explicit local-state boundary |
+| Claude Code Cloud | Preview, private only | Private creation/CI boundary, zero-token repository binding, public doctrine, explicit local-state boundary |
 | Codex | Native | Shared plugin skills, thin `AGENTS.md`, trusted plugin hook, Codex verification |
 | Gemini CLI / Kimi Code | Unsupported | No adapter is authored |
 

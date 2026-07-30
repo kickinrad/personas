@@ -5,11 +5,12 @@ set -euo pipefail
 
 usage() {
   cat >&2 <<'EOF'
-Usage: public-repo-guard.sh --check-staged|--check-repository|--check-tree <treeish>|--cloud-preflight [owner/repo]
+Usage: public-repo-guard.sh --check-staged|--check-repository|--check-tree <treeish>|--check-cloud-binding|--cloud-preflight [owner/repo]
 
 --check-staged     inspect the staged Git index before commit or release
 --check-repository inspect every file in the committed HEAD tree (fails closed without HEAD)
 --check-tree REF   inspect one committed tree (suitable for CI/release)
+--check-cloud-binding  verify the committed Cloud marker matches this checkout
 --cloud-preflight  require authenticated GitHub evidence of exactly PRIVATE
 EOF
 }
@@ -73,9 +74,9 @@ check_tree() {
   fi
 }
 
-cloud_preflight() {
-  local repo="${1:-}" marker gh_bin="${PERSONA_GITHUB_CLI:-gh}" visibility
-  git rev-parse --is-inside-work-tree >/dev/null 2>&1 || die "cloud preflight requires a Git worktree"
+check_cloud_binding() {
+  local repo="${1:-}" marker committed
+  git rev-parse --is-inside-work-tree >/dev/null 2>&1 || die "Cloud binding check requires a Git worktree"
   if [[ -z "$repo" ]]; then
     repo="$(git config --get remote.origin.url 2>/dev/null || true)"
   fi
@@ -88,9 +89,23 @@ cloud_preflight() {
   [[ "$repo" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || die "GitHub repository identity is ambiguous"
   marker=".persona-cloud-repository"
   [[ -f "$marker" ]] || die "Cloud repository binding marker is missing"
+  git ls-files --error-unmatch -- "$marker" >/dev/null 2>&1 ||
+    die "Cloud repository binding marker must be tracked"
+  git cat-file -e "HEAD:$marker" 2>/dev/null ||
+    die "Cloud repository binding marker is missing from committed HEAD"
+  committed="$(git show "HEAD:$marker" 2>/dev/null)" ||
+    die "Cloud repository binding marker cannot be read from committed HEAD"
+  [[ "$(<"$marker")" == "$committed" ]] ||
+    die "Cloud repository binding marker differs from committed HEAD"
   [[ "$(<"$marker")" == "$repo" ]] || die "Cloud repository binding marker does not match origin"
+  CLOUD_REPOSITORY="$repo"
+}
+
+cloud_preflight() {
+  local gh_bin="${PERSONA_GITHUB_CLI:-gh}" visibility
+  check_cloud_binding "${1:-}"
   command -v "$gh_bin" >/dev/null 2>&1 || die "authenticated GitHub inspection is unavailable"
-  visibility="$($gh_bin repo view "$repo" --json visibility --jq .visibility 2>/dev/null || true)"
+  visibility="$($gh_bin repo view "$CLOUD_REPOSITORY" --json visibility --jq .visibility 2>/dev/null || true)"
   [[ "$visibility" == "PRIVATE" ]] || die "GitHub visibility is not proven PRIVATE (reported: ${visibility:-unknown})"
 }
 
@@ -98,6 +113,7 @@ case "${1:-}" in
   --check-staged) [[ $# -eq 1 ]] || { usage; exit 64; }; check_staged ;;
   --check-repository) [[ $# -eq 1 ]] || { usage; exit 64; }; check_repository ;;
   --check-tree) [[ $# -eq 2 ]] || { usage; exit 64; }; check_tree "$2" ;;
+  --check-cloud-binding) [[ $# -eq 1 ]] || { usage; exit 64; }; check_cloud_binding ;;
   --cloud-preflight) [[ $# -le 2 ]] || { usage; exit 64; }; cloud_preflight "${2:-}" ;;
   *) usage; exit 64 ;;
 esac

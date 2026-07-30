@@ -35,7 +35,7 @@ class PrivacySafetyTest(unittest.TestCase):
         (self.repo / ".persona-cloud-repository").write_text("owner/private-persona\n", encoding="utf-8")
         shutil.copy(FIXTURES / "clean-public/CLAUDE.md", self.repo / "CLAUDE.md")
         (self.repo / ".gitignore").write_text((ROOT / "skills/persona-dev/assets/gitignore-template").read_text(), encoding="utf-8")
-        run("git", "add", "CLAUDE.md", ".gitignore", cwd=self.repo)
+        run("git", "add", "CLAUDE.md", ".gitignore", ".persona-cloud-repository", cwd=self.repo)
         committed = run("git", "-c", "commit.gpgSign=false", "commit", "-qm", "clean publishable definition", cwd=self.repo)
         self.assertEqual(committed.returncode, 0, committed.stderr)
 
@@ -142,9 +142,26 @@ class PrivacySafetyTest(unittest.TestCase):
         fake_gh.write_text("#!/usr/bin/env bash\nprintf 'PRIVATE\\n'\n", encoding="utf-8")
         fake_gh.chmod(0o755)
         (self.repo / ".persona-cloud-repository").write_text("owner/other-persona\n", encoding="utf-8")
+        run("git", "add", ".persona-cloud-repository", cwd=self.repo)
+        run("git", "-c", "commit.gpgSign=false", "commit", "-qm", "change binding marker", cwd=self.repo)
         result = self.guard("--cloud-preflight", env=os.environ | {"PERSONA_GITHUB_CLI": str(fake_gh)})
         self.assertEqual(result.returncode, 2)
         self.assertIn("binding marker does not match origin", result.stderr)
+
+    def test_cloud_binding_requires_the_unchanged_committed_marker(self) -> None:
+        self.assertEqual(self.guard("--check-cloud-binding").returncode, 0)
+
+        run("git", "remote", "set-url", "origin", "https://github.com/owner/other-persona.git", cwd=self.repo)
+        (self.repo / ".persona-cloud-repository").write_text("owner/other-persona\n", encoding="utf-8")
+        modified = self.guard("--check-cloud-binding")
+        self.assertEqual(modified.returncode, 2)
+        self.assertIn("differs from committed HEAD", modified.stderr)
+
+        (self.repo / ".persona-cloud-repository").write_text("owner/private-persona\n", encoding="utf-8")
+        run("git", "rm", "--cached", "--quiet", ".persona-cloud-repository", cwd=self.repo)
+        untracked = self.guard("--check-cloud-binding")
+        self.assertEqual(untracked.returncode, 2)
+        self.assertIn("must be tracked", untracked.stderr)
 
     def test_templates_document_local_writes_and_cloud_ordering(self) -> None:
         ignore = (ROOT / "skills/persona-dev/assets/gitignore-template").read_text(encoding="utf-8")
@@ -155,18 +172,16 @@ class PrivacySafetyTest(unittest.TestCase):
         self.assertIn("never enter Git", readme)
         self.assertIn("before writing or committing any personalized context", readme)
         self.assertIn("advisory only", hooks)
-        self.assertIn("--cloud-preflight", hooks)
+        self.assertIn("--check-cloud-binding", hooks)
+        self.assertNotIn("--cloud-preflight", hooks)
 
-    def test_session_start_context_is_truthful_for_local_and_cloud(self) -> None:
+    def test_session_start_context_is_truthful_and_cloud_binding_is_offline(self) -> None:
         command = json.loads(
             (ROOT / "skills/persona-dev/assets/hooks-template.json").read_text(encoding="utf-8")
         )["hooks"]["SessionStart"][0]["hooks"][0]["command"]
         guard = self.repo / ".claude/hooks/public-repo-guard.sh"
         guard.parent.mkdir(parents=True)
-        guard.write_text(
-            "#!/usr/bin/env bash\n[ \"${GUARD_RESULT:-pass}\" = pass ] || exit 2\n",
-            encoding="utf-8",
-        )
+        shutil.copy(ROOT / "scripts/public-repo-guard.sh", guard)
         guard.chmod(0o755)
 
         (self.repo / ".persona-cloud-repository").unlink()
@@ -176,21 +191,21 @@ class PrivacySafetyTest(unittest.TestCase):
         self.assertNotIn("visibility and repository binding were proven", local.stdout)
 
         (self.repo / ".persona-cloud-repository").write_text("owner/private-persona\n", encoding="utf-8")
-        cloud = run("bash", "-c", command, cwd=self.repo, env=os.environ)
+        cloud = run("bash", "-c", command, cwd=self.repo, env=os.environ | {"PATH": "/usr/bin:/bin"})
         self.assertEqual(cloud.returncode, 0, cloud.stderr)
         self.assertIn(
-            "visibility and repository binding were proven",
+            "repository binding matches this checkout",
             json.loads(cloud.stdout)["hookSpecificOutput"]["additionalContext"],
         )
         self.assertNotIn("Read user/profile.md", cloud.stdout)
 
-        rejected = run(
-            "bash", "-c", command,
-            cwd=self.repo,
-            env=os.environ | {"GUARD_RESULT": "fail"},
-        )
+        (self.repo / ".persona-cloud-repository").write_text("owner/other-persona\n", encoding="utf-8")
+        run("git", "add", ".persona-cloud-repository", cwd=self.repo)
+        run("git", "-c", "commit.gpgSign=false", "commit", "-qm", "change binding marker", cwd=self.repo)
+        rejected = run("bash", "-c", command, cwd=self.repo, env=os.environ | {"PATH": "/usr/bin:/bin"})
         self.assertEqual(rejected.returncode, 2)
-        self.assertNotIn("visibility and repository binding were proven", rejected.stdout)
+        self.assertIn("binding marker does not match origin", rejected.stderr)
+        self.assertNotIn("repository binding matches this checkout", rejected.stdout)
 
 
 if __name__ == "__main__":

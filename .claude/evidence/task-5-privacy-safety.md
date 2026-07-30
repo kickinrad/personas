@@ -56,11 +56,10 @@ or publish:
 ```
 
 The generated SessionStart hook treats the committed
-`.persona-cloud-repository` marker as the Cloud signal, executes the
-independent `--cloud-preflight` before it supplies instructions that read
-personalized context, and emits a separate local-session context otherwise. CI
-event visibility is a separate fail-closed check; it does not replace
-authenticated GitHub inspection at Cloud startup.
+`.persona-cloud-repository` marker as the Cloud signal and executes the offline
+`--check-cloud-binding` before it supplies Cloud context. Exact private
+visibility remains enforced at creation, local verification, and CI. Cloud
+startup deliberately requires no GitHub token.
 
 ## Validation
 

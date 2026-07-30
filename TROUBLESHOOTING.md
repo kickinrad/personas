@@ -59,21 +59,18 @@ The report names the missing or malformed path. `WARN` is inspection-only;
 `FAIL` requires correction. A legacy `.claude/skills/self-improve/` copy is a
 warning: review it and remove it only with explicit approval.
 
-## Claude Cloud says private visibility is not proven
+## Claude Cloud says the repository binding does not match
 
-Stop before loading personalized context. Public, internal, unknown,
-unavailable, unauthenticated, and ambiguous repository evidence are all unsafe.
-Check that the repository identity is unambiguous, authenticated GitHub access
-is available, and the reported visibility is exactly `PRIVATE`. Then rerun the
-Cloud preflight and verification. Credentials remain forbidden from Git even in
-a private repository.
+Cloud startup compares `.persona-cloud-repository` with the normalized GitHub
+`origin` offline. Check that you launched the persona from its intended
+repository and that neither value was copied from another persona. Correct the
+repository or recreate the sanitized persona; do not weaken or delete the
+binding check.
 
-Anthropic's Cloud VM does not preinstall `gh`. Configure the Claude Code Cloud
-environment setup script to install it and add a least-privilege `GH_TOKEN`
-environment variable with read access to this repository's metadata. Do not
-put the token in `.claude/settings.json`, `.mcp.json`, a prompt, or any tracked
-file. Alternatively, configure an authenticated `PERSONA_GITHUB_CLI` adapter
-that returns exact visibility evidence and fails closed.
+No `GH_TOKEN` or Cloud-side `gh` installation is required. Exact private
+visibility is proven before creation, checked by local `bin/personas verify`,
+and enforced by the generated GitHub Actions workflow on every push.
+Credentials remain forbidden from Git even in a private repository.
 
 The framework repository may be public. The personalized Cloud persona
 repository is private. If you cannot prove that boundary, use Claude local or
@@ -90,8 +87,8 @@ portable and add an adapter as separate framework work.
 
 Use the repository’s last known good commit, inspect the persona’s exact diff,
 and rerun verification before resuming work. The framework hook reports version
-drift but does not repair files. If a Cloud session fails, resolve private
-visibility first; Cloud auto-memory is environment-local and is not a recovery
+drift but does not repair files. If a Cloud session fails, resolve its repository
+binding first; Cloud auto-memory is environment-local and is not a recovery
 transport.
 
 ## A skill cannot find its templates

@@ -25,18 +25,19 @@ use.
 
 ### Claude Cloud (private repository only)
 
-Only after separately authorizing GitHub access, create or select a repository and
-prove its authenticated GitHub visibility is exactly `PRIVATE`. Run the cloud
-preflight before writing or committing any personalized context:
+Only after separately authorizing GitHub access, create or select a repository
+and prove its authenticated GitHub visibility is exactly `PRIVATE`. Persona
+Manager performs that proof before creation, and generated CI enforces it on
+every push. Complete that boundary before writing or committing any personalized context.
+Cloud startup needs no GitHub token; its offline check is:
 
 ```bash
-.claude/hooks/public-repo-guard.sh --cloud-preflight OWNER/REPO
+.claude/hooks/public-repo-guard.sh --check-cloud-binding
 ```
 
-Public, internal, unauthenticated, unreachable, or unknown visibility stops the
-flow. The preflight transmits only the repository identity to the authorized GitHub
-client for visibility inspection; it must run before profile or memory content is
-loaded or written. Private visibility does not permit credentials in Git.
+A mismatched repository marker and origin stop the Cloud session. Public,
+internal, unauthenticated, unreachable, or unknown visibility stop creation or
+local verification. Private visibility does not permit credentials in Git.
 
 ## Usage
 

@@ -18,10 +18,10 @@ external-service instruction.
 ## Cloud boundary and deterministic creation
 
 The README states that authenticated GitHub visibility must be exactly `PRIVATE`
-at creation, verification, CI, and Cloud SessionStart; public, internal,
-unknown, unavailable, and ambiguous evidence fails closed. It also distinguishes
-the public framework repository from the private personalized Cloud repository
-and states that credentials are forbidden from Git regardless of visibility.
+at creation and local verification and is enforced by CI. Cloud SessionStart
+uses a zero-token offline repository-binding check. It also distinguishes the
+public framework repository from the private personalized Cloud repository and
+states that credentials are forbidden from Git regardless of visibility.
 
 Task-7 extension closed the creation and rollback gap with
 `bin/personas create <name> --destination <parent> --profile … [--repository

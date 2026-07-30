@@ -10,8 +10,8 @@ Highlights:
 
 - deterministic, atomic persona creation and structured verification;
 - native Codex packaging alongside Claude Code support;
-- Cloud startup, CI, creation, and verification fail closed unless GitHub
-  visibility is exactly `PRIVATE` and the repository binding matches;
+- Cloud creation/local verification and CI require exact `PRIVATE` visibility;
+  zero-token Cloud startup verifies the repository binding offline;
 - local profile, memory, settings, connections, and credentials stay ignored;
 - one source gate is the CI verdict.
 

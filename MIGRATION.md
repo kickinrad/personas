@@ -16,9 +16,10 @@ configuration are user-owned; do not bulk-copy or commit them during migration.
 The new defaults ignore them. Credentials must never enter Git.
 
 Claude Code local and Codex are supported. Claude Code Cloud is preview-only
-until a separately authorized private GitHub/Cloud canary is run, and is usable only
-for a bound GitHub repository whose authenticated visibility is exactly
-`PRIVATE`; public, internal, unavailable, or ambiguous evidence fails closed.
+until a separately authorized private GitHub/Cloud canary is run, and is usable
+only for a bound GitHub repository proven `PRIVATE` at creation and enforced
+private by CI. Cloud startup checks the repository binding offline and requires
+no GitHub token.
 Cloud creation initializes a new empty local Git repository with the approved
 origin but never creates, clones, or pushes a remote. Adopting an existing
 nonempty repository requires separately approved migration work.
