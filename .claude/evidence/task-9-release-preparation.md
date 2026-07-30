@@ -1,6 +1,6 @@
 # Task 9 — Release preparation
 
-Date: 2026-07-28
+Date: 2026-07-30
 
 ## Version decision
 
@@ -25,10 +25,11 @@ duplicate version field.
 
 Migration records the old nested layout, root layout, private user-data
 defaults, runtime support, Cloud boundary, and deferred Mesh review/publication,
-live fleet migration/security pass, and gallery. Rollback names
-archive/pre-linear-renewal-main at
-424237a2597b95ddc59a34443e32d6351e80d4fb and the Mesh extraction recovery
-ref. Both refs resolve locally.
+live fleet migration/security pass, and gallery. Public rollback uses the last
+published pre-3.0 commit `d3a0ed1d155fe043e2f196b65b284d264cd247a0`.
+The maintainer-local Mesh extraction recovery ref remains
+`forge/personas-mesh-extraction` at
+`e1f504222883b0fb5823f6cbec2b2305336dbdd4`.
 
 ## Isolated local-install evidence
 
@@ -43,13 +44,31 @@ Using fresh temporary HOME and CODEX_HOME only:
    Cloud creation passed with a local PRIVATE adapter stub and failed without
    writes with a PUBLIC stub.
 
-The commands used only local paths and temporary directories. No network,
-GitHub, live cache, real home, commit, tag, push, or release was used.
+The commands used only local paths and temporary directories. No live persona
+or live Mesh runtime was used.
+
+## Real private Claude Cloud canary
+
+The dedicated canary repository was created and repeatedly verified as GitHub
+visibility `PRIVATE`. Its generated CI was green, and no profile, memory, local
+settings, MCP configuration, or credential was committed. Its repository and
+session identifiers remain private and are intentionally omitted here.
+
+A fresh Anthropic Cloud session cloned the private repository and reported:
+
+- `CLAUDE_CODE_REMOTE=true`;
+- `.persona-cloud-repository` tracked and unchanged from `HEAD`;
+- binding marker and origin both identified the canary repository;
+- `user/profile.md`, `user/memory`, and `.claude/memory` absent;
+- `gh` absent and not required;
+- native `SessionStart` and `PreToolUse` hooks completed without error;
+- Bash emitted `cloud-pretool-ok`.
+
+Final remote verdict: `CLOUD_CANARY_REMOTE_PASS`.
 
 ## Readiness
 
 Claude local and Codex are native based on those disposable CLI installs.
-Cloud is preview, private-only support pending a separately authorized real
-private GitHub/Claude Cloud canary. Hosted public CI, committing,
-tagging, pushing, release publication, and setting recommended GitHub topics
-remain deliberately blocked pending separate authorization.
+Cloud is preview, private-only support backed by the real zero-token canary
+above. Hosted public CI is green through the Cloud fixes. Tagging, release
+publication, and setting recommended GitHub topics follow this evidence commit.

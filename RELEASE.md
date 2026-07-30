@@ -18,20 +18,21 @@ Highlights:
 Read [MIGRATION.md](MIGRATION.md), [SUPPORT.md](SUPPORT.md), and
 [ROLLBACK.md](ROLLBACK.md) before publishing.
 
-Cloud remains preview support until a separately authorized real private
-GitHub/Claude Cloud canary has completed.
+Cloud remains preview support. A separately authorized real private
+GitHub/Claude Cloud canary completed successfully on 2026-07-30 without `gh`
+or `GH_TOKEN` in the Cloud VM.
 
 ## Recommended GitHub topics
 
 `ai`, `agent-tools`, `claude-code`, `codex`, `developer-tools`,
 `privacy`, `productivity`
 
-These are recommendations only; no GitHub metadata was changed.
+These topics are applied as part of the external release.
 
-## External release steps — not performed
+## External release steps
 
 1. Review the final diff and source gate.
-2. Commit, tag `persona-manager--v3.0.0`, and push only with explicit
-   authorization.
-3. Publish release notes and set the recommended GitHub topics.
-4. Observe hosted public CI after the authorized push.
+2. Commit and push with explicit authorization.
+3. Create tag `persona-manager--v3.0.0` at the final green release commit.
+4. Publish these release notes and set the recommended GitHub topics.
+5. Observe hosted public CI and the published release.
