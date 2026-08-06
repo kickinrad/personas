@@ -1,0 +1,5 @@
+# Native Codex project settings for a persona folder.
+sandbox_mode = "workspace-write"
+
+[sandbox_workspace_write]
+network_access = false

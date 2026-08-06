@@ -1,98 +1,58 @@
 # Troubleshooting
 
-## I want to cancel creation
+## Creation was cancelled or stopped partway through
 
-For role refinement, say “stop” or decline the proposed plan before approval.
-For deterministic creation, interrupt `bin/personas create`; it removes its
-named sibling staging directory on a handled failure and reports whether
-`stagingCleaned` is true. Never overwrite the final home to restart.
+Decline the folder plan to stop before writing. If work stops after approval,
+inspect the partial folder and exact diff. Finish it deliberately or move it
+aside; never overwrite an existing persona blindly.
 
-## Permission was denied
+## The target directory already exists
 
-Do not retry with broader permissions by default. Read the denial, decide
-whether the requested filesystem, plugin, repository, or connection access is
-actually necessary, then grant the narrowest permission or choose an offline
-path. Installation, GitHub repository creation, and external connections each
-need separate approval.
+Treat it as an existing persona and use `personas:persona-update`, or
+choose another empty directory. Preserve its identity, skills, and `user/`
+content until ownership is clear.
 
-## I am offline or plugin installation failed
+## The persona does not sound or behave right
 
-Creation from an installed or source plugin is offline-capable; it uses bundled
-templates and opens no listener. If marketplace installation is unavailable,
-clone or otherwise obtain the framework source through an approved route, then
-run the same skill from that source context. Do not download random copies of
-persona templates. Retry plugin installation only after connectivity and
-marketplace authorization are available.
+Confirm the runtime loaded its native entry file, then read `PERSONA.md`.
+Identity, voice, role, and boundaries belong there. Repeated multi-step
+procedure belongs in a role skill. Avoid copying the same correction into both
+`CLAUDE.md` and `AGENTS.md`.
 
-## The persona name or directory collides
+## Codex does not load the persona
 
-Choose a different empty directory, or treat the existing directory as an
-existing persona and use `persona-manager:persona-update`. Do not overwrite an
-existing `CLAUDE.md`, `AGENTS.md`, `user/`, or `.claude/` tree. A collision is a
-stop-and-inspect event, not a merge instruction.
+Start Codex from the persona folder and confirm `AGENTS.md` is discovered.
+Trust the project if Codex asks before applying `.codex/config.toml`. Verify
+that `AGENTS.md` points to `PERSONA.md`, optional `user/` context, and the
+relevant `skills/` directory.
 
-## Creation stopped after a partial write
+Codex support was earned by the release canary. Do not describe a new loader or
+setting as supported until it passes the same parity probes.
 
-Keep the partial directory out of Git while you inspect it. Compare it with the
-approved plan, then either finish deliberately or move it aside as a recovery
-copy. Before any commit, use the publishing guard at the staging seam:
+## Memory is missing
 
-```bash
-.claude/hooks/public-repo-guard.sh --check-staged
-```
+Explicit persona memory lives in ignored `user/memory/MEMORY.md`. A fresh clone
+or Cloud checkout will not contain it. Restore it only from its intended local
+source; do not commit it merely to make it travel.
 
-`bin/personas create` stages at `.<name>.personas-staging` beside the final home
-and atomically renames only on success. A handled failure removes that staging
-directory; if cleanup itself fails, the JSON report gives the retained staging
-path for inspection and explicit cleanup.
+Claude and Codex native auto-memory use separate runtime-owned locations. They
+do not synchronize with each other or automatically write the explicit persona
+memory file.
 
-## Verification fails
+## Cloud cannot see local context
 
-Run the profile that matches the runtime:
-
-```bash
-bin/personas verify /path/to/persona --profile claude-local --json
-bin/personas verify /path/to/persona --profile codex --json
-```
-
-The report names the missing or malformed path. `WARN` is inspection-only;
-`FAIL` requires correction. A legacy `.claude/skills/self-improve/` copy is a
-warning: review it and remove it only with explicit approval.
-
-## Claude Cloud says the repository binding does not match
-
-Cloud startup compares `.persona-cloud-repository` with the normalized GitHub
-`origin` offline. Check that you launched the persona from its intended
-repository and that neither value was copied from another persona. Correct the
-repository or recreate the sanitized persona; do not weaken or delete the
-binding check.
-
-No `GH_TOKEN` or Cloud-side `gh` installation is required. Exact private
-visibility is proven before creation, checked by local `bin/personas verify`,
-and enforced by the generated GitHub Actions workflow on every push.
-Credentials remain forbidden from Git even in a private repository.
-
-The framework repository may be public. The personalized Cloud persona
-repository is private. If you cannot prove that boundary, use Claude local or
-Codex without publishing personal state.
+That is expected: ignored `user/` files are absent from a fresh checkout.
+Provide session context explicitly or use the runtime's environment-owned
+memory. Never solve the problem by committing a private profile, memory, or
+credential.
 
 ## A capability is unsupported
 
-Only Claude Code local, private-only Claude Cloud, and Codex are supported.
-Gemini CLI and Kimi Code have no adapter. Do not copy Claude hooks or settings
-into another runtime and call it supported; keep the persona’s role procedure
-portable and add an adapter as separate framework work.
-
-## Recovery after a failed update or session
-
-Use the repository’s last known good commit, inspect the persona’s exact diff,
-and rerun verification before resuming work. The framework hook reports version
-drift but does not repair files. If a Cloud session fails, resolve its repository
-binding first; Cloud auto-memory is environment-local and is not a recovery
-transport.
+Do not copy another runtime's settings and call it support. Add a native adapter
+and pass the same behavioral canary used by supported runtimes.
 
 ## A skill cannot find its templates
 
-Run from an installed or source plugin context that provides
-`${CLAUDE_PLUGIN_ROOT}`. Framework skills resolve sibling references from that
-root; they do not search an assumed marketplace or cache directory.
+Use an installed or source Personas plugin context. The skills resolve
+their bundled `assets/` and `references/` relative to their own plugin package;
+they do not require a management CLI.

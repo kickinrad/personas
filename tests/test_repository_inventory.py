@@ -69,7 +69,7 @@ class RepositoryInventoryTest(unittest.TestCase):
     def test_json_sources_are_parseable(self) -> None:
         for relative in tracked():
             path = ROOT / relative
-            if path.suffix == ".json":
+            if path.suffix == ".json" and path.is_file():
                 with self.subTest(path=relative):
                     json.loads(path.read_text(encoding="utf-8"))
 
@@ -78,10 +78,7 @@ class RepositoryInventoryTest(unittest.TestCase):
         for test in (
             "personas-test.sh",
             "framework-contract-test.py",
-            "test_persona_verify.py",
-            "test_privacy_safety.py",
             "test_runtime_adapters.py",
-            "test_persona_create.py",
             "test_documentation.py",
             "test_repository_inventory.py",
             "test_release.py",

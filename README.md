@@ -2,180 +2,155 @@
   <img src="assets/banner.svg" alt="Personas" width="650">
 </p>
 
-# Personas
+<h1 align="center">Personas</h1>
 
-Re-explaining your preferences, working style, and boundaries to every new AI
-session is exhausting. Personas helps you create one durable collaborator whose
-role and procedure travel with its repository while personal context stays
-local.
+<p align="center">
+  A persona is a folder that teaches an AI collaborator how to work with you.
+</p>
 
-Persona Manager supports **Claude Code local**, **Claude Code Cloud** (only in a
-private personalized repository), and **Codex**. Start by installing the
-Persona Manager plugin:
+<p align="center">
+  <a href="https://github.com/kickinrad/personas-framework/actions/workflows/ci.yml"><img src="https://github.com/kickinrad/personas-framework/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="Apache 2.0 license"></a>
+</p>
+
+Re-explaining your role, preferences, and working style in every AI session gets
+old. Personas helps you create one durable collaborator as readable
+Markdown, shared skills, and small native adapters for **Claude Code local**,
+**Claude Code Cloud**, and **Codex**.
+
+```text
+atlas/
+├── PERSONA.md                 # identity, role, voice, and boundaries
+├── CLAUDE.md                  # Claude Code entry point
+├── AGENTS.md                  # Codex entry point
+├── skills/                    # reusable role workflows
+├── .claude/settings.json      # native Claude project settings
+├── .codex/config.toml         # native Codex project settings
+└── user/                      # optional, ignored local context
+    ├── profile.md
+    └── memory/MEMORY.md
+```
+
+That folder is the product. There is no persona daemon, database, account, or
+required management CLI.
+
+## Install
+
+### Claude Code
 
 ```text
 /plugin marketplace add kickinrad/personas-framework
-/plugin install persona-manager@personas
+/plugin install personas@personas
 ```
 
-## Before you start
-
-- Claude Code local or Codex, plus permission to install a plugin.
-- A local directory you may use for the persona home. The guided path uses
-  `~/.personas/atlas`; choose another empty path if that name is already taken.
-- Five to ten minutes for a useful sanitized first home, then a role review.
-  `bin/personas create` makes the initial files deterministically; the skill
-  adds role-specific procedure after you review its plan.
-- For Claude Cloud, separately authorized GitHub access to an existing or new
-  **private** persona repository. The framework repository may be public; each
-  personalized Cloud persona repository is private.
-
-No example below asks for a real profile, credential, or integration. See the
-[sanitized Atlas example](examples/atlas-sanitized/README.md) before adapting
-the flow to your own work.
-
-## Quickstart: Claude Code local
-
-1. Install Persona Manager with the commands above.
-2. Create the sanitized initial home from a source checkout:
-
-   ```bash
-   bin/personas create atlas --destination ~/.personas --profile claude-local --json
-   ```
-
-   Expected JSON has `"status": "PASS"` and `"path": "…/atlas"`. The
-   command makes a sibling staging directory and atomically renames it only on
-   success; it opens no listener, sends no telemetry, or contacts a network.
-3. In Claude Code, ask `persona-manager:persona-dev` to add Atlas’s role
-   procedure for reviewing small software projects. It shows a plan and waits
-   for approval before changing the sanitized home.
-4. Expect `CLAUDE.md`, a thin `AGENTS.md`, role-local `skills/`, `.claude/`
-   settings and hooks, plus local `user/` state.
-5. Verify:
-
-   ```bash
-   bin/personas verify ~/.personas/atlas --profile claude-local
-   ```
-
-   Expected output begins `PASS: atlas` and ends with a count of checks. In an
-   installed plugin context, use
-   `${CLAUDE_PLUGIN_ROOT}/bin/personas verify … --profile claude-local`.
-
-## Quickstart: Codex
-
-1. Add the marketplace and install the same root plugin:
-
-   ```bash
-   codex plugin marketplace add kickinrad/personas-framework
-   codex plugin add persona-manager --marketplace personas
-   ```
-
-2. Create the same sanitized home without Claude-only requirements:
-
-   ```bash
-   bin/personas create atlas --destination ~/.personas --profile codex --json
-   ```
-
-3. Ask Codex to refine the role after reviewing a plan. The plugin’s shared
-   skills provide the procedure; the short `AGENTS.md` loads shared `CLAUDE.md`
-   doctrine instead of duplicating it. Then verify without applying
-   Claude-only requirements:
-
-   ```bash
-   bin/personas verify ~/.personas/atlas --profile codex
-   ```
-
-   A `PASS` means the shared and Codex checks passed. A Claude setting is not
-   required by this profile.
-
-## Quickstart: Claude Code Cloud
-
-Cloud is for a persona repository you have deliberately made private. Persona
-Manager proves exact `PRIVATE` visibility at creation and local verification,
-and the generated GitHub Actions workflow enforces it on every push. Cloud
-startup needs no GitHub token: it verifies only that the committed repository
-binding matches the checkout.
-
-1. With separate approval, create or select the private persona repository.
-   Repository creation is deliberately not performed by Persona Manager.
-2. Authenticate the GitHub CLI (`gh`) locally. Persona Manager also accepts an
-   explicitly configured `PERSONAS_GITHUB_VISIBILITY_ADAPTER` for
-   create/verify in controlled environments. Claude Cloud itself needs neither
-   `gh` nor `GH_TOKEN`.
-3. Create only after local `gh` can prove
-   the named repository is `PRIVATE`:
-
-   ```bash
-   bin/personas create atlas --destination /workspace/personas --profile claude-cloud --repository OWNER/REPO --json
-   ```
-
-   The command uses `gh repo view OWNER/REPO --json visibility --jq .visibility`
-   unless an explicit `PERSONAS_GITHUB_VISIBILITY_ADAPTER` is supplied for a
-   controlled environment. A public, internal, unknown, unavailable, or
-   ambiguous result writes neither final nor staging persona files. A `PASS`
-   home includes a private-repository CI workflow, offline Cloud binding check,
-   and a committed `.persona-cloud-repository` marker binding the home to that
-   exact GitHub repository. This path initializes a new empty local Git
-   repository with that origin only; it does not create, clone, or push a
-   remote. Adopting an existing nonempty repository requires separately approved
-   migration work.
-4. Commit only publishable doctrine and procedure: `CLAUDE.md`, `AGENTS.md`,
-   role-local skills, public settings, hooks, README, and the generated CI
-   workflow.
-5. Keep `user/profile.md`, `user/memory/`, `.claude/settings.local.json`,
-   `.mcp.json`, and every credential out of Git. Private visibility does not
-   protect committed credentials; they are always forbidden.
-6. The native `SessionStart` project hook in `.claude/settings.json` verifies
-   that the origin matches `.persona-cloud-repository`. It trusts the creation
-   and CI privacy boundary and does not require a Cloud credential. Verify exact
-   visibility locally with the Cloud profile:
-
-   ```bash
-   bin/personas verify /path/to/persona --profile claude-cloud --json
-   ```
-
-   `PASS` requires the binding to match `origin` and authenticated evidence of
-   exactly `PRIVATE`. This stronger operator check is intentionally local; a
-   normal Cloud session performs the offline binding check only.
-
-Persona Manager does not create GitHub repositories. Keep that separately
-authorized operator action; the command receives a repository identity and
-proves it private before it writes any Cloud persona file.
-
-## What gets stored where
-
-Publishable persona definition: role procedure, `CLAUDE.md`, thin `AGENTS.md`,
-role-local skills, public settings, hooks, and README. Local-only state:
-profile, memory, local settings, connection configuration, and credentials.
-The generated `.gitignore` keeps local-only state out of Git by default.
-
-Cloud auto-memory is environment-local. It is not presented as a portable
-cross-session transport. Move any durable shared knowledge through its owning
-system deliberately; do not copy it into a repository just to make it travel.
-
-## Verify and recover
-
-`bin/personas verify` is read-only. It returns `PASS`, `WARN`, or `FAIL` and
-does not repair a home. Use `--profile shared`, `claude-local`, `codex`, or
-`claude-cloud` to evaluate the relevant contract.
+### Codex
 
 ```bash
-bin/personas verify /path/to/persona --profile shared --json
+codex plugin marketplace add kickinrad/personas-framework
+codex plugin add personas --marketplace personas
 ```
 
-Use `WARN` for inspection, such as framework drift or a legacy local
-`self-improve` copy. Resolve `FAIL` using the exact path in the report, then
-run the same command again. See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for
-cancellation, recovery, and Cloud failure handling.
+## Create your first persona
 
-## Support matrix
+Ask the installed plugin:
 
-| Surface | Status | What is supported |
+```text
+Use personas:persona-dev to create a software-review persona named
+Atlas. Show me the complete folder plan before writing anything.
+```
+
+Personas helps define the role, voice, boundaries, and useful workflows;
+shows the proposed folder; and waits for approval before writing it. Start with
+the [sanitized Atlas example](examples/atlas-sanitized/README.md) if you want to
+inspect a finished folder first.
+
+## How the folder works
+
+`PERSONA.md` is the portable source of truth. It contains the collaborator's
+identity and behavior without referring to a particular AI runtime.
+
+Claude Code discovers `CLAUDE.md`. Codex discovers `AGENTS.md`. Each native
+entry point loads the same `PERSONA.md`, optional local user context, and
+relevant workflows under `skills/`.
+
+The `.claude/` and `.codex/` directories contain only native project settings.
+They are adapters, not competing persona definitions. Personas adds no
+default lifecycle hooks; instructions and skills should carry the behavior
+unless a future feature demonstrates that mechanical enforcement is necessary.
+
+## Memory
+
+`user/memory/MEMORY.md` is explicit persona memory: ordinary ignored Markdown
+that both Claude Code and Codex can read when it exists locally. You control
+what goes into it.
+
+Native auto-memory is separate:
+
+- Claude may maintain runtime-owned memory through its own settings.
+- Codex can maintain experimental local memories under `$CODEX_HOME/memories`.
+
+Those native stores do not synchronize, and persona identity never depends on
+them. A fresh Cloud checkout normally has no ignored `user/` directory and
+still works from its publishable persona definition.
+
+## Claude Code Cloud
+
+Cloud uses the same persona folder—there is no special Cloud profile. Commit
+only the publishable definition and open its repository in Claude Code Cloud.
+
+Use a private repository for a personalized Cloud persona. Personas
+trusts you to choose and maintain that visibility; it does not require a
+GitHub token, marker file, visibility preflight, generated CI workflow, or
+startup guard. More importantly, keep `user/`, local settings, connections, and
+credentials out of Git regardless of repository visibility.
+
+## Core workflows
+
+| Goal | Skill |
+|---|---|
+| Create or extend a persona | `personas:persona-dev` |
+| Reconcile an existing folder | `personas:persona-update` |
+| Improve identity or procedure from real evidence | `personas:self-improve` |
+
+Each workflow plans first, preserves persona-owned content, and keeps one source
+for each piece of meaning.
+
+## Why not just use `CLAUDE.md` or `AGENTS.md`?
+
+For a few instructions, you should. Personas becomes useful when the
+collaborator has a distinct role, reusable workflows, private local context, or
+needs to work in both Claude Code and Codex.
+
+It adds a neutral persona definition, shared skills, native runtime entry
+points, and a careful update workflow while keeping every file readable.
+
+## Runtime support
+
+| Runtime | Status | Adapter |
 |---|---|---|
-| Claude Code local | Native | Shared skills, Claude settings, hooks, and verification |
-| Claude Code Cloud | Preview, private only | Private creation/CI boundary, zero-token repository binding, public doctrine, explicit local-state boundary |
-| Codex | Native | Shared plugin skills, thin `AGENTS.md`, trusted plugin hook, Codex verification |
-| Gemini CLI / Kimi Code | Unsupported | No adapter is authored |
+| Claude Code local | Supported | `CLAUDE.md` and `.claude/settings.json` |
+| Claude Code Cloud | Supported folder model | Same publishable Claude folder; ignored local context is absent |
+| Codex | Supported | `AGENTS.md`, `.codex/config.toml`, and shared plugin skills |
+| Gemini CLI / Kimi Code | Unsupported | No native adapter has been proven |
 
-For framework development, run `bash tests/run-tests.sh`. It uses temporary
-homes and does not touch `~/.personas`.
+Claude Code and Codex passed the same clean identity, voice, boundary, skill,
+profile, and explicit-memory canary. Parity is a release gate, not an
+aspiration.
+
+## Project documentation
+
+- [Sanitized Atlas example](examples/atlas-sanitized/README.md)
+- [Support and memory boundaries](SUPPORT.md)
+- [Troubleshooting](TROUBLESHOOTING.md)
+- [Migration notes](MIGRATION.md)
+- [Contributing](CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md)
+- [Apache 2.0 license](LICENSE)
+
+For framework development:
+
+```bash
+bash tests/run-tests.sh
+```
+
+The suite uses temporary fixtures and never modifies `~/.personas`.

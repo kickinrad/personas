@@ -1,33 +1,27 @@
 ---
 name: persona-update
-description: Use when the user asks to update a persona, inspect framework drift, reconcile hooks or settings with current templates, or check whether a persona is outdated. NOT for creating a new persona; use persona-dev.
+description: Use when the user asks to update a persona, reconcile its folder with the current framework, or inspect whether its runtime adapters are outdated. NOT for creating a new persona; use persona-dev.
 ---
 
 # Update a persona
 
 Reconcile framework mechanics without normalizing the persona.
 
-1. Snapshot the persona repository and confirm the target. Preserve identity,
-   voice, user data, local role procedure, integrations, and vault knowledge.
-2. Resolve framework source from `${CLAUDE_PLUGIN_ROOT}`. Read the current
-   version from its `.claude-plugin/plugin.json`, templates from the sibling
-   `persona-dev/assets/` directory, and procedure depth from `references/`.
-   Stop if the plugin root is unavailable;
-   never guess a marketplace or cache path.
-3. Compare `.framework-version`, `CLAUDE.md`, `AGENTS.md`, hooks, settings,
-   gitignore, guard script, and required structural sections. Classify each difference as framework
-   addition, framework change, persona customization, or ambiguity.
-4. Present the drift report before writing. Merge framework mechanics while
-   preserving persona-owned content; ask only where both authorities changed
-   the same meaning.
-5. Reject `.claude/skills/self-improve/`. The plugin-shipped
-   `persona-manager:self-improve` skill is canonical; retire a legacy local copy
-   only with explicit approval.
-6. Run `${CLAUDE_PLUGIN_ROOT}/bin/personas verify <persona-path> --profile claude-local`.
-   Fix every `FAIL`. Use a fresh internal reviewer for judgment-heavy changes;
-   the runtime selects its model and profile.
-7. Stamp `.framework-version` only after deterministic validation passes, then
-   show the exact diff and propose the persona-local commit.
+1. Snapshot the persona folder and confirm the target. Preserve identity,
+   voice, user data, role procedure, integrations, and external knowledge.
+2. Resolve the installed Personas root and read the current templates
+   under `skills/persona-dev/assets/`. Stop if the plugin root is unavailable.
+3. Compare the folder with the portable contract: `PERSONA.md`, `CLAUDE.md`,
+   `AGENTS.md`, shared skills, `.claude/settings.json`, `.codex/config.toml`,
+   `.gitignore`, and optional ignored `user/` context.
+4. Classify each difference as a framework adapter change, persona-owned
+   customization, obsolete machinery, or ambiguity.
+5. Present the reconciliation plan before writing. Preserve persona-owned
+   meaning and ask where ownership is ambiguous.
+6. Remove retired Cloud markers, visibility workflows, publishing guards,
+   framework stamps, and generated hooks only after showing their exact paths
+   and receiving approval for the persona-local change.
+7. Inspect the final tree and diff. Confirm both runtime entry files load the
+   same `PERSONA.md`, optional user context, and shared skills.
 
-Batch updates repeat this procedure independently per persona. Shared meaning
-may be consistent, but identity and voice are never copied across homes.
+Batch updates repeat this procedure independently for each persona.

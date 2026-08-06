@@ -1,51 +1,51 @@
-# Migration notes
+# Migration to Personas 4.0.0
 
-## 3.0.0 layout and user-data migration
+Version 3.0.0 returned to the original product model: a persona is a folder.
+Version 4.0.0 keeps that contract and renames the plugin itself to `personas`.
 
-The supported source layout is now one root plugin:
+## Target folder
 
 ```text
-.claude-plugin/  .codex-plugin/  skills/  hooks/  bin/  scripts/  interop/
+PERSONA.md
+CLAUDE.md
+AGENTS.md
+skills/
+.claude/settings.json
+.codex/config.toml
+user/                       # optional and ignored
 ```
 
-Do not use the former `plugins/persona-manager/` path or generated nested
-copies. Recreate or extend a sanitized persona with `bin/personas create`,
-then verify it with `bin/personas verify`. Existing persona identity, voice,
-`user/profile.md`, `user/memory/`, local settings, and connection
-configuration are user-owned; do not bulk-copy or commit them during migration.
-The new defaults ignore them. Credentials must never enter Git.
+Use `personas:persona-update` to inspect an existing folder and propose
+the migration before writing.
 
-Claude Code local and Codex are supported. Claude Code Cloud is preview-only
-until a separately authorized private GitHub/Cloud canary is run, and is usable
-only for a bound GitHub repository proven `PRIVATE` at creation and enforced
-private by CI. Cloud startup checks the repository binding offline and requires
-no GitHub token.
-Cloud creation initializes a new empty local Git repository with the approved
-origin but never creates, clones, or pushes a remote. Adopting an existing
-nonempty repository requires separately approved migration work.
-Use [ROLLBACK.md](ROLLBACK.md) instead of modifying live homes if source rollback
-is needed.
+## Move portable meaning once
 
-## 2026-07-28 — Persona Manager becomes the core product
+Move shared identity, voice, role, and boundaries into `PERSONA.md`. Reduce
+`CLAUDE.md` and `AGENTS.md` to native entry points that load it. Keep reusable
+role procedure in `skills/`. Claude Code and Codex then consume the same
+portable persona through their own native entry files.
 
-The core repository now distributes only `persona-manager`. Persona Dashboard
-and Personas Mesh were retired from this repository; they are not installable
-or activatable from this marketplace.
+Do not bulk-replace persona-owned content. Preserve `user/profile.md`,
+`user/memory/`, local settings, and integrations.
 
-Before the Mesh source was removed, it was extracted unchanged to a separately
-owned sibling repository with history, file digest parity, independent tests,
-and recovery evidence. The maintainer-local retained source ref is
-`forge/personas-mesh-extraction` at
-`e1f504222883b0fb5823f6cbec2b2305336dbdd4`. It is deliberately unpublished
-pending the separate Mesh review. This is a recovery record, not a Mesh
-installation or runtime instruction.
+## Remove transitional machinery
 
-Existing installed Dashboard or Mesh components, launchers, units, caches, and
-persona homes are deliberately untouched. Their maintenance and any migration
-remain separate, explicitly approved work.
+After reviewing the exact paths, remove obsolete framework stamps, the public
+`bin/personas` CLI, Cloud repository markers, visibility adapters, generated
+privacy workflows, publishing guards, and default persona hooks. They are not
+part of the 3.0.0 folder contract.
 
-## Deferred work
+Cloud uses the same publishable folder. A private repository is recommended for
+personalized use, but visibility is user-managed and credentials remain
+forbidden from Git.
 
-- Separate Mesh review and any publication.
-- Live fleet migration and a live-persona security pass.
-- A persona gallery beyond the sanitized example.
+## Repository history
+
+Personas is the single root plugin. The former Dashboard is retired. The
+former `persona-manager` plugin identifier and `plugins/persona-manager/`
+source layout are no longer active.
+Personas Mesh was preserved with history in a separate local project before its
+core source was removed; Mesh review and publication remain separate work.
+
+Use [ROLLBACK.md](ROLLBACK.md) for source rollback. Framework rollback never
+authorizes mutation of live persona folders.

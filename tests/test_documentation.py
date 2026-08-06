@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Public documentation stays executable, current, and privacy-honest."""
+"""Public documentation explains and links the folder-first product."""
 
 from __future__ import annotations
 
@@ -10,91 +10,82 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 README = ROOT / "README.md"
-TROUBLESHOOTING = ROOT / "TROUBLESHOOTING.md"
-EXAMPLE = ROOT / "examples/atlas-sanitized/README.md"
+EXAMPLE = ROOT / "examples/atlas-sanitized"
 DOCS = (
-    README, ROOT / "CONTRIBUTING.md", TROUBLESHOOTING, EXAMPLE,
-    ROOT / "CHANGELOG.md", ROOT / "MIGRATION.md", ROOT / "ROLLBACK.md",
-    ROOT / "SUPPORT.md", ROOT / "RELEASE.md",
+    README,
+    ROOT / "CONTRIBUTING.md",
+    ROOT / "TROUBLESHOOTING.md",
+    EXAMPLE / "README.md",
+    ROOT / "CHANGELOG.md",
+    ROOT / "MIGRATION.md",
+    ROOT / "ROLLBACK.md",
+    ROOT / "SUPPORT.md",
+    ROOT / "RELEASE.md",
 )
 
 
 class DocumentationTest(unittest.TestCase):
-    def test_first_screen_explains_problem_outcome_support_and_install(self) -> None:
-        first_screen = README.read_text(encoding="utf-8")[:2400].casefold()
+    def test_first_screen_explains_folder_outcome_support_and_install(self) -> None:
+        first_screen = README.read_text(encoding="utf-8")[:2600].casefold()
         for phrase in (
+            "a persona is a folder",
             "re-explaining",
             "durable collaborator",
             "claude code local",
             "claude code cloud",
             "codex",
+            "persona.md",
             "/plugin marketplace add kickinrad/personas-framework",
         ):
             self.assertIn(phrase, first_screen)
 
-    def test_quickstarts_and_verification_use_current_interfaces(self) -> None:
+    def test_readme_uses_only_current_user_interfaces(self) -> None:
         text = README.read_text(encoding="utf-8")
-        for heading in ("## Quickstart: Claude Code local", "## Quickstart: Claude Code Cloud", "## Quickstart: Codex"):
-            self.assertIn(heading, text)
-        self.assertIn("bin/personas verify", text)
-        self.assertIn("bin/personas create", text)
-        self.assertNotIn("bin/validate-persona", text)
-        self.assertNotIn("plugins/" + "persona-manager", text)
+        self.assertIn("personas:persona-dev", text)
+        self.assertIn("personas:persona-update", text)
+        self.assertIn("personas:self-improve", text)
+        for retired in (
+            "bin/personas create",
+            "bin/personas verify",
+            ".persona-cloud-repository",
+            "GH_TOKEN",
+            "visibility adapter",
+            "plugins/" + "persona-manager",
+        ):
+            self.assertNotIn(retired, text)
 
-    def test_active_docs_do_not_advertise_retired_validation_command(self) -> None:
-        active = (
-            README, ROOT / "CLAUDE.md", ROOT / "ACTIVATION.md", ROOT / "CONTRIBUTING.md",
-            TROUBLESHOOTING, ROOT / "CHANGELOG.md", ROOT / "MIGRATION.md",
-            ROOT / "ROLLBACK.md", ROOT / "SUPPORT.md", ROOT / "RELEASE.md",
-        )
-        for document in active:
-            self.assertNotIn("bin/validate-persona", document.read_text(encoding="utf-8"), document)
-
-    def test_cloud_safety_and_remediation_are_prominent(self) -> None:
+    def test_memory_and_cloud_claims_are_plain_and_truthful(self) -> None:
         text = README.read_text(encoding="utf-8")
         for phrase in (
-            "exactly `PRIVATE`",
-            "creation",
-            "verification",
-            "CI",
-            "SessionStart",
-            "public",
-            "internal",
-            "unknown",
-            "unavailable",
-            "ambiguous",
-            "credentials",
-            "framework repository may be public",
-            "personalized Cloud persona repository is private",
-            "GH_TOKEN",
-            "needs neither",
-            "offline binding check",
+            "user/memory/MEMORY.md",
+            "$CODEX_HOME/memories",
+            "do not synchronize",
+            "private repository",
+            "trusts you",
+            "out of Git",
         ):
             self.assertIn(phrase, text)
         support = (ROOT / "SUPPORT.md").read_text(encoding="utf-8")
-        self.assertIn("needs no GitHub token", support)
-        self.assertIn("private visibility in GitHub Actions", support)
+        self.assertIn("behavioral canary", support)
+        self.assertIn("user-managed", support)
 
-    def test_support_covers_expected_recovery_boundaries(self) -> None:
-        text = TROUBLESHOOTING.read_text(encoding="utf-8").casefold()
-        for phrase in (
-            "cancel", "permission", "offline", "collision", "partial", "staging",
-            "verification", "unsupported", "recovery",
-        ):
-            self.assertIn(phrase, text)
+    def test_sanitized_example_is_a_complete_persona_folder(self) -> None:
+        expected = {
+            "PERSONA.md",
+            "CLAUDE.md",
+            "AGENTS.md",
+            "README.md",
+            ".gitignore",
+            ".claude/settings.json",
+            ".codex/config.toml",
+            "skills/atlas-review/SKILL.md",
+        }
+        actual = {path.relative_to(EXAMPLE).as_posix() for path in EXAMPLE.rglob("*") if path.is_file()}
+        self.assertEqual(actual, expected)
+        all_text = "\n".join((EXAMPLE / path).read_text(encoding="utf-8") for path in expected)
+        self.assertNotRegex(all_text, r"(?i)(password|private key|real integration)")
 
-    def test_create_quickstart_does_not_claim_the_closed_gap(self) -> None:
-        text = README.read_text(encoding="utf-8")
-        self.assertIn("atomically renames", text)
-        self.assertIn("writes neither final nor staging", text)
-        self.assertIn("gh repo view OWNER/REPO --json visibility --jq .visibility", text)
-        self.assertIn(".persona-cloud-repository", text)
-        self.assertNotIn("Current gap: creation is skill-driven", text)
-
-    def test_sanitized_example_and_local_links_are_safe(self) -> None:
-        example = EXAMPLE.read_text(encoding="utf-8")
-        self.assertIn("Sanitized", example)
-        self.assertNotRegex(example, r"(?i)(token|password|private profile|real integration)")
+    def test_local_markdown_links_resolve(self) -> None:
         for document in DOCS:
             text = document.read_text(encoding="utf-8")
             for target in re.findall(r"\]\(([^)#]+)(?:#[^)]+)?\)", text):

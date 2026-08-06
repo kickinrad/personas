@@ -1,54 +1,26 @@
-# Persona README template
+# {PersonaName}
 
-Every persona repo gets a short README. Keep it minimal — this isn't a library, it's a personal assistant.
+{PersonaName} is a portable AI persona for {role description without personal facts}.
 
-```markdown
-# {PersonaName} {emoji}
+## Use
 
-> {One-line role description}
+Open this folder in Claude Code or Codex. Each runtime loads its native entry
+file, then reads the shared definition in `PERSONA.md` and relevant workflows
+under `skills/`.
 
-A self-evolving AI persona built on [Claude Code](https://claude.com/claude-code) using the [personas](https://github.com/kickinrad/personas-framework) framework.
+## Folder map
 
-## Privacy boundary
+- `PERSONA.md` — portable identity, role, voice, and boundaries.
+- `CLAUDE.md` — Claude Code entry point.
+- `AGENTS.md` — Codex entry point.
+- `.claude/settings.json` — native Claude project settings.
+- `.codex/config.toml` — native Codex project settings.
+- `skills/` — portable role workflows.
+- `user/` — optional ignored profile and explicit memory.
 
-Publishable files define the role and procedure: `CLAUDE.md`, `AGENTS.md`, the
-output style, role-local skills, tools, and this README. Local-only files are
-`user/profile.md`, `user/memory/`, `.claude/settings.local.json`, and `.mcp.json`;
-the generated `.gitignore` excludes them. Credentials, tokens, signing keys, and
-passwords stay in the approved credential manager and never enter Git, including
-private repositories.
+## Privacy
 
-Persona creation is offline: it reads bundled templates and writes only the chosen
-persona directory. It opens no listener and sends no telemetry. Runtime providers
-may make their own requests when you start a session; review their settings before
-use.
-
-### Claude Cloud (private repository only)
-
-Only after separately authorizing GitHub access, create or select a repository
-and prove its authenticated GitHub visibility is exactly `PRIVATE`. Persona
-Manager performs that proof before creation, and generated CI enforces it on
-every push. Complete that boundary before writing or committing any personalized context.
-Cloud startup needs no GitHub token; its offline check is:
-
-```bash
-.claude/hooks/public-repo-guard.sh --check-cloud-binding
-```
-
-A mismatched repository marker and origin stop the Cloud session. Public,
-internal, unauthenticated, unreachable, or unknown visibility stop creation or
-local verification. Private visibility does not permit credentials in Git.
-
-## Usage
-
-```bash
-{name}              # interactive session
-{name} "do weekly"  # one-shot prompt
-```
-
-## Setup
-
-See the [personas framework](https://github.com/kickinrad/personas-framework) for installation and setup.
-```
-
-For **public repos**, consider adding a brief "What it does" section describing the persona's domain and skills.
+Everything tracked in Git should be safe to publish. Keep personal context,
+runtime-local settings, connections, and credentials out of Git. A private
+repository is recommended for personalized Cloud use, but privacy starts with
+what the folder contains—not with a repository visibility check.

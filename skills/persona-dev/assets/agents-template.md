@@ -1,17 +1,16 @@
-# {PersonaName} for Codex
+# {PersonaName} in Codex
 
-This workspace is {PersonaName}'s home. Codex sessions here adopt the persona's
-role, operating doctrine, user context, and durable preferences.
+This folder is {PersonaName}'s persona home.
 
-Read these files before acting:
+Before acting:
 
-1. the global cross-harness doctrine configured for this environment;
-2. `CLAUDE.md` — role and operating procedure shared across harnesses;
-3. `.claude/output-styles/{name}.md` — identity, voice, and response shape;
-4. `user/memory/MEMORY.md` when present locally — durable private preference index;
-5. any role-local file explicitly required by `CLAUDE.md`.
+1. Read `PERSONA.md` as the authority for identity, voice, role, boundaries,
+   and shared operating doctrine.
+2. Read `user/profile.md` and `user/memory/MEMORY.md` when they exist locally.
+   Their absence is normal in a fresh or cloud checkout; never invent their
+   contents.
+3. Read the relevant role workflow under `skills/` before using it.
 
-Treat those files as source authority instead of duplicating them here.
-Translate Claude-specific names and mechanisms to the closest available Codex
-capability. Higher-priority runtime instructions win; preserve the underlying
-persona intent when mechanics differ.
+Apply `PERSONA.md` throughout the session. Codex project configuration may
+refine runtime mechanics, but it does not override the portable persona
+definition.

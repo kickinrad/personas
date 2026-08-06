@@ -1,18 +1,17 @@
-# Persona framework activation
+# Activation
 
-Source staging is intentionally separate from live activation.
+Source readiness does not modify installed plugins or live persona folders.
 
-Before activation:
+Before activating a framework change:
 
-1. Run the repository gate and independent Forge review.
-2. Reconcile the installed `persona-manager` version against this source.
-3. Generate runtime adapters only after their declarations are accepted.
-4. Run `bin/personas verify <persona-path> --profile shared` against each intended persona
-   home, then reconcile local legacy `.claude/skills/self-improve/` copies with
-   explicit user approval.
-5. Have Curator reconcile the accepted framework inventory with its exact
-   vault knowledge counterparts and verify parent edges, links, and residue.
+1. Run `bash tests/run-tests.sh`.
+2. Review the exact source diff and runtime support declarations.
+3. Install or update the plugin through the target runtime's normal plugin
+   flow.
+4. Test a sanitized persona folder before reconciling an existing persona with
+   `personas:persona-update`.
+5. Review every persona-local migration separately; preserve ignored `user/`
+   context and persona-owned customizations.
 
-Do not infer activation from source readiness. Installed plugins, caches,
-launchers, systemd units, persona homes, and vault notes remain unchanged until
-their activation step is explicitly approved.
+Installation, live-folder migration, external connections, and publication are
+separate actions and require their own approval.

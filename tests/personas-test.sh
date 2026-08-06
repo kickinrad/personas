@@ -1,176 +1,43 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PASS=0
-FAIL=0
+ROOT=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+pass=0
+fail=0
 
 check() {
-  local desc="$1" result="$2"
-  if [[ "$result" == "pass" ]]; then
-    echo "  ✓ $desc"
-    ((PASS++)) || true
+  local description="$1" result="$2"
+  if [[ "$result" == pass ]]; then
+    echo "  ✓ $description"
+    ((pass++)) || true
   else
-    echo "  ✗ $desc: $result"
-    ((FAIL++)) || true
+    echo "  ✗ $description: $result"
+    ((fail++)) || true
   fi
 }
 
-echo "Testing: persona-manager"
+echo "Testing: personas 4.0.0"
 
-# plugin.json exists and has version
-pjson="$REPO_ROOT/.claude-plugin/plugin.json"
-if [[ -f "$pjson" ]]; then
-  check "plugin.json exists" "pass"
-  version=$(jq -r '.version // empty' "$pjson" 2>/dev/null)
-  [[ -n "$version" ]] && check "version present ($version)" "pass" || check "version present" "missing"
-else
-  check "plugin.json exists" "missing"
-fi
+for manifest in .claude-plugin/plugin.json .codex-plugin/plugin.json; do
+  version=$(jq -r '.version // empty' "$ROOT/$manifest")
+  [[ "$version" == 4.0.0 ]] && check "$manifest version" pass || check "$manifest version" "expected 4.0.0, got ${version:-missing}"
+done
 
-# All SKILL.md files must have YAML frontmatter
 while IFS= read -r -d '' skill; do
-  grep -q "^---" "$skill" && \
-    check "frontmatter: $(basename "$(dirname "$skill")")/SKILL.md" "pass" || \
-    check "frontmatter: $(basename "$(dirname "$skill")")/SKILL.md" "missing"
-done < <(find "$REPO_ROOT/skills" -name "SKILL.md" -print0 2>/dev/null)
+  grep -q '^---$' "$skill" && check "frontmatter: ${skill#"$ROOT"/}" pass || check "frontmatter: ${skill#"$ROOT"/}" missing
+done < <(find "$ROOT/skills" -name SKILL.md -type f -print0)
 
-# Secret detection in source files. Secret prefixes must be followed by
-# ≥20 base64url chars to rule out bare-prefix docs (e.g. "GOCSPX-" listed as
-# an example pattern in validator agent prose).
+for relative in PERSONA.md CLAUDE.md AGENTS.md .claude/settings.json .codex/config.toml skills/atlas-review/SKILL.md; do
+  [[ -f "$ROOT/examples/atlas-sanitized/$relative" ]] && check "example: $relative" pass || check "example: $relative" missing
+done
+
 secret_hits=""
-while IFS= read -r -d '' f; do
-  basename_f=$(basename "$f")
-  [[ "$basename_f" == ".mcp.json" ]] && continue
-  if grep -qE '(eyJ[A-Za-z0-9_-]{20,}|GOCSPX-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|BEGIN[ ]PRIVATE[ ]KEY)' "$f" 2>/dev/null; then
-    secret_hits+=" ${f#"$REPO_ROOT"/}"
+while IFS= read -r -d '' file; do
+  if grep -qE '(eyJ[A-Za-z0-9_-]{20,}|GOCSPX-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|BEGIN[ ]PRIVATE[ ]KEY)' "$file" 2>/dev/null; then
+    secret_hits+=" ${file#"$ROOT"/}"
   fi
-done < <(find "$REPO_ROOT" -path "$REPO_ROOT/.git" -prune -o -path "$REPO_ROOT/.claude" -prune -o \( -name "*.md" -o -name "*.json" \) -type f -print0)
-[[ -z "$secret_hits" ]] && \
-  check "no secrets in source files" "pass" || check "no secrets in source files" "found in:$secret_hits"
+done < <(find "$ROOT" -path "$ROOT/.git" -prune -o -path "$ROOT/.claude" -prune -o \( -name '*.md' -o -name '*.json' -o -name '*.toml' \) -type f -print0)
+[[ -z "$secret_hits" ]] && check "no credential-like source values" pass || check "no credential-like source values" "found in:$secret_hits"
 
-echo ""
-
-# Marketplace checks: plugin.json#version is the single source of truth
-# (forge §Version bumping dual-write ban — plugins[] entries must NOT carry a version field;
-# stripped in "wave 2", commit 07bd5bc). Each entry must map to a real plugin
-# dir whose plugin.json has a version.
-echo "Marketplace checks"
-marketplace="$REPO_ROOT/.claude-plugin/marketplace.json"
-if [[ -f "$marketplace" ]]; then
-  count=$(jq '.plugins | length' "$marketplace")
-  for (( i=0; i<count; i++ )); do
-    mp_name=$(jq -r ".plugins[$i].name" "$marketplace")
-    if jq -e ".plugins[$i] | has(\"version\")" "$marketplace" >/dev/null 2>&1; then
-      check "$mp_name: no version field in marketplace.json" "version present — plugin.json is the single source of truth, remove it"
-    else
-      check "$mp_name: no version field in marketplace.json" "pass"
-    fi
-    pjson="$REPO_ROOT/.claude-plugin/plugin.json"
-    if [[ -f "$pjson" ]]; then
-      pj_version=$(jq -r '.version // empty' "$pjson" 2>/dev/null)
-      [[ -n "$pj_version" ]] && \
-        check "$mp_name: plugin.json version present ($pj_version)" "pass" || \
-        check "$mp_name: plugin.json version present" "missing"
-    else
-      check "$mp_name: plugin.json exists" "missing"
-    fi
-  done
-else
-  check "marketplace.json exists" "missing"
-fi
-echo ""
-
-# Persona directory checks (~/.personas/)
-PERSONAS_DIR="$HOME/.personas"
-if [[ -d "$PERSONAS_DIR" ]]; then
-  echo "Persona directory checks (~/.personas/)"
-  for persona_dir in "$PERSONAS_DIR"/*/; do
-    [[ -d "$persona_dir" ]] || continue
-
-    # Persona homes are identified by a positive marker (CLAUDE.md and/or .claude/),
-    # not by enumerating every top-level directory. This excludes non-persona folders
-    # (e.g. issues/, a mount-source vault folder) without a hardcoded name list.
-    if [[ ! -f "$persona_dir/CLAUDE.md" && ! -d "$persona_dir/.claude" ]]; then
-      continue
-    fi
-
-    pname=$(basename "$persona_dir")
-    echo "  Checking: $pname"
-
-    # Must have CLAUDE.md
-    [[ -f "$persona_dir/CLAUDE.md" ]] && \
-      check "CLAUDE.md exists" "pass" || check "CLAUDE.md exists" "missing"
-
-    # Stub-mode: persona lives elsewhere via .persona-cwd redirect.
-    # Skip structural checks (sandbox / user / settings.local / .gitignore) — those live at the redirect target.
-    if [[ -f "$persona_dir/.persona-cwd" ]]; then
-      pcwd=$(tr -d '[:space:]' < "$persona_dir/.persona-cwd")
-      if [[ -d "$pcwd" ]]; then
-        check ".persona-cwd resolves ($pcwd)" "pass"
-      else
-        check ".persona-cwd resolves" "target does not exist: $pcwd"
-      fi
-    else
-      # Standard persona — full structural checks
-      # Must have sandbox config
-      psettings="$persona_dir/.claude/settings.json"
-      if [[ -f "$psettings" ]]; then
-        jq -e '.sandbox' "$psettings" >/dev/null 2>&1 && \
-          check "sandbox config present" "pass" || check "sandbox config present" "missing sandbox key"
-      else
-        check "sandbox config present" ".claude/settings.json missing"
-      fi
-
-      # Must have user/ directory
-      [[ -d "$persona_dir/user" ]] && \
-        check "user/ directory exists" "pass" || check "user/ directory exists" "missing"
-
-      # Must have autoMemoryDirectory in settings.local.json (not settings.json — Claude ignores it there)
-      plocal="$persona_dir/.claude/settings.local.json"
-      if [[ -f "$plocal" ]]; then
-        jq -e '.autoMemoryDirectory' "$plocal" >/dev/null 2>&1 && \
-          check "autoMemoryDirectory configured" "pass" || check "autoMemoryDirectory configured" "missing in settings.local.json"
-      else
-        check "autoMemoryDirectory configured" "settings.local.json not found"
-      fi
-
-      # Must have .gitignore
-      [[ -f "$persona_dir/.gitignore" ]] && \
-        check ".gitignore exists" "pass" || check ".gitignore exists" "missing"
-    fi
-
-    # Framework version stamp
-    fwversion="$persona_dir/.framework-version"
-    if [[ -f "$fwversion" ]]; then
-      fv=$(cat "$fwversion" | tr -d '[:space:]')
-      if [[ "$fv" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        check ".framework-version valid ($fv)" "pass"
-      else
-        check ".framework-version valid" "invalid format: $fv"
-      fi
-    else
-      echo "    ℹ .framework-version not found (run persona-update to add)"
-    fi
-
-    # No secrets in committed files
-    psecret_hits=""
-    while IFS= read -r -d '' f; do
-      basename_f=$(basename "$f")
-      [[ "$basename_f" == ".mcp.json" ]] && continue
-      if grep -qE '(eyJ[A-Za-z0-9_-]{20,}|GOCSPX-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|BEGIN[ ]PRIVATE[ ]KEY)' "$f" 2>/dev/null; then
-        psecret_hits+=" $f"
-      fi
-    done < <(find "$persona_dir" \( -name "*.md" -o -name "*.json" \) -print0 2>/dev/null)
-    [[ -z "$psecret_hits" ]] && \
-      check "no secrets in files" "pass" || check "no secrets in files" "found in:$psecret_hits"
-
-    echo ""
-  done
-else
-  echo "Persona directory checks (~/.personas/): skipped (directory not found)"
-  echo ""
-fi
-
-echo "Results: $PASS passed, $FAIL failed"
-[[ $FAIL -eq 0 ]]
+echo "Results: $pass passed, $fail failed"
+[[ $fail -eq 0 ]]

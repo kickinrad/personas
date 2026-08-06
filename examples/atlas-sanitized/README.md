@@ -1,29 +1,23 @@
 # Sanitized Atlas example
 
-Atlas is a fictional collaborator for reviewing small software projects. This
-example demonstrates a safe creation conversation without personal context,
+Atlas is a fictional collaborator for reviewing small software changes. This
+folder demonstrates the complete portable structure without personal context,
 credentials, or external services.
 
-Create Atlas in an existing empty parent directory:
+Open the folder and inspect:
 
-```bash
-bin/personas create atlas --destination /path/to/personas --profile codex --json
+- `PERSONA.md` for Atlas's shared identity and working behavior;
+- `CLAUDE.md` and `.claude/settings.json` for the Claude Code adapter;
+- `AGENTS.md` and `.codex/config.toml` for the Codex adapter;
+- `skills/atlas-review/SKILL.md` for one portable role workflow.
+
+The example intentionally has no `user/` directory. A real local persona may
+use ignored `user/profile.md` and `user/memory/MEMORY.md`; a fresh Cloud
+checkout works without them.
+
+To create your own version, install Personas and ask:
+
+```text
+Use personas:persona-dev to create a software-review persona named
+Atlas. Show me the complete folder plan before writing anything.
 ```
-
-Then ask the installed `persona-manager:persona-dev` skill to add a role brief:
-“Review a small change, explain the risk in plain language, and suggest the next
-verification step.” The skill shows a plan and waits for approval.
-
-After approval, expect public role files such as `CLAUDE.md`, `AGENTS.md`, a
-README, and a role-local `skills/` directory. Local state belongs under `user/`
-and local runtime configuration; it is intentionally absent from this example.
-
-From a source checkout, inspect the result without changing it:
-
-```bash
-bin/personas verify /path/to/atlas --profile shared
-```
-
-Expected output starts with `PASS: atlas` for a complete sanitized home. For
-Cloud, do not reuse this example as a repository recipe: prove the target
-repository is exactly `PRIVATE` before adding any personalized context.

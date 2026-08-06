@@ -1,34 +1,13 @@
-# Private persona state: profile and runtime-managed memory are never publishable.
+# Private persona context
 user/
 
-# Connection settings and credentials: never commit these, even to a private repo.
+# Local runtime configuration and connections
+.claude/settings.local.json
+.codex/*.local.toml
 .mcp.json
-.mcp.json.*
 
-# Secret and credential files
-*.env
+# Credentials and environment files
+.env
+.env.*
 *.key
 *.pem
-*.secret
-secrets/
-credentials/
-
-# Local overrides
-.claude/settings.local.json
-.claude/settings.*.local.json
-
-# Databases
-*.db
-*.db-journal
-*.sqlite
-
-# Logs
-*.log
-
-# Local config variants
-*.local.json
-*.local.md
-
-# OS files
-.DS_Store
-Thumbs.db

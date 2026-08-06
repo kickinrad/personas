@@ -5,15 +5,15 @@
     "url": "https://github.com/kickinrad"
   },
   "metadata": {
-    "description": "Privacy-first toolkit for one durable AI collaborator",
-    "version": "3.0.0",
+    "description": "Create portable persona folders for Claude Code and Codex",
+    "version": "4.0.0",
     "pluginRoot": "."
   },
   "plugins": [
     {
-      "name": "persona-manager",
+      "name": "personas",
       "source": ".",
-      "description": "Create and verify privacy-first Claude Code and Codex personas",
+      "description": "Create portable persona folders for Claude Code and Codex",
       "category": "developer-tools"
     }
   ]

@@ -1,52 +1,37 @@
 {
-  "schemaVersion": 3,
-  "component": "persona-manager",
-  "canonicalRuntime": "claude-code",
+  "schemaVersion": 4,
+  "component": "personas",
+  "version": "4.0.0",
+  "residency": {"claude-code": "on-demand", "codex": "on-demand"},
+  "portableAuthority": "PERSONA.md",
   "portableSkills": ["persona-dev", "persona-update", "self-improve"],
-  "executables": ["bin/personas", "scripts/public-repo-guard.sh"],
-  "verification": {
-    "command": "bin/personas verify <persona-path> [--json]",
-    "profiles": ["shared", "claude-local", "codex", "claude-cloud"],
-    "exitCodes": {"0": "PASS or WARN", "1": "contract FAIL", "2": "unsupported profile or invocation failure"},
-    "cloudVisibility": "Authenticated adapter evidence must report visibility exactly PRIVATE."
+  "folderMemory": {
+    "path": "user/memory/MEMORY.md",
+    "tracked": false,
+    "nativeMemorySynchronization": false
   },
-  "knowledgeBoundary": "Framework source owns lifecycle mechanics, parity templates, validation, and runtime declarations. Persona homes own identity, voice, role procedure, configuration, and cache. Vault notes own durable Wils knowledge, topology, decisions, current state, and recovery.",
-  "executableDependencies": [
-    {
-      "id": "vault-curator",
-      "kind": "local-plugin",
-      "immutableSourcePin": "vault@core 0.19.0",
-      "capabilities": ["durable knowledge discovery and mutation"],
-      "required": "conditional"
-    }
-  ],
+  "cloud": {
+    "status": "same-folder",
+    "repositoryVisibility": "user-managed",
+    "privateRepositoryRecommendedForPersonalizedUse": true
+  },
   "runtimes": {
     "claude-code": {
       "status": "native",
-      "profiles": {"local": "native", "cloud": "preview-private-repository-only"},
+      "instructions": "CLAUDE.md",
+      "projectSettings": ".claude/settings.json",
       "skills": true,
-      "hooks": {
-        "status": "native",
-        "pluginPath": "hooks/hooks.json",
-        "personaProjectPath": ".claude/settings.json",
-        "personaProjectStatus": "generated-native"
-      },
-      "deterministicValidation": true,
-      "memory": "environment-local; profile and memory transport are explicit and never implied"
+      "acceptanceProbes": ["identity", "voice", "boundary", "skill", "profile", "explicit-memory"]
     },
     "codex": {
       "status": "native",
+      "instructions": "AGENTS.md",
+      "projectSettings": ".codex/config.toml",
       "skills": true,
-      "deterministicValidation": true,
-      "hooks": {
-        "status": "native",
-        "path": "hooks/hooks.json",
-        "trust": "required",
-        "environment": ["PLUGIN_ROOT", "PLUGIN_DATA", "CLAUDE_PLUGIN_ROOT"]
-      },
-      "instructionLoading": "AGENTS.md is a thin loader for shared CLAUDE.md doctrine and explicitly chosen private context."
+      "acceptanceProbes": ["identity", "voice", "boundary", "skill", "profile", "explicit-memory"],
+      "canaryEvidence": ".claude/evidence/personas-folder-parity.md"
     },
-    "gemini-cli": {"status": "unsupported", "reason": "No adapter is authored."},
-    "kimi-code": {"status": "unsupported", "reason": "No adapter is authored."}
+    "gemini-cli": {"status": "unsupported", "reason": "No native adapter is authored."},
+    "kimi-code": {"status": "unsupported", "reason": "No native adapter is authored."}
   }
 }

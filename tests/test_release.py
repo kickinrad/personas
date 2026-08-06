@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Release-preparation assertions for the root Persona Manager product."""
+"""Release-preparation assertions for the root Personas product."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "3.0.0"
+VERSION = "4.0.0"
 
 
 class ReleasePreparationTest(unittest.TestCase):
@@ -20,6 +20,7 @@ class ReleasePreparationTest(unittest.TestCase):
         codex = json.loads((ROOT / ".codex-plugin/plugin.json").read_text(encoding="utf-8"))
         market = json.loads((ROOT / ".claude-plugin/marketplace.json").read_text(encoding="utf-8"))
         self.assertEqual({claude["version"], codex["version"], market["metadata"]["version"]}, {VERSION})
+        self.assertEqual({claude["name"], codex["name"], market["plugins"][0]["name"]}, {"personas"})
         self.assertEqual({claude["license"], codex["license"]}, {"Apache-2.0"})
         self.assertTrue(all("version" not in entry for entry in market["plugins"]))
 
@@ -29,7 +30,7 @@ class ReleasePreparationTest(unittest.TestCase):
         rollback = (ROOT / "ROLLBACK.md").read_text(encoding="utf-8")
         support = (ROOT / "SUPPORT.md").read_text(encoding="utf-8")
         old_layout = "plugins/" + "persona-manager/"
-        for phrase in (old_layout, "user/profile.md", "PRIVATE", "Codex", "Deferred work"):
+        for phrase in (old_layout, "user/profile.md", "PERSONA.md", "Codex", "Mesh"):
             self.assertIn(phrase, migration)
         self.assertIn("d3a0ed1d29177f85df9cdc28f4e51378ed0da8d9", rollback)
         self.assertIn("tag", release)

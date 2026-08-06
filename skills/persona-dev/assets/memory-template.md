@@ -1,8 +1,8 @@
-# {PersonaName} — Memory Index
+# Explicit persona memory
 
-> Private runtime state. `user/memory/` is ignored by Git and is never sent by
-> Persona Manager. Keep credentials, tokens, signing keys, and passwords outside
-> this directory in the approved credential manager.
+This ignored Markdown file is portable, user-controlled memory that both
+Claude Code and Codex can read. Record only durable, useful context with the
+user's approval.
 
-Add concise links to runtime-managed memory entries here when the runtime supports
-them. Durable shared knowledge belongs in its canonical knowledge system.
+Runtime-native auto-memory is separate and may live outside this folder. Do not
+claim that Claude and Codex native memories synchronize.

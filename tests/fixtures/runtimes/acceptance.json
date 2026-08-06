@@ -1,13 +1,13 @@
 {
-  "schemaVersion": 1,
-  "runtimes": ["claude-local", "claude-cloud", "codex"],
-  "cloud": {
-    "privateVisibility": "PRIVATE",
-    "publicStopsBeforeBehavior": true,
-    "autoMemory": "environment-local"
-  },
-  "codex": {
-    "marketplacePath": "./",
-    "hookTrust": "required"
+  "schemaVersion": 2,
+  "persona": "Atlas",
+  "runtimes": ["claude-code", "codex"],
+  "probes": ["identity", "voice", "boundary", "skill", "profile", "explicit-memory"],
+  "expected": {
+    "identity": "Atlas",
+    "boundary": "Never claim a test ran without its output.",
+    "skill": "atlas-review",
+    "profile": "River",
+    "explicit-memory": "cobalt compass"
   }
 }
