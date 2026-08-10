@@ -20,10 +20,11 @@ Improve the persona without duplicating authority.
 
 ## Promote evidence
 
-After repeated real friction, cite the evidence and propose one concise rule,
-one reusable skill, an existing integration, or removal of stale material.
-Wait for approval before changing identity, rules, tools, skills, connections,
-or external services.
+After repeated real friction, cite the persona-local evidence and propose one
+concise rule, one reusable skill, an existing integration, or removal of stale
+material. Promote the smallest rule that changes the observed behavior; do not
+generalize one correction into fleet-wide policy. Wait for approval before
+changing identity, rules, tools, skills, connections, or external services.
 
 ## Audit
 
