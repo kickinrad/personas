@@ -21,7 +21,6 @@ Reconcile framework mechanics without normalizing the persona.
 6. Remove retired Cloud markers, visibility workflows, publishing guards,
    framework stamps, and generated hooks only after showing their exact paths
    and receiving approval for the persona-local change.
-7. Inspect the final tree and diff. Confirm both runtime entry files load the
-   same `PERSONA.md`, optional user context, and shared skills.
+7. Inspect the final tree and diff.
 
 Batch updates repeat this procedure independently for each persona.

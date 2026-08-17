@@ -42,11 +42,9 @@ private local context, and external knowledge sources distinct.
 ## Extend
 
 For an existing persona, inspect its folder first and edit only the owning
-surface. Put portable identity and behavior in `PERSONA.md`, reusable procedure
-in a role skill, runtime-only mechanics in the matching adapter, and private
-context under ignored `user/`. Prefer an existing capability over a new wrapper.
-Read `references/lifecycle-meta.md` when ownership between those surfaces is
-unclear.
+surface; `self-improve`'s "Route the change" list owns content routing. Prefer
+an existing capability over a new wrapper. Read `references/lifecycle-meta.md`
+when ownership between those surfaces is unclear.
 
 ## Verify
 
