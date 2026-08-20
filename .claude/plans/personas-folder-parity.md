@@ -1,15 +1,17 @@
-# Plan: Personas as Folders, With Runtime Parity
+# Plan: Personas v5 as Folders, With Runtime Parity
 
 _Created 2026-07-31 from the accepted simplification and parity direction._
 
 ## Execution status
 
-Implemented on 2026-07-31 as Persona Manager `3.0.0`.
+Current contract: Personas `5.0.0`, with `AGENTS.md` as the sole portable
+persona definition and an import-only `CLAUDE.md` adapter. The completed 3.0
+work below is historical planning context, not current authority.
 
 - Tasks 0–6 and 8–9 are complete in source.
-- Task 7's finished-folder canaries passed in Claude Code 2.1.220 and Codex CLI
-  0.146.0; evidence is recorded in
-  [personas-folder-parity.md](../evidence/personas-folder-parity.md).
+- The current v5 canary is recorded in
+  [personas-folder-parity.md](../evidence/personas-folder-parity.md): Codex
+  and Claude Code loaded the synthetic Atlas fixture without runtime mutation.
 - Codex also discovers the repository's local marketplace and Persona Manager
   package. The plugin was not installed into the maintainer's live Codex or
   Claude configuration during source validation.
@@ -38,7 +40,7 @@ product.
 2. **Parity is observable behavior.** Runtime files may differ, but identity,
    working doctrine, skill availability, and explicit folder memory must behave
    equivalently.
-3. **One portable authority.** `PERSONA.md` owns identity, voice, role,
+3. **One portable authority.** `AGENTS.md` owns identity, voice, role,
    boundaries, and shared operating doctrine.
 4. **Native adapters stay thin.** `CLAUDE.md`, `AGENTS.md`, `.claude/`, and
    `.codex/` contain only what their runtime needs to load the portable source.
@@ -55,9 +57,8 @@ product.
 
 ```text
 atlas/
-├── PERSONA.md                 # portable identity and operating doctrine
-├── CLAUDE.md                  # Claude Code entry point
-├── AGENTS.md                  # Codex entry point
+├── AGENTS.md                  # portable identity and operating doctrine
+├── CLAUDE.md                  # Claude Code import of AGENTS.md
 ├── README.md                  # human orientation
 ├── skills/                    # shared role workflows
 ├── .claude/
@@ -97,7 +98,7 @@ Therefore:
 1. A sanitized persona can be understood without running a command: its
    identity, instructions, skills, runtime adapters, and private-state boundary
    are visible in the folder.
-2. A newly generated persona contains `PERSONA.md`, `CLAUDE.md`, `AGENTS.md`,
+2. A newly generated persona contains `AGENTS.md`, importing `CLAUDE.md`,
    shared `skills/`, minimal `.claude/` configuration, and minimal `.codex/`
    configuration.
 3. Claude Code and Codex independently pass a clean-room identity probe that
@@ -185,7 +186,7 @@ Replace file-presence parity with observable persona adoption.
 
 **Work**
 
-1. Define the portable authority as `PERSONA.md` and document what remains in
+1. Define the portable authority as `AGENTS.md` and document what remains in
    `CLAUDE.md` and `AGENTS.md`.
 2. Define one sanitized acceptance persona with a distinctive name, role,
    voice rule, refusal boundary, and role skill.
@@ -264,9 +265,9 @@ receiving approval.
 
 **Work**
 
-1. Add `PERSONA.md` as the single source for identity, voice, boundaries, and
+1. Add `AGENTS.md` as the single source for identity, voice, boundaries, and
    runtime-neutral procedure.
-2. Make the runtime entry files thin, explicit loaders of `PERSONA.md`, shared
+2. Make `CLAUDE.md` an explicit import of `AGENTS.md`, with shared
    skills, and optional ignored user context.
 3. Have `persona-dev` write the approved folder directly with normal agent file
    operations; rely on plan review, diffs, and Git for recovery.
@@ -302,12 +303,12 @@ domain model.
 
 **Work**
 
-1. Make `CLAUDE.md` load `PERSONA.md`, shared skills, and optional ignored user
+1. Make `CLAUDE.md` import `AGENTS.md`; `AGENTS.md` routes optional user
    context.
 2. Reduce `.claude/settings.json` to settings needed for persona behavior;
    remove repository-policy and plugin-installation management.
 3. Retain an output-style adapter only if the Claude acceptance probe shows it
-   materially improves persona adoption beyond `PERSONA.md`.
+   materially improves persona adoption beyond `AGENTS.md`.
 4. Add no default hook without a named behavior that instructions or skills
    cannot provide reliably.
 
@@ -337,13 +338,13 @@ Give Codex equivalent outcomes through its documented native surfaces.
 
 **Work**
 
-1. Make `AGENTS.md` load `PERSONA.md`, shared skills, and optional ignored user
+1. Make `AGENTS.md` the portable definition, route optional user context, and
    context without referring to Claude as the canonical runtime.
 2. Generate minimal trusted-project `.codex/config.toml` settings only where
    they affect persona behavior.
 3. Map any retained persona-critical Claude lifecycle behavior to documented
    Codex hook events. Do not create hooks merely for structural symmetry.
-4. Express voice and response shape through `PERSONA.md`/`AGENTS.md`, since
+4. Express voice and response shape through `AGENTS.md`, since
    Codex has no documented first-class equivalent to Claude output styles.
 5. Verify the installed Codex plugin exposes the same shared skills.
 
@@ -445,7 +446,7 @@ Explain the simple product that now exists.
 1. Lead with “a persona is a folder” and show the folder immediately.
 2. Show one plugin install and one guided creation request per supported
    runtime.
-3. Explain `.claude/` and `.codex/` as native adapters around `PERSONA.md`.
+3. Explain `.claude/` and `.codex/` as native adapters around `AGENTS.md`.
 4. Explain portable folder memory versus runtime-native memory in one short
    section.
 5. Reduce Cloud guidance to publishability, private-repository recommendation,

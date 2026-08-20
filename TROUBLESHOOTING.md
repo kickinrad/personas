@@ -14,7 +14,7 @@ content until ownership is clear.
 
 ## The persona does not sound or behave right
 
-Confirm the runtime loaded its native entry file, then read `PERSONA.md`.
+Confirm the runtime loaded its native entry file, then read `AGENTS.md`.
 Identity, voice, role, and boundaries belong there. Repeated multi-step
 procedure belongs in a role skill. Avoid copying the same correction into both
 `CLAUDE.md` and `AGENTS.md`.
@@ -23,8 +23,8 @@ procedure belongs in a role skill. Avoid copying the same correction into both
 
 Start Codex from the persona folder and confirm `AGENTS.md` is discovered.
 Trust the project if Codex asks before applying `.codex/config.toml`. Verify
-that `AGENTS.md` points to `PERSONA.md`, optional `user/` context, and the
-relevant `skills/` directory.
+that `AGENTS.md` contains the portable definition and the relevant `skills/`
+directory.
 
 Codex support was earned by the release canary. Do not describe a new loader or
 setting as supported until it passes the same parity probes.

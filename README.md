@@ -20,9 +20,8 @@ Markdown, shared skills, and small native adapters for **Claude Code local**,
 
 ```text
 atlas/
-├── PERSONA.md                 # identity, role, voice, and boundaries
-├── CLAUDE.md                  # Claude Code entry point
-├── AGENTS.md                  # Codex entry point
+├── AGENTS.md                  # portable identity, role, voice, and boundaries
+├── CLAUDE.md                  # Claude Code import of AGENTS.md
 ├── skills/                    # reusable role workflows
 ├── .claude/settings.json      # native Claude project settings
 ├── .codex/config.toml         # native Codex project settings
@@ -66,12 +65,12 @@ inspect a finished folder first.
 
 ## How the folder works
 
-`PERSONA.md` is the portable source of truth. It contains the collaborator's
+`AGENTS.md` is the portable source of truth. It contains the collaborator's
 identity and behavior without referring to a particular AI runtime.
 
-Claude Code discovers `CLAUDE.md`. Codex discovers `AGENTS.md`. Each native
-entry point loads the same `PERSONA.md`, optional local user context, and
-relevant workflows under `skills/`.
+Codex discovers `AGENTS.md`. Claude Code discovers `CLAUDE.md`, which imports
+that same definition. Reusable workflows live under `skills/`; private local
+context remains outside the portable definition.
 
 The `.claude/` and `.codex/` directories contain only native project settings.
 They are adapters, not competing persona definitions. Personas adds no
@@ -121,7 +120,7 @@ For a few instructions, you should. Personas becomes useful when the
 collaborator has a distinct role, reusable workflows, private local context, or
 needs to work in both Claude Code and Codex.
 
-It adds a neutral persona definition, shared skills, native runtime entry
+It adds one portable persona definition, shared skills, native runtime entry
 points, and a careful update workflow while keeping every file readable.
 
 ## Runtime support

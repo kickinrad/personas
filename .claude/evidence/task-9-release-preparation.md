@@ -1,4 +1,8 @@
-# Task 9 — Release preparation
+# Historical Task 9 — Release preparation (3.0.0)
+
+> Historical evidence only. It does not prove the current 5.0.0 contract,
+> whose release metadata and validation live in the current source release
+> surfaces and tests.
 
 Date: 2026-07-30
 

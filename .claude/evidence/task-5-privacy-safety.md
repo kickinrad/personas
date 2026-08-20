@@ -1,4 +1,7 @@
-# Task 5 — Privacy and publishing safety evidence
+# Historical Task 5 — Privacy and publishing safety evidence
+
+> Historical evidence only. It documents superseded guards and Cloud machinery;
+> it is not current v5 privacy or runtime proof.
 
 Date: 2026-07-28
 
@@ -15,10 +18,11 @@ Date: 2026-07-28
   opens no listener, and emits no telemetry. Runtime-provider requests occur
   only when the user starts that runtime.
 
-## Guard contract
+## Retired guard evidence
 
-`scripts/public-repo-guard.sh` is deterministic and does not parse a user shell
-command. Invoke it at a Git/release seam:
+At Task 5, `scripts/public-repo-guard.sh` was the deterministic guard. The
+commands below record that retired implementation; they are not v5 procedures
+and must not be invoked as current release checks.
 
 ```bash
 scripts/public-repo-guard.sh --check-staged
@@ -29,10 +33,10 @@ scripts/public-repo-guard.sh --check-repository
 The generated PreToolUse hook is advisory only. It is deliberately not the
 security boundary.
 
-## Claude Cloud contract
+## Retired Claude Cloud evidence
 
-The Cloud creation flow is separately authorized: obtain/validate the GitHub
-repository first, then run:
+Task 5's Cloud flow required a separately authorized GitHub repository and the
+following now-retired preflight:
 
 ```bash
 .claude/hooks/public-repo-guard.sh --cloud-preflight OWNER/REPO
@@ -45,17 +49,17 @@ unauthenticated, or empty evidence exits 2 before profile or memory context is
 loaded, written, or committed. This task did not contact GitHub or create a
 repository.
 
-## Required integration owned by Task 6/root
+## Superseded integration handoff
 
-Add these checks to the repository CI/release workflow before artifact creation
-or publish:
+Task 5 handed the following checks to Task 6. The v5 contract retired that
+machinery; this block is historical evidence, not an outstanding requirement:
 
 ```yaml
 - run: test "${{ github.event.repository.private }}" = true
 - run: scripts/public-repo-guard.sh --check-tree "${{ github.sha }}"
 ```
 
-The generated SessionStart hook treats the committed
+The then-generated SessionStart hook treated the committed
 `.persona-cloud-repository` marker as the Cloud signal and executes the offline
 `--check-cloud-binding` before it supplies Cloud context. Exact private
 visibility remains enforced at creation, local verification, and CI. Cloud

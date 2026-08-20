@@ -2,7 +2,7 @@
 
 | Concern | Owning surface |
 |---|---|
-| Identity, voice, role, boundaries | `PERSONA.md` |
+| Identity, voice, role, boundaries | `AGENTS.md` |
 | Claude Code loading and mechanics | `CLAUDE.md`, `.claude/` |
 | Codex loading and mechanics | `AGENTS.md`, `.codex/` |
 | Reusable role procedure | `skills/<workflow>/SKILL.md` |

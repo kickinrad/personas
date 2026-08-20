@@ -4,15 +4,13 @@
 
 ## Use
 
-Open this folder in Claude Code or Codex. Each runtime loads its native entry
-file, then reads the shared definition in `PERSONA.md` and relevant workflows
-under `skills/`.
+Open this folder in Claude Code or Codex. Codex loads the portable definition in
+`AGENTS.md`; Claude Code imports that same definition through `CLAUDE.md`.
 
 ## Folder map
 
-- `PERSONA.md` — portable identity, role, voice, and boundaries.
-- `CLAUDE.md` — Claude Code entry point.
-- `AGENTS.md` — Codex entry point.
+- `AGENTS.md` — portable identity, role, voice, boundaries, and Codex entry.
+- `CLAUDE.md` — Claude Code import of `AGENTS.md`.
 - `.claude/settings.json` — native Claude project settings.
 - `.codex/config.toml` — native Codex project settings.
 - `skills/` — portable role workflows.

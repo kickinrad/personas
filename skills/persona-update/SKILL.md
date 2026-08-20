@@ -11,16 +11,19 @@ Reconcile framework mechanics without normalizing the persona.
    voice, user data, role procedure, integrations, and external knowledge.
 2. Resolve the installed Personas root and read the current templates
    under `skills/persona-dev/assets/`. Stop if the plugin root is unavailable.
-3. Compare the folder with the portable contract: `PERSONA.md`, `CLAUDE.md`,
-   `AGENTS.md`, shared skills, `.claude/settings.json`, `.codex/config.toml`,
-   `.gitignore`, and optional ignored `user/` context.
+3. Compare the folder with the portable contract: authoritative `AGENTS.md`,
+   importing `CLAUDE.md`, shared skills, `.claude/settings.json`,
+   `.codex/config.toml`, `.gitignore`, and optional ignored `user/` context.
 4. Classify each difference as a framework adapter change, persona-owned
    customization, obsolete machinery, or ambiguity.
 5. Present the reconciliation plan before writing. Preserve persona-owned
    meaning and ask where ownership is ambiguous.
-6. Remove retired Cloud markers, visibility workflows, publishing guards,
-   framework stamps, and generated hooks only after showing their exact paths
-   and receiving approval for the persona-local change.
+6. Remove a retired portable definition only after its meaning is closed into
+   `AGENTS.md`, its references are closed, and approval covers the persona-local
+   change. Before retiring a nonempty `.claude/output-styles/*.md`, review its
+   voice cues and consolidate useful cues into `AGENTS.md` only when active
+   persona docs still need them; otherwise preserve it for review. Remove other
+   retired machinery only after showing its exact paths.
 7. Inspect the final tree and diff.
 
 Batch updates repeat this procedure independently for each persona.

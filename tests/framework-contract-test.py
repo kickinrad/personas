@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "4.0.0"
+VERSION = "5.0.0"
 ASSETS = ROOT / "skills/persona-dev/assets"
 
 
@@ -31,21 +31,48 @@ class FrameworkContractTest(unittest.TestCase):
             "codex-config-template.toml",
             "gitignore-template",
             "memory-template.md",
-            "persona-template.md",
             "profile-template.md",
             "readme-template.md",
             "settings-template.json",
         }
         self.assertEqual({path.name for path in ASSETS.iterdir() if path.is_file()}, expected)
-        persona = (ASSETS / "persona-template.md").read_text(encoding="utf-8")
-        self.assertIn("# {PersonaName}", persona)
-        self.assertIn("## Voice", persona)
-        self.assertIn("## Boundaries", persona)
-        for adapter in ("claude-md-template.md", "agents-template.md"):
-            text = (ASSETS / adapter).read_text(encoding="utf-8")
-            self.assertIn("PERSONA.md", text)
-            self.assertIn("user/profile.md", text)
-            self.assertIn("user/memory/MEMORY.md", text)
+        agents = (ASSETS / "agents-template.md").read_text(encoding="utf-8")
+        claude = (ASSETS / "claude-md-template.md").read_text(encoding="utf-8")
+        self.assertLessEqual(len(agents.split()), 300)
+        self.assertLessEqual(len(claude.split()), 80)
+        for phrase in ("## Role and authority", "## Voice", "## Boundaries", "vault:curator", "skills/"):
+            self.assertIn(phrase, agents)
+        for forbidden in ("PERSONA.md", "## Working approach", "Before acting:", "enabledPlugins", "extraKnownMarketplaces", "1. "):
+            self.assertNotIn(forbidden, agents)
+        self.assertEqual(claude.splitlines()[-1], "@AGENTS.md")
+        self.assertNotIn("PERSONA.md", claude)
+
+    def test_portable_skills_stay_compact_and_current(self) -> None:
+        for skill in (ROOT / "skills").glob("*/SKILL.md"):
+            with self.subTest(skill=skill):
+                text = skill.read_text(encoding="utf-8")
+                self.assertLessEqual(len(text.split()), 500)
+                self.assertNotIn("PERSONA.md", text)
+
+    def test_active_contract_has_no_duplicate_or_legacy_authority(self) -> None:
+        active = (
+            ROOT / "interop/capabilities.json",
+            ROOT / "README.md",
+            ROOT / "MIGRATION.md",
+            ROOT / "RELEASE.md",
+            ROOT / "SUPPORT.md",
+            ROOT / "TROUBLESHOOTING.md",
+            ROOT / "ACTIVATION.md",
+            *(ROOT / "skills").rglob("*"),
+            *(ROOT / "examples/atlas-sanitized").rglob("*"),
+        )
+        for path in active:
+            if not path.is_file():
+                continue
+            with self.subTest(path=path):
+                text = path.read_text(encoding="utf-8", errors="ignore")
+                self.assertNotIn("PERSONA.md", text)
+        self.assertFalse((ASSETS / "persona-template.md").exists())
 
     def test_no_runtime_or_cli_enforcement_product_remains(self) -> None:
         for relative in (

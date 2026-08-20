@@ -1,8 +1,8 @@
 # Claude launch flags
 
 Read this reference only when configuring the Claude launcher for a persona.
-Codex loads the persona through its workspace and `AGENTS.md`; it does not use
-`.claude-flags`.
+Codex loads the persona through its workspace and `AGENTS.md`; Claude Code
+imports that definition through `CLAUDE.md`. Codex does not use `.claude-flags`.
 
 ## Contract
 

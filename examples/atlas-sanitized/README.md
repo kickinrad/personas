@@ -6,9 +6,9 @@ credentials, or external services.
 
 Open the folder and inspect:
 
-- `PERSONA.md` for Atlas's shared identity and working behavior;
+- `AGENTS.md` for Atlas's portable identity and working behavior;
 - `CLAUDE.md` and `.claude/settings.json` for the Claude Code adapter;
-- `AGENTS.md` and `.codex/config.toml` for the Codex adapter;
+- `.codex/config.toml` for Codex settings;
 - `skills/atlas-review/SKILL.md` for one portable role workflow.
 
 The example intentionally has no `user/` directory. A real local persona may

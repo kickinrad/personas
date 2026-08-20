@@ -78,6 +78,8 @@ class RepositoryInventoryTest(unittest.TestCase):
         for test in (
             "personas-test.sh",
             "framework-contract-test.py",
+            "test_fleet_verifier.py",
+            "verify-fleet.py",
             "test_runtime_adapters.py",
             "test_documentation.py",
             "test_repository_inventory.py",

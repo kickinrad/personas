@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 4,
+  "schemaVersion": 5,
   "component": "personas",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "residency": {"claude-code": "on-demand", "codex": "on-demand"},
-  "portableAuthority": "PERSONA.md",
+  "portableAuthority": "AGENTS.md",
   "portableSkills": ["persona-dev", "persona-update", "self-improve"],
   "folderMemory": {
     "path": "user/memory/MEMORY.md",
@@ -19,6 +19,7 @@
     "claude-code": {
       "status": "native",
       "instructions": "CLAUDE.md",
+      "imports": ["AGENTS.md"],
       "projectSettings": ".claude/settings.json",
       "skills": true,
       "acceptanceProbes": ["identity", "voice", "boundary", "skill", "profile", "explicit-memory"]

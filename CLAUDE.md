@@ -8,6 +8,9 @@ This repository contains Personas framework mechanics for persona
 lifecycle. Persona homes are external, independent repositories and are
 evidence—not normalization targets.
 
+This repository-development file is not a generated persona adapter; the
+persona `CLAUDE.md` import-only budget does not apply here.
+
 ## Authorities
 
 - Framework source owns lifecycle procedure, templates, runtime declarations,
@@ -29,7 +32,7 @@ plugin-shipped `self-improve` skill is canonical.
 
 1. Snapshot source and preserve unrelated work before editing.
 2. Work in an isolated migration branch or worktree.
-3. Keep this release aligned at `4.0.0`; do not create a documentation-only or
+3. Keep this release aligned at `5.0.0`; do not create a documentation-only or
    staging version bump.
 4. Declare runtime support in each plugin's `interop/capabilities.json`.
    Claude support is native only where proven. Missing adapters are

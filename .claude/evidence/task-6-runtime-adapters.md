@@ -1,4 +1,7 @@
-# Task 6 — Runtime adapter acceptance
+# Historical Task 6 — Runtime adapter acceptance
+
+> Historical evidence only. It predates the 5.0.0 `AGENTS.md` authority and
+> import-only Claude adapter, so it is not current runtime proof.
 
 Date: 2026-07-28
 

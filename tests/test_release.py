@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "4.0.0"
+VERSION = "5.0.0"
 
 
 class ReleasePreparationTest(unittest.TestCase):
@@ -30,7 +30,7 @@ class ReleasePreparationTest(unittest.TestCase):
         rollback = (ROOT / "ROLLBACK.md").read_text(encoding="utf-8")
         support = (ROOT / "SUPPORT.md").read_text(encoding="utf-8")
         old_layout = "plugins/" + "persona-manager/"
-        for phrase in (old_layout, "user/profile.md", "PERSONA.md", "Codex", "Mesh"):
+        for phrase in (old_layout, "user/profile.md", "AGENTS.md", "Codex", "Mesh"):
             self.assertIn(phrase, migration)
         self.assertIn("d3a0ed1d29177f85df9cdc28f4e51378ed0da8d9", rollback)
         self.assertIn("tag", release)

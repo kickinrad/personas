@@ -1,14 +1,13 @@
-# Migration to Personas 4.0.0
+# Migration to Personas 5.0.0
 
-Version 3.0.0 returned to the original product model: a persona is a folder.
-Version 4.0.0 keeps that contract and renames the plugin itself to `personas`.
+Version 5.0.0 makes `AGENTS.md` the one portable persona definition; Claude
+Code imports it through a deliberately thin `CLAUDE.md` adapter.
 
 ## Target folder
 
 ```text
-PERSONA.md
-CLAUDE.md
 AGENTS.md
+CLAUDE.md
 skills/
 .claude/settings.json
 .codex/config.toml
@@ -20,10 +19,10 @@ the migration before writing.
 
 ## Move portable meaning once
 
-Move shared identity, voice, role, and boundaries into `PERSONA.md`. Reduce
-`CLAUDE.md` and `AGENTS.md` to native entry points that load it. Keep reusable
-role procedure in `skills/`. Claude Code and Codex then consume the same
-portable persona through their own native entry files.
+Move shared identity, voice, role, and boundaries into `AGENTS.md`. Reduce
+`CLAUDE.md` to an `@AGENTS.md` import. Keep reusable role procedure in
+`skills/`. Claude Code and Codex then consume the same portable persona through
+their native entry files.
 
 Do not bulk-replace persona-owned content. Preserve `user/profile.md`,
 `user/memory/`, local settings, and integrations.
@@ -33,7 +32,7 @@ Do not bulk-replace persona-owned content. Preserve `user/profile.md`,
 After reviewing the exact paths, remove obsolete framework stamps, the public
 `bin/personas` CLI, Cloud repository markers, visibility adapters, generated
 privacy workflows, publishing guards, and default persona hooks. They are not
-part of the 3.0.0 folder contract.
+part of the 5.0.0 folder contract.
 
 Cloud uses the same publishable folder. A private repository is recommended for
 personalized use, but visibility is user-managed and credentials remain

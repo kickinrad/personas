@@ -5,6 +5,7 @@ user/
 .claude/settings.local.json
 .codex/*.local.toml
 .mcp.json
+.mcp.json.lock
 
 # Credentials and environment files
 .env

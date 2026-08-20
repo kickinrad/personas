@@ -1,5 +1,49 @@
 # Personas folder parity evidence
 
+## Current v5 canary — 2026-08-17
+
+The synthetic, non-secret Atlas fixture at `/tmp/personas-v5-canary` exercised
+the v5 contract: portable `AGENTS.md`, optional profile and memory routing,
+and role-skill discovery. No live persona, credential, or external system was
+mutated.
+
+### Codex
+
+```text
+cd /tmp/personas-v5-canary && codex exec --skip-git-repo-check --ephemeral --ignore-user-config --sandbox read-only --json
+```
+
+Final result exactly:
+
+```text
+Atlas | weather ahead | do not publish or mutate external systems without approval | CERULEAN-COMPASS | HARBOR-SEVEN | NORTHSTAR-READY
+```
+
+This proves `AGENTS.md` loading plus profile, memory, and skill routing.
+
+### Claude Code
+
+```text
+cd /tmp/personas-v5-canary && claude --setting-sources project,local --model claude-opus-4-6[1m] --plugin-dir ~/projects/markets/personas-framework -p --output-format json
+```
+
+Final result exactly:
+
+```text
+Atlas|weather ahead|Ask before publication|CERULEAN-COMPASS|HARBOR-SEVEN|NORTHSTAR-READY
+```
+
+The JSON `modelUsage` reports `claude-opus-4-6[1m]` with context window
+`1000000`; there were no permission denials. This proves the Claude import
+path and the tracked model setting under the same synthetic fixture.
+
+### Current verdict
+
+Codex and Claude Code passed the v5 behavior canary. This evidence covers
+explicit folder context, not synchronization of runtime-native memory stores.
+
+## Historical v3 canary — 2026-07-31
+
 _Recorded 2026-07-31 against the sanitized Atlas folder in a temporary Git
 repository. No live persona home was read or changed._
 
@@ -40,8 +84,8 @@ The temporary ignored local context contained:
 
 ## Verdict
 
-Both runtimes passed the same six behavioral probes. Codex support is therefore
-promoted from experimental to supported for the 3.0.0 folder contract.
+Both runtimes passed the same six behavioral probes for the historical 3.0.0
+folder contract.
 
 This evidence proves explicit folder-memory reading. It does not claim that
 Claude and Codex native auto-memory stores synchronize.

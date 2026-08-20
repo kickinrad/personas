@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.0 — 2026-08-17
+
+### Changed
+
+- Made `AGENTS.md` the single portable persona definition.
+- Reduced `CLAUDE.md` to a native import of that definition.
+
 ## 4.0.0 — 2026-08-06
 
 ### Changed

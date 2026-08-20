@@ -34,7 +34,7 @@ class DocumentationTest(unittest.TestCase):
             "claude code local",
             "claude code cloud",
             "codex",
-            "persona.md",
+            "agents.md",
             "/plugin marketplace add kickinrad/personas-framework",
         ):
             self.assertIn(phrase, first_screen)
@@ -71,7 +71,6 @@ class DocumentationTest(unittest.TestCase):
 
     def test_sanitized_example_is_a_complete_persona_folder(self) -> None:
         expected = {
-            "PERSONA.md",
             "CLAUDE.md",
             "AGENTS.md",
             "README.md",
@@ -84,6 +83,7 @@ class DocumentationTest(unittest.TestCase):
         self.assertEqual(actual, expected)
         all_text = "\n".join((EXAMPLE / path).read_text(encoding="utf-8") for path in expected)
         self.assertNotRegex(all_text, r"(?i)(password|private key|real integration)")
+        self.assertNotIn("PERSONA.md", all_text)
 
     def test_local_markdown_links_resolve(self) -> None:
         for document in DOCS:

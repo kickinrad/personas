@@ -9,7 +9,7 @@ Improve the persona without duplicating authority.
 
 ## Route the change
 
-- Identity, voice, role, and boundaries belong in `PERSONA.md`.
+- Identity, voice, role, and boundaries belong in `AGENTS.md`.
 - A recurring multi-step procedure belongs in one portable role skill.
 - Explicit persona memory belongs in ignored `user/memory/MEMORY.md` with user
   approval.

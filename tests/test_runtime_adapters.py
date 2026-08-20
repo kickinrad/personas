@@ -29,7 +29,6 @@ def render(name: str) -> str:
 
 def create_fixture(home: Path, *, private_context: bool = True) -> None:
     destinations = {
-        "persona-template.md": "PERSONA.md",
         "claude-md-template.md": "CLAUDE.md",
         "agents-template.md": "AGENTS.md",
         "readme-template.md": "README.md",
@@ -57,18 +56,27 @@ def create_fixture(home: Path, *, private_context: bool = True) -> None:
 
 
 class RuntimeAdapterTest(unittest.TestCase):
-    def test_folder_has_one_portable_authority_and_two_native_adapters(self) -> None:
+    def test_folder_has_one_portable_authority_and_one_native_import(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             home = Path(directory) / "atlas"
             create_fixture(home)
-            self.assertTrue((home / "PERSONA.md").is_file())
             claude = (home / "CLAUDE.md").read_text(encoding="utf-8")
-            codex = (home / "AGENTS.md").read_text(encoding="utf-8")
-            for adapter in (claude, codex):
-                for source in ("PERSONA.md", "user/profile.md", "user/memory/MEMORY.md", "skills/"):
-                    self.assertIn(source, adapter)
-            self.assertNotIn("translate Claude", codex)
-            self.assertNotIn("canonicalRuntime", codex)
+            agents = (home / "AGENTS.md").read_text(encoding="utf-8")
+            self.assertFalse((home / "PERSONA.md").exists())
+            self.assertEqual(claude.splitlines()[-1], "@AGENTS.md")
+            self.assertIn("## Role and authority", agents)
+            self.assertIn("vault:curator", agents)
+            self.assertIn("skills/", agents)
+            self.assertIn("user/profile.md", agents)
+            self.assertIn("user/memory/MEMORY.md", agents)
+            for forbidden in (
+                "PERSONA.md",
+                "Before acting:",
+                "## Working approach",
+                "1. ",
+                "output-style",
+            ):
+                self.assertNotIn(forbidden, agents)
 
     def test_native_settings_are_minimal_parseable_and_hook_free(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -77,6 +85,7 @@ class RuntimeAdapterTest(unittest.TestCase):
             claude = json.loads((home / ".claude/settings.json").read_text(encoding="utf-8"))
             codex = tomllib.loads((home / ".codex/config.toml").read_text(encoding="utf-8"))
             self.assertEqual(claude["sandbox"]["enabled"], True)
+            self.assertEqual(claude["model"], "claude-opus-4-6[1m]")
             self.assertNotIn("hooks", claude)
             self.assertEqual(codex["sandbox_mode"], "workspace-write")
             self.assertFalse(codex["sandbox_workspace_write"]["network_access"])
@@ -92,11 +101,13 @@ class RuntimeAdapterTest(unittest.TestCase):
             self.assertIn("user/", ignore)
             self.assertTrue((local / "user/memory/MEMORY.md").is_file())
             self.assertFalse((cloud / "user").exists())
-            self.assertTrue((cloud / "PERSONA.md").is_file())
+            self.assertTrue((cloud / "AGENTS.md").is_file())
+            self.assertFalse((cloud / "PERSONA.md").exists())
 
     def test_capability_claims_name_executable_parity_evidence(self) -> None:
         capabilities = json.loads((ROOT / "interop/capabilities.json").read_text(encoding="utf-8"))
-        self.assertEqual(capabilities["portableAuthority"], "PERSONA.md")
+        self.assertEqual(capabilities["portableAuthority"], "AGENTS.md")
+        self.assertEqual(capabilities["runtimes"]["claude-code"]["imports"], ["AGENTS.md"])
         self.assertEqual(capabilities["runtimes"]["codex"]["status"], "native")
         for runtime in ("claude-code", "codex"):
             probes = capabilities["runtimes"][runtime]["acceptanceProbes"]

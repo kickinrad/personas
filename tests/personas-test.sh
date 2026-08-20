@@ -16,20 +16,22 @@ check() {
   fi
 }
 
-echo "Testing: personas 4.0.0"
+echo "Testing: personas 5.0.0"
 
 for manifest in .claude-plugin/plugin.json .codex-plugin/plugin.json; do
   version=$(jq -r '.version // empty' "$ROOT/$manifest")
-  [[ "$version" == 4.0.0 ]] && check "$manifest version" pass || check "$manifest version" "expected 4.0.0, got ${version:-missing}"
+  [[ "$version" == 5.0.0 ]] && check "$manifest version" pass || check "$manifest version" "expected 5.0.0, got ${version:-missing}"
 done
 
 while IFS= read -r -d '' skill; do
   grep -q '^---$' "$skill" && check "frontmatter: ${skill#"$ROOT"/}" pass || check "frontmatter: ${skill#"$ROOT"/}" missing
 done < <(find "$ROOT/skills" -name SKILL.md -type f -print0)
 
-for relative in PERSONA.md CLAUDE.md AGENTS.md .claude/settings.json .codex/config.toml skills/atlas-review/SKILL.md; do
+for relative in CLAUDE.md AGENTS.md .claude/settings.json .codex/config.toml skills/atlas-review/SKILL.md; do
   [[ -f "$ROOT/examples/atlas-sanitized/$relative" ]] && check "example: $relative" pass || check "example: $relative" missing
 done
+
+[[ ! -e "$ROOT/examples/atlas-sanitized/PERSONA.md" ]] && check "example has no legacy portable definition" pass || check "example has no legacy portable definition" present
 
 secret_hits=""
 while IFS= read -r -d '' file; do
