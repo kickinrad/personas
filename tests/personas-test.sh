@@ -16,11 +16,11 @@ check() {
   fi
 }
 
-echo "Testing: personas 5.0.0"
+echo "Testing: personas 6.0.0"
 
 for manifest in .claude-plugin/plugin.json .codex-plugin/plugin.json; do
   version=$(jq -r '.version // empty' "$ROOT/$manifest")
-  [[ "$version" == 5.0.0 ]] && check "$manifest version" pass || check "$manifest version" "expected 5.0.0, got ${version:-missing}"
+  [[ "$version" == 6.0.0 ]] && check "$manifest version" pass || check "$manifest version" "expected 6.0.0, got ${version:-missing}"
 done
 
 while IFS= read -r -d '' skill; do

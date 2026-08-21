@@ -8,7 +8,7 @@ aside; never overwrite an existing persona blindly.
 
 ## The target directory already exists
 
-Treat it as an existing persona and use `personas:persona-update`, or
+Treat it as an existing persona and use `personas:persona-dev`, or
 choose another empty directory. Preserve its identity, skills, and `user/`
 content until ownership is clear.
 
@@ -28,6 +28,14 @@ directory.
 
 Codex support was earned by the release canary. Do not describe a new loader or
 setting as supported until it passes the same parity probes.
+
+## Native agent adapter is stale or will not install
+
+Run `persona-native-sync.py --persona PATH --runtime all` without `--apply`.
+It will report drift without writing. The helper refuses unmarked target files,
+so rename or resolve a manually owned collision before approving `--apply`.
+Claude also needs access to the live absolute `AGENTS.md`; the helper does not
+alter Claude's global permissions.
 
 ## Memory is missing
 

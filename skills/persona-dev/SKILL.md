@@ -1,6 +1,6 @@
 ---
 name: persona-dev
-description: Use when the user asks to create or design a persona, extend an existing persona with a role workflow, or connect an approved capability to a persona folder. NOT for framework reconciliation; use persona-update.
+description: Use when the user asks to create, evolve, reconcile, or activate a persona folder, or connect an approved capability to it.
 ---
 
 # Develop a persona
@@ -38,12 +38,25 @@ private local context, and external knowledge sources distinct.
 9. Ask separately before plugin installation, repository creation, external
    connection, publishing, or changes to an existing persona's private data.
 
-## Extend
+## Evolve or reconcile
 
 For an existing persona, inspect its folder first and edit only the owning
 surface; `self-improve`'s "Route the change" list owns content routing. Prefer
 an existing capability over a new wrapper. Read `references/lifecycle-meta.md`
 when ownership between those surfaces is unclear.
+
+Compare existing folders with the current portable contract, classify each
+difference as adapter drift, persona-owned customization, obsolete machinery,
+or ambiguity, and show the reconciliation plan before writing. Preserve
+persona-owned meaning and optional ignored `user/` context.
+
+## Activate native adapters
+
+Use `scripts/persona-native-sync.py --persona PATH --runtime claude|codex|all`
+to validate and report native-agent drift. Add `--apply` only after explicit
+approval to install runtime state. The helper generates adapters that read the
+live absolute `AGENTS.md`; it never copies identity prose. It reports the
+Claude path-access requirement and never changes global Claude permissions.
 
 ## Verify
 

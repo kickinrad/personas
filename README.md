@@ -5,7 +5,7 @@
 <h1 align="center">Personas</h1>
 
 <p align="center">
-  A persona is a folder that teaches an AI collaborator how to work with you.
+A persona is a folder that gives an AI collaborator a durable role.
 </p>
 
 <p align="center">
@@ -103,12 +103,18 @@ GitHub token, marker file, visibility preflight, generated CI workflow, or
 startup guard. More importantly, keep `user/`, local settings, connections, and
 credentials out of Git regardless of repository visibility.
 
+## Persona or specialist?
+
+A persona is the durable collaborator: role, voice, boundaries, and reusable
+workflows that should remain coherent across many sessions. A specialist is a
+focused, replaceable workflow for one bounded job. Put enduring working
+identity in a persona; put a narrow procedure in a skill or specialist.
+
 ## Core workflows
 
 | Goal | Skill |
 |---|---|
-| Create or extend a persona | `personas:persona-dev` |
-| Reconcile an existing folder | `personas:persona-update` |
+| Create, evolve, reconcile, or activate a persona | `personas:persona-dev` |
 | Improve identity or procedure from real evidence | `personas:self-improve` |
 
 Each workflow plans first, preserves persona-owned content, and keeps one source
@@ -120,21 +126,20 @@ For a few instructions, you should. Personas becomes useful when the
 collaborator has a distinct role, reusable workflows, private local context, or
 needs to work in both Claude Code and Codex.
 
-It adds one portable persona definition, shared skills, native runtime entry
-points, and a careful update workflow while keeping every file readable.
+It adds one portable persona definition, shared skills, and small native
+runtime entry points while keeping every file readable.
 
 ## Runtime support
 
 | Runtime | Status | Adapter |
 |---|---|---|
-| Claude Code local | Supported | `CLAUDE.md` and `.claude/settings.json` |
+| Claude Code local | Supported | `CLAUDE.md`, `.claude/settings.json`, and optional native-agent sync |
 | Claude Code Cloud | Supported folder model | Same publishable Claude folder; ignored local context is absent |
-| Codex | Supported | `AGENTS.md`, `.codex/config.toml`, and shared plugin skills |
+| Codex | Supported | `AGENTS.md`, `.codex/config.toml`, shared skills, and optional native-agent sync |
 | Gemini CLI / Kimi Code | Unsupported | No native adapter has been proven |
 
-Claude Code and Codex passed the same clean identity, voice, boundary, skill,
-profile, and explicit-memory canary. Parity is a release gate, not an
-aspiration.
+Native-agent promotion is on demand: `persona-native-sync.py` validates first
+and applies only with explicit approval.
 
 ## Project documentation
 

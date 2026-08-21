@@ -2,16 +2,17 @@
 
 | Runtime | Status | Supported path |
 |---|---|---|
-| Claude Code local | Supported | `CLAUDE.md`, `.claude/settings.json`, shared skills, and optional explicit folder memory |
+| Claude Code local | Supported | `CLAUDE.md`, `.claude/settings.json`, shared skills, optional explicit folder memory, and on-demand marked native agents |
 | Claude Code Cloud | Supported folder model | The same publishable Claude folder in a repository; ignored local context is normally absent |
-| Codex | Supported | `AGENTS.md`, `.codex/config.toml`, shared skills, and optional explicit folder memory |
+| Codex | Supported | `AGENTS.md`, `.codex/config.toml`, shared skills, optional explicit folder memory, and on-demand marked native agents |
 | Gemini CLI / Kimi Code | Unsupported | No native adapter has passed the parity gate |
 
-## Parity gate
+## Native-agent boundary
 
-A runtime is supported only when a clean installed behavioral canary proves that it loads
-the persona's identity, voice, boundary, role skill, optional local profile, and
-explicit folder memory. File presence alone is insufficient.
+`persona-native-sync.py` validates adapters by default and writes only when
+`--apply` is explicitly requested. Generated adapters read the live absolute
+`AGENTS.md`; unmarked or other-source files are never overwritten. Claude path
+access remains a user/runtime configuration decision.
 
 ## Memory boundary
 

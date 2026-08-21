@@ -1,6 +1,6 @@
 ---
 name: self-improve
-description: Use when a persona is asked to self-improve, promote a repeated correction into a rule, turn recurring work into a skill, or review its local procedures. NOT for framework upgrades; use persona-update.
+description: Use when a persona is asked to self-improve, promote a repeated correction into a rule, turn recurring work into a skill, or review its local procedures.
 ---
 
 # Self-improve
@@ -16,7 +16,7 @@ Improve the persona without duplicating authority.
 - Stable knowledge belongs in its owning external system, with only the minimum
   useful persona-local pointer.
 - Claude- or Codex-only mechanics belong in the matching runtime adapter.
-- Framework structure belongs in Personas and routes to `persona-update`.
+- Framework structure belongs in Personas and routes to `persona-dev`.
 
 ## Promote evidence
 

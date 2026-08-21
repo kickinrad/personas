@@ -42,7 +42,7 @@ class DocumentationTest(unittest.TestCase):
     def test_readme_uses_only_current_user_interfaces(self) -> None:
         text = README.read_text(encoding="utf-8")
         self.assertIn("personas:persona-dev", text)
-        self.assertIn("personas:persona-update", text)
+        self.assertNotIn("personas:persona-update", text)
         self.assertIn("personas:self-improve", text)
         for retired in (
             "bin/personas create",
@@ -58,16 +58,14 @@ class DocumentationTest(unittest.TestCase):
         text = README.read_text(encoding="utf-8")
         for phrase in (
             "user/memory/MEMORY.md",
-            "$CODEX_HOME/memories",
-            "do not synchronize",
             "private repository",
             "trusts you",
             "out of Git",
         ):
             self.assertIn(phrase, text)
         support = (ROOT / "SUPPORT.md").read_text(encoding="utf-8")
-        self.assertIn("behavioral canary", support)
-        self.assertIn("user-managed", support)
+        self.assertIn("persona-native-sync.py", support)
+        self.assertIn("--apply", support)
 
     def test_sanitized_example_is_a_complete_persona_folder(self) -> None:
         expected = {

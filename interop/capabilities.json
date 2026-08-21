@@ -1,10 +1,10 @@
 {
-  "schemaVersion": 5,
+  "schemaVersion": 6,
   "component": "personas",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "residency": {"claude-code": "on-demand", "codex": "on-demand"},
   "portableAuthority": "AGENTS.md",
-  "portableSkills": ["persona-dev", "persona-update", "self-improve"],
+  "portableSkills": ["persona-dev", "self-improve"],
   "folderMemory": {
     "path": "user/memory/MEMORY.md",
     "tracked": false,
@@ -22,15 +22,14 @@
       "imports": ["AGENTS.md"],
       "projectSettings": ".claude/settings.json",
       "skills": true,
-      "acceptanceProbes": ["identity", "voice", "boundary", "skill", "profile", "explicit-memory"]
+      "personaNativeSync": "skills/persona-dev/scripts/persona-native-sync.py"
     },
     "codex": {
       "status": "native",
       "instructions": "AGENTS.md",
       "projectSettings": ".codex/config.toml",
       "skills": true,
-      "acceptanceProbes": ["identity", "voice", "boundary", "skill", "profile", "explicit-memory"],
-      "canaryEvidence": ".claude/evidence/personas-folder-parity.md"
+      "personaNativeSync": "skills/persona-dev/scripts/persona-native-sync.py"
     },
     "gemini-cli": {"status": "unsupported", "reason": "No native adapter is authored."},
     "kimi-code": {"status": "unsupported", "reason": "No native adapter is authored."}

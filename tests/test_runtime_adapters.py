@@ -65,7 +65,7 @@ class RuntimeAdapterTest(unittest.TestCase):
             self.assertFalse((home / "PERSONA.md").exists())
             self.assertEqual(claude.splitlines()[-1], "@AGENTS.md")
             self.assertIn("## Role and authority", agents)
-            self.assertIn("vault:curator", agents)
+            self.assertNotIn("vault:curator", agents)
             self.assertIn("skills/", agents)
             self.assertIn("user/profile.md", agents)
             self.assertIn("user/memory/MEMORY.md", agents)
@@ -110,11 +110,7 @@ class RuntimeAdapterTest(unittest.TestCase):
         self.assertEqual(capabilities["runtimes"]["claude-code"]["imports"], ["AGENTS.md"])
         self.assertEqual(capabilities["runtimes"]["codex"]["status"], "native")
         for runtime in ("claude-code", "codex"):
-            probes = capabilities["runtimes"][runtime]["acceptanceProbes"]
-            self.assertEqual(
-                set(probes),
-                {"identity", "voice", "boundary", "skill", "profile", "explicit-memory"},
-            )
+            self.assertEqual(capabilities["runtimes"][runtime]["personaNativeSync"], "skills/persona-dev/scripts/persona-native-sync.py")
 
 
 if __name__ == "__main__":

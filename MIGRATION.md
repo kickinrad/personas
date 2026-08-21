@@ -1,7 +1,7 @@
-# Migration to Personas 5.0.0
+# Migration to Personas 6.0.0
 
-Version 5.0.0 makes `AGENTS.md` the one portable persona definition; Claude
-Code imports it through a deliberately thin `CLAUDE.md` adapter.
+Version 6.0.0 keeps `AGENTS.md` as the portable persona definition and folds
+creation, evolution, reconciliation, and native activation into `persona-dev`.
 
 ## Target folder
 
@@ -14,7 +14,7 @@ skills/
 user/                       # optional and ignored
 ```
 
-Use `personas:persona-update` to inspect an existing folder and propose
+Use `personas:persona-dev` to inspect an existing folder and propose
 the migration before writing.
 
 ## Move portable meaning once
@@ -27,12 +27,21 @@ their native entry files.
 Do not bulk-replace persona-owned content. Preserve `user/profile.md`,
 `user/memory/`, local settings, and integrations.
 
+## Optional native agents
+
+For an on-demand global Claude or Codex agent, run the bundled sync helper
+without `--apply` first. It derives its name and description from `AGENTS.md`,
+keeps adapters marked and collision-safe, and reads the live absolute source
+instead of copying identity text. If `.mcp.json` exists, it translates only
+stdio and streamable HTTP servers; unsupported transports, fields, and literal
+credentials stop the run.
+
 ## Remove transitional machinery
 
 After reviewing the exact paths, remove obsolete framework stamps, the public
 `bin/personas` CLI, Cloud repository markers, visibility adapters, generated
 privacy workflows, publishing guards, and default persona hooks. They are not
-part of the 5.0.0 folder contract.
+part of the current folder contract.
 
 Cloud uses the same publishable folder. A private repository is recommended for
 personalized use, but visibility is user-managed and credentials remain

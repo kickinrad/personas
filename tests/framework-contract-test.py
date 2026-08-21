@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "5.0.0"
+VERSION = "6.0.0"
 ASSETS = ROOT / "skills/persona-dev/assets"
 
 
@@ -40,7 +40,7 @@ class FrameworkContractTest(unittest.TestCase):
         claude = (ASSETS / "claude-md-template.md").read_text(encoding="utf-8")
         self.assertLessEqual(len(agents.split()), 300)
         self.assertLessEqual(len(claude.split()), 80)
-        for phrase in ("## Role and authority", "## Voice", "## Boundaries", "vault:curator", "skills/"):
+        for phrase in ("## Role and authority", "## Voice", "## Boundaries", "skills/"):
             self.assertIn(phrase, agents)
         for forbidden in ("PERSONA.md", "## Working approach", "Before acting:", "enabledPlugins", "extraKnownMarketplaces", "1. "):
             self.assertNotIn(forbidden, agents)
@@ -98,7 +98,7 @@ class FrameworkContractTest(unittest.TestCase):
 
     def test_shared_skills_are_the_only_plugin_workflows(self) -> None:
         names = {path.parent.name for path in (ROOT / "skills").glob("*/SKILL.md")}
-        self.assertEqual(names, {"persona-dev", "persona-update", "self-improve"})
+        self.assertEqual(names, {"persona-dev", "self-improve"})
 
 
 if __name__ == "__main__":

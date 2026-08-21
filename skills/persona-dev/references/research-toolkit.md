@@ -18,11 +18,11 @@ satisfy.
 | Lifecycle enforcement | one narrow hook |
 | Deterministic transformation | `tools/` script |
 | Role-local explanatory depth | `docs/` reference |
-| Durable knowledge or current state | vault note through Curator |
+| Durable knowledge or current state | its canonical owner |
 
-Keep credentials in 1Password and configuration outside committed templates.
+Keep credentials and local configuration outside committed templates.
 Installing or connecting a capability requires explicit approval. Record an
-executable dependency in the owning component; a vault citation is never an
+executable dependency in the owning component; a knowledge citation is never an
 installation edge.
 
 Verify one positive control in the target persona and one isolation control

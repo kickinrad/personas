@@ -81,6 +81,7 @@ class RepositoryInventoryTest(unittest.TestCase):
             "test_fleet_verifier.py",
             "verify-fleet.py",
             "test_runtime_adapters.py",
+            "test_persona_native_sync.py",
             "test_documentation.py",
             "test_repository_inventory.py",
             "test_release.py",

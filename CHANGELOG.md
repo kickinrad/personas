@@ -1,5 +1,16 @@
 # Changelog
 
+## 6.0.0 — 2026-08-20
+
+### Changed
+
+- Folded persona creation, evolution, reconciliation, and optional native
+  activation into `persona-dev`; retired `persona-update`.
+- Added on-demand, marked and collision-safe Claude/Codex native-agent sync
+  from the live `AGENTS.md`, including narrow local MCP translation.
+- Removed public host-specific identity, credential-manager, and local-path
+  coupling.
+
 ## 5.0.0 — 2026-08-17
 
 ### Changed
@@ -13,8 +24,7 @@
 
 - Renamed the public plugin from `persona-manager` to `personas`, matching the
   project and marketplace name.
-- Kept the folder contract and the `persona-dev`, `persona-update`, and
-  `self-improve` workflows unchanged.
+- Kept the folder contract and its original portable workflows unchanged.
 
 ## 3.0.0 — 2026-07-31
 
