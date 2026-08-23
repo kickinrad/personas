@@ -6,6 +6,15 @@ imports that definition through `CLAUDE.md`. Codex does not use `.claude-flags`.
 
 ## Contract
 
+The launcher passes caller arguments through to the Claude CLI verbatim; it
+maintains no flag allowlist. It interprets only a leading
+`--session-id`/`--resume` pair for Agent Deck transcript reconciliation.
+Persona preferences (model, remote control, Discord chrome and channels) are
+defaults added only when neither `.claude-flags` nor the caller supplied the
+flag; `--setting-sources` and `--add-dir` are always applied. Launcher errors
+must stay readable in a tmux pane rather than exiting into a silent spawn
+failure.
+
 Discover supported flags from the installed Claude CLI before proposing them.
 Store the approved single-line set in `.claude-flags`; the launcher reads it as
 configuration, not shell code.
