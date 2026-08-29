@@ -31,7 +31,7 @@ plugin-shipped `self-improve` skill is canonical.
 
 1. Snapshot source and preserve unrelated work before editing.
 2. Work in an isolated migration branch or worktree.
-3. Keep this release aligned at `6.0.0`; do not create a documentation-only or
+3. Keep this release aligned at `6.1.0`; do not create a documentation-only or
    staging version bump.
 4. Declare runtime support in each plugin's `interop/capabilities.json`.
    Claude support is native only where proven. Missing adapters are

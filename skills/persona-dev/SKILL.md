@@ -55,12 +55,17 @@ persona-owned meaning and optional ignored `user/` context.
 Use `scripts/persona-native-sync.py --persona PATH --runtime claude|codex|all`
 to validate and report native-agent drift. Add `--apply` only after explicit
 approval to install runtime state. The helper generates adapters that read the
-live absolute `AGENTS.md`; it never copies identity prose. It reports the
-Claude path-access requirement and never changes global Claude permissions.
+live absolute `AGENTS.md`; it never copies identity prose or private MCP
+bindings. Pass a named `--codex-mcp <binding>` only after validating an
+equivalent role-bound Codex provider; Claude-only bindings never project by
+default. It reports the Claude path-access requirement and never changes global
+Claude permissions.
 
 ## Verify
 
 Read the finished folder as a user would. Check that it is understandable,
 contains no duplicated doctrine, keeps private state ignored, and provides
-equivalent Claude and Codex entry paths. Run the framework test suite only when
-changing the framework itself.
+equivalent Claude and Codex entry paths. For each approved capability, execute
+the `research-toolkit.md` controls: installed plugin, settings/MCP alignment,
+private bindings, resolver success, fresh-session discovery, and isolation.
+Run the framework test suite when changing the framework itself.
