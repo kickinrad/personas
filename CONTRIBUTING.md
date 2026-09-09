@@ -1,6 +1,7 @@
 # Contributing
 
-Keep Personas easy to understand and preserve persona-owned content.
+Thanks for helping make Personas better. Aim for changes that make it easier
+to use and understand, while keeping people's existing personas intact.
 
 ## Development
 
@@ -11,16 +12,18 @@ Create a focused branch and run:
 bash tests/run-tests.sh
 ```
 
-The same offline gate runs in CI against a checkout and a source export.
-Tests use temporary homes; never point them at a live persona or runtime home.
+CI runs the same tests against both a Git checkout and an exported copy of
+the source. Tests use temporary folders; never point them at a real persona
+or your normal Claude/Codex home.
 
-Keep lifecycle procedure and templates under their owning skill. Add behavior
-tests for changed contracts, including a failing case. For runtime changes,
-also run a synthetic Claude/Codex acceptance probe and record versions,
-results, and limits in [runtime evidence](docs/runtime-evidence.md).
+Keep each skill's procedures and templates together. When behavior changes,
+add a test for what should happen and a case that should fail safely. For
+runtime changes, also try the behavior with a disposable persona in Claude
+or Codex, as appropriate. Record versions, results, and limits in
+[runtime evidence](docs/runtime-evidence.md).
 
-Pull requests explain the user outcome and verification. Include a DCO sign-off
-with `git commit -s`.
+In your pull request, explain what improves for the user and how you checked
+it. Include a DCO sign-off with `git commit -s`.
 
 ## Release
 
@@ -31,7 +34,7 @@ with `git commit -s`.
    behavior. Merge the reviewed pull request after hosted CI passes.
 3. Tag the tested merge commit as `personas--v<VERSION>` and publish its
    changelog entry as the release notes.
-4. Install the release through the runtime's plugin flow and test a synthetic
-   persona before separately reviewing any live-folder reconciliation.
+4. Install the release through the runtime's plugin flow and test a disposable
+   persona before reviewing updates to any real persona folders.
 
 Use the [rollback procedure](docs/rollback.md) if a release needs recovery.

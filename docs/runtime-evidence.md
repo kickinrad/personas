@@ -1,5 +1,22 @@
 # Runtime acceptance evidence
 
+## Julia example — 2026-09-09
+
+A disposable copy of the Julia example was tested without the Personas plugin,
+private context, or external integrations in Claude Code 2.1.266
+(`claude-sonnet-5`, medium) and Codex CLI 0.153.4 (`gpt-5.6-sol`, medium).
+Claude used print/plan mode, Read/Glob/Grep tools, project/local settings,
+strict MCP configuration, and no session persistence. Codex used an ephemeral
+read-only session without user configuration.
+
+Both read the local definition and `julia-meal-plan` skill, proposed a dinner
+from supplied ingredients, labeled extra pantry staples as optional, and
+stated that grocery orders or shared-list changes needed approval and an
+available connection. Claude reported no permission denials. The tested folder
+matched the source afterward. These are instruction-following smoke checks,
+not proof of cooking accuracy or every runtime configuration; Cloud and live
+integrations were not tested.
+
 ## 6.2.1 folder probe — 2026-09-09
 
 A temporary copy of the Atlas example, with synthetic ignored context, was
