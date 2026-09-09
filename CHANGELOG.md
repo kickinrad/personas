@@ -1,5 +1,28 @@
 # Changelog
 
+## 6.2.1 — 2026-09-09
+
+- Prevent generated adapters from replacing another persona's files and check
+  all selected destinations before applying changes.
+- Correct MCP key and description quoting; isolate Claude generation from
+  Codex configuration and preserve independent profile and agent modes.
+- Replace content-hash drift with explicit source ownership. Legacy profiles
+  without ownership need reviewed regeneration.
+- Inherit runtime model choices for new personas and preserve existing
+  persona settings.
+- Simplify offline testing, support source exports, and remove the `jq`
+  requirement and personal fleet policy from public validation.
+- Consolidate usage documentation and retain completed task records in Git
+  history.
+
+## 6.2.0 — 2026-09-01
+
+### Changed
+
+- Added independent Codex profile and native-agent generation.
+- Limited Codex MCP validation and projection to explicitly selected bindings,
+  preserving Claude-only transports without weakening profile validation.
+
 ## 6.0.0 — 2026-08-20
 
 ### Changed

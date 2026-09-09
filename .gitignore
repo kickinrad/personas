@@ -6,6 +6,3 @@ __pycache__/
 *.log
 *.local.json
 *.local.md
-
-# Top-level docs/ only — plugin-internal docs (e.g. plugins/*/docs/) stay tracked.
-/docs/

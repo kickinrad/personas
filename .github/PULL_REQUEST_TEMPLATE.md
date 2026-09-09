@@ -1,17 +1,7 @@
-## Summary
+## Outcome
 
-<!-- What does this PR do? Why? -->
+<!-- What changes for users, and why? -->
 
-## Type of Change
+## Verification
 
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Breaking change
-- [ ] Documentation update
-
-## Checklist
-
-- [ ] Code follows project style
-- [ ] Self-reviewed
-- [ ] Tests added/updated (if applicable)
-- [ ] Documentation updated (if applicable)
+<!-- Checks run, results, and any remaining limitations. -->

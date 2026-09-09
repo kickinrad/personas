@@ -2,47 +2,25 @@
   <img src="assets/banner.svg" alt="Personas" width="650">
 </p>
 
-<h1 align="center">Personas</h1>
+# Personas
 
-<p align="center">
 A persona is a folder that gives an AI collaborator a durable role.
-</p>
+Create one for **Claude Code or Codex**, with its own voice, boundaries,
+workflows, and optional private context.
 
-<p align="center">
-  <a href="https://github.com/kickinrad/personas-framework/actions/workflows/ci.yml"><img src="https://github.com/kickinrad/personas-framework/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="Apache 2.0 license"></a>
-</p>
-
-Re-explaining your role, preferences, and working style in every AI session gets
-old. Personas helps you create one durable collaborator as readable
-Markdown, shared skills, and small native adapters for **Claude Code local**,
-**Claude Code Cloud**, and **Codex**.
-
-```text
-atlas/
-├── AGENTS.md                  # portable identity, role, voice, and boundaries
-├── CLAUDE.md                  # Claude Code import of AGENTS.md
-├── skills/                    # reusable role workflows
-├── .claude/settings.json      # native Claude project settings
-├── .codex/config.toml         # native Codex project settings
-└── user/                      # optional, ignored local context
-    ├── profile.md
-    └── memory/MEMORY.md
-```
-
-That folder is the product. There is no persona daemon, database, account, or
-required management CLI.
+[![CI](https://github.com/kickinrad/personas-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/kickinrad/personas-framework/actions/workflows/ci.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
 ## Install
 
-### Claude Code
+In Claude Code:
 
 ```text
 /plugin marketplace add kickinrad/personas-framework
 /plugin install personas@personas
 ```
 
-### Codex
+For Codex:
 
 ```bash
 codex plugin marketplace add kickinrad/personas-framework
@@ -51,110 +29,42 @@ codex plugin add personas --marketplace personas
 
 ## Create your first persona
 
-Ask the installed plugin:
+Ask your agent:
 
 ```text
-Use personas:persona-dev to create a software-review persona named
-Atlas. Show me the complete folder plan before writing anything.
+Use personas:persona-dev to create a software-review persona named Atlas.
 ```
 
-Personas helps define the role, voice, boundaries, and useful workflows;
-shows the proposed folder; and waits for approval before writing it. Start with
-the [sanitized Atlas example](examples/atlas-sanitized/README.md) if you want to
-inspect a finished folder first.
+The skill helps define the role and shows a folder plan for approval.
+Once created, open the folder in Claude Code or Codex and ask Atlas to review
+a small change. See the [complete Atlas example](examples/atlas/README.md).
 
-## How the folder works
+```text
+atlas/
+├── AGENTS.md              # identity, voice, role, and boundaries
+├── CLAUDE.md              # imports AGENTS.md for Claude Code
+├── skills/                # reusable role workflows
+├── .claude/settings.json  # Claude project settings
+├── .codex/config.toml     # Codex project settings
+└── user/                  # optional, ignored profile and memory
+```
 
-`AGENTS.md` is the portable source of truth. It contains the collaborator's
-identity and behavior without referring to a particular AI runtime.
+Use `personas:persona-dev` to evolve the folder or activate native agents.
+Use `personas:self-improve` to turn repeated feedback into a focused improvement.
+Your model choice stays with your runtime or explicit persona settings.
 
-Codex discovers `AGENTS.md`. Claude Code discovers `CLAUDE.md`, which imports
-that same definition. Reusable workflows live under `skills/`; private local
-context remains outside the portable definition.
+## Learn more
 
-The `.claude/` and `.codex/` directories contain only native project settings.
-They are adapters, not competing persona definitions. Personas adds no
-default lifecycle hooks; instructions and skills should carry the behavior
-unless a future feature demonstrates that mechanical enforcement is necessary.
+Keep personal context, local connections, and credentials out of Git. A fresh
+clone, including a Claude Code Cloud checkout, uses the portable definition
+without ignored local context.
 
-## Memory
-
-`user/memory/MEMORY.md` is explicit persona memory: ordinary ignored Markdown
-that both Claude Code and Codex can read when it exists locally. You control
-what goes into it.
-
-Native auto-memory is separate:
-
-- Claude may maintain runtime-owned memory through its own settings.
-- Codex can maintain experimental local memories under `$CODEX_HOME/memories`.
-
-Those native stores do not synchronize, and persona identity never depends on
-them. A fresh Cloud checkout normally has no ignored `user/` directory and
-still works from its publishable persona definition.
-
-## Claude Code Cloud
-
-Cloud uses the same persona folder—there is no special Cloud profile. Commit
-only the publishable definition and open its repository in Claude Code Cloud.
-
-Use a private repository for a personalized Cloud persona. Personas
-trusts you to choose and maintain that visibility; it does not require a
-GitHub token, marker file, visibility preflight, generated CI workflow, or
-startup guard. More importantly, keep `user/`, local settings, connections, and
-credentials out of Git regardless of repository visibility.
-
-## Persona or specialist?
-
-A persona is the durable collaborator: role, voice, boundaries, and reusable
-workflows that should remain coherent across many sessions. A specialist is a
-focused, replaceable workflow for one bounded job. Put enduring working
-identity in a persona; put a narrow procedure in a skill or specialist.
-
-## Core workflows
-
-| Goal | Skill |
-|---|---|
-| Create, evolve, reconcile, or activate a persona | `personas:persona-dev` |
-| Improve identity or procedure from real evidence | `personas:self-improve` |
-
-Each workflow plans first, preserves persona-owned content, and keeps one source
-for each piece of meaning.
-
-## Why not just use `CLAUDE.md` or `AGENTS.md`?
-
-For a few instructions, you should. Personas becomes useful when the
-collaborator has a distinct role, reusable workflows, private local context, or
-needs to work in both Claude Code and Codex.
-
-It adds one portable persona definition, shared skills, and small native
-runtime entry points while keeping every file readable.
-
-## Runtime support
-
-| Runtime | Status | Adapter |
-|---|---|---|
-| Claude Code local | Supported | `CLAUDE.md`, `.claude/settings.json`, and optional native-agent sync |
-| Claude Code Cloud | Supported folder model | Same publishable Claude folder; ignored local context is absent |
-| Codex | Supported | `AGENTS.md`, `.codex/config.toml`, shared skills, and optional native-agent sync |
-| Gemini CLI / Kimi Code | Unsupported | No native adapter has been proven |
-
-Native-agent promotion is on demand: `persona-native-sync.py` validates first
-and applies only with explicit approval.
-
-## Project documentation
-
-- [Sanitized Atlas example](examples/atlas-sanitized/README.md)
-- [Support and memory boundaries](SUPPORT.md)
-- [Troubleshooting](TROUBLESHOOTING.md)
-- [Migration notes](MIGRATION.md)
-- [Contributing](CONTRIBUTING.md)
+- [Usage, memory, and native adapters](docs/usage.md)
+- [Troubleshooting](docs/troubleshooting.md)
+- [Migrating an existing persona](docs/migration.md)
+- [Contributing and testing](CONTRIBUTING.md)
 - [Changelog](CHANGELOG.md)
-- [Apache 2.0 license](LICENSE)
 
-For framework development:
-
-```bash
-bash tests/run-tests.sh
-```
-
-The suite uses temporary fixtures and never modifies `~/.personas`.
+For a few shared instructions, an `AGENTS.md` or `CLAUDE.md` is enough.
+Personas helps when a collaborator needs a distinct role that carries across
+sessions and runtimes.

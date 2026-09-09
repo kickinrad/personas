@@ -1,5 +1,4 @@
 {
-  "model": "claude-opus-4-6[1m]",
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
