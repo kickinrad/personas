@@ -8,6 +8,24 @@ Codex reads `AGENTS.md`. Claude Code reads the same definition through the
 `skills/` when a task needs it. [Julia](../examples/julia/README.md) shows how
 these few files fit together.
 
+## Integrated and focused use
+
+By default, a persona works alongside your normal Claude Code or Codex setup.
+That keeps the tools and conveniences you already use while adding the
+persona's project instructions, skills, and settings.
+
+During creation, you can instead choose focused use for fewer user-level
+customizations. Personas uses the runtimes' native launch options:
+
+```bash
+claude --setting-sources project,local
+codex --ignore-user-config
+```
+
+These options exclude ordinary user settings; they do not replace managed
+organization policy, authentication, or command-line options. A persona folder
+organizes configuration—it is not a separate account or security container.
+
 ## Maintain a persona
 
 Ask `personas:persona-dev` to create a persona, improve an existing one, or

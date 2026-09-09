@@ -4,38 +4,77 @@
 
 # Personas
 
-Give your AI a role of its own.
+Build purpose-made AI workspaces for **Claude Code and Codex**.
 
-A chef who helps with dinner. A gardener for your balcony jungle. A code
-reviewer who tells you what they really think. Personas helps you create AI
-collaborators for **Claude Code and Codex**, each with their own personality,
-instructions, skills, and settings—all in a folder you own.
+Instead of squeezing every rule, tool, and workflow into one global setup,
+give each job its own folder. A persona can have its own instructions, skills,
+settings, private context, and connected tools. It uses the native features of
+Claude Code or Codex and the account you already use with that runtime—there's
+no separate AI service hiding underneath it.
 
 [![CI](https://github.com/kickinrad/personas-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/kickinrad/personas-framework/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-## Dinner with Julia
+## What could you build?
 
-Picture a weeknight with your own personal chef:
+### Julia — a personal chef
 
-> **You:** Julia, I'm tired, there's food in the fridge, and I have absolutely
-> no dinner ideas. Help?
->
-> **Julia:** Let's keep it easy. What's in the fridge, and are we talking
-> “happy to chop an onion” or “one pan and I'm done”?
+> “Plan three easy dinners from what we already have, add anything missing to
+> the grocery list, and put the plan on our calendar.”
 
-That's the idea. A familiar voice, a useful role, and a little less explaining
-every time. Give Julia your cooking preferences, adjust her approach, and
-make her yours. [Try Julia →](examples/julia/README.md)
+Julia can combine a meal-planning skill with your private food preferences and
+the tools you choose to connect: a recipe library, pantry, grocery list, or
+calendar. She can turn scattered information into one useful plan, show it to
+you, and wait for approval before changing anything. The
+[Julia example](examples/julia/README.md) works without any connections, so you
+can try the basic machinery first and add tools later.
 
-## Why a persona?
+### Jesse — a market researcher
 
-- **Less repeating yourself.** Save preferences and useful lessons for next time.
-- **A place for each role.** Keep your chef's recipes and your reviewer's rules
-  in their own folders, instead of piling everything into your global setup.
-- **Yours to shape and share.** Edit the personality, add skills or tool
-  connections, and use the same persona in Claude Code or Codex. Keep your
-  personal details private.
+> “Revisit our original thesis, check it against current evidence, and tell me
+> plainly what got stronger, what broke, and what we still don't know.”
+
+Jesse's workspace can hold the research process, decision rules, and private
+thesis context for that job. Connect market data or research tools and he can
+use fresh information without turning your global assistant into a trading
+terminal. The result is a focused research workflow with clear limits—not a
+promise of returns and not permission to place trades.
+
+### Atlas — a code reviewer
+
+> “Review this branch using our standards. Run the focused checks, separate
+> real blockers from nits, and give me the smallest safe path forward.”
+
+Atlas can carry your review checklist as a reusable skill, load the project's
+standards, and use native development tools such as Git, tests, and linters.
+Those rules stay with the reviewer instead of leaking into Julia's kitchen—or
+every other Claude Code and Codex session you start.
+
+## The machinery
+
+| Persona | Skills | Private context | Optional tools |
+|---|---|---|---|
+| Julia | Meal planning, groceries | Food preferences and household routines | Recipes, pantry, shopping list, calendar |
+| Jesse | Thesis research, portfolio review | Research notes and decision context | Market data and research sources |
+| Atlas | Code review, architecture checks | Project conventions | Git, tests, linters, repository tools |
+
+Underneath, each persona is a small, readable folder:
+
+```text
+julia/
+├── AGENTS.md              # role and rules
+├── CLAUDE.md              # Claude Code entry point
+├── skills/                # repeatable workflows
+├── user/                  # private profile and memory
+├── .mcp.json              # optional tool connections
+├── .claude/settings.json  # Claude Code settings
+└── .codex/config.toml     # Codex settings
+```
+
+Share the useful parts without sharing your life: `user/`, local settings,
+tool credentials, and connections stay out of Git by default. Personas work
+alongside your usual setup; during creation you can instead choose focused use
+with fewer user-level customizations.
 
 ## Install
 
@@ -62,8 +101,9 @@ Use personas:persona-dev to create a personal chef named Julia.
 I want help with easy weeknight dinners and using what I already have.
 ```
 
-It helps you shape the role and walks you through the plan before creating
-anything. Open the new folder in Claude Code or Codex and start talking.
+It helps you choose the instructions, skills, settings, context, and tools the
+job needs, then walks you through the folder plan before creating anything.
+Open the new folder in Claude Code or Codex and start working.
 
 Want to change something later? Ask `personas:persona-dev`. Keep giving the
 same feedback? Ask `personas:self-improve` to suggest an improvement you can review.
