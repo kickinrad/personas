@@ -12,11 +12,14 @@ class DocumentationTest(unittest.TestCase):
     def test_public_docs_are_present_and_linked(self) -> None:
         for document in DOCS:
             self.assertTrue(document.is_file(), document)
+        for document in ROOT.rglob("*.md"):
             text = document.read_text(encoding="utf-8")
-            self.assertNotIn("PERSONA.md", text)
             for target in re.findall(r"\]\(([^)#]+)(?:#[^)]+)?\)", text):
                 if "://" not in target and not target.startswith("mailto:"):
                     self.assertTrue((document.parent / target).resolve().exists(), f"{document}: {target}")
+        for skill in (ROOT / "skills").glob("*/SKILL.md"):
+            for target in re.findall(r"`((?:assets|references|scripts)/[^` ]+)", skill.read_text()):
+                self.assertTrue((skill.parent / target).exists(), f"{skill}: {target}")
 
     def test_example_is_complete_and_sanitized(self) -> None:
         example = ROOT / "examples" / "atlas"

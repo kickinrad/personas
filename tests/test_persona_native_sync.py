@@ -3,14 +3,19 @@
 from __future__ import annotations
 
 import json
+import importlib.util
 import subprocess
 import tempfile
 import tomllib
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "skills/persona-dev/scripts/persona-native-sync.py"
+SPEC = importlib.util.spec_from_file_location("native_sync", SCRIPT)
+SYNC = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(SYNC)
 
 class PersonaNativeSyncTest(unittest.TestCase):
     def fixture(self, directory: Path, name: str = "atlas-review", mcp: dict | None = None, codex_mcps: list[str] | None = None) -> Path:
@@ -185,5 +190,58 @@ class PersonaNativeSyncTest(unittest.TestCase):
             self.assertEqual(self.invoke(persona, claude, codex).returncode, 2)
             (persona / ".mcp.json").write_text(json.dumps({"mcpServers": {"bad": {"command": "tool", "env": {"TOKEN": "literal"}}}, "codexMcpServers": ["bad"]}), encoding="utf-8")
             self.assertEqual(self.invoke(persona, claude, codex).returncode, 2)
+
+    def test_serialization_preserves_quoted_unicode_values(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            name = 'weather.雪"tool'
+            persona = self.fixture(root, mcp={name: {"command": "tool", "env": {"PLAIN.KEY": "value"}}}, codex_mcps=[name])
+            description = 'A reviewer: "careful" # always'
+            (persona / "AGENTS.md").write_text(f"# Atlas\n\n> {description}\n")
+            result = self.invoke(persona, root / "claude", root / "codex", "--apply")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            claude = (root / "claude/agents/atlas-review.md").read_text()
+            scalar = next(line.removeprefix("description: ") for line in claude.splitlines() if line.startswith("description: "))
+            self.assertEqual(json.loads(scalar), description)
+            codex = tomllib.loads((root / "codex/agents/atlas-review.toml").read_text())
+            self.assertEqual(codex["mcp_servers"][name]["env"], {"PLAIN.KEY": "value"})
+
+    def test_foreign_metadata_and_ambiguous_pruning_never_write(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            persona = self.fixture(root)
+            agent = root / "codex/agents/atlas-review.toml"
+            agent.parent.mkdir(parents=True)
+            agent.write_text(f'{SYNC.MARKER}\n{SYNC.SOURCE}"/foreign/AGENTS.md"\nRead and follow {persona / "AGENTS.md"}.\n')
+            self.assertEqual(self.invoke(persona, root / "claude", root / "codex", "--apply").returncode, 2)
+            self.assertFalse((root / "claude").exists())
+            agent.unlink()
+            legacy = agent.with_name("persona-atlas-review.config.toml")
+            legacy.write_text(SYNC.MARKER + "\n")
+            self.assertEqual(self.invoke(persona, root / "claude", root / "codex", "--apply").returncode, 2)
+            self.assertFalse((root / "claude").exists())
+            result = self.invoke(persona, root / "claude", root / "codex", "--runtime", "codex", "--codex-artifact", "profile", "--apply")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertTrue(legacy.exists())
+
+    def test_failed_replace_preserves_destination_and_cleans_temporary_file(self):
+        with tempfile.TemporaryDirectory() as raw:
+            target = Path(raw) / "agent.toml"
+            target.write_text("original")
+            with patch.object(Path, "replace", side_effect=OSError("fixture failure")):
+                with self.assertRaises(OSError):
+                    SYNC.write(target, "replacement")
+            self.assertEqual(target.read_text(), "original")
+            self.assertEqual(list(target.parent.iterdir()), [target])
+
+    def test_malformed_payload_returns_actionable_error(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            persona = self.fixture(root)
+            (persona / ".mcp.json").write_text("[]")
+            result = self.invoke(persona, root / "claude", root / "codex", "--apply")
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("must be an object", result.stderr)
+            self.assertFalse((root / "claude").exists())
 
 if __name__ == "__main__": unittest.main(verbosity=2)

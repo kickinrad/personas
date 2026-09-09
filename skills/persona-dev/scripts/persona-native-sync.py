@@ -48,6 +48,7 @@ def load_mcp_payload(persona: Path) -> tuple[dict[str, object], list[str]]:
     source = persona / ".mcp.json"
     if not source.exists(): return {}, []
     payload = json.loads(source.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict): fail(".mcp.json must be an object")
     if set(payload) - {"mcpServers", "mcp_servers", "codexMcpServers"}: fail(".mcp.json has unsupported top-level fields")
     servers = payload.get("mcpServers", payload.get("mcp_servers"))
     if not isinstance(servers, dict): fail(".mcp.json needs an mcpServers object")
@@ -108,8 +109,10 @@ def rendered(slug: str, description: str, agents: Path, mcps: dict[str, dict[str
 def owner(content: str) -> str | None:
     for line in content.splitlines():
         if line.startswith(SOURCE):
-            try: return json.loads(line[len(SOURCE):])
-            except json.JSONDecodeError: return None
+            try:
+                return json.loads(line[len(SOURCE):])
+            except json.JSONDecodeError:
+                return None
     return None
 
 
@@ -127,24 +130,34 @@ def legacy_owner(content: str) -> str | None:
 
 
 def disposition(path: Path, content: str, agents: Path) -> str:
-    if not path.exists(): return "drift"
+    if not path.exists():
+        return "drift"
     existing = path.read_text(encoding="utf-8")
-    if existing == content: return "current"
-    if MARKER not in existing[:300]: fail(f"refusing to overwrite unmarked or other-source file: {path}")
+    if existing == content:
+        return "current"
+    if MARKER not in existing[:300]:
+        fail(f"refusing to overwrite unmarked or other-source file: {path}")
     recorded_owner = owner(existing)
     if SOURCE in existing:
-        if recorded_owner == str(agents): return "drift"
+        if recorded_owner == str(agents):
+            return "drift"
     elif legacy_owner(existing) == str(agents):
         return "drift"
-    if path.name.startswith("persona-") and path.suffix == ".toml": fail(f"legacy profile ownership is unknown; review and move aside {path} before applying")
+    if path.name.startswith("persona-") and path.suffix == ".toml":
+        fail(f"legacy profile ownership is unknown; review and move aside {path} before applying")
     fail(f"refusing to overwrite generated adapter owned by another persona: {path}")
 
 
 def write(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent, delete=False) as temporary:
-        temporary.write(content)
-    Path(temporary.name).replace(path)
+        temporary_path = Path(temporary.name)
+        try:
+            temporary.write(content)
+            temporary.close()
+            temporary_path.replace(path)
+        finally:
+            temporary_path.unlink(missing_ok=True)
 
 
 def main() -> int:
@@ -158,7 +171,8 @@ def main() -> int:
     parser.add_argument("--codex-home", type=Path, default=Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")))
     args = parser.parse_args()
     try:
-        persona = args.persona.resolve(); slug, description, agents = persona_data(persona)
+        persona = args.persona.resolve()
+        slug, description, agents = persona_data(persona)
         if args.runtime in ("codex", "all"):
             servers, declared_names = load_mcp_payload(persona)
             mcps = selected_codex_mcps(servers, [*declared_names, *args.codex_mcp])
@@ -168,19 +182,24 @@ def main() -> int:
         tomllib.loads(codex)
         tomllib.loads(profile)
         targets: list[tuple[Path, str]] = []
-        if args.runtime in ("claude", "all"): targets.append((args.claude_home / "agents" / f"{slug}.md", claude))
+        if args.runtime in ("claude", "all"):
+            targets.append((args.claude_home / "agents" / f"{slug}.md", claude))
         if args.runtime in ("codex", "all"):
-            if args.codex_artifact in ("agent", "all"): targets.append((args.codex_home / "agents" / f"{slug}.toml", codex))
-            if args.codex_artifact in ("profile", "all"): targets.append((args.codex_home / f"persona-{slug}.config.toml", profile))
+            if args.codex_artifact in ("agent", "all"):
+                targets.append((args.codex_home / "agents" / f"{slug}.toml", codex))
+            if args.codex_artifact in ("profile", "all"):
+                targets.append((args.codex_home / f"persona-{slug}.config.toml", profile))
         states = [(path, content, disposition(path, content, agents)) for path, content in targets]
         legacy = args.codex_home / "agents" / f"persona-{slug}.config.toml"
         prune_legacy = args.runtime in ("codex", "all") and args.codex_artifact in ("agent", "all") and legacy.exists()
         if prune_legacy:
             legacy_content = legacy.read_text(encoding="utf-8")
-            if MARKER not in legacy_content[:300]: fail(f"refusing to remove unmarked legacy profile: {legacy}")
+            if MARKER not in legacy_content[:300]:
+                fail(f"refusing to remove unmarked legacy profile: {legacy}")
             recorded_owner = owner(legacy_content)
             known_owner = recorded_owner == str(agents) if SOURCE in legacy_content else legacy_owner(legacy_content) == str(agents)
-            if not known_owner: fail(f"legacy adapter ownership is unknown; review and move aside {legacy} before applying")
+            if not known_owner:
+                fail(f"legacy adapter ownership is unknown; review and move aside {legacy} before applying")
         for index, (path, content, state) in enumerate(states):
             if args.apply and state == "drift":
                 try:
@@ -190,11 +209,16 @@ def main() -> int:
                     remaining = ", ".join(str(todo) for todo, _, status in states[index:] if status == "drift") or "none"
                     fail(f"write failed: {error}; completed: {completed}; remaining: {remaining}")
             print(f"{state if not args.apply or state == 'current' else 'updated'} {path}")
-        if args.apply and prune_legacy: legacy.unlink(); print(f"removed {legacy}")
+        if prune_legacy:
+            if args.apply:
+                legacy.unlink()
+            print(f"{'removed' if args.apply else 'stale'} {legacy}")
         print("Claude path access must permit the live AGENTS.md; global Claude permissions are unchanged.")
         return 0
     except (OSError, ValueError, json.JSONDecodeError) as error:
-        print(f"error: {error}", file=sys.stderr); return 2
+        print(f"error: {error}", file=sys.stderr)
+        return 2
 
 
-if __name__ == "__main__": raise SystemExit(main())
+if __name__ == "__main__":
+    raise SystemExit(main())

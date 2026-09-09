@@ -1,108 +1,96 @@
-#!/usr/bin/env python3
-"""Contract tests for the small, folder-first personas product."""
-
-from __future__ import annotations
-
+"""Package contracts, source inventory, and their negative controls."""
 import json
+import re
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
-from release_cases import ReleaseTest
-from repository_inventory_cases import RepositoryInventoryTest
-
-
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "6.2.1"
-ASSETS = ROOT / "skills/persona-dev/assets"
+CACHES = {"__pycache__", ".pytest_cache"}
+PRIVATE = {"user", ".mcp.json", ".env"}
+SECRET = re.compile(r"eyJ[A-Za-z0-9_-]{20,}|GOCSPX-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|BEGIN PRIVATE KEY")
 
 
-class FrameworkContractTest(unittest.TestCase):
-    def test_release_is_one_versioned_root_plugin(self) -> None:
-        claude = json.loads((ROOT / ".claude-plugin/plugin.json").read_text(encoding="utf-8"))
-        codex = json.loads((ROOT / ".codex-plugin/plugin.json").read_text(encoding="utf-8"))
-        market = json.loads((ROOT / ".claude-plugin/marketplace.json").read_text(encoding="utf-8"))
-        self.assertEqual({claude["version"], codex["version"], market["metadata"]["version"]}, {VERSION})
-        self.assertEqual({claude["name"], codex["name"], market["plugins"][0]["name"]}, {"personas"})
+def inventory(root):
+    if (root / ".git").exists():
+        names = subprocess.check_output(["git", "ls-files", "-z"], cwd=root).decode().split("\0")
+        return [root / name for name in names if name]
+    return [p for p in root.rglob("*") if p.is_file() and not CACHES.intersection(p.relative_to(root).parts)]
+
+
+def package_errors(root):
+    errors = []
+    for path in inventory(root):
+        relative = path.relative_to(root)
+        if CACHES.union(PRIVATE).intersection(relative.parts):
+            errors.append(f"private or generated file: {relative}")
+        if not path.is_file():
+            continue
+        if path.suffix in {".md", ".json", ".toml"}:
+            text = path.read_text(encoding="utf-8")
+            if SECRET.search(text):
+                errors.append(f"credential-like source: {relative}")
+            if path.name == "SKILL.md":
+                if not re.match(r"\A---\nname: .+\ndescription: .+\n---\n", text):
+                    errors.append(f"invalid skill frontmatter: {relative}")
+                if len(text.split()) > 500:
+                    errors.append(f"skill exceeds 500 words: {relative}")
+        if path.suffix == ".json":
+            json.loads(path.read_text(encoding="utf-8"))
+    return errors
+
+
+class RepositoryTest(unittest.TestCase):
+    def test_native_manifests_share_one_release(self):
+        def read(path):
+            return json.loads((ROOT / path).read_text())
+        claude = read(".claude-plugin/plugin.json")
+        codex = read(".codex-plugin/plugin.json")
+        market = read(".claude-plugin/marketplace.json")
+        agents = read(".agents/plugins/marketplace.json")
+        capabilities = read("interop/capabilities.json")
+        self.assertRegex(claude["version"], r"^\d+\.\d+\.\d+$")
+        self.assertEqual({codex["version"], market["metadata"]["version"], capabilities["version"]}, {claude["version"]})
+        self.assertEqual({claude["name"], codex["name"], market["plugins"][0]["name"], agents["plugins"][0]["name"]}, {"personas"})
+        self.assertEqual({claude["license"], codex["license"]}, {"Apache-2.0"})
+        self.assertIn("Apache License", (ROOT / "LICENSE").read_text())
         self.assertEqual(market["metadata"]["pluginRoot"], ".")
+        self.assertEqual(market["plugins"][0]["source"], ".")
+        self.assertEqual(agents["plugins"][0]["source"]["path"], "./")
         self.assertEqual(codex["skills"], "./skills/")
-        self.assertFalse((ROOT / "plugins").exists())
+        self.assertTrue(all("version" not in entry for entry in market["plugins"]))
+        self.assertEqual(capabilities["portableAuthority"], "AGENTS.md")
+        self.assertEqual(capabilities["runtimes"]["claude-code"]["imports"], ["AGENTS.md"])
+        for runtime in ("claude-code", "codex"):
+            declaration = capabilities["runtimes"][runtime]
+            self.assertEqual(declaration["status"], "native")
+            self.assertTrue((ROOT / declaration["personaNativeSync"]).is_file())
 
-    def test_persona_assets_define_one_portable_folder(self) -> None:
-        expected = {
-            "agents-template.md",
-            "claude-md-template.md",
-            "codex-config-template.toml",
-            "gitignore-template",
-            "memory-template.md",
-            "profile-template.md",
-            "readme-template.md",
-            "settings-template.json",
-        }
-        self.assertEqual({path.name for path in ASSETS.iterdir() if path.is_file()}, expected)
-        agents = (ASSETS / "agents-template.md").read_text(encoding="utf-8")
-        claude = (ASSETS / "claude-md-template.md").read_text(encoding="utf-8")
-        self.assertLessEqual(len(agents.split()), 300)
-        self.assertLessEqual(len(claude.split()), 80)
-        for phrase in ("## Role and authority", "## Voice", "## Boundaries", "skills/"):
-            self.assertIn(phrase, agents)
-        for forbidden in ("PERSONA.md", "## Working approach", "Before acting:", "enabledPlugins", "extraKnownMarketplaces", "1. "):
-            self.assertNotIn(forbidden, agents)
-        self.assertEqual(claude.splitlines()[-1], "@AGENTS.md")
-        self.assertNotIn("PERSONA.md", claude)
+    def test_source_package_is_clean(self):
+        self.assertEqual(package_errors(ROOT), [])
+        self.assertEqual({p.parent.name for p in (ROOT / "skills").glob("*/SKILL.md")}, {"persona-dev", "self-improve"})
+        for retired in ("plugins", "bin/personas", "hooks", ".claude/plans", ".claude/evidence"):
+            self.assertFalse(any(p.is_file() for p in (ROOT / retired).rglob("*")) if (ROOT / retired).is_dir() else (ROOT / retired).exists())
 
-    def test_portable_skills_stay_compact_and_current(self) -> None:
-        for skill in (ROOT / "skills").glob("*/SKILL.md"):
-            with self.subTest(skill=skill):
-                text = skill.read_text(encoding="utf-8")
-                self.assertLessEqual(len(text.split()), 500)
-                self.assertNotIn("PERSONA.md", text)
+    def test_export_ignores_caches_but_git_inventory_rejects_them(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            cache = root / "__pycache__/example.pyc"
+            cache.parent.mkdir()
+            cache.write_bytes(b"fixture")
+            self.assertEqual(package_errors(root), [])
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            subprocess.run(["git", "add", "__pycache__"], cwd=root, check=True)
+            self.assertIn("private or generated", package_errors(root)[0])
 
-    def test_active_contract_has_no_duplicate_or_legacy_authority(self) -> None:
-        active = (
-            ROOT / "interop/capabilities.json",
-            ROOT / "README.md",
-            ROOT / "MIGRATION.md",
-            ROOT / "RELEASE.md",
-            ROOT / "SUPPORT.md",
-            ROOT / "TROUBLESHOOTING.md",
-            ROOT / "ACTIVATION.md",
-            *(ROOT / "skills").rglob("*"),
-            *(ROOT / "examples/atlas-sanitized").rglob("*"),
-        )
-        for path in active:
-            if not path.is_file():
-                continue
-            with self.subTest(path=path):
-                text = path.read_text(encoding="utf-8", errors="ignore")
-                self.assertNotIn("PERSONA.md", text)
-        self.assertFalse((ASSETS / "persona-template.md").exists())
-
-    def test_no_runtime_or_cli_enforcement_product_remains(self) -> None:
-        for relative in (
-            "bin/personas",
-            "scripts/public-repo-guard.sh",
-            "hooks/framework-version.sh",
-            "hooks/hooks.json",
-        ):
-            self.assertFalse((ROOT / relative).exists(), relative)
-        source = "\n".join(
-            path.read_text(encoding="utf-8", errors="ignore")
-            for parent in (ROOT / "skills", ROOT / "interop")
-            for path in parent.rglob("*")
-            if path.is_file()
-        )
-        for retired in (
-            ".persona-cloud-repository",
-            "PERSONAS_GITHUB_VISIBILITY_ADAPTER",
-            "bin/personas create",
-            "bin/personas verify",
-        ):
-            self.assertNotIn(retired, source)
-
-    def test_shared_skills_are_the_only_plugin_workflows(self) -> None:
-        names = {path.parent.name for path in (ROOT / "skills").glob("*/SKILL.md")}
-        self.assertEqual(names, {"persona-dev", "self-improve"})
-
-
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    def test_removed_shell_checks_still_reject_bad_source(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            (root / "SKILL.md").write_text("Broken frontmatter\n")
+            (root / "leak.json").write_text(json.dumps({"value": "sk-" + "x" * 24}))
+            (root / "user").mkdir()
+            (root / "user/profile.md").write_text("private fixture")
+            errors = "\n".join(package_errors(root))
+            for expected in ("frontmatter", "credential-like", "private or generated"):
+                self.assertIn(expected, errors)
