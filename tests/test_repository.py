@@ -7,9 +7,12 @@ import json
 import unittest
 from pathlib import Path
 
+from release_cases import ReleaseTest
+from repository_inventory_cases import RepositoryInventoryTest
+
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "6.2.0"
+VERSION = "6.2.1"
 ASSETS = ROOT / "skills/persona-dev/assets"
 
 

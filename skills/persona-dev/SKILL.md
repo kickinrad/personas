@@ -13,8 +13,7 @@ private local context, and external knowledge sources distinct.
 1. Discover the name, role, outcomes, voice, boundaries, workflows, context,
    and runtimes. Ask only questions that materially change the folder.
 2. Read the templates in `assets/`. Read `references/environments.md` when
-   choosing a home across native, WSL, Windows, Desktop, or Cowork. Read
-   `references/launch-flags.md` when configuring a Claude launcher. Read
+   choosing a home or configuring a Claude launcher. Read
    `references/research-toolkit.md` when the persona needs a new capability.
 3. Present a folder plan covering `AGENTS.md`, importing `CLAUDE.md`, shared
    skills, native settings, ignored context, and requested integration. Write
@@ -40,8 +39,7 @@ private local context, and external knowledge sources distinct.
 
 For an existing persona, inspect its folder first and edit only the owning
 surface; `self-improve`'s "Route the change" list owns content routing. Prefer
-an existing capability over a new wrapper. Read `references/lifecycle-meta.md`
-when ownership between those surfaces is unclear.
+an existing capability over a new wrapper.
 
 Compare existing folders with the current portable contract, classify each
 difference as adapter drift, persona-owned customization, obsolete machinery,

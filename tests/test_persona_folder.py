@@ -9,6 +9,8 @@ import tomllib
 import unittest
 from pathlib import Path
 
+from fleet_verifier_cases import FleetVerifierTest
+
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "skills/persona-dev/assets"
@@ -85,7 +87,7 @@ class RuntimeAdapterTest(unittest.TestCase):
             claude = json.loads((home / ".claude/settings.json").read_text(encoding="utf-8"))
             codex = tomllib.loads((home / ".codex/config.toml").read_text(encoding="utf-8"))
             self.assertEqual(claude["sandbox"]["enabled"], True)
-            self.assertEqual(claude["model"], "claude-opus-4-6[1m]")
+            self.assertNotIn("model", claude)
             self.assertNotIn("hooks", claude)
             self.assertEqual(codex["sandbox_mode"], "workspace-write")
             self.assertFalse(codex["sandbox_workspace_write"]["network_access"])

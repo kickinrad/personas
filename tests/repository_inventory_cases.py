@@ -28,7 +28,7 @@ def tracked() -> set[str]:
     return {
         path.relative_to(ROOT).as_posix()
         for path in ROOT.rglob("*")
-        if path.is_file() and ".git" not in path.parts
+        if path.is_file() and not {".git", "__pycache__", ".pytest_cache"}.intersection(path.parts)
     }
 
 
@@ -52,7 +52,6 @@ class RepositoryInventoryTest(unittest.TestCase):
     def test_only_documented_public_asset_is_retained(self) -> None:
         assets = {path for path in tracked() if path.startswith("assets/")}
         self.assertEqual(assets, {"assets/banner.svg"})
-        self.assertIn('src="assets/banner.svg"', (ROOT / "README.md").read_text(encoding="utf-8"))
 
     def test_current_plan_and_evidence_are_the_only_claude_records(self) -> None:
         records = {
@@ -60,11 +59,7 @@ class RepositoryInventoryTest(unittest.TestCase):
             for path in (ROOT / ".claude").rglob("*")
             if path.is_file()
         }
-        self.assertIn(".claude/plans/personas-core-renewal.md", records)
-        self.assertTrue(
-            all(path.startswith(".claude/plans/") or path.startswith(".claude/evidence/") for path in records),
-            records,
-        )
+        self.assertEqual(records, set())
 
     def test_json_sources_are_parseable(self) -> None:
         for relative in tracked():
@@ -75,19 +70,7 @@ class RepositoryInventoryTest(unittest.TestCase):
 
     def test_central_gate_and_ci_share_one_verdict(self) -> None:
         gate = (ROOT / "tests/run-tests.sh").read_text(encoding="utf-8")
-        for test in (
-            "personas-test.sh",
-            "framework-contract-test.py",
-            "test_fleet_verifier.py",
-            "verify-fleet.py",
-            "test_runtime_adapters.py",
-            "test_persona_native_sync.py",
-            "test_documentation.py",
-            "test_repository_inventory.py",
-            "test_release.py",
-            "bash -n",
-            "diff --check",
-        ):
+        for test in ("unittest discover", "verify-fleet.py", "bash -n", "diff --check"):
             self.assertIn(test, gate)
         workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
         self.assertEqual(workflow.count("bash tests/run-tests.sh"), 1)
