@@ -22,11 +22,14 @@ class DocumentationTest(unittest.TestCase):
                 self.assertTrue((skill.parent / target).exists(), f"{skill}: {target}")
 
     def test_example_is_complete_and_sanitized(self) -> None:
-        example = ROOT / "examples" / "atlas"
-        expected = {"CLAUDE.md", "AGENTS.md", "README.md", ".gitignore", ".claude/settings.json", ".codex/config.toml", "skills/atlas-review/SKILL.md"}
+        example = ROOT / "examples" / "julia"
+        expected = {"CLAUDE.md", "AGENTS.md", "README.md", ".gitignore", ".claude/settings.json", ".codex/config.toml", "skills/julia-meal-plan/SKILL.md"}
         actual = {path.relative_to(example).as_posix() for path in example.rglob("*") if path.is_file()}
         self.assertEqual(actual, expected)
         text = "\n".join((example / path).read_text(encoding="utf-8") for path in expected)
         self.assertNotRegex(text, r"(?i)(password|private key|real integration)")
+        self.assertIn("self-contained AI collaborator", text)
+        self.assertIn("ask before ordering groceries", text)
+        self.assertRegex(text, r"before\s+changing shared systems or spending money")
 
 if __name__ == "__main__": unittest.main(verbosity=2)

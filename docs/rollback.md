@@ -1,14 +1,16 @@
 # Recovering from a release
 
-Keep framework recovery separate from changes to a live persona's content.
+If a release causes trouble, you can return to a known-good version without
+rewriting your persona. Keep a backup of any local changes before you begin.
 
-1. Identify the affected release and a known-good published tag or commit.
-2. Inspect the known-good source in a separate checkout and run its own test
-   gate. Preserve the failing checkout and any persona-local changes.
-3. Reinstall the selected version through the runtime's plugin flow, or prepare
-   a corrective release through the normal pull-request process.
-4. Verify a synthetic persona before reviewing any live-folder reconciliation.
+1. Find the affected release and a published tag or commit that worked.
+2. Check out the working version in a separate folder and run its test suite.
+   Keep the failing checkout and your persona's local changes for comparison.
+3. Reinstall the chosen version through your runtime's plugin flow. If you're
+   maintaining Personas, you can instead prepare a fix through a pull request.
+4. Test with a disposable persona before changing a persona you rely on.
 
-For a failed adapter update, inspect the helper's reported paths and restore
-only the affected files from reviewed backups. Preview generation again before
-applying it. Private context remains with its existing owner and backup source.
+If only an agent or profile update failed, check the paths in the helper's
+output and restore only the affected files from your reviewed backups. Run
+the preview again before applying it. Your private context doesn't need to
+move or change as part of recovery.
