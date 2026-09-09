@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.2.2 — 2026-09-09
+
+- Ask during persona creation whether normal user configuration should remain
+  integrated or be excluded with each runtime's native focused-launch option.
+- Introduce Personas through practical chef, market-research, and code-review
+  workflows, with a compact map of skills, private context, and optional tools.
+
 ## 6.2.1 — 2026-09-09
 
 - Prevent generated adapters from replacing another persona's files and check

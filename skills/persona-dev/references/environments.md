@@ -25,10 +25,18 @@ When the user wants both CLI and Desktop, personas should live on the Windows si
 ln -s /mnt/c/Users/{WINUSER}/.personas ~/.personas
 ```
 
+## Integrated or focused launch
+
+Integrated is the default: start `claude` or `codex` normally from the persona
+folder and retain user-level configuration. When the user chooses focused use,
+launch Claude with `--setting-sources project,local` or Codex with
+`--ignore-user-config`. Managed policy, authentication, and explicit CLI flags
+remain runtime-owned.
+
 ## Claude launcher
 
 Pass caller arguments through unchanged. Add persona defaults only when neither
-the caller nor `.claude-flags` supplies them; always isolate project and local
-settings with `--setting-sources project,local`. Discover supported flags from
-the installed CLI and store one approved line in `.claude-flags`. Verify the
-launcher starts at the persona root, loads `CLAUDE.md`, and leaves Codex alone.
+the caller nor `.claude-flags` supplies them. For focused use, add
+`--setting-sources project,local`. Discover supported flags from the installed
+CLI and store one approved line in `.claude-flags`. Verify the launcher starts
+at the persona root, loads `CLAUDE.md`, and leaves Codex alone.
