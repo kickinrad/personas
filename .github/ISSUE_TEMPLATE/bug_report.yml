@@ -40,8 +40,8 @@ body:
       label: Environment
       description: OS, runtime version, package version, etc.
       placeholder: |
-        - OS: Ubuntu 22.04
-        - Node: 20.x
-        - Package version: 1.2.3
+        - OS:
+        - Runtime and version (Claude Code / Codex):
+        - Personas version:
     validations:
       required: false
