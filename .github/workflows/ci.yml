@@ -11,8 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Run central gate
         run: bash tests/run-tests.sh
+
+      - name: Verify source export
+        run: |
+          export_root=$(mktemp -d)
+          git archive HEAD | tar -x -C "$export_root"
+          bash "$export_root/tests/run-tests.sh"

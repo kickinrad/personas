@@ -1,10 +1,11 @@
-# Sanitized Atlas example
+# Atlas example
 
 Atlas is a fictional collaborator for reviewing small software changes. This
 folder demonstrates the complete portable structure without personal context,
 credentials, or external services.
 
-Open the folder and inspect:
+Open this folder in Claude Code or Codex and ask Atlas to review a small change.
+Inspect:
 
 - `AGENTS.md` for Atlas's portable identity and working behavior;
 - `CLAUDE.md` and `.claude/settings.json` for the Claude Code adapter;

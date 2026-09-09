@@ -1,7 +1,7 @@
 {
   "name": "personas",
   "interface": {
-    "displayName": "Wils Personas"
+    "displayName": "Personas"
   },
   "plugins": [
     {

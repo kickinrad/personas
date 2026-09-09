@@ -1,7 +1,7 @@
 # Environments — personas root, Cowork, WSL2 symlink
 
 Read when `persona-dev` must choose a persona home across native, WSL, Windows,
-Desktop, or Cowork environments.
+Desktop, or Cowork environments, or configure a Claude launcher.
 
 ## Personas root by environment
 
@@ -24,3 +24,11 @@ When the user wants both CLI and Desktop, personas should live on the Windows si
 ```bash
 ln -s /mnt/c/Users/{WINUSER}/.personas ~/.personas
 ```
+
+## Claude launcher
+
+Pass caller arguments through unchanged. Add persona defaults only when neither
+the caller nor `.claude-flags` supplies them; always isolate project and local
+settings with `--setting-sources project,local`. Discover supported flags from
+the installed CLI and store one approved line in `.claude-flags`. Verify the
+launcher starts at the persona root, loads `CLAUDE.md`, and leaves Codex alone.
