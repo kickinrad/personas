@@ -194,6 +194,16 @@ class PersonaNativeSyncTest(unittest.TestCase):
             (persona / ".mcp.json").write_text(json.dumps({"mcpServers": {"bad": {"command": "tool", "env": {"TOKEN": "literal"}}}, "codexMcpServers": ["bad"]}), encoding="utf-8")
             self.assertEqual(self.invoke(persona, claude, codex).returncode, 2)
 
+    def test_rejects_http_mcp_url_userinfo(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw); claude = root / "claude"; codex = root / "codex"
+            for index, url in enumerate(("https://user:password@example.test/mcp", "https://user%3Apassword@example.test/mcp")):
+                with self.subTest(url=url):
+                    persona = self.fixture(root, f"atlas-review-{index}", {"remote": {"type": "http", "url": url}}, ["remote"])
+                    result = self.invoke(persona, claude, codex)
+                    self.assertEqual(result.returncode, 2)
+                    self.assertIn("must not contain credentials", result.stderr)
+
     def test_serialization_preserves_quoted_unicode_values(self):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
