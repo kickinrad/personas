@@ -1,4 +1,4 @@
-# Personas framework development
+# Personas development
 
 This repository owns the portable persona contract, lifecycle skills,
 templates, native adapters, and validation. Persona folders own their identity,

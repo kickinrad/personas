@@ -14,8 +14,8 @@ runtime may still load global rules and tools; the folder isn't a sandbox.
 Clone the repository and open the example:
 
 ```bash
-git clone https://github.com/kickinrad/personas-framework.git
-cd personas-framework/examples/julia
+git clone https://github.com/kickinrad/personas.git
+cd personas/examples/julia
 claude
 ```
 
