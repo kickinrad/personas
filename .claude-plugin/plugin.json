@@ -1,11 +1,11 @@
 {
   "name": "personas",
   "description": "Create portable persona folders for Claude Code and Codex",
-  "version": "6.2.2",
+  "version": "6.2.3",
   "author": {
     "name": "kickinrad",
     "url": "https://github.com/kickinrad"
   },
-  "repository": "https://github.com/kickinrad/personas-framework",
+  "repository": "https://github.com/kickinrad/personas",
   "license": "Apache-2.0"
 }
