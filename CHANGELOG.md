@@ -1,10 +1,5 @@
 # Changelog
 
-## 6.2.3 — 2026-09-11
-
-- Restore the repository name to `personas` and update installation commands,
-  example paths, and project links.
-
 ## 6.2.2 — 2026-09-09
 
 - Ask during persona creation whether normal user configuration should remain
