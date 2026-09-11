@@ -11,6 +11,14 @@ Personas 6.2.2, then accepted the same local marketplace at 0.6.0. Claude's
 `plugin update` and Codex's `plugin add` each reported 0.6.0. These are
 installation-state checks, not live persona sessions.
 
+Claude Code 2.1.268 ran the public Julia example in print mode with
+`--setting-sources project,local` and no session persistence. Codex CLI 0.154.0
+ran the same example with its normal integrated configuration, `--ephemeral`,
+and a read-only sandbox. Both identified Julia and her ask-before-ordering
+boundary. Codex reported unrelated configured-MCP OAuth refresh errors, but no
+MCP was used and the prompt completed. This probes instruction loading and the
+focused/integrated launch boundary, not native-agent or MCP activation.
+
 ## 6.2.1 folder probe — 2026-09-09
 
 A temporary copy of the Atlas example, with synthetic ignored context, was
