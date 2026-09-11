@@ -12,7 +12,7 @@ settings, private context, and connected tools. It uses the native features of
 Claude Code or Codex and the account you already use with that runtime—there's
 no separate AI service hiding underneath it.
 
-[![CI](https://github.com/kickinrad/personas-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/kickinrad/personas-framework/actions/workflows/ci.yml)
+[![CI](https://github.com/kickinrad/personas/actions/workflows/ci.yml/badge.svg)](https://github.com/kickinrad/personas/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
 ## What could you build?
@@ -81,14 +81,14 @@ with fewer user-level customizations.
 In Claude Code:
 
 ```text
-/plugin marketplace add kickinrad/personas-framework
+/plugin marketplace add kickinrad/personas
 /plugin install personas@personas
 ```
 
 For Codex:
 
 ```bash
-codex plugin marketplace add kickinrad/personas-framework
+codex plugin marketplace add kickinrad/personas
 codex plugin add personas --marketplace personas
 ```
 

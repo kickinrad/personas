@@ -10,7 +10,7 @@
 
 **Do not open a public issue for security vulnerabilities.**
 
-Use [GitHub's private vulnerability reporting](https://github.com/kickinrad/personas-framework/security/advisories/new) to report security issues.
+Use [GitHub's private vulnerability reporting](https://github.com/kickinrad/personas/security/advisories/new) to report security issues.
 
 ### What to expect
 
