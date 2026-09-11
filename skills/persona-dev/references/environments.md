@@ -28,10 +28,10 @@ ln -s /mnt/c/Users/{WINUSER}/.personas ~/.personas
 ## Integrated or focused launch
 
 Integrated is the default: start `claude` or `codex` normally from the persona
-folder and retain user-level configuration. When the user chooses focused use,
-launch Claude with `--setting-sources project,local` or Codex with
-`--ignore-user-config`. Managed policy, authentication, and explicit CLI flags
-remain runtime-owned.
+folder and retain user-level configuration. Claude Code also supports focused
+use with `--setting-sources project,local`. Codex has no supported equivalent,
+so it remains integrated. Managed policy, authentication, and explicit CLI
+flags remain runtime-owned.
 
 ## Claude launcher
 

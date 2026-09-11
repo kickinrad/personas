@@ -11,8 +11,8 @@ private local context, and external knowledge sources distinct.
 ## Create
 
 1. Discover the name, role, outcomes, voice, boundaries, workflows, context,
-   and runtimes. Ask integrated or focused: integrated is the default and keeps
-   user configuration; focused excludes it through native runtime controls.
+   and runtimes. Ask whether Claude Code should use its focused launcher;
+   integrated use is the default for both runtimes and keeps user configuration.
 2. Read the templates in `assets/`. Read `references/environments.md` when
    choosing a home or configuring a Claude launcher. Read
    `references/research-toolkit.md` when the persona needs a new capability.

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0 — 2026-09-11
+
+- Reset the public version from 6.2.2 as a one-time early-development
+  correction; history and existing tags are unchanged.
+- Keep focused launch as a Claude Code option. Codex remains integrated until
+  it offers a supported user-configuration exclusion control.
+- Reject HTTP MCP URLs with embedded credentials before projecting them to a
+  Codex profile.
+
 ## 6.2.2 — 2026-09-09
 
 - Ask during persona creation whether normal user configuration should remain

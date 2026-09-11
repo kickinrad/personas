@@ -14,17 +14,17 @@ By default, a persona works alongside your normal Claude Code or Codex setup.
 That keeps the tools and conveniences you already use while adding the
 persona's project instructions, skills, and settings.
 
-During creation, you can instead choose focused use for fewer user-level
-customizations. Personas uses the runtimes' native launch options:
+During creation, you can instead choose Claude Code's focused use for fewer
+user-level customizations:
 
 ```bash
 claude --setting-sources project,local
-codex --ignore-user-config
 ```
 
-These options exclude ordinary user settings; they do not replace managed
-organization policy, authentication, or command-line options. A persona folder
-organizes configuration—it is not a separate account or security container.
+Codex has no supported equivalent, so it stays integrated with your normal
+configuration. Focused Claude use does not replace managed organization policy,
+authentication, or command-line options. A persona folder organizes
+configuration—it is not a separate account or security container.
 
 ## Maintain a persona
 

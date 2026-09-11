@@ -96,12 +96,15 @@ class RuntimeAdapterTest(unittest.TestCase):
             self.assertFalse(codex["sandbox_workspace_write"]["network_access"])
             self.assertFalse((home / ".codex/hooks.json").exists())
 
-    def test_creation_offers_native_focused_launch_without_changing_the_default(self) -> None:
+    def test_creation_offers_claude_focused_launch_and_keeps_codex_integrated(self) -> None:
         skill = (ROOT / "skills/persona-dev/SKILL.md").read_text(encoding="utf-8")
         environments = (ROOT / "skills/persona-dev/references/environments.md").read_text(encoding="utf-8")
-        self.assertIn("integrated is the default", skill)
+        usage = (ROOT / "docs/usage.md").read_text(encoding="utf-8")
+        self.assertIn("integrated use is the default", skill)
         self.assertIn("--setting-sources project,local", environments)
-        self.assertIn("--ignore-user-config", environments)
+        self.assertIn("Codex has no supported equivalent", environments)
+        self.assertIn("Codex has no supported equivalent", usage)
+        self.assertNotIn("--ignore-user-config", "\n".join((skill, environments, usage)))
 
     def test_private_folder_context_is_optional_and_ignored(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
