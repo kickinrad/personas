@@ -14,6 +14,7 @@ from pathlib import Path
 
 ARCHIVE_PARTS = {"archive", "archives", "consumed", "history", "historical", ".git", "node_modules", "__pycache__"}
 RELEASE_VERSION = re.compile(r"^v?\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$")
+PRIVATE_PATHS = ("user", ".claude/settings.local.json", ".codex/*.local.toml", ".mcp.json", ".env", ".env.*")
 RESIDENT_HEADINGS = re.compile(
     r"^#{1,6}\s+(?:tools?(?:\s+(?:inventory|available))?|procedures?|workflows?|rituals?|integrations?)\b",
     re.IGNORECASE | re.MULTILINE,
@@ -32,6 +33,24 @@ def tracked_files(repo: Path) -> set[Path]:
     if result.returncode == 0:
         return {repo / name for name in result.stdout.decode().split("\0") if name}
     return {path for path in repo.rglob("*") if path.is_file()}
+
+
+def tracked_private_paths(repo: Path) -> list[str]:
+    """Return tracked private paths, allowing user/ subpaths the persona re-includes after ignoring user/ by default."""
+    result = subprocess.run(["git", "ls-files", "-z", "--", *PRIVATE_PATHS], cwd=repo, capture_output=True)
+    if result.returncode:
+        return []
+    names = [name for name in result.stdout.decode().split("\0") if name]
+    user = [name for name in names if name.startswith("user/")]
+    denies_user = subprocess.run(["git", "check-ignore", "-q", "--no-index", "user/.verify-fleet-probe"], cwd=repo).returncode == 0
+    if user and denies_user:
+        ignored = subprocess.run(
+            ["git", "check-ignore", "--no-index", "-z", "--stdin"], cwd=repo, input="\0".join(user).encode(), capture_output=True
+        ).stdout.decode()
+        user = [name for name in user if name in set(ignored.split("\0"))]
+    private = [name for name in names if not name.startswith("user/")]
+    private += ["/".join(name.split("/")[:2]) + ("/" if name.count("/") > 1 else "") for name in user]
+    return sorted(set(private))
 
 
 def persona_roots(fleet_root: Path) -> list[Path]:
@@ -57,6 +76,10 @@ def verify_persona(repo: Path) -> list[str]:
     for required in (agents, claude, repo / ".claude/settings.json"):
         if required not in tracked or not required.is_file():
             errors.append(f"{name}: required tracked file missing: {required.relative_to(repo)}")
+
+    private = tracked_private_paths(repo)
+    if private:
+        errors.append(f"{name}: private local context is tracked: {', '.join(private)}")
 
     if agents.is_file():
         resident = agents.read_text(encoding="utf-8")
