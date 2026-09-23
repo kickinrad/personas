@@ -84,7 +84,7 @@ class RepositoryTest(unittest.TestCase):
             subprocess.run(["git", "add", "__pycache__"], cwd=root, check=True)
             self.assertIn("private or generated", package_errors(root)[0])
 
-    def test_removed_shell_checks_still_reject_bad_source(self):
+    def test_package_check_rejects_bad_frontmatter_credentials_and_private_files(self):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             (root / "SKILL.md").write_text("Broken frontmatter\n")
