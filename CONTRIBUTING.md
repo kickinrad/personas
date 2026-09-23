@@ -19,8 +19,8 @@ or your normal Claude/Codex home.
 Keep each skill's procedures and templates together. When behavior changes,
 add a test for what should happen and a case that should fail safely. For
 runtime changes, also try the behavior with a disposable persona in Claude
-or Codex, as appropriate. Record versions, results, and limits in
-[runtime evidence](docs/runtime-evidence.md).
+or Codex, as appropriate, and note the runtime versions and results in your
+pull request.
 
 In your pull request, explain what improves for the user and how you checked
 it. Include a DCO sign-off with `git commit -s`.
@@ -37,4 +37,5 @@ it. Include a DCO sign-off with `git commit -s`.
 4. Install the release through the runtime's plugin flow and test a disposable
    persona before reviewing updates to any real persona folders.
 
-Use the [rollback procedure](docs/rollback.md) if a release needs recovery.
+If a release causes trouble, reinstall the last good tag through the runtime's
+plugin flow and prepare a fix through a pull request.

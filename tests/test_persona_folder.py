@@ -66,21 +66,13 @@ class RuntimeAdapterTest(unittest.TestCase):
             create_fixture(home)
             claude = (home / "CLAUDE.md").read_text(encoding="utf-8")
             agents = (home / "AGENTS.md").read_text(encoding="utf-8")
-            self.assertFalse((home / "PERSONA.md").exists())
             self.assertEqual(VERIFIER.verify(Path(directory)), [])
             self.assertEqual(claude.splitlines()[-1], "@AGENTS.md")
             self.assertIn("## Role and authority", agents)
-            self.assertNotIn("vault:curator", agents)
             self.assertIn("skills/", agents)
             self.assertIn("user/profile.md", agents)
             self.assertIn("user/memory/MEMORY.md", agents)
-            for forbidden in (
-                "PERSONA.md",
-                "Before acting:",
-                "## Working approach",
-                "1. ",
-                "output-style",
-            ):
+            for forbidden in ("Before acting:", "## Working approach", "1. "):
                 self.assertNotIn(forbidden, agents)
 
     def test_native_settings_are_minimal_parseable_and_hook_free(self) -> None:
@@ -117,7 +109,6 @@ class RuntimeAdapterTest(unittest.TestCase):
             self.assertTrue((local / "user/memory/MEMORY.md").is_file())
             self.assertFalse((cloud / "user").exists())
             self.assertTrue((cloud / "AGENTS.md").is_file())
-            self.assertFalse((cloud / "PERSONA.md").exists())
 
     def test_existing_model_and_private_context_survive_validation(self):
         with tempfile.TemporaryDirectory() as raw:
@@ -174,14 +165,13 @@ class FleetVerifierTest(unittest.TestCase):
     def test_rejects_each_contract_boundary(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            persona = self.create_persona(root, "archer")
-            (persona / "AGENTS.md").write_text("# Archer\n\n## Tools\n\n" + "word " * 301, encoding="utf-8")
+            persona = self.create_persona(root, "lumen")
+            (persona / "AGENTS.md").write_text("# Lumen\n\n## Tools\n\n" + "word " * 301, encoding="utf-8")
             (persona / "CLAUDE.md").write_text("@AGENTS.md\nExtra adapter text\n", encoding="utf-8")
             (persona / "skills/review/SKILL.md").write_text("word " * 501, encoding="utf-8")
             (persona / ".claude/settings.json").write_text("{", encoding="utf-8")
-            (persona / "PERSONA.md").write_text("legacy", encoding="utf-8")
             errors = "\n".join(VERIFIER.verify(root))
-            for expected in ("exceeds 300", "resident tool/procedure", "may contain only", "exceeds 500", "invalid JSON", "legacy persona"):
+            for expected in ("exceeds 300", "resident tool/procedure", "may contain only", "exceeds 500", "invalid JSON"):
                 self.assertIn(expected, errors)
 
     def test_tracked_private_context_fails(self) -> None:
@@ -210,32 +200,11 @@ class FleetVerifierTest(unittest.TestCase):
             subprocess.run(["git", "add", "-f", "user/profile.md"], cwd=persona, check=True)
             self.assertEqual(VERIFIER.verify(root), ["atlas: private local context is tracked: user/profile.md"])
 
-    def test_archive_is_not_active_residue(self) -> None:
+    def test_tracked_but_deleted_file_does_not_crash_verification(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             persona = self.create_persona(root)
-            archive = persona / "docs/archive"
-            archive.mkdir(parents=True)
-            (archive / "old.md").write_text("PERSONA.md", encoding="utf-8")
-            self.assertEqual(VERIFIER.verify(root), [])
-
-    def test_versioned_release_is_history_but_other_active_files_are_not(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            persona = self.create_persona(root)
-            release = persona / "releases/component/2.15.4"
-            release.mkdir(parents=True)
-            (release / "RELEASE.md").write_text("legacy", encoding="utf-8")
-            self.assertEqual(VERIFIER.verify(root), [])
-            (persona / "user/memory/MEMORY.md").parent.mkdir(parents=True)
-            (persona / "user/memory/MEMORY.md").write_text("legacy", encoding="utf-8")
-            self.assertEqual(VERIFIER.verify(root), [])
-
-    def test_deleted_optional_runtime_file_does_not_crash_current_tree_scan(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            persona = self.create_persona(root)
-            deleted = persona / ".claude-flags"
+            deleted = persona / "skills/retired/SKILL.md"
             tracked = {path for path in persona.rglob("*") if path.is_file()} | {deleted}
             with patch.object(VERIFIER, "tracked_files", return_value=tracked):
                 self.assertEqual(VERIFIER.verify(root), [])

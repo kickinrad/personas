@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.7.0 — 2026-09-23
+
+- Summon any persona as a native subagent from Claude Code or Codex. The sync
+  helper writes one agent per runtime that reads the live `AGENTS.md` and
+  resolves the persona's `skills/` and `user/` paths from its folder.
+- Choose a Claude agent color with `--color`; later runs keep it.
+- Give subagents the persona's tools: servers named in `.mcp.json`
+  `agentMcpServers` are projected into both the Claude and Codex agents.
+- **Breaking:** rename `codexMcpServers` to `agentMcpServers`; the
+  `mcp_servers` alias is no longer read.
+- **Breaking:** remove the generated Codex profile and the `--codex-artifact`
+  and `--codex-mcp` options. Move older generated profiles and agents aside,
+  then regenerate.
+- Flag tracked private context (`user/`, local settings, `.mcp.json`, `.env`)
+  in the fleet verifier, and drop checks for pre-0.6 folder layouts.
+- Consolidate documentation into usage and troubleshooting guides.
+
 ## 0.6.0 — 2026-09-11
 
 - Reset the public version from 6.2.2 as a one-time early-development

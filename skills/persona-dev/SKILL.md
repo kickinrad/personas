@@ -11,10 +11,12 @@ private local context, and external knowledge sources distinct.
 ## Create
 
 1. Discover the name, role, outcomes, voice, boundaries, workflows, context,
-   and runtimes. Ask whether Claude Code should use its focused launcher;
-   integrated use is the default for both runtimes and keeps user configuration.
+   and runtimes. Ask for a Claude agent color (red, blue, green, yellow,
+   purple, orange, pink, or cyan) and whether Claude Code should use focused
+   launch; integrated use is the default for both runtimes and keeps user
+   configuration.
 2. Read the templates in `assets/`. Read `references/environments.md` when
-   choosing a home or configuring a Claude launcher. Read
+   choosing a home or launch mode. Read
    `references/research-toolkit.md` when the persona needs a new capability.
 3. Present a folder plan covering `AGENTS.md`, importing `CLAUDE.md`, skills,
    settings, ignored context, integrations, and launch choice. Write nothing
@@ -49,16 +51,14 @@ persona-owned meaning and optional ignored `user/` context.
 
 ## Activate native adapters
 
-Use `scripts/persona-native-sync.py --persona PATH --runtime claude|codex|all`
-to validate and report native-agent drift. Add `--apply` only after explicit
-approval to install runtime state. The helper generates adapters that read the
-live absolute `AGENTS.md`; it never copies identity prose or private MCP
-bindings. Pass a named `--codex-mcp <binding>` only after validating an
-equivalent role-bound Codex provider; Claude-only bindings never project by
-default. Use `--codex-artifact profile` when reconciling only the persona MCP
-layer; that mode never creates, changes, or retires native Codex agents. It
-reports the Claude path-access requirement and never changes global Claude
-permissions.
+Run `scripts/persona-native-sync.py --persona PATH --runtime claude|codex|all
+[--color COLOR]` to report drift for the persona's native subagents. Add
+`--apply` only after explicit approval. Each agent reads the live `AGENTS.md`
+and resolves relative paths from the folder; omitting `--color` keeps the
+existing color. Only servers named in the ignored `.mcp.json`
+`agentMcpServers` list are projected; agree that list with the user. When the
+helper refuses an unowned or older file, move it aside only with approval. The
+helper never changes global runtime permissions.
 
 ## Verify
 

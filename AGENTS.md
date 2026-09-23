@@ -11,8 +11,8 @@ workflows, settings, and private context.
 - Preserve existing persona customizations and every supported artifact mode.
 - Run `bash tests/run-tests.sh` with fixture homes. Never mutate live personas
   or installed runtime homes during validation.
-- Treat runtime acceptance separately from file parsing; record the tested
-  versions and limits in `docs/runtime-evidence.md`.
+- Treat runtime acceptance separately from file parsing; report tested
+  runtime versions and limits in the pull request.
 
 The Claude plugin manifest owns the release version; native declarations must
 agree with it. See `CONTRIBUTING.md` for contribution and release procedure.

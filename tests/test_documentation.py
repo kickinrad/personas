@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DOCS = tuple(ROOT / "docs" / name for name in ("usage.md", "troubleshooting.md", "migration.md", "rollback.md", "runtime-evidence.md"))
+DOCS = tuple(ROOT / "docs" / name for name in ("usage.md", "troubleshooting.md"))
 
 class DocumentationTest(unittest.TestCase):
     def test_public_docs_are_present_and_linked(self) -> None:

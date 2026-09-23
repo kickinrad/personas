@@ -51,9 +51,8 @@ grant only the access the role needs. Julia works without any connections.
 
 Opening a folder does **not** automatically turn off global instructions,
 settings, or tools. Runtime permissions and organization policies still apply.
-For example, a Codex profile layers on top of its base user configuration;
-it is not an isolated account. If you need a restricted toolset, configure it
-in the runtime and check the active tools before using sensitive data.
+If you need a restricted toolset, configure it in the runtime and check the
+active tools before using sensitive data.
 
 ## Private context and memory
 
@@ -72,45 +71,52 @@ Provide any missing context in the session. If you deliberately share personal
 context through a private repository, review exactly what you commit; never
 commit credentials.
 
-## Native agents and Codex profiles
+## Call a persona from any session
 
-Opening the folder is enough to get started. If you also want to call the
-persona as a native Claude or Codex agent, the bundled helper creates the
-runtime files that point to it. It can also create a separate Codex MCP profile.
-
-From a checkout of this repository, preview what it would create:
+Opening the folder is enough to get started. To also summon the persona as a
+native subagent from any Claude Code or Codex session, generate one small
+agent file per runtime. From a checkout of this repository, preview it:
 
 ```bash
-python3 skills/persona-dev/scripts/persona-native-sync.py --persona /path/to/julia --runtime all
+python3 skills/persona-dev/scripts/persona-native-sync.py --persona /path/to/julia --runtime all --color orange
 ```
 
-Replace `/path/to/julia` with your persona's location. Review the output, then
-add `--apply` to write the files. The helper checks which persona owns an
-existing file and refuses to overwrite someone else's or a hand-written one.
-See [troubleshooting](troubleshooting.md) if an older file has no ownership record.
+Replace `/path/to/julia` with your persona's location. Review the report, then
+add `--apply` to write the files:
 
-| Option | Output |
+| Runtime | File |
 |---|---|
-| `--runtime claude` | Claude native agent |
-| `--runtime codex --codex-artifact agent` | Codex native agent |
-| `--runtime codex --codex-artifact profile` | Codex MCP profile |
-| `--runtime all` | Both native agents and the Codex profile |
+| Claude Code | `~/.claude/agents/<slug>.md` |
+| Codex | `$CODEX_HOME/agents/<slug>.toml` (default `~/.codex`) |
 
-Codex outputs default to `all`. A profile is written to
-`$CODEX_HOME/persona-<slug>.config.toml`; load it with
-`codex --profile persona-<slug>` from the persona folder. Native agents read
-the live absolute `AGENTS.md`, so their runtime must have access to that path.
+Each agent tells the runtime to read the live `AGENTS.md` and resolve the
+persona's `skills/` and `user/` paths from its folder, so edits to the persona
+apply immediately. Regenerate only when its description or subagent tools
+change. Claude shows the
+agent in the chosen color (red, blue, green, yellow, purple, orange, pink, or
+cyan); a later run without `--color` keeps it. Codex has no agent color. The
+runtime needs permission to read the persona folder from wherever you call it.
 
-The helper reads MCP connections from ignored `.mcp.json`. Choose each
-connection you want to make available to Codex with `--codex-mcp NAME` or the
-file's `codexMcpServers` list. It supports stdio and HTTP connections and stops
-on unsupported fields, connection types, or embedded credentials. Connections
-you haven't selected aren't copied to Codex.
+The helper only overwrites files it generated for the same persona. It
+refuses a hand-written agent or one generated for another folder.
+
+To give the subagent the persona's tools, list them in the ignored `.mcp.json`:
+
+```json
+{
+  "mcpServers": {"recipes": {"command": "recipes-mcp", "env": {"API_KEY": "${RECIPES_API_KEY}"}}},
+  "agentMcpServers": ["recipes"]
+}
+```
+
+Only the servers named in `agentMcpServers` are copied into the agents. The
+helper supports stdio and HTTP servers and stops on unsupported fields,
+transports, or embedded credentials; reference secrets through environment
+variables instead.
 
 ## Runtime support
 
 Claude Code and Codex share the role and skills through their own entry files.
 Claude Code Cloud uses the committed Claude folder; your ignored local files
 stay on your machine. There are no bundled adapters for Gemini CLI or Kimi
-Code. The dated [runtime evidence](runtime-evidence.md) records what we've
-tested, including the limits of the Cloud checks.
+Code.
