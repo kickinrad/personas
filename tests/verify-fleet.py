@@ -36,10 +36,21 @@ def tracked_files(repo: Path) -> set[Path]:
 
 
 def tracked_private_paths(repo: Path) -> list[str]:
+    """Return tracked private paths, allowing user/ subpaths the persona re-includes after ignoring user/ by default."""
     result = subprocess.run(["git", "ls-files", "-z", "--", *PRIVATE_PATHS], cwd=repo, capture_output=True)
     if result.returncode:
         return []
-    return sorted({"user/" if name.startswith("user/") else name for name in result.stdout.decode().split("\0") if name})
+    names = [name for name in result.stdout.decode().split("\0") if name]
+    user = [name for name in names if name.startswith("user/")]
+    denies_user = subprocess.run(["git", "check-ignore", "-q", "--no-index", "user/.verify-fleet-probe"], cwd=repo).returncode == 0
+    if user and denies_user:
+        ignored = subprocess.run(
+            ["git", "check-ignore", "--no-index", "-z", "--stdin"], cwd=repo, input="\0".join(user).encode(), capture_output=True
+        ).stdout.decode()
+        user = [name for name in user if name in set(ignored.split("\0"))]
+    private = [name for name in names if not name.startswith("user/")]
+    private += ["/".join(name.split("/")[:2]) + ("/" if name.count("/") > 1 else "") for name in user]
+    return sorted(set(private))
 
 
 def persona_roots(fleet_root: Path) -> list[Path]:
