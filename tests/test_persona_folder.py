@@ -184,6 +184,18 @@ class FleetVerifierTest(unittest.TestCase):
             for expected in ("exceeds 300", "resident tool/procedure", "may contain only", "exceeds 500", "invalid JSON", "legacy persona"):
                 self.assertIn(expected, errors)
 
+    def test_tracked_private_context_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            persona = self.create_persona(root)
+            (persona / "user/memory").mkdir(parents=True)
+            (persona / "user/memory/MEMORY.md").write_text("private", encoding="utf-8")
+            (persona / ".mcp.json").write_text("{}", encoding="utf-8")
+            subprocess.run(["git", "init", "-q"], cwd=persona, check=True)
+            subprocess.run(["git", "add", "."], cwd=persona, check=True)
+            errors = "\n".join(VERIFIER.verify(root))
+            self.assertIn("private local context is tracked: .mcp.json, user/", errors)
+
     def test_archive_is_not_active_residue(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
