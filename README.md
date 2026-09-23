@@ -29,13 +29,13 @@ you, and wait for approval before changing anything. The
 [Julia example](examples/julia/README.md) works without any connections, so you
 can try the basic machinery first and add tools later.
 
-### Jesse — a market researcher
+### Quinn — a market researcher
 
 > “Revisit our original thesis, check it against current evidence, and tell me
 > plainly what got stronger, what broke, and what we still don't know.”
 
-Jesse's workspace can hold the research process, decision rules, and private
-thesis context for that job. Connect market data or research tools and he can
+Quinn's workspace can hold the research process, decision rules, and private
+thesis context for that job. Connect market data or research tools and Quinn can
 use fresh information without turning your global assistant into a trading
 terminal. The result is a focused research workflow with clear limits—not a
 promise of returns and not permission to place trades.
@@ -55,7 +55,7 @@ every other Claude Code and Codex session you start.
 | Persona | Skills | Private context | Optional tools |
 |---|---|---|---|
 | Julia | Meal planning, groceries | Food preferences and household routines | Recipes, pantry, shopping list, calendar |
-| Jesse | Thesis research, portfolio review | Research notes and decision context | Market data and research sources |
+| Quinn | Thesis research, portfolio review | Research notes and decision context | Market data and research sources |
 | Atlas | Code review, architecture checks | Project conventions | Git, tests, linters, repository tools |
 
 Underneath, each persona is a small, readable folder:
@@ -108,5 +108,13 @@ Open the new folder in Claude Code or Codex and start working.
 Want to change something later? Ask `personas:persona-dev`. Keep giving the
 same feedback? Ask `personas:self-improve` to suggest an improvement you can review.
 
+## Call a persona from anywhere
+
+A persona can also be a native subagent: ask for Julia from any Claude Code or
+Codex session and she answers with her own role, skills, and chosen tools. One
+small generated file per runtime points at the live folder, so edits to the
+persona take effect immediately. See
+[call a persona from any session](docs/usage.md#call-a-persona-from-any-session).
+
 [Make it your own](docs/usage.md) · [Need a hand?](docs/troubleshooting.md) ·
-[Updating an older persona](docs/migration.md) · [Contributing](CONTRIBUTING.md)
+[Contributing](CONTRIBUTING.md)

@@ -12,20 +12,11 @@ import tomllib
 from pathlib import Path
 
 
-ARCHIVE_PARTS = {"archive", "archives", "consumed", "history", "historical", ".git", "node_modules", "__pycache__"}
-RELEASE_VERSION = re.compile(r"^v?\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$")
 PRIVATE_PATHS = ("user", ".claude/settings.local.json", ".codex/*.local.toml", ".mcp.json", ".env", ".env.*")
 RESIDENT_HEADINGS = re.compile(
     r"^#{1,6}\s+(?:tools?(?:\s+(?:inventory|available))?|procedures?|workflows?|rituals?|integrations?)\b",
     re.IGNORECASE | re.MULTILINE,
 )
-
-
-def is_active(path: Path, root: Path) -> bool:
-    parts = path.relative_to(root).parts
-    if any(part.lower() in ARCHIVE_PARTS for part in parts):
-        return False
-    return not (len(parts) >= 4 and parts[0] == "releases" and RELEASE_VERSION.fullmatch(parts[2]))
 
 
 def tracked_files(repo: Path) -> set[Path]:
@@ -112,15 +103,6 @@ def verify_persona(repo: Path) -> list[str]:
             tomllib.loads(codex.read_text(encoding="utf-8"))
         except tomllib.TOMLDecodeError as exc:
             errors.append(f"{name}: invalid TOML in .codex/config.toml: {exc}")
-    for path in (path for path in repo.rglob("*") if path.is_file()):
-        if not is_active(path, repo):
-            continue
-        relative = path.relative_to(repo)
-        lowered_parts = {part.lower() for part in relative.parts}
-        if path.name == "PERSONA.md":
-            errors.append(f"{name}: active legacy persona definition: {relative}")
-        if "output-styles" in lowered_parts:
-            errors.append(f"{name}: active legacy output style: {relative}")
     return errors
 
 
