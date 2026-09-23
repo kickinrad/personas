@@ -145,6 +145,9 @@ class PersonaNativeSyncTest(unittest.TestCase):
     def test_rejects_credentials(self) -> None:
         cases = {
             "literal env": ({"command": "tool", "env": {"TOKEN": "literal"}}, "credential literal"),
+            "secret key": ({"command": "tool", "env": {"SECRET_KEY": "literal"}}, "credential literal"),
+            "aws secret": ({"command": "tool", "env": {"AWS_SECRET_ACCESS_KEY": "literal"}}, "credential literal"),
+            "password hash": ({"command": "tool", "env": {"PASSWORD_HASH": "literal"}}, "credential literal"),
             "token-shaped arg": ({"command": "tool", "args": ["sk-" + "x" * 16]}, "credential literal"),
             "url userinfo": ({"type": "http", "url": "https://user:password@example.test/mcp"}, "must not contain credentials"),
             "encoded userinfo": ({"type": "http", "url": "https://user%3Apassword@example.test/mcp"}, "must not contain credentials"),
