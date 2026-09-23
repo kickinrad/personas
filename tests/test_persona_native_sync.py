@@ -158,6 +158,11 @@ class PersonaNativeSyncTest(unittest.TestCase):
                 self.assertEqual(result.returncode, 2)
                 self.assertIn(message, result.stderr)
 
+    def test_settings_that_mention_credentials_are_not_credentials(self) -> None:
+        server = {"command": "tool", "env": {"REDACT_SECRETS": "true", "TOKEN_CACHE_DIR": "/tmp/cache", "API_TOKEN": "${API_TOKEN}"}}
+        result = self.invoke(self.persona(mcp={"mcpServers": {"a": server}, "agentMcpServers": ["a"]}), "--apply")
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_refuses_unowned_and_other_persona_files_before_writing(self) -> None:
         persona = self.persona()
         manual = self.codex / "agents/atlas-review.toml"
