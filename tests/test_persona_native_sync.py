@@ -148,6 +148,8 @@ class PersonaNativeSyncTest(unittest.TestCase):
             "secret key": ({"command": "tool", "env": {"SECRET_KEY": "literal"}}, "credential literal"),
             "aws secret": ({"command": "tool", "env": {"AWS_SECRET_ACCESS_KEY": "literal"}}, "credential literal"),
             "password hash": ({"command": "tool", "env": {"PASSWORD_HASH": "literal"}}, "credential literal"),
+            "numeric pin": ({"command": "tool", "env": {"SECRET_PIN": "123456"}}, "credential literal"),
+            "path-shaped secret": ({"command": "tool", "env": {"TOKEN": "/c2VjcmV0"}}, "credential literal"),
             "token-shaped arg": ({"command": "tool", "args": ["sk-" + "x" * 16]}, "credential literal"),
             "url userinfo": ({"type": "http", "url": "https://user:password@example.test/mcp"}, "must not contain credentials"),
             "encoded userinfo": ({"type": "http", "url": "https://user%3Apassword@example.test/mcp"}, "must not contain credentials"),
@@ -162,7 +164,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
                 self.assertIn(message, result.stderr)
 
     def test_settings_that_mention_credentials_are_not_credentials(self) -> None:
-        server = {"command": "tool", "env": {"REDACT_SECRETS": "true", "TOKEN_CACHE_DIR": "/tmp/cache", "API_TOKEN": "${API_TOKEN}"}}
+        server = {"command": "tool", "env": {"REDACT_SECRETS": "true", "API_TOKEN": "${API_TOKEN}"}}
         result = self.invoke(self.persona(mcp={"mcpServers": {"a": server}, "agentMcpServers": ["a"]}), "--apply")
         self.assertEqual(result.returncode, 0, result.stderr)
 
