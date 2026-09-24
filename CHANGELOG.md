@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.1 — 2026-09-24
+
+- Project remote MCP servers that use SSE or Claude Code's `oauth` setting
+  (`clientId` and `callbackPort` only) into Claude subagents. Codex agents
+  skip them, and the sync helper reports each skip instead of failing.
+- Reject any other OAuth field, such as `clientSecret`, as a credential.
+- Allow environment references and boolean flags under credential-named keys
+  while still rejecting literal values.
+
 ## 0.7.0 — 2026-09-23
 
 - Summon any persona as a native subagent from Claude Code or Codex. The sync

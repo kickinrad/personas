@@ -62,9 +62,15 @@ def agent_mcps(persona: Path) -> dict[str, dict[str, object]]:
             if set(raw) - {"type", "command", "args", "env"} or not isinstance(raw.get("command"), str) or not strings(raw.get("args", [])) \
                     or not (isinstance(env, dict) and strings(list(env.values()))):
                 fail(f"MCP {name} needs only a string command, string args, and string env")
-        elif kind in ("http", "streamable-http"):
-            if set(raw) != {"type", "url"} or not isinstance(raw["url"], str) or not raw["url"].startswith(("https://", "http://")):
-                fail(f"MCP {name} needs only type and an HTTP url")
+        elif kind in ("http", "streamable-http", "sse"):
+            if set(raw) - {"type", "url", "oauth"} or not isinstance(raw.get("url"), str) or not raw["url"].startswith(("https://", "http://")):
+                fail(f"MCP {name} needs only type, an HTTP url, and optional oauth")
+            oauth = raw.get("oauth", {})
+            if not isinstance(oauth, dict): fail(f"MCP {name} oauth must be an object")
+            if extra := sorted(set(oauth) - {"clientId", "callbackPort"}):
+                fail(f"MCP {name} oauth {', '.join(extra)} is unsupported; only clientId and callbackPort may be set, and credentials stay out of .mcp.json")
+            if not isinstance(oauth.get("clientId", ""), str) or type(oauth.get("callbackPort", 0)) is not int:
+                fail(f"MCP {name} oauth needs a string clientId and an integer callbackPort")
             url = urlsplit(raw["url"])
             if url.username is not None or url.password is not None: fail(f"MCP {name} HTTP url must not contain credentials")
             if any(SENSITIVE.search(key) for part in (url.query, url.fragment) for key, _ in parse_qsl(part, keep_blank_values=True)):
@@ -80,6 +86,13 @@ def toml_value(value: object) -> str:
     return json.dumps(value, ensure_ascii=False)
 
 
+def codex_gap(server: dict[str, object]) -> str | None:
+    """Name why Codex cannot run a server Claude can, or None when it can."""
+    if server["type"] == "sse": return "sse transport is unsupported"
+    if "oauth" in server: return "oauth config is Claude-only"
+    return None
+
+
 def rendered(persona: Path, description: str, color: str | None, mcps: dict[str, dict[str, object]]) -> tuple[str, str]:
     agents, quote = persona / "AGENTS.md", lambda value: json.dumps(value, ensure_ascii=False)
     meta = f"{MARKER}\n{SOURCE}{quote(str(agents))}\n"
@@ -89,6 +102,7 @@ def rendered(persona: Path, description: str, color: str | None, mcps: dict[str,
     claude = "---\n" + "\n".join(front) + f"\n---\n\n{meta}\n{body}\n"
     codex = meta + "".join(f"{key} = {quote(value)}\n" for key, value in (("name", persona_slug(persona)), ("description", description), ("developer_instructions", body)))
     for name, server in mcps.items():
+        if codex_gap(server): continue
         fields = {key: value for key, value in server.items() if key != "type"}
         codex += f"\n[mcp_servers.{quote(name)}]\n" + "".join(f"{key} = {toml_value(value)}\n" for key, value in fields.items())
     tomllib.loads(codex)
@@ -137,7 +151,11 @@ def main() -> int:
         existing = {runtime: owned(path, agents) for runtime, path in targets.items()}
         preserved = re.search(r'^color: "?([a-z]+)"?$', (existing.get("claude") or "").split("\n---", 1)[0], re.M)
         color = args.color or (preserved.group(1) if preserved and preserved.group(1) in COLORS else None)
-        content = dict(zip(("claude", "codex"), rendered(persona, description, color, agent_mcps(persona))))
+        mcps = agent_mcps(persona)
+        content = dict(zip(("claude", "codex"), rendered(persona, description, color, mcps)))
+        if "codex" in targets:
+            for name, server in mcps.items():
+                if reason := codex_gap(server): print(f"skipped {name} for codex: {reason}")
         for runtime, path in targets.items():
             state = "current" if existing[runtime] == content[runtime] else "drift"
             if args.apply and state == "drift":
