@@ -1,8 +1,8 @@
 {
   "schemaVersion": 6,
   "component": "personas",
-  "version": "0.7.1",
-  "residency": {"claude-code": "on-demand", "codex": "on-demand"},
+  "version": "0.7.2",
+  "residency": {"claude-code": "global", "codex": "global"},
   "portableAuthority": "AGENTS.md",
   "portableSkills": ["persona-dev", "self-improve"],
   "folderMemory": {
