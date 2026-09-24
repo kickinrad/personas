@@ -107,6 +107,22 @@ class PersonaNativeSyncTest(unittest.TestCase):
             "remote": {"url": "https://example.test/mcp?limit=10"},
         })
 
+    def test_oauth_remote_servers_project_to_claude_and_are_reported_for_codex(self) -> None:
+        servers = {
+            "events": {"type": "sse", "url": "https://example.test/sse", "oauth": {"clientId": "public-client", "callbackPort": 8080}},
+            "portal": {"type": "http", "url": "https://example.test/mcp", "oauth": {"clientId": "public-client"}},
+            "plain": {"type": "http", "url": "https://example.test/plain"},
+        }
+        persona = self.persona(mcp={"mcpServers": servers, "agentMcpServers": list(servers)})
+        result = self.invoke(persona, "--apply")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("skipped events for codex: sse transport is unsupported\n", result.stdout)
+        self.assertIn("skipped portal for codex: oauth config is Claude-only\n", result.stdout)
+        claude, codex = self.adapters()
+        self.assertEqual(frontmatter(claude)["mcpServers"], [{name: server} for name, server in servers.items()])
+        self.assertEqual(codex["mcp_servers"], {"plain": {"url": "https://example.test/plain"}})
+        self.assertNotIn("skipped", self.invoke(persona, "--runtime", "claude").stdout)
+
     def test_unselected_servers_are_not_projected(self) -> None:
         persona = self.persona(mcp={"mcpServers": {"private": {"command": "tool"}}})
         self.assertEqual(self.invoke(persona, "--apply").returncode, 0)
@@ -130,7 +146,9 @@ class PersonaNativeSyncTest(unittest.TestCase):
             "legacy key": {"mcpServers": {"a": {"command": "tool"}}, "codexMcpServers": ["a"]},
             "missing server": {"mcpServers": {}, "agentMcpServers": ["missing"]},
             "duplicate name": {"mcpServers": {"a": {"command": "tool"}}, "agentMcpServers": ["a", "a"]},
-            "unsupported transport": {"mcpServers": {"a": {"type": "sse", "url": "https://example.test"}}, "agentMcpServers": ["a"]},
+            "unsupported transport": {"mcpServers": {"a": {"type": "ws", "url": "https://example.test"}}, "agentMcpServers": ["a"]},
+            "unknown oauth key": {"mcpServers": {"a": {"type": "sse", "url": "https://example.test", "oauth": {"scope": "read"}}}, "agentMcpServers": ["a"]},
+            "string callback port": {"mcpServers": {"a": {"type": "http", "url": "https://example.test", "oauth": {"callbackPort": "8080"}}}, "agentMcpServers": ["a"]},
             "non-string env": {"mcpServers": {"a": {"command": "tool", "env": {"COUNT": 3}}}, "agentMcpServers": ["a"]},
             "extra field": {"mcpServers": {"a": {"command": "tool", "cwd": "/tmp"}}, "agentMcpServers": ["a"]},
             "not an object": [],
@@ -156,6 +174,8 @@ class PersonaNativeSyncTest(unittest.TestCase):
             "query token": ({"type": "http", "url": "https://example.test/mcp?token=value"}, "credential parameters"),
             "encoded query key": ({"type": "http", "url": "https://example.test/mcp?api%5Fkey=value"}, "credential parameters"),
             "fragment secret": ({"type": "http", "url": "https://example.test/mcp#secret=value"}, "credential parameters"),
+            "oauth client secret": ({"type": "sse", "url": "https://example.test/sse", "oauth": {"clientId": "id", "clientSecret": "literal"}}, "clientSecret"),
+            "referenced client secret": ({"type": "sse", "url": "https://example.test/sse", "oauth": {"clientSecret": "${CLIENT_SECRET}"}}, "clientSecret"),
         }
         for index, (label, (server, message)) in enumerate(cases.items()):
             with self.subTest(label):
