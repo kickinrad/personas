@@ -113,6 +113,9 @@ Only the servers named in `agentMcpServers` are copied into the agents. The
 helper supports stdio and HTTP servers and stops on unsupported fields,
 transports, or embedded credentials; reference secrets through environment
 variables instead.
+Remote servers that sign in through Claude Code's `oauth` setting (or use
+SSE) project to Claude subagents only; Codex agents get stdio and plain HTTP
+servers, and the helper reports each server it skips.
 
 ## Runtime support
 

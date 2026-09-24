@@ -30,6 +30,14 @@ directory, and rerun the helper. Keep the backup until the replacement works.
 A `.mcp.json` from before 0.7.0 may still use `codexMcpServers`; rename that
 list to `agentMcpServers`.
 
+## A server added with `claude mcp add` is missing from the agents
+
+`claude mcp add -s project` rewrites `.mcp.json` and drops the
+`agentMcpServers` list. Add the list back, including the new server's name,
+then rerun the sync helper. A remote server that uses OAuth signs in once
+through `/mcp` inside the runtime; its client ID and callback port are the only
+OAuth settings the helper accepts.
+
 ## Updating an older persona
 
 Ask `personas:persona-dev` to review the folder and propose an update. You
