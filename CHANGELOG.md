@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.2 — 2026-09-24
+
+- Declare global residency for Claude Code and Codex, matching how the
+  plugin is installed and enabled.
+
 ## 0.7.1 — 2026-09-24
 
 - Project remote MCP servers that use SSE or Claude Code's `oauth` setting
