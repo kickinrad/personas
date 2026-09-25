@@ -101,8 +101,10 @@ Use personas:persona-dev to create a personal chef named Julia.
 I want help with easy weeknight dinners and using what I already have.
 ```
 
-It helps you choose the instructions, skills, settings, context, and tools the
-job needs, then walks you through the folder plan before creating anything.
+It interviews you one question at a time, each with a suggested answer,
+researches plugins, MCP servers, and tools that fit the job, and gives the
+persona a character of its own: a voice, a sense of humor, and things it
+pushes back on. You approve the folder plan before anything is created.
 Open the new folder in Claude Code or Codex and start working.
 
 Want to change something later? Ask `personas:persona-dev`. Keep giving the

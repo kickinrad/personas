@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.8.0 — 2026-09-25
+
+- Create personas through an interview: one question at a time, each with a
+  recommended answer, covering the job, boundaries, context, workflows,
+  runtimes, color, and launch.
+- Research capabilities during the interview, from installed ones through
+  official marketplaces, the MCP Registry, vendor servers, CLIs, and labeled
+  community skills, and recommend a small starting set with auth, cost,
+  privacy, and runtime support for each.
+- Design each persona's character: concept, name, emoji, voice traits, humor,
+  signature, pushback, and sample lines. The `AGENTS.md` template's Voice
+  section now holds these placeholders.
+- Say "always-loaded" instead of "resident" for content in every session's
+  context, including the fleet verifier's heading error.
+
 ## 0.7.2 — 2026-09-24
 
 - Declare global residency for Claude Code and Codex, matching how the

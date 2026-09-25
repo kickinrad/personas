@@ -13,7 +13,7 @@ from pathlib import Path
 
 
 PRIVATE_PATHS = ("user", ".claude/settings.local.json", ".codex/*.local.toml", ".mcp.json", ".env", ".env.*")
-RESIDENT_HEADINGS = re.compile(
+ALWAYS_LOADED_HEADINGS = re.compile(
     r"^#{1,6}\s+(?:tools?(?:\s+(?:inventory|available))?|procedures?|workflows?|rituals?|integrations?)\b",
     re.IGNORECASE | re.MULTILINE,
 )
@@ -73,12 +73,12 @@ def verify_persona(repo: Path) -> list[str]:
         errors.append(f"{name}: private local context is tracked: {', '.join(private)}")
 
     if agents.is_file():
-        resident = agents.read_text(encoding="utf-8")
+        always_loaded = agents.read_text(encoding="utf-8")
         if words(agents) > 300:
             errors.append(f"{name}: AGENTS.md exceeds 300 words")
-        if RESIDENT_HEADINGS.search(resident):
-            errors.append(f"{name}: AGENTS.md contains a resident tool/procedure heading")
-        if len(re.findall(r"^\s*\d+[.)]\s+", resident, re.MULTILINE)) >= 4:
+        if ALWAYS_LOADED_HEADINGS.search(always_loaded):
+            errors.append(f"{name}: AGENTS.md contains an always-loaded tool/procedure heading")
+        if len(re.findall(r"^\s*\d+[.)]\s+", always_loaded, re.MULTILINE)) >= 4:
             errors.append(f"{name}: AGENTS.md contains procedural bulk (four or more numbered steps)")
 
     if claude.is_file():
