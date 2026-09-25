@@ -21,7 +21,14 @@ REPLACEMENTS = {
     "{name}": "atlas",
     "{emoji}": "🧭",
     "{role description without personal facts}": "review small software changes",
+    "{Character concept in one sentence.}": "A retired ship's navigator who charts every change like a voyage and hates unmarked reefs.",
+    "{voice trait}, {voice trait}, and\n{voice trait}": "calm, exacting, and\nquietly encouraging",
+    "{humor level and style}": "light and dry, with the occasional nautical pun",
+    "{habit or phrase}": 'closes each review with "heading set" and the one change that matters most',
+    "{what this persona challenges}": "vague goals, skipped tests, and changes too large to review in one sitting",
+    '"{sample line}" / "{sample line}"': '"Two reefs ahead: the null check and the missing test. Heading set." / "This diff is an ocean. Split it and I will chart each half."',
 }
+PERSONALITY = ("{Character concept in one sentence.}", "{voice trait}", "{humor level and style}", "{habit or phrase}", "{what this persona challenges}", "{sample line}")
 
 
 def render(name: str) -> str:
@@ -74,6 +81,15 @@ class RuntimeAdapterTest(unittest.TestCase):
             self.assertIn("user/memory/MEMORY.md", agents)
             for forbidden in ("Before acting:", "## Working approach", "1. "):
                 self.assertNotIn(forbidden, agents)
+
+    def test_template_voice_is_a_filled_character_within_budget(self) -> None:
+        template = (ASSETS / "agents-template.md").read_text(encoding="utf-8")
+        for placeholder in PERSONALITY:
+            self.assertIn(placeholder, template)
+        agents = render("agents-template.md")
+        self.assertNotRegex(agents, r"\{[^}]+\}")
+        self.assertLessEqual(len(agents.split()), 300)
+        self.assertIn("never bends a boundary or the truth", agents)
 
     def test_native_settings_are_minimal_parseable_and_hook_free(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -171,7 +187,7 @@ class FleetVerifierTest(unittest.TestCase):
             (persona / "skills/review/SKILL.md").write_text("word " * 501, encoding="utf-8")
             (persona / ".claude/settings.json").write_text("{", encoding="utf-8")
             errors = "\n".join(VERIFIER.verify(root))
-            for expected in ("exceeds 300", "resident tool/procedure", "may contain only", "exceeds 500", "invalid JSON"):
+            for expected in ("exceeds 300", "always-loaded tool/procedure", "may contain only", "exceeds 500", "invalid JSON"):
                 self.assertIn(expected, errors)
 
     def test_tracked_private_context_fails(self) -> None:
