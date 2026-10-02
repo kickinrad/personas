@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.1 — 2026-10-02
+
+- Drop the unread Gemini CLI, Kimi Code, folder-memory, and Cloud entries
+  from the capability declaration. Behaviour is unchanged.
+
 ## 0.8.0 — 2026-09-25
 
 - Create personas through an interview: one question at a time, each with a
