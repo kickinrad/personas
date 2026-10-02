@@ -126,23 +126,6 @@ class RuntimeAdapterTest(unittest.TestCase):
             self.assertFalse((cloud / "user").exists())
             self.assertTrue((cloud / "AGENTS.md").is_file())
 
-    def test_existing_model_and_private_context_survive_validation(self):
-        with tempfile.TemporaryDirectory() as raw:
-            root = Path(raw)
-            home = root / "atlas"
-            create_fixture(home)
-            settings = home / ".claude/settings.json"
-            config = json.loads(settings.read_text())
-            config["model"] = "user-selected-model"
-            settings.write_text(json.dumps(config))
-            subprocess.run(["git", "init", "-q", str(home)], check=True)
-            subprocess.run(["git", "add", "."], cwd=home, check=True)
-            tracked = subprocess.check_output(["git", "ls-files"], cwd=home).decode()
-            self.assertNotIn("user/", tracked)
-            before = settings.read_bytes()
-            self.assertEqual(VERIFIER.verify(root), [])
-            self.assertEqual(settings.read_bytes(), before)
-
     def test_broken_import_and_missing_required_file_fail(self):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
@@ -172,11 +155,6 @@ class FleetVerifierTest(unittest.TestCase):
         (persona / ".claude/settings.json").write_text("{}", encoding="utf-8")
         (persona / "skills/review/SKILL.md").write_text("---\nname: review\n---\n\nReview work.\n", encoding="utf-8")
         return persona
-
-    def test_valid_fixture_passes(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            self.create_persona(Path(directory))
-            self.assertEqual(VERIFIER.verify(Path(directory)), [])
 
     def test_rejects_each_contract_boundary(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

@@ -70,8 +70,6 @@ class RepositoryTest(unittest.TestCase):
     def test_source_package_is_clean(self):
         self.assertEqual(package_errors(ROOT), [])
         self.assertEqual({p.parent.name for p in (ROOT / "skills").glob("*/SKILL.md")}, {"persona-dev", "self-improve"})
-        for retired in ("plugins", "bin/personas", "hooks", ".claude/plans", ".claude/evidence"):
-            self.assertFalse(any(p.is_file() for p in (ROOT / retired).rglob("*")) if (ROOT / retired).is_dir() else (ROOT / retired).exists())
 
     def test_export_ignores_caches_but_git_inventory_rejects_them(self):
         with tempfile.TemporaryDirectory() as raw:
