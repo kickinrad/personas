@@ -168,6 +168,13 @@ class FleetVerifierTest(unittest.TestCase):
             for expected in ("exceeds 300", "always-loaded tool/procedure", "may contain only", "exceeds 500", "invalid JSON"):
                 self.assertIn(expected, errors)
 
+    def test_persona_missing_agents_is_reported_not_skipped(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.create_persona(root)
+            (self.create_persona(root, "lumen") / "AGENTS.md").unlink()
+            self.assertEqual(VERIFIER.verify(root), ["lumen: required tracked file missing: AGENTS.md"])
+
     def test_tracked_private_context_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

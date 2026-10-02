@@ -44,8 +44,12 @@ def tracked_private_paths(repo: Path) -> list[str]:
     return sorted(set(private))
 
 
+REQUIRED = ("AGENTS.md", "CLAUDE.md", ".claude/settings.json")
+
+
 def persona_roots(fleet_root: Path) -> list[Path]:
-    roots = [path for path in fleet_root.iterdir() if path.is_dir() and (path / "AGENTS.md").is_file()]
+    """Any folder holding a required file is a persona, so a missing one is reported, not skipped."""
+    roots = [path for path in fleet_root.iterdir() if path.is_dir() and any((path / name).exists() for name in REQUIRED)]
     return sorted(roots, key=lambda path: path.name)
 
 
@@ -64,7 +68,7 @@ def verify_persona(repo: Path) -> list[str]:
     tracked = tracked_files(repo)
     agents, claude = repo / "AGENTS.md", repo / "CLAUDE.md"
 
-    for required in (agents, claude, repo / ".claude/settings.json"):
+    for required in (repo / file for file in REQUIRED):
         if required not in tracked or not required.is_file():
             errors.append(f"{name}: required tracked file missing: {required.relative_to(repo)}")
 
@@ -111,7 +115,7 @@ def verify(fleet_root: Path) -> list[str]:
         return [f"fleet root does not exist: {fleet_root}"]
     roots = persona_roots(fleet_root)
     if not roots:
-        return [f"no persona folders with AGENTS.md under: {fleet_root}"]
+        return [f"no persona folders under: {fleet_root}"]
     return [error for root in roots for error in verify_persona(root)]
 
 

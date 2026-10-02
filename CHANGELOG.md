@@ -2,6 +2,8 @@
 
 ## 0.8.1 — 2026-10-02
 
+- The fleet verifier now reports a persona folder that lost its `AGENTS.md`
+  instead of silently skipping it.
 - Drop the unread Gemini CLI, Kimi Code, folder-memory, and Cloud entries
   from the capability declaration. Behaviour is unchanged.
 
