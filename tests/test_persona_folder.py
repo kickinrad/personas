@@ -175,6 +175,18 @@ class FleetVerifierTest(unittest.TestCase):
             (self.create_persona(root, "lumen") / "AGENTS.md").unlink()
             self.assertEqual(VERIFIER.verify(root), ["lumen: required tracked file missing: AGENTS.md"])
 
+    def test_agent_mcp_allowlist_is_validated_and_legacy_list_flagged(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            persona = self.create_persona(root)
+            (persona / ".agent-mcp.json").write_text('["ob"]', encoding="utf-8")
+            self.assertEqual(VERIFIER.verify(root), [])
+            (persona / ".agent-mcp.json").write_text('["ob", "ob"]', encoding="utf-8")
+            (persona / ".mcp.json").write_text('{"mcpServers": {}, "agentMcpServers": []}', encoding="utf-8")
+            errors = "\n".join(VERIFIER.verify(root))
+            self.assertIn("unique server names", errors)
+            self.assertIn("still holds agentMcpServers", errors)
+
     def test_tracked_private_context_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

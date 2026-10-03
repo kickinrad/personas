@@ -100,16 +100,19 @@ runtime needs permission to read the persona folder from wherever you call it.
 The helper only overwrites files it generated for the same persona. It
 refuses a hand-written agent or one generated for another folder.
 
-To give the subagent the persona's tools, list them in the ignored `.mcp.json`:
+To give the subagent the persona's tools, define them in the ignored
+`.mcp.json` and name the ones it gets in `.agent-mcp.json`, which you can
+commit because it holds only names:
 
 ```json
-{
-  "mcpServers": {"recipes": {"command": "recipes-mcp", "env": {"API_KEY": "${RECIPES_API_KEY}"}}},
-  "agentMcpServers": ["recipes"]
-}
+{"mcpServers": {"recipes": {"command": "recipes-mcp", "env": {"API_KEY": "${RECIPES_API_KEY}"}}}}
 ```
 
-Only the servers named in `agentMcpServers` are copied into the agents. The
+```json
+["recipes"]
+```
+
+Only the servers named in `.agent-mcp.json` are copied into the agents. The
 helper supports stdio and HTTP servers and stops on unsupported fields,
 transports, or embedded credentials; reference secrets through environment
 variables instead.

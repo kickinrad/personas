@@ -47,8 +47,8 @@ nothing existing covers:
 
 Installing, connecting, or creating an account requires the user's explicit
 approval, asked separately. Approved choices feed the folder plan: MCP servers
-in the ignored `.mcp.json`, with the ones subagents need listed in
-`agentMcpServers`, and Claude plugins under `enabledPlugins` in
+in the ignored `.mcp.json`, with the names subagents need listed in the
+tracked `.agent-mcp.json`, and Claude plugins under `enabledPlugins` in
 `.claude/settings.json`. Keep credentials and local configuration outside
 tracked files. Record an executable dependency in the owning component; a
 knowledge citation is never an installation edge.
