@@ -112,7 +112,8 @@ commit because it holds only names:
 ["recipes"]
 ```
 
-Only the servers named in `.agent-mcp.json` are copied into the agents. The
+Only the servers named in `.agent-mcp.json` are copied into the agents; names
+use letters, digits, `_`, and `-`. The
 helper supports stdio and HTTP servers and stops on unsupported fields,
 transports, or embedded credentials; reference secrets through environment
 variables instead.

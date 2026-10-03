@@ -20,6 +20,8 @@ SENSITIVE = re.compile(r"(?:api[_-]?key|token|secret|password|authorization|cook
 NOT_SECRET = re.compile(r"\$\{[A-Za-z_][A-Za-z0-9_]*\}|true|false", re.I)
 # claude mcp add rewrites .mcp.json, so the subagent allowlist lives beside it.
 ALLOWLIST, LEGACY = ".agent-mcp.json", "agentMcpServers"
+# Codex `-c mcp_servers.<name>.*` overrides need a bare TOML key.
+SERVER_NAME = re.compile(r"[A-Za-z0-9_-]+")
 LITERAL = re.compile(r"(?:sk-[A-Za-z0-9_-]{12,}|eyJ[A-Za-z0-9_-]{12,}|gh[pousr]_[A-Za-z0-9_-]{12,})")
 
 
@@ -53,7 +55,8 @@ def agent_mcps(persona: Path) -> dict[str, dict[str, object]]:
     servers = payload.get("mcpServers", {})
     names = json.loads(allowlist.read_text(encoding="utf-8")) if allowlist.exists() else payload.get(LEGACY, [])
     if not isinstance(servers, dict): fail(".mcp.json mcpServers must be an object")
-    if not strings(names) or not all(names) or len(names) != len(set(names)): fail(f"{ALLOWLIST} must list unique server names")
+    if not strings(names) or not all(map(SERVER_NAME.fullmatch, names)) or len(names) != len(set(names)):
+        fail(f"{ALLOWLIST} must list unique server names of letters, digits, _ and -")
     selected = {}
     for name in names:
         raw = servers.get(name)

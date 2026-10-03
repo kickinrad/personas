@@ -156,9 +156,9 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertNotIn("mcpServers", frontmatter(claude))
         self.assertNotIn("mcp_servers", codex)
 
-    def test_serialization_preserves_quoted_unicode_values(self) -> None:
-        name = 'weather.雪"tool'
-        description = 'A reviewer: "careful" # always'
+    def test_serialization_preserves_quoted_values(self) -> None:
+        name = "weather"
+        description = 'A 雪 reviewer: "careful" # always'
         persona = self.persona(mcp={"mcpServers": {name: {"command": "tool", "env": {"PLAIN.KEY": "value"}}}, "agentMcpServers": [name]})
         (persona / "AGENTS.md").write_text(f"# Atlas\n\n> {description}\n", encoding="utf-8")
         self.assertEqual(self.invoke(persona, "--apply").returncode, 0)
@@ -172,6 +172,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
             "legacy key": {"mcpServers": {"a": {"command": "tool"}}, "codexMcpServers": ["a"]},
             "missing server": {"mcpServers": {}, "agentMcpServers": ["missing"]},
             "duplicate name": {"mcpServers": {"a": {"command": "tool"}}, "agentMcpServers": ["a", "a"]},
+            "dotted name": {"mcpServers": {"a.b": {"command": "tool"}}, "agentMcpServers": ["a.b"]},
             "unsupported transport": {"mcpServers": {"a": {"type": "ws", "url": "https://example.test"}}, "agentMcpServers": ["a"]},
             "unknown oauth key": {"mcpServers": {"a": {"type": "sse", "url": "https://example.test", "oauth": {"scope": "read"}}}, "agentMcpServers": ["a"]},
             "string callback port": {"mcpServers": {"a": {"type": "http", "url": "https://example.test", "oauth": {"callbackPort": "8080"}}}, "agentMcpServers": ["a"]},

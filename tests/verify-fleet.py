@@ -104,7 +104,7 @@ def verify_persona(repo: Path) -> list[str]:
     allowlist, mcp = repo / ".agent-mcp.json", repo / ".mcp.json"
     try:
         names = json.loads(allowlist.read_text(encoding="utf-8")) if allowlist.is_file() else []
-        if not (isinstance(names, list) and all(isinstance(n, str) and n for n in names) and len(names) == len(set(names))):
+        if not (isinstance(names, list) and all(isinstance(n, str) and re.fullmatch(r"[A-Za-z0-9_-]+", n) for n in names) and len(names) == len(set(names))):
             errors.append(f"{name}: .agent-mcp.json must be a list of unique server names")
         if mcp.is_file() and "agentMcpServers" in json.loads(mcp.read_text(encoding="utf-8")):
             errors.append(f"{name}: .mcp.json still holds agentMcpServers; run persona-native-sync.py --apply to move it to .agent-mcp.json")
