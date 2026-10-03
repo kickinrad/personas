@@ -67,6 +67,7 @@ julia/
 ├── skills/                # repeatable workflows
 ├── user/                  # private profile and memory
 ├── .mcp.json              # optional tool connections
+├── .agent-mcp.json        # connections the subagent gets
 ├── .claude/settings.json  # Claude Code settings
 └── .codex/config.toml     # Codex settings
 ```
