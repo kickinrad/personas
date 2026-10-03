@@ -44,8 +44,12 @@ def tracked_private_paths(repo: Path) -> list[str]:
     return sorted(set(private))
 
 
+REQUIRED = ("AGENTS.md", "CLAUDE.md", ".claude/settings.json")
+
+
 def persona_roots(fleet_root: Path) -> list[Path]:
-    roots = [path for path in fleet_root.iterdir() if path.is_dir() and (path / "AGENTS.md").is_file()]
+    """Any folder holding a required file is a persona, so a missing one is reported, not skipped."""
+    roots = [path for path in fleet_root.iterdir() if path.is_dir() and any((path / name).exists() for name in REQUIRED)]
     return sorted(roots, key=lambda path: path.name)
 
 
@@ -64,7 +68,7 @@ def verify_persona(repo: Path) -> list[str]:
     tracked = tracked_files(repo)
     agents, claude = repo / "AGENTS.md", repo / "CLAUDE.md"
 
-    for required in (agents, claude, repo / ".claude/settings.json"):
+    for required in (repo / file for file in REQUIRED):
         if required not in tracked or not required.is_file():
             errors.append(f"{name}: required tracked file missing: {required.relative_to(repo)}")
 
@@ -97,6 +101,15 @@ def verify_persona(repo: Path) -> list[str]:
             json.loads(settings.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
             errors.append(f"{name}: invalid JSON in {settings.relative_to(repo)}: {exc.msg}")
+    allowlist, mcp = repo / ".agent-mcp.json", repo / ".mcp.json"
+    try:
+        names = json.loads(allowlist.read_text(encoding="utf-8")) if allowlist.is_file() else []
+        if not (isinstance(names, list) and all(isinstance(n, str) and re.fullmatch(r"[A-Za-z0-9_-]+", n) for n in names) and len(names) == len(set(names))):
+            errors.append(f"{name}: .agent-mcp.json must be a list of unique server names")
+        if mcp.is_file() and "agentMcpServers" in json.loads(mcp.read_text(encoding="utf-8")):
+            errors.append(f"{name}: .mcp.json still holds agentMcpServers; run persona-native-sync.py --apply to move it to .agent-mcp.json")
+    except json.JSONDecodeError as exc:
+        errors.append(f"{name}: invalid JSON in agent MCP config: {exc.msg}")
     codex = repo / ".codex/config.toml"
     if codex.is_file():
         try:
@@ -111,7 +124,7 @@ def verify(fleet_root: Path) -> list[str]:
         return [f"fleet root does not exist: {fleet_root}"]
     roots = persona_roots(fleet_root)
     if not roots:
-        return [f"no persona folders with AGENTS.md under: {fleet_root}"]
+        return [f"no persona folders under: {fleet_root}"]
     return [error for root in roots for error in verify_persona(root)]
 
 

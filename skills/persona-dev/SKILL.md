@@ -57,8 +57,8 @@ Run `scripts/persona-native-sync.py --persona PATH --runtime claude|codex|all
 [--color COLOR]` to report drift for the persona's native subagents. Add
 `--apply` only after explicit approval. Each agent reads the live `AGENTS.md`
 and resolves relative paths from the folder; omitting `--color` keeps the
-existing color. Only servers named in the ignored `.mcp.json`
-`agentMcpServers` list are projected; agree that list with the user. When the
+existing color. Only servers named in the tracked `.agent-mcp.json`
+list are projected from the ignored `.mcp.json`; agree that list with the user. When the
 helper refuses an unowned or older file, move it aside only with approval. The
 helper never changes global runtime permissions.
 

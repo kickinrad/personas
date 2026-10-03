@@ -18,6 +18,10 @@ COLORS = ("red", "blue", "green", "yellow", "purple", "orange", "pink", "cyan")
 SENSITIVE = re.compile(r"(?:api[_-]?key|token|secret|password|authorization|cookie)", re.I)
 # Values under a credential-like key that cannot hold a secret: an env reference or a boolean flag.
 NOT_SECRET = re.compile(r"\$\{[A-Za-z_][A-Za-z0-9_]*\}|true|false", re.I)
+# claude mcp add rewrites .mcp.json, so the subagent allowlist lives beside it.
+ALLOWLIST, LEGACY = ".agent-mcp.json", "agentMcpServers"
+# Codex `-c mcp_servers.<name>.*` overrides need a bare TOML key.
+SERVER_NAME = re.compile(r"[A-Za-z0-9_-]+")
 LITERAL = re.compile(r"(?:sk-[A-Za-z0-9_-]{12,}|eyJ[A-Za-z0-9_-]{12,}|gh[pousr]_[A-Za-z0-9_-]{12,})")
 
 
@@ -44,17 +48,19 @@ def credential_free(value: object, key: str = "") -> None:
 
 
 def agent_mcps(persona: Path) -> dict[str, dict[str, object]]:
-    source = persona / ".mcp.json"
-    if not source.exists(): return {}
-    payload = json.loads(source.read_text(encoding="utf-8"))
-    if not isinstance(payload, dict) or set(payload) - {"mcpServers", "agentMcpServers"}: fail(".mcp.json must be an object with only mcpServers and agentMcpServers")
-    servers, names = payload.get("mcpServers", {}), payload.get("agentMcpServers", [])
+    source, allowlist = persona / ".mcp.json", persona / ALLOWLIST
+    payload = json.loads(source.read_text(encoding="utf-8")) if source.exists() else {}
+    if not isinstance(payload, dict) or set(payload) - {"mcpServers", LEGACY}: fail(f".mcp.json must be an object with only mcpServers (and a legacy {LEGACY})")
+    if LEGACY in payload and allowlist.exists(): fail(f"remove {LEGACY} from .mcp.json; {ALLOWLIST} owns the list")
+    servers = payload.get("mcpServers", {})
+    names = json.loads(allowlist.read_text(encoding="utf-8")) if allowlist.exists() else payload.get(LEGACY, [])
     if not isinstance(servers, dict): fail(".mcp.json mcpServers must be an object")
-    if not strings(names) or not all(names) or len(names) != len(set(names)): fail(".mcp.json agentMcpServers must list unique server names")
+    if not strings(names) or not all(map(SERVER_NAME.fullmatch, names)) or len(names) != len(set(names)):
+        fail(f"{ALLOWLIST} must list unique server names of letters, digits, _ and -")
     selected = {}
     for name in names:
         raw = servers.get(name)
-        if not isinstance(raw, dict): fail(f"agentMcpServers names an unavailable server: {name}")
+        if not isinstance(raw, dict): fail(f"{ALLOWLIST} names a server missing from .mcp.json: {name}")
         credential_free(raw)
         kind = raw.get("type", "stdio")
         if kind == "stdio":
@@ -109,6 +115,17 @@ def rendered(persona: Path, description: str, color: str | None, mcps: dict[str,
     return claude, codex
 
 
+def migrate(persona: Path, apply: bool) -> None:
+    """Move a legacy .mcp.json agentMcpServers list into the allowlist file."""
+    source = persona / ".mcp.json"
+    payload = json.loads(source.read_text(encoding="utf-8")) if source.exists() else {}
+    if LEGACY not in payload: return
+    if apply:
+        write(persona / ALLOWLIST, json.dumps(payload.pop(LEGACY)) + "\n")
+        write(source, json.dumps(payload, indent=2, ensure_ascii=False) + "\n")
+    print(f"{'migrated' if apply else 'migrate'} {source} {LEGACY} to {persona / ALLOWLIST}")
+
+
 def owned(path: Path, agents: Path) -> str | None:
     """Return the existing adapter text if this persona owns it; refuse anything else."""
     if not path.exists(): return None
@@ -152,6 +169,7 @@ def main() -> int:
         preserved = re.search(r'^color: "?([a-z]+)"?$', (existing.get("claude") or "").split("\n---", 1)[0], re.M)
         color = args.color or (preserved.group(1) if preserved and preserved.group(1) in COLORS else None)
         mcps = agent_mcps(persona)
+        migrate(persona, args.apply)
         content = dict(zip(("claude", "codex"), rendered(persona, description, color, mcps)))
         if "codex" in targets:
             for name, server in mcps.items():

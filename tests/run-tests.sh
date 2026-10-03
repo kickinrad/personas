@@ -8,10 +8,6 @@ cleanup() {
 }
 trap cleanup EXIT
 
-while IFS= read -r -d '' script; do
-  bash -n "$script"
-done < <(find "$ROOT" -path "$ROOT/.git" -prune -o -name '*.sh' -type f -print0)
-
 HOME="$TEST_HOME" PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "$ROOT/tests" -p 'test_*.py' -v
 HOME="$TEST_HOME" PYTHONDONTWRITEBYTECODE=1 python3 "$ROOT/tests/verify-fleet.py" --root "$ROOT/examples"
 

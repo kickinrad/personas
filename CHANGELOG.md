@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.9.0 — 2026-10-03
+
+- **Layout change:** the subagent MCP allowlist moves from `.mcp.json`
+  `agentMcpServers` to a tracked `.agent-mcp.json` list of server names, so
+  `claude mcp add` no longer erases it. `persona-native-sync.py --apply`
+  migrates an existing list, and the fleet verifier flags one left behind.
+- The fleet verifier now reports a persona folder that lost its `AGENTS.md`
+  instead of silently skipping it.
+- Drop the unread Gemini CLI, Kimi Code, folder-memory, and Cloud entries
+  from the capability declaration. Behaviour is unchanged.
+
 ## 0.8.0 — 2026-09-25
 
 - Create personas through an interview: one question at a time, each with a
