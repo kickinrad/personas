@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.0 — 2026-10-05
+
+- Use the root plugin directory for both Claude Code and Codex, with
+  `.claude-plugin/plugin.json` as the release manifest.
+- Keep Codex runtime support declared in the capability contract without a
+  second plugin manifest. Persona native subagent sync remains available.
+
 ## 0.9.1 — 2026-10-05
 
 - Clarify when persona development and persona-local self-improvement apply.
