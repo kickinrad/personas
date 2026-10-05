@@ -1,6 +1,6 @@
 ---
 name: persona-dev
-description: Use when the user asks to create, evolve, reconcile, or activate a persona folder, or connect an approved capability to it.
+description: Develop and reconcile portable persona folders. Use when creating or evolving a persona, connecting an approved capability, or activating native adapters. Not for persona-local self-improvement (use self-improve).
 ---
 
 # Develop a persona

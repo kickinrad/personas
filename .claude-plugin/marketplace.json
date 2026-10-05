@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Create portable persona folders for Claude Code and Codex",
-    "version": "0.9.0",
+    "version": "0.9.1",
     "pluginRoot": "."
   },
   "plugins": [

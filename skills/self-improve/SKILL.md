@@ -1,6 +1,6 @@
 ---
 name: self-improve
-description: Use when a persona is asked to self-improve, promote a repeated correction into a rule, turn recurring work into a skill, or review its local procedures.
+description: Improve a persona. Use when asked to self-improve, review local procedures, promote repeated corrections into a rule, or turn recurring work into a skill. Not for framework structure or native adapter activation (use persona-dev).
 ---
 
 # Self-improve
