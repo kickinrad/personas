@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.1 — 2026-10-05
+
+- Clarify when persona development and persona-local self-improvement apply.
+- Keep repository contributor guidance in `AGENTS.md`; remove the root
+  `CLAUDE.md` import that Claude's strict plugin validator rejects.
+
 ## 0.9.0 — 2026-10-03
 
 - **Layout change:** the subagent MCP allowlist moves from `.mcp.json`
