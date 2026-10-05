@@ -1,7 +1,7 @@
 {
   "schemaVersion": 6,
   "component": "personas",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "residency": {"claude-code": "global", "codex": "global"},
   "portableAuthority": "AGENTS.md",
   "portableSkills": ["persona-dev", "self-improve"],
