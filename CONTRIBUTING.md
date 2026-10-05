@@ -27,8 +27,8 @@ it. Include a DCO sign-off with `git commit -s`.
 
 ## Release
 
-1. Update the version in `.claude-plugin/plugin.json` and align the Codex
-   manifest, marketplace metadata, and capability declaration. Check dependent
+1. Update the version in `.claude-plugin/plugin.json` and align the
+   marketplace metadata and capability declaration. Check dependent
    pins and add the user-facing changes to `CHANGELOG.md`.
 2. Run the gate, review the diff, scan for secrets, and verify affected runtime
    behavior. Merge the reviewed pull request after hosted CI passes.
