@@ -42,30 +42,30 @@ def package_errors(root):
 
 
 class RepositoryTest(unittest.TestCase):
-    def test_native_manifests_share_one_release(self):
+    def test_native_plugin_has_one_release_manifest(self):
         def read(path):
             return json.loads((ROOT / path).read_text())
         claude = read(".claude-plugin/plugin.json")
-        codex = read(".codex-plugin/plugin.json")
         market = read(".claude-plugin/marketplace.json")
         agents = read(".agents/plugins/marketplace.json")
         capabilities = read("interop/capabilities.json")
         self.assertRegex(claude["version"], r"^\d+\.\d+\.\d+$")
-        self.assertEqual({codex["version"], market["metadata"]["version"], capabilities["version"]}, {claude["version"]})
-        self.assertEqual({claude["name"], codex["name"], market["plugins"][0]["name"], agents["plugins"][0]["name"]}, {"personas"})
-        self.assertEqual({claude["license"], codex["license"]}, {"Apache-2.0"})
+        self.assertEqual({market["metadata"]["version"], capabilities["version"]}, {claude["version"]})
+        self.assertEqual({claude["name"], market["plugins"][0]["name"], agents["plugins"][0]["name"]}, {"personas"})
+        self.assertEqual(claude["license"], "Apache-2.0")
+        self.assertFalse((ROOT / ".codex-plugin/plugin.json").exists())
         self.assertIn("Apache License", (ROOT / "LICENSE").read_text())
         self.assertEqual(market["metadata"]["pluginRoot"], ".")
         self.assertEqual(market["plugins"][0]["source"], ".")
         self.assertEqual(agents["plugins"][0]["source"]["path"], "./")
-        self.assertEqual(codex["skills"], "./skills/")
+        self.assertTrue((ROOT / "skills/persona-dev/SKILL.md").is_file())
         self.assertTrue(all("version" not in entry for entry in market["plugins"]))
         self.assertEqual(capabilities["portableAuthority"], "AGENTS.md")
         self.assertEqual(capabilities["runtimes"]["claude-code"]["imports"], ["AGENTS.md"])
-        for runtime in ("claude-code", "codex"):
-            declaration = capabilities["runtimes"][runtime]
-            self.assertEqual(declaration["status"], "native")
-            self.assertTrue((ROOT / declaration["personaNativeSync"]).is_file())
+        declaration = capabilities["runtimes"]["claude-code"]
+        self.assertEqual(declaration["status"], "native")
+        self.assertTrue((ROOT / declaration["personaNativeSync"]).is_file())
+        self.assertEqual(capabilities["runtimes"]["codex"], {"status": "native"})
 
     def test_source_package_is_clean(self):
         self.assertEqual(package_errors(ROOT), [])

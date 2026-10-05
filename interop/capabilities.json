@@ -1,7 +1,7 @@
 {
   "schemaVersion": 6,
   "component": "personas",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "residency": {"claude-code": "global", "codex": "global"},
   "portableAuthority": "AGENTS.md",
   "portableSkills": ["persona-dev", "self-improve"],
@@ -14,12 +14,6 @@
       "skills": true,
       "personaNativeSync": "skills/persona-dev/scripts/persona-native-sync.py"
     },
-    "codex": {
-      "status": "native",
-      "instructions": "AGENTS.md",
-      "projectSettings": ".codex/config.toml",
-      "skills": true,
-      "personaNativeSync": "skills/persona-dev/scripts/persona-native-sync.py"
-    }
+    "codex": {"status": "native"}
   }
 }
