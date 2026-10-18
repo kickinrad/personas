@@ -55,6 +55,8 @@ refused file aside only with approval.
 ## Evaluate
 
 The Craft's Proof is the outside judge; never grade the persona yourself.
+Grade checkable facts with deterministic graders (`regex`, `tool_used`); keep
+`llm` rubrics for judgment, where they are noisy.
 Wrap it as a plugin whose main agent it is, then compare it with plain Claude:
 
 ```bash
