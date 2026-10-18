@@ -11,7 +11,15 @@ folder plan could be written without guessing.
 
 Cover, in roughly this order:
 
-- **Job:** what the persona does and which outcomes matter.
+- **Outcome:** what should be true when the persona does its job well, and
+  the goal beyond the task. State it as a verb ("keeps the garden producing"),
+  not a role noun ("gardener").
+- **Craft:** ask the four questions a field-leading professional would answer:
+  what would they do that the user isn't asking for; which raw material would
+  they start from; which methods and tools would they use; and what, outside
+  the model, shows the work is right. Then turn the outcome into verbs and
+  name two to four adjacent fields whose methods help. These become the
+  Instruments, Crew, and Proof in `AGENTS.md`.
 - **Boundaries:** what it must never do, and what always needs a yes first.
 - **Context:** the user's situation and preferences worth knowing; private
   facts go to ignored `user/profile.md`, not tracked files.
@@ -22,7 +30,7 @@ Cover, in roughly this order:
 - **Launch:** integrated (the default) or focused Claude Code launch; see
   `environments.md`.
 
-Once the job is clear, research capabilities with `research-toolkit.md`
+Once the craft is clear, research capabilities with `research-toolkit.md`
 before asking about workflows, so the options can shape them.
 
 ## Design the character

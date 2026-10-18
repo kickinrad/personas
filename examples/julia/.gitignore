@@ -6,3 +6,4 @@ user/
 .env.*
 *.key
 *.pem
+evals/results/

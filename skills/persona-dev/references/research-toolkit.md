@@ -5,7 +5,8 @@ needs a new tool, integration, skill, hook, or reusable worker.
 
 ## Search
 
-Look for what would help this role, in this order:
+Start from the Craft: the raw inputs, instruments, and methods the field's
+best practitioners use. Find what lets the persona reach them, in this order:
 
 1. Installed runtime capabilities: the session's skills, plugins, and MCP
    servers.

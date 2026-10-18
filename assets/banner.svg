@@ -27,7 +27,7 @@
     font-weight="400"
     letter-spacing="3.5"
     fill="#94A3B8"
-  >native AI assistants for claude</text>
+  >craft-first AI for claude and codex</text>
 
   <style>
     @media (prefers-color-scheme: dark) {

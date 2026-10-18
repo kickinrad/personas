@@ -6,3 +6,4 @@ __pycache__/
 *.log
 *.local.json
 *.local.md
+evals/results/

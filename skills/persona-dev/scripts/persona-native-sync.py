@@ -6,6 +6,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import sys
 import tempfile
 import tomllib
@@ -19,9 +20,10 @@ SENSITIVE = re.compile(r"(?:api[_-]?key|token|secret|password|authorization|cook
 # Values under a credential-like key that cannot hold a secret: an env reference or a boolean flag.
 NOT_SECRET = re.compile(r"\$\{[A-Za-z_][A-Za-z0-9_]*\}|true|false", re.I)
 # claude mcp add rewrites .mcp.json, so the subagent allowlist lives beside it.
-ALLOWLIST, LEGACY = ".agent-mcp.json", "agentMcpServers"
+ALLOWLIST = ".agent-mcp.json"
 # Codex `-c mcp_servers.<name>.*` overrides need a bare TOML key.
 SERVER_NAME = re.compile(r"[A-Za-z0-9_-]+")
+SHARED = Path(__file__).resolve().parent.parent / "assets" / "PERSONAS.md"
 LITERAL = re.compile(r"(?:sk-[A-Za-z0-9_-]{12,}|eyJ[A-Za-z0-9_-]{12,}|gh[pousr]_[A-Za-z0-9_-]{12,})")
 
 
@@ -50,10 +52,9 @@ def credential_free(value: object, key: str = "") -> None:
 def agent_mcps(persona: Path) -> dict[str, dict[str, object]]:
     source, allowlist = persona / ".mcp.json", persona / ALLOWLIST
     payload = json.loads(source.read_text(encoding="utf-8")) if source.exists() else {}
-    if not isinstance(payload, dict) or set(payload) - {"mcpServers", LEGACY}: fail(f".mcp.json must be an object with only mcpServers (and a legacy {LEGACY})")
-    if LEGACY in payload and allowlist.exists(): fail(f"remove {LEGACY} from .mcp.json; {ALLOWLIST} owns the list")
+    if not isinstance(payload, dict) or set(payload) - {"mcpServers"}: fail(".mcp.json must be an object with only mcpServers")
     servers = payload.get("mcpServers", {})
-    names = json.loads(allowlist.read_text(encoding="utf-8")) if allowlist.exists() else payload.get(LEGACY, [])
+    names = json.loads(allowlist.read_text(encoding="utf-8")) if allowlist.exists() else []
     if not isinstance(servers, dict): fail(".mcp.json mcpServers must be an object")
     if not strings(names) or not all(map(SERVER_NAME.fullmatch, names)) or len(names) != len(set(names)):
         fail(f"{ALLOWLIST} must list unique server names of letters, digits, _ and -")
@@ -115,15 +116,25 @@ def rendered(persona: Path, description: str, color: str | None, mcps: dict[str,
     return claude, codex
 
 
-def migrate(persona: Path, apply: bool) -> None:
-    """Move a legacy .mcp.json agentMcpServers list into the allowlist file."""
-    source = persona / ".mcp.json"
-    payload = json.loads(source.read_text(encoding="utf-8")) if source.exists() else {}
-    if LEGACY not in payload: return
-    if apply:
-        write(persona / ALLOWLIST, json.dumps(payload.pop(LEGACY)) + "\n")
-        write(source, json.dumps(payload, indent=2, ensure_ascii=False) + "\n")
-    print(f"{'migrated' if apply else 'migrate'} {source} {LEGACY} to {persona / ALLOWLIST}")
+def eval_plugin(persona: Path, description: str) -> Path:
+    """Wrap the persona as a plugin whose main-thread agent it is, for `claude plugin eval`.
+
+    The wrapper holds private user/ context, so it goes in a fresh owner-only temporary directory."""
+    shared = persona / "PERSONAS.md"
+    if not shared.is_file() or shared.read_text(encoding="utf-8") != SHARED.read_text(encoding="utf-8"):
+        fail("PERSONAS.md is missing or drifted; run without --eval-plugin and --apply first")
+    out, slug = Path(tempfile.mkdtemp(prefix=f"persona-eval-{persona_slug(persona)}-")), persona_slug(persona)
+    # The sandbox cannot read the folder, so private user/ context the persona would read is inlined.
+    sources = (shared, persona / "AGENTS.md", persona / "user/profile.md", *sorted((persona / "user/memory").glob("*.md")))
+    body = "\n\n".join(path.read_text(encoding="utf-8") for path in sources if path.is_file())
+    write(out / ".claude-plugin" / "plugin.json", json.dumps({"name": "persona"}) + "\n")
+    write(out / "agents" / f"{slug}.md", f"---\nname: {json.dumps(slug)}\ndescription: {json.dumps(description)}\n---\n\n{body}")
+    write(out / "settings.json", json.dumps({"agent": f"persona:{slug}"}) + "\n")
+    # Evals answer these from evals/mocks/<server>/; real servers start only with --allow-real-servers.
+    if mcps := agent_mcps(persona): write(out / ".mcp.json", json.dumps({"mcpServers": mcps}, indent=2) + "\n")
+    for source, target in (("skills", "skills"), ("evals", "evals"), ("user/evals", "evals/private")):
+        if (persona / source).is_dir(): shutil.copytree(persona / source, out / target, ignore=shutil.ignore_patterns("results"))
+    return out
 
 
 def owned(path: Path, agents: Path) -> str | None:
@@ -156,12 +167,16 @@ def main() -> int:
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--claude-home", type=Path, default=Path.home() / ".claude")
     parser.add_argument("--codex-home", type=Path, default=Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")))
+    parser.add_argument("--eval-plugin", action="store_true", help="print a private temporary plugin that runs the persona as the main agent, for claude plugin eval")
     args = parser.parse_args()
     try:
         persona = args.persona.resolve()
         agents = persona / "AGENTS.md"
         lines = agents.read_text(encoding="utf-8").splitlines() if agents.is_file() else fail(f"missing {agents}")
         description = next((line[1:].strip() for line in lines if line.startswith(">")), None) or fail("AGENTS.md needs an opening blockquote")
+        if args.eval_plugin:
+            print(eval_plugin(persona, description))
+            return 0
         slug = persona_slug(persona)
         targets = {"claude": args.claude_home / "agents" / f"{slug}.md", "codex": args.codex_home / "agents" / f"{slug}.toml"}
         targets = {runtime: path for runtime, path in targets.items() if args.runtime in (runtime, "all")}
@@ -169,8 +184,12 @@ def main() -> int:
         preserved = re.search(r'^color: "?([a-z]+)"?$', (existing.get("claude") or "").split("\n---", 1)[0], re.M)
         color = args.color or (preserved.group(1) if preserved and preserved.group(1) in COLORS else None)
         mcps = agent_mcps(persona)
-        migrate(persona, args.apply)
         content = dict(zip(("claude", "codex"), rendered(persona, description, color, mcps)))
+        # PERSONAS.md is a generated copy in every persona, so it is always overwritten.
+        shared = persona / "PERSONAS.md"
+        targets = {"shared": shared, **targets}
+        content["shared"] = SHARED.read_text(encoding="utf-8")
+        existing["shared"] = shared.read_text(encoding="utf-8") if shared.is_file() else None
         if "codex" in targets:
             for name, server in mcps.items():
                 if reason := codex_gap(server): print(f"skipped {name} for codex: {reason}")
