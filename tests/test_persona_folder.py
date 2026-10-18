@@ -151,7 +151,7 @@ class FleetVerifierTest(unittest.TestCase):
         persona = root / name
         (persona / ".claude").mkdir(parents=True)
         (persona / "skills" / "review").mkdir(parents=True)
-        (persona / "AGENTS.md").write_text("# Wren\n\nShared rules: @PERSONAS.md\n\n## Craft\n\n- **Instruments:** diffs\n- **Crew:** testing\n- **Proof:** CI\n", encoding="utf-8")
+        (persona / "AGENTS.md").write_text("# Wren\n\nShared rules: @PERSONAS.md\n\n## Craft\n\n- **Instruments:** diffs, `grep -E 'x{2,3}'`\n- **Crew:** testing\n- **Proof:** CI\n", encoding="utf-8")
         (persona / "PERSONAS.md").write_text(VERIFIER.SHARED.read_text(encoding="utf-8"), encoding="utf-8")
         (persona / ".claude/settings.json").write_text("{}", encoding="utf-8")
         (persona / "skills/review/SKILL.md").write_text("---\nname: review\n---\n\nReview work.\n", encoding="utf-8")
@@ -161,7 +161,7 @@ class FleetVerifierTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             persona = self.create_persona(root, "lumen")
-            (persona / "AGENTS.md").write_text("# Lumen\n\n## Craft\n\n- **Instruments:** .\n- **Crew:** {fields}.\n- **Proof:**\n\n## Tools\n\n" + "word " * 301, encoding="utf-8")
+            (persona / "AGENTS.md").write_text("# Lumen\n\n## Craft\n\n- **Instruments:** .\n- **Crew:** {two to four adjacent fields, each with the method borrowed from\n  it}.\n- **Proof:** match `x{2,3}`\n\n## Tools\n\n" + "word " * 301, encoding="utf-8")
             (persona / "skills/review/SKILL.md").write_text("word " * 501, encoding="utf-8")
             (persona / ".claude/settings.json").write_text("{", encoding="utf-8")
             errors = "\n".join(VERIFIER.verify(root))

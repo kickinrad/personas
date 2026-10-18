@@ -46,6 +46,7 @@ def tracked_private_paths(repo: Path) -> list[str]:
 
 REQUIRED = ("AGENTS.md", "PERSONAS.md", ".claude/settings.json")
 SHARED = Path(__file__).resolve().parent.parent / "assets" / "PERSONAS.md"
+TEMPLATE = SHARED.with_name("agents-template.md")
 # Any of these in a persona or above it stops Claude Code from reading AGENTS.md.
 CLAUDE_FILES = ("CLAUDE.md", ".claude/CLAUDE.md", "CLAUDE.local.md")
 
@@ -90,7 +91,8 @@ def verify_persona(repo: Path) -> list[str]:
         craft = re.search(r"^## Craft\b(.*?)(?=^## |\Z)", always_loaded, re.MULTILINE | re.DOTALL)
         if not craft or not all(re.search(rf"\*\*{entry}:\*\*[^\n]*\w", craft.group(1)) for entry in ("Instruments", "Crew", "Proof")):
             errors.append(f"{name}: AGENTS.md needs a Craft section with Instruments, Crew, and Proof")
-        if re.search(r"\{[^{}\n]+\}", always_loaded):
+        flat = " ".join(always_loaded.split())
+        if any(" ".join(slot.split()) in flat for slot in re.findall(r"\{[^{}]+\}", TEMPLATE.read_text(encoding="utf-8"))):
             errors.append(f"{name}: AGENTS.md still contains a template placeholder")
         if not re.search(r"@PERSONAS\.md\s*$", always_loaded, re.MULTILINE):
             errors.append(f"{name}: AGENTS.md must import the shared rules with a line ending in @PERSONAS.md")
