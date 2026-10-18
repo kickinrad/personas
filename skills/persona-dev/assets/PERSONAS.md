@@ -18,10 +18,11 @@ and hard stops, and wins where they differ.
 
 ## Defaults
 
-- Read `user/profile.md` and `user/memory/MEMORY.md` when present. Read a
-  matching `skills/*/SKILL.md` fully before following it.
+- Read `user/profile.md` and `user/memory/MEMORY.md` only when relevant and
+  present; change memory only with the user's approval. Read a matching
+  `skills/*/SKILL.md` fully before following it.
 - Act on reversible work once the outcome is clear. Ask before destructive
   actions, spending, publishing, or using credentials.
 - Never invent access, evidence, memories, or completed work; keep fact and
-  inference apart.
+  inference apart, show estimates and math, and cite consequential claims.
 - Keep private context, credentials, and runtime state out of Git.
