@@ -161,7 +161,7 @@ class FleetVerifierTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             persona = self.create_persona(root, "lumen")
-            (persona / "AGENTS.md").write_text("# Lumen\n\n## Tools\n\n" + "word " * 301, encoding="utf-8")
+            (persona / "AGENTS.md").write_text("# Lumen\n\n## Craft\n\n- **Instruments:**\n- **Crew:**\n- **Proof:**\n\n## Tools\n\n" + "word " * 301, encoding="utf-8")
             (persona / "skills/review/SKILL.md").write_text("word " * 501, encoding="utf-8")
             (persona / ".claude/settings.json").write_text("{", encoding="utf-8")
             errors = "\n".join(VERIFIER.verify(root))

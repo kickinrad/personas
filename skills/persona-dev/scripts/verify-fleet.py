@@ -88,7 +88,7 @@ def verify_persona(repo: Path) -> list[str]:
         if len(re.findall(r"^\s*\d+[.)]\s+", always_loaded, re.MULTILINE)) >= 4:
             errors.append(f"{name}: AGENTS.md contains procedural bulk (four or more numbered steps)")
         craft = re.search(r"^## Craft\b(.*?)(?=^## |\Z)", always_loaded, re.MULTILINE | re.DOTALL)
-        if not craft or not all(f"**{entry}:**" in craft.group(1) for entry in ("Instruments", "Crew", "Proof")):
+        if not craft or not all(re.search(rf"\*\*{entry}:\*\*[ \t]*\S", craft.group(1)) for entry in ("Instruments", "Crew", "Proof")):
             errors.append(f"{name}: AGENTS.md needs a Craft section with Instruments, Crew, and Proof")
         if not re.search(r"@PERSONAS\.md\s*$", always_loaded, re.MULTILINE):
             errors.append(f"{name}: AGENTS.md must import the shared rules with a line ending in @PERSONAS.md")
@@ -129,10 +129,11 @@ def verify(fleet_root: Path) -> list[str]:
     roots = persona_roots(fleet_root)
     if not roots:
         return [f"no persona folders under: {fleet_root}"]
-    # Claude Code checks the persona's ancestors too; only the user-level ~/.claude/CLAUDE.md is exempt.
-    blocking = [directory / file for directory in (fleet_root, *fleet_root.parents) for file in CLAUDE_FILES]
-    errors = [f"delete {path}; it stops Claude Code from reading AGENTS.md" for path in blocking
-              if path.exists() and path != Path.home() / ".claude/CLAUDE.md"]
+    # Claude Code checks ancestors too. Above the fleet root, .claude/CLAUDE.md is skipped because
+    # the user-level ~/.claude/CLAUDE.md is exempt and looks the same.
+    blocking = [fleet_root / file for file in CLAUDE_FILES]
+    blocking += [directory / file for directory in fleet_root.parents for file in ("CLAUDE.md", "CLAUDE.local.md")]
+    errors = [f"delete {path}; it stops Claude Code from reading AGENTS.md" for path in blocking if path.exists()]
     if (fleet_root / "AGENTS.md").exists():
         errors.append(f"remove {fleet_root / 'AGENTS.md'}; Claude Code would load it into every persona")
     return errors + [error for root in roots for error in verify_persona(root)]
