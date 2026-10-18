@@ -129,6 +129,8 @@ class PersonaNativeSyncTest(unittest.TestCase):
     def test_eval_plugin_runs_the_persona_as_main_agent_with_its_guide(self) -> None:
         persona = self.persona(mcp={"mcpServers": {"local": {"command": "tool"}}, "agentMcpServers": ["local"]})
         (self.root / "AGENTS.md").write_text("# Shared guide\n", encoding="utf-8")
+        (persona / "user/memory").mkdir(parents=True)
+        (persona / "user/memory/MEMORY.md").write_text("Prefers one-pan dinners.\n", encoding="utf-8")
         (persona / "skills/review").mkdir(parents=True)
         (persona / "skills/review/SKILL.md").write_text("---\nname: review\n---\n", encoding="utf-8")
         for case in ("evals/public-case", "user/evals/replay-case", "evals/results/old-run"):
@@ -140,6 +142,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertEqual(json.loads((out / "settings.json").read_text()), {"agent": "persona:wren-review"})
         self.assertEqual(json.loads((out / ".claude-plugin/plugin.json").read_text())["name"], "persona")
         self.assertLess(agent.index("# Shared guide"), agent.index("# Wren Review"))
+        self.assertIn("Prefers one-pan dinners.", agent)
         self.assertNotIn("mcpServers", agent)
         self.assertEqual(json.loads((out / ".mcp.json").read_text()), {"mcpServers": {"local": {"type": "stdio", "command": "tool"}}})
         self.assertTrue((out / "skills/review/SKILL.md").is_file())

@@ -119,7 +119,9 @@ def eval_plugin(persona: Path, description: str, out: Path) -> None:
     """Wrap the persona as a plugin whose main-thread agent it is, for `claude plugin eval`."""
     if out.exists() and any(out.iterdir()): fail(f"eval plugin directory must be empty: {out}")
     slug, guide = persona_slug(persona), persona.parent / "AGENTS.md"
-    body = "\n\n".join(path.read_text(encoding="utf-8") for path in (guide, persona / "AGENTS.md") if path.is_file())
+    # The sandbox cannot read the folder, so private user/ context the persona would read is inlined.
+    sources = (guide, persona / "AGENTS.md", persona / "user/profile.md", *sorted((persona / "user/memory").glob("*.md")))
+    body = "\n\n".join(path.read_text(encoding="utf-8") for path in sources if path.is_file())
     write(out / ".claude-plugin" / "plugin.json", json.dumps({"name": "persona"}) + "\n")
     write(out / "agents" / f"{slug}.md", f"---\nname: {json.dumps(slug)}\ndescription: {json.dumps(description)}\n---\n\n{body}")
     write(out / "settings.json", json.dumps({"agent": f"persona:{slug}"}) + "\n")
