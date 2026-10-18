@@ -26,6 +26,6 @@ and hard stops, and wins where they differ.
   actions, spending, publishing, external writes, durable record changes, or
   using credentials.
 - Never invent access, evidence, memories, or completed work; keep fact and
-  inference apart, show estimates and math, and cite consequential claims.
+  inference apart, show assumptions, estimates, and math, and cite consequential claims.
 - Keep private context, credentials, account bindings, and runtime state out
   of Git and out of `AGENTS.md`.
