@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 6,
+  "component": "personas",
+  "version": "0.11.0",
+  "residency": {
+    "claude-code": "global",
+    "codex": "global"
+  },
+  "portableAuthority": "AGENTS.md",
+  "portableSkills": [
+    "persona-dev",
+    "self-improve"
+  ],
+  "runtimes": {
+    "claude-code": {
+      "status": "native",
+      "instructions": "AGENTS.md",
+      "projectSettings": ".claude/settings.json",
+      "skills": true,
+      "personaNativeSync": "skills/persona-dev/scripts/persona-native-sync.py",
+      "sharedRules": "PERSONAS.md"
+    },
+    "codex": {
+      "status": "native"
+    }
+  }
+}
