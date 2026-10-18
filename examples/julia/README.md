@@ -43,8 +43,10 @@ a low-stress menu, a prep timeline, and substitutions for a dairy-free guest.
 Change Julia's voice in `AGENTS.md`, adjust how she plans meals in the skill,
 or ask her to help you edit either. Here's where everything lives:
 
-- `AGENTS.md` says who Julia is, how she talks, and when she needs your approval.
-- `CLAUDE.md` points Claude Code to that same definition.
+- `AGENTS.md` says what Julia is for, the craft she practices, how she talks,
+  and when she needs your approval.
+- `PERSONAS.md` holds the rules every persona shares.
+- `evals/` holds test cases; see [evaluate a persona](../../README.md#evaluate-a-persona).
 - `.claude/settings.json` and `.codex/config.toml` hold each runtime's settings.
 - `skills/julia-meal-plan/SKILL.md` explains how she plans meals.
 

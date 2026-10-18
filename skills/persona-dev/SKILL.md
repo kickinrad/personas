@@ -10,61 +10,68 @@ private local context, and external knowledge sources distinct.
 
 ## Create
 
-1. Interview the user with `references/interview.md`: one question at a time,
-   each with a recommended answer, until the job, boundaries, context,
-   workflows, runtimes, color, and launch are clear;
-   integrated use is the default for both runtimes.
-2. Once the role is clear, research capabilities with
+1. Interview the user with `references/interview.md` until the outcome,
+   craft, character, boundaries, workflows, runtimes, color, and launch are
+   clear. Integrated use is the default.
+2. Once the craft is clear, research capabilities with
    `references/research-toolkit.md` and recommend a small starting set.
-3. Design a distinctive character with the interview reference, and check
-   its sample lines with the user.
-4. Read the templates in `assets/`, and `references/environments.md` when
+3. Read the templates in `assets/`, and `references/environments.md` when
    choosing a home or launch mode.
-5. Present a folder plan covering `AGENTS.md`, importing `CLAUDE.md`, skills,
-   settings, ignored context, approved capabilities, and launch choice. Write
-   nothing before approval.
-6. After approval, create the folder directly with normal file operations:
-   - `AGENTS.md` owns identity, voice, role, boundaries, and shared doctrine;
-   - `CLAUDE.md` imports `AGENTS.md` for Claude Code;
-   - `.claude/settings.json` and `.codex/config.toml` contain minimal native
-     project settings;
-   - `skills/` contains portable role workflows;
-   - `user/` contains optional ignored profile and explicit memory.
-7. Replace every placeholder with reviewed persona-specific content. Create
-   no hook merely for symmetry, reminders, framework drift, repository
-   visibility, or memory simulation.
-8. Keep everything tracked in Git safe to publish. Never put profile, memory,
-   local settings, connections, or credentials in tracked files.
-9. Inspect the resulting tree and exact diff. Confirm `AGENTS.md` is the only
-   always-loaded persona authority and `CLAUDE.md` imports it.
-10. Ask separately before plugin installation, repository creation, external
-    connection, publishing, or changes to an existing persona's private data.
+4. Present a folder plan covering `AGENTS.md`, skills, settings, ignored
+   context, approved capabilities, starter evals, and launch. Write nothing
+   before approval.
+5. After approval, create:
+   - `AGENTS.md`: identity, role, craft, voice, and role-specific boundaries;
+   - `PERSONAS.md`, the shared rules, written by the sync helper below;
+   - minimal `.claude/settings.json` and `.codex/config.toml`;
+   - `skills/` for portable role workflows;
+   - `evals/` with two or three synthetic cases graded by the Craft's Proof;
+   - ignored `user/` for profile, memory, and private evals.
+6. Replace every placeholder with reviewed content. Add no hook for symmetry,
+   reminders, drift, or memory simulation. Keep everything tracked safe to
+   publish.
+7. Inspect the tree and diff. No `CLAUDE.md` may exist in the folder or above
+   it; it stops Claude Code from reading `AGENTS.md`.
+8. Ask separately before plugin installation, repository creation, external
+   connection, publishing, or changing an existing persona's private data.
 
 ## Evolve or reconcile
 
-For an existing persona, inspect its folder first and edit only the owning
-surface; `self-improve`'s "Route the change" list owns content routing. Prefer
-an existing capability over a new wrapper.
-
-Compare existing folders with the current portable contract, classify each
-difference as adapter drift, persona-owned customization, obsolete machinery,
-or ambiguity, and show the reconciliation plan before writing. Preserve
-persona-owned meaning and optional ignored `user/` context.
+Inspect the folder first and edit only the owning surface; `self-improve`'s
+"Route the change" list owns routing. Classify each difference from the
+current contract as adapter drift, persona-owned customization, obsolete
+machinery, or ambiguity, and show the plan before writing. Preserve
+persona-owned meaning and `user/`.
 
 ## Activate native adapters
 
-Run `scripts/persona-native-sync.py --persona PATH --runtime claude|codex|all
-[--color COLOR]` to report drift for the persona's native subagents. Add
-`--apply` only after explicit approval. Each agent reads the live `AGENTS.md`
-and resolves relative paths from the folder; omitting `--color` keeps the
-existing color. Only servers named in the tracked `.agent-mcp.json`
-list are projected from the ignored `.mcp.json`; agree that list with the user. When the
-helper refuses an unowned or older file, move it aside only with approval. The
-helper never changes global runtime permissions.
+`scripts/persona-native-sync.py --persona PATH --runtime claude|codex|all
+[--color COLOR]` reports drift for `PERSONAS.md` and the native subagents;
+add `--apply` only after approval. Each agent reads the live folder. Only servers named in
+tracked `.agent-mcp.json` are projected from ignored `.mcp.json`. Move a
+refused file aside only with approval.
+
+## Evaluate
+
+The Craft's Proof is the outside judge; never grade the persona yourself.
+Grade checkable facts with deterministic graders (`regex`, `tool_used`); keep
+`llm` rubrics for judgment, where they are noisy.
+Wrap it as a plugin whose main agent it is, then compare it with plain Claude:
+
+```bash
+plugin=$(python3 scripts/persona-native-sync.py --persona PATH --eval-plugin)
+claude plugin eval "$plugin" --no-publish
+```
+
+Tracked `evals/` hold synthetic cases only. Cases from real conversations,
+including `context.history_file` replays, go in ignored `user/evals/`; the
+wrapper copies them to `evals/private/`. Mock the persona's allowlisted tools in
+`evals/mocks/<server>/<tool>.md`; real servers never start. Run
+evals before changing a persona; afterward it must match or beat the old
+version on cases tagged `holdout`.
 
 ## Verify
 
-Read the finished folder as a user would: understandable, free of duplicated
-doctrine, private state ignored, and equivalent Claude and Codex entry paths.
-For each approved capability, run the `references/research-toolkit.md` Verify
-controls. Run the framework test suite when changing the framework itself.
+Read the folder as a user would. Run `scripts/verify-fleet.py --root
+PERSONAS_ROOT`, the Verify controls in `references/research-toolkit.md` for
+each approved capability, and the framework tests when changing the framework.

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import shutil
 import subprocess
 import tempfile
 import tomllib
@@ -38,10 +39,10 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.root = Path(directory.name)
         self.claude, self.codex = self.root / "claude", self.root / "codex"
 
-    def persona(self, name: str = "atlas-review", mcp: dict | None = None) -> Path:
+    def persona(self, name: str = "wren-review", mcp: dict | None = None) -> Path:
         persona = self.root / name
         persona.mkdir()
-        (persona / "AGENTS.md").write_text("# Atlas Review\n\n> 🧭 Reviews small changes carefully.\n", encoding="utf-8")
+        (persona / "AGENTS.md").write_text("# Wren Review\n\n> 🧭 Reviews small changes carefully.\n", encoding="utf-8")
         if isinstance(mcp, dict) and "agentMcpServers" in mcp:
             mcp = dict(mcp)
             (persona / ".agent-mcp.json").write_text(json.dumps(mcp.pop("agentMcpServers")), encoding="utf-8")
@@ -53,32 +54,33 @@ class PersonaNativeSyncTest(unittest.TestCase):
         command = ("python3", str(SCRIPT), "--persona", str(persona), "--claude-home", str(self.claude), "--codex-home", str(self.codex), *args)
         return subprocess.run(command, text=True, capture_output=True, check=False)
 
-    def adapters(self, slug: str = "atlas-review") -> tuple[str, dict[str, object]]:
+    def adapters(self, slug: str = "wren-review") -> tuple[str, dict[str, object]]:
         return (self.claude / f"agents/{slug}.md").read_text(encoding="utf-8"), tomllib.loads((self.codex / f"agents/{slug}.toml").read_text(encoding="utf-8"))
 
     def test_reports_then_writes_one_agent_per_runtime(self) -> None:
         persona = self.persona()
         report = self.invoke(persona)
         self.assertEqual(report.returncode, 0, report.stderr)
-        self.assertEqual(report.stdout.count("drift"), 2)
-        self.assertFalse(self.claude.exists() or self.codex.exists())
+        self.assertEqual(report.stdout.count("drift"), 3)
+        self.assertFalse(self.claude.exists() or self.codex.exists() or (persona / "PERSONAS.md").exists())
         self.assertEqual(self.invoke(persona, "--apply").returncode, 0)
         self.assertEqual(sorted(p.relative_to(self.root).as_posix() for p in self.root.rglob("*") if p.is_file() and persona not in p.parents),
-                         ["claude/agents/atlas-review.md", "codex/agents/atlas-review.toml"])
+                         ["claude/agents/wren-review.md", "codex/agents/wren-review.toml"])
+        self.assertEqual((persona / "PERSONAS.md").read_text(), SYNC.SHARED.read_text())
         claude, codex = self.adapters()
         body = f"You are the persona defined in {persona / 'AGENTS.md'}. Read and follow it. Resolve its relative paths (skills/, user/, tools/) from {persona}."
-        self.assertEqual(frontmatter(claude), {"name": "atlas-review", "description": "🧭 Reviews small changes carefully."})
+        self.assertEqual(frontmatter(claude), {"name": "wren-review", "description": "🧭 Reviews small changes carefully."})
         self.assertEqual(claude.split("---\n", 2)[2], f"\n{SYNC.MARKER}\n{SYNC.SOURCE}{json.dumps(str(persona / 'AGENTS.md'))}\n\n{body}\n")
-        self.assertEqual(codex, {"name": "atlas-review", "description": "🧭 Reviews small changes carefully.", "developer_instructions": body})
-        self.assertTrue((self.codex / "agents/atlas-review.toml").read_text().startswith(f"{SYNC.MARKER}\n{SYNC.SOURCE}"))
-        self.assertEqual(self.invoke(persona).stdout.count("current"), 2)
+        self.assertEqual(codex, {"name": "wren-review", "description": "🧭 Reviews small changes carefully.", "developer_instructions": body})
+        self.assertTrue((self.codex / "agents/wren-review.toml").read_text().startswith(f"{SYNC.MARKER}\n{SYNC.SOURCE}"))
+        self.assertEqual(self.invoke(persona).stdout.count("current"), 3)
 
     def test_body_edits_stay_current_and_description_edits_drift(self) -> None:
         persona = self.persona()
         self.invoke(persona, "--apply")
-        (persona / "AGENTS.md").write_text("# Atlas Review\n\n> 🧭 Reviews small changes carefully.\n\nFresh body prose.\n", encoding="utf-8")
-        self.assertEqual(self.invoke(persona).stdout.count("current"), 2)
-        (persona / "AGENTS.md").write_text("# Atlas Review\n\n> 🧭 A revised description.\n", encoding="utf-8")
+        (persona / "AGENTS.md").write_text("# Wren Review\n\n> 🧭 Reviews small changes carefully.\n\nFresh body prose.\n", encoding="utf-8")
+        self.assertEqual(self.invoke(persona).stdout.count("current"), 3)
+        (persona / "AGENTS.md").write_text("# Wren Review\n\n> 🧭 A revised description.\n", encoding="utf-8")
         self.assertEqual(self.invoke(persona).stdout.count("drift"), 2)
 
     def test_color_is_validated_set_and_preserved(self) -> None:
@@ -87,7 +89,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertEqual(self.invoke(persona, "--color", "blue", "--apply").returncode, 0)
         self.assertEqual(frontmatter(self.adapters()[0])["color"], "blue")
         self.assertNotIn("color", self.adapters()[1])
-        self.assertEqual(self.invoke(persona).stdout.count("current"), 2)
+        self.assertEqual(self.invoke(persona).stdout.count("current"), 3)
         self.assertEqual(self.invoke(persona, "--color", "pink", "--apply").returncode, 0)
         self.assertEqual(frontmatter(self.adapters()[0])["color"], "pink")
 
@@ -126,21 +128,35 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertEqual(codex["mcp_servers"], {"plain": {"url": "https://example.test/plain"}})
         self.assertNotIn("skipped", self.invoke(persona, "--runtime", "claude").stdout)
 
-    def test_legacy_list_migrates_out_of_mcp_json_on_apply(self) -> None:
-        persona = self.persona()
-        mcp = persona / ".mcp.json"
-        mcp.write_text(json.dumps({"mcpServers": {"local": {"command": "tool"}}, "agentMcpServers": ["local"]}), encoding="utf-8")
-        report = self.invoke(persona)
-        self.assertIn("migrate ", report.stdout)
-        self.assertFalse((persona / ".agent-mcp.json").exists())
-        self.assertEqual(self.invoke(persona, "--apply").returncode, 0)
-        self.assertEqual(json.loads((persona / ".agent-mcp.json").read_text()), ["local"])
-        self.assertEqual(json.loads(mcp.read_text()), {"mcpServers": {"local": {"command": "tool"}}})
-        self.assertIn("local", frontmatter(self.adapters()[0])["mcpServers"][0])
-        mcp.write_text(json.dumps({"mcpServers": {"local": {"command": "tool"}}, "agentMcpServers": ["local"]}), encoding="utf-8")
-        result = self.invoke(persona)
-        self.assertEqual(result.returncode, 2)
-        self.assertIn("owns the list", result.stderr)
+    def test_eval_plugin_runs_the_persona_as_main_agent_with_its_guide(self) -> None:
+        persona = self.persona(mcp={"mcpServers": {"local": {"command": "tool"}}, "agentMcpServers": ["local"]})
+        (persona / "PERSONAS.md").write_text("# Hand-edited copy\n", encoding="utf-8")
+        (persona / "user/memory").mkdir(parents=True)
+        (persona / "user/memory/MEMORY.md").write_text("Prefers one-pan dinners.\n", encoding="utf-8")
+        (persona / "skills/review").mkdir(parents=True)
+        (persona / "skills/review/SKILL.md").write_text("---\nname: review\n---\n", encoding="utf-8")
+        for case in ("evals/public-case", "user/evals/replay-case", "evals/results/old-run"):
+            (persona / case).mkdir(parents=True)
+            (persona / case / "prompt.md").write_text("Hi\n", encoding="utf-8")
+        self.assertIn("drifted", self.invoke(persona, "--eval-plugin").stderr)
+        (persona / "PERSONAS.md").write_text(SYNC.SHARED.read_text(encoding="utf-8"), encoding="utf-8")
+        result = self.invoke(persona, "--eval-plugin")
+        out = Path(result.stdout.strip())
+        self.addCleanup(shutil.rmtree, out)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(out.stat().st_mode & 0o777, 0o700)
+        agent = (out / "agents/wren-review.md").read_text(encoding="utf-8")
+        self.assertEqual(json.loads((out / "settings.json").read_text()), {"agent": "persona:wren-review"})
+        self.assertEqual(json.loads((out / ".claude-plugin/plugin.json").read_text())["name"], "persona")
+        self.assertLess(agent.index("# Shared persona rules"), agent.index("# Wren Review"))
+        self.assertIn("Prefers one-pan dinners.", agent)
+        self.assertNotIn("mcpServers", agent)
+        self.assertEqual(json.loads((out / ".mcp.json").read_text()), {"mcpServers": {"local": {"type": "stdio", "command": "tool"}}})
+        self.assertTrue((out / "skills/review/SKILL.md").is_file())
+        self.assertTrue((out / "evals/public-case/prompt.md").is_file())
+        self.assertTrue((out / "evals/private/replay-case/prompt.md").is_file())
+        self.assertFalse((out / "evals/results").exists())
+        self.assertFalse(self.claude.exists() or self.codex.exists())
 
     def test_allowlist_without_mcp_json_fails(self) -> None:
         persona = self.persona()
@@ -160,7 +176,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
         name = "weather"
         description = 'A 雪 reviewer: "careful" # always'
         persona = self.persona(mcp={"mcpServers": {name: {"command": "tool", "env": {"PLAIN.KEY": "value"}}}, "agentMcpServers": [name]})
-        (persona / "AGENTS.md").write_text(f"# Atlas\n\n> {description}\n", encoding="utf-8")
+        (persona / "AGENTS.md").write_text(f"# Wren\n\n> {description}\n", encoding="utf-8")
         self.assertEqual(self.invoke(persona, "--apply").returncode, 0)
         claude, codex = self.adapters()
         self.assertEqual(frontmatter(claude)["description"], description)
@@ -169,7 +185,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
 
     def test_rejects_invalid_mcp_declarations(self) -> None:
         cases = {
-            "legacy key": {"mcpServers": {"a": {"command": "tool"}}, "codexMcpServers": ["a"]},
+            "unknown key": {"mcpServers": {"a": {"command": "tool"}}, "codexMcpServers": ["a"]},
             "missing server": {"mcpServers": {}, "agentMcpServers": ["missing"]},
             "duplicate name": {"mcpServers": {"a": {"command": "tool"}}, "agentMcpServers": ["a", "a"]},
             "dotted name": {"mcpServers": {"a.b": {"command": "tool"}}, "agentMcpServers": ["a.b"]},
@@ -182,7 +198,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
         }
         for index, (label, payload) in enumerate(cases.items()):
             with self.subTest(label):
-                result = self.invoke(self.persona(f"atlas-{index}", payload), "--apply")
+                result = self.invoke(self.persona(f"wren-{index}", payload), "--apply")
                 self.assertEqual(result.returncode, 2)
                 self.assertTrue(result.stderr.startswith("error: "))
         self.assertFalse(self.claude.exists() or self.codex.exists())
@@ -206,7 +222,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
         }
         for index, (label, (server, message)) in enumerate(cases.items()):
             with self.subTest(label):
-                result = self.invoke(self.persona(f"atlas-{index}", {"mcpServers": {"a": server}, "agentMcpServers": ["a"]}))
+                result = self.invoke(self.persona(f"wren-{index}", {"mcpServers": {"a": server}, "agentMcpServers": ["a"]}))
                 self.assertEqual(result.returncode, 2)
                 self.assertIn(message, result.stderr)
 
@@ -217,7 +233,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
 
     def test_refuses_unowned_and_other_persona_files_before_writing(self) -> None:
         persona = self.persona()
-        manual = self.codex / "agents/atlas-review.toml"
+        manual = self.codex / "agents/wren-review.toml"
         manual.parent.mkdir(parents=True)
         manual.write_text("manual = true\n", encoding="utf-8")
         result = self.invoke(persona, "--apply")
@@ -227,7 +243,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
         manual.write_text(f'{SYNC.MARKER}\n{SYNC.SOURCE}"/elsewhere/AGENTS.md"\n', encoding="utf-8")
         self.assertEqual(self.invoke(persona, "--apply").returncode, 2)
         manual.unlink()
-        self.assertEqual(self.invoke(self.persona("Atlas Review"), "--apply").returncode, 0)
+        self.assertEqual(self.invoke(self.persona("Wren Review"), "--apply").returncode, 0)
         self.assertEqual(self.invoke(persona, "--apply").returncode, 2)
 
     def test_single_runtime_touches_only_its_home(self) -> None:
@@ -235,13 +251,13 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertEqual(self.invoke(persona, "--runtime", "claude", "--apply").returncode, 0)
         self.assertFalse(self.codex.exists())
         self.assertEqual(self.invoke(persona, "--runtime", "codex", "--apply").returncode, 0)
-        self.assertTrue((self.codex / "agents/atlas-review.toml").is_file())
+        self.assertTrue((self.codex / "agents/wren-review.toml").is_file())
 
     def test_codex_home_defaults_to_environment(self) -> None:
         persona = self.persona()
         command = ("python3", str(SCRIPT), "--persona", str(persona), "--runtime", "codex")
         result = subprocess.run(command, text=True, capture_output=True, check=False, env={"CODEX_HOME": str(self.codex), "HOME": str(self.root)})
-        self.assertEqual(result.stdout.strip(), f"drift {self.codex / 'agents/atlas-review.toml'}")
+        self.assertIn(f"drift {self.codex / 'agents/wren-review.toml'}", result.stdout)
 
     def test_failed_replace_preserves_destination_and_cleans_temporary_file(self) -> None:
         target = self.root / "agent.toml"

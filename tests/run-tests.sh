@@ -9,7 +9,7 @@ cleanup() {
 trap cleanup EXIT
 
 HOME="$TEST_HOME" PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "$ROOT/tests" -p 'test_*.py' -v
-HOME="$TEST_HOME" PYTHONDONTWRITEBYTECODE=1 python3 "$ROOT/tests/verify-fleet.py" --root "$ROOT/examples"
+HOME="$TEST_HOME" PYTHONDONTWRITEBYTECODE=1 python3 "$ROOT/skills/persona-dev/scripts/verify-fleet.py" --root "$ROOT/examples"
 
 if [[ -e "$ROOT/.git" ]]; then
   git -C "$ROOT" diff --check

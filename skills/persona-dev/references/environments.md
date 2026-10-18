@@ -25,4 +25,11 @@ claude --setting-sources project,local
 
 Codex has no supported equivalent, so it remains integrated. Managed policy,
 authentication, and explicit CLI flags remain runtime-owned. Verify a launch
-starts at the persona root and loads `CLAUDE.md`.
+starts at the persona root and loads `AGENTS.md`.
+
+## Instruction loading
+
+Claude Code 2.1.281 or later reads `AGENTS.md` directly when no `CLAUDE.md`
+exists in the folder or above it, and expands its `@PERSONAS.md` import.
+Codex reads the same line and opens the file. Keep `CLAUDE.md` and other
+`AGENTS.md` files out of the personas root; Claude Code would load them too.

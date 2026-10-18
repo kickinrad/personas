@@ -4,17 +4,18 @@
 
 ## Use
 
-Open this folder in Claude Code or Codex. Codex loads the portable definition in
-`AGENTS.md`; Claude Code imports that same definition through `CLAUDE.md`.
+Open this folder in Claude Code or Codex. Both read `AGENTS.md`, which
+pulls in the shared rules in `PERSONAS.md`.
 
 ## Folder map
 
-- `AGENTS.md` — portable identity, role, voice, boundaries, and Codex entry.
-- `CLAUDE.md` — Claude Code import of `AGENTS.md`.
+- `AGENTS.md` — identity, role, craft, voice, and boundaries.
+- `PERSONAS.md` — shared rules, generated; don't edit here.
 - `.claude/settings.json` — native Claude project settings.
 - `.codex/config.toml` — native Codex project settings.
 - `skills/` — portable role workflows.
-- `user/` — optional ignored profile and explicit memory.
+- `evals/` — synthetic eval cases.
+- `user/` — optional ignored profile, memory, and private evals.
 
 ## Privacy
 
