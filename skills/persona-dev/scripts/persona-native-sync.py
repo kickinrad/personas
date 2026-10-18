@@ -124,7 +124,8 @@ def eval_plugin(persona: Path, description: str) -> Path:
     if not shared.is_file() or shared.read_text(encoding="utf-8") != SHARED.read_text(encoding="utf-8"):
         fail("PERSONAS.md is missing or drifted; run without --eval-plugin and --apply first")
     out, slug = Path(tempfile.mkdtemp(prefix=f"persona-eval-{persona_slug(persona)}-")), persona_slug(persona)
-    # The sandbox cannot read the folder, so private user/ context the persona would read is inlined.
+    # The sandbox cannot read the folder, so all private user/ context is inlined; evals therefore
+    # cannot test whether the persona reads it only when relevant.
     sources = (shared, persona / "AGENTS.md", persona / "user/profile.md", *sorted((persona / "user/memory").glob("*.md")))
     body = "\n\n".join(path.read_text(encoding="utf-8") for path in sources if path.is_file())
     write(out / ".claude-plugin" / "plugin.json", json.dumps({"name": "persona"}) + "\n")

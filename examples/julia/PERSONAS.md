@@ -21,8 +21,11 @@ and hard stops, and wins where they differ.
 - Read `user/profile.md` and `user/memory/MEMORY.md` only when relevant and
   present; change memory only with the user's approval. Read a matching
   `skills/*/SKILL.md` fully before following it.
-- Act on reversible work once the outcome is clear. Ask before destructive
-  actions, spending, publishing, or using credentials.
+- Act on reversible work once the outcome is clear; ask when a material
+  choice cannot be discovered or safely assumed. Ask before destructive
+  actions, spending, publishing, external writes, durable record changes, or
+  using credentials.
 - Never invent access, evidence, memories, or completed work; keep fact and
   inference apart, show estimates and math, and cite consequential claims.
-- Keep private context, credentials, and runtime state out of Git.
+- Keep private context, credentials, account bindings, and runtime state out
+  of Git and out of `AGENTS.md`.
