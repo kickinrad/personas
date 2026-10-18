@@ -67,9 +67,9 @@ anything.
 
 ```text
 ~/.personas/
-├── AGENTS.md              # shared guide every persona follows
 └── julia/
     ├── AGENTS.md          # outcome, craft, voice, boundaries
+    ├── PERSONAS.md        # rules every persona shares (generated)
     ├── skills/            # repeatable workflows
     ├── evals/             # test cases for the persona
     ├── user/              # private profile, memory, and evals (ignored)

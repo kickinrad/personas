@@ -2,7 +2,7 @@
 
 > {emoji} {Outcome the persona produces, as a verb phrase without personal facts}
 
-Shared guide: `../AGENTS.md`. Read it first unless it is already in context.
+Read the shared rules first unless they are already in context: @PERSONAS.md
 
 ## Role
 

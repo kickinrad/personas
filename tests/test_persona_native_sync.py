@@ -60,24 +60,25 @@ class PersonaNativeSyncTest(unittest.TestCase):
         persona = self.persona()
         report = self.invoke(persona)
         self.assertEqual(report.returncode, 0, report.stderr)
-        self.assertEqual(report.stdout.count("drift"), 2)
-        self.assertFalse(self.claude.exists() or self.codex.exists())
+        self.assertEqual(report.stdout.count("drift"), 3)
+        self.assertFalse(self.claude.exists() or self.codex.exists() or (persona / "PERSONAS.md").exists())
         self.assertEqual(self.invoke(persona, "--apply").returncode, 0)
         self.assertEqual(sorted(p.relative_to(self.root).as_posix() for p in self.root.rglob("*") if p.is_file() and persona not in p.parents),
                          ["claude/agents/wren-review.md", "codex/agents/wren-review.toml"])
+        self.assertEqual((persona / "PERSONAS.md").read_text(), SYNC.SHARED.read_text())
         claude, codex = self.adapters()
         body = f"You are the persona defined in {persona / 'AGENTS.md'}. Read and follow it. Resolve its relative paths (skills/, user/, tools/) from {persona}."
         self.assertEqual(frontmatter(claude), {"name": "wren-review", "description": "🧭 Reviews small changes carefully."})
         self.assertEqual(claude.split("---\n", 2)[2], f"\n{SYNC.MARKER}\n{SYNC.SOURCE}{json.dumps(str(persona / 'AGENTS.md'))}\n\n{body}\n")
         self.assertEqual(codex, {"name": "wren-review", "description": "🧭 Reviews small changes carefully.", "developer_instructions": body})
         self.assertTrue((self.codex / "agents/wren-review.toml").read_text().startswith(f"{SYNC.MARKER}\n{SYNC.SOURCE}"))
-        self.assertEqual(self.invoke(persona).stdout.count("current"), 2)
+        self.assertEqual(self.invoke(persona).stdout.count("current"), 3)
 
     def test_body_edits_stay_current_and_description_edits_drift(self) -> None:
         persona = self.persona()
         self.invoke(persona, "--apply")
         (persona / "AGENTS.md").write_text("# Wren Review\n\n> 🧭 Reviews small changes carefully.\n\nFresh body prose.\n", encoding="utf-8")
-        self.assertEqual(self.invoke(persona).stdout.count("current"), 2)
+        self.assertEqual(self.invoke(persona).stdout.count("current"), 3)
         (persona / "AGENTS.md").write_text("# Wren Review\n\n> 🧭 A revised description.\n", encoding="utf-8")
         self.assertEqual(self.invoke(persona).stdout.count("drift"), 2)
 
@@ -87,7 +88,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertEqual(self.invoke(persona, "--color", "blue", "--apply").returncode, 0)
         self.assertEqual(frontmatter(self.adapters()[0])["color"], "blue")
         self.assertNotIn("color", self.adapters()[1])
-        self.assertEqual(self.invoke(persona).stdout.count("current"), 2)
+        self.assertEqual(self.invoke(persona).stdout.count("current"), 3)
         self.assertEqual(self.invoke(persona, "--color", "pink", "--apply").returncode, 0)
         self.assertEqual(frontmatter(self.adapters()[0])["color"], "pink")
 
@@ -128,7 +129,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
 
     def test_eval_plugin_runs_the_persona_as_main_agent_with_its_guide(self) -> None:
         persona = self.persona(mcp={"mcpServers": {"local": {"command": "tool"}}, "agentMcpServers": ["local"]})
-        (self.root / "AGENTS.md").write_text("# Shared guide\n", encoding="utf-8")
+        (persona / "PERSONAS.md").write_text("# Shared guide\n", encoding="utf-8")
         (persona / "user/memory").mkdir(parents=True)
         (persona / "user/memory/MEMORY.md").write_text("Prefers one-pan dinners.\n", encoding="utf-8")
         (persona / "skills/review").mkdir(parents=True)
@@ -251,7 +252,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
         persona = self.persona()
         command = ("python3", str(SCRIPT), "--persona", str(persona), "--runtime", "codex")
         result = subprocess.run(command, text=True, capture_output=True, check=False, env={"CODEX_HOME": str(self.codex), "HOME": str(self.root)})
-        self.assertEqual(result.stdout.strip(), f"drift {self.codex / 'agents/wren-review.toml'}")
+        self.assertIn(f"drift {self.codex / 'agents/wren-review.toml'}", result.stdout)
 
     def test_failed_replace_preserves_destination_and_cleans_temporary_file(self) -> None:
         target = self.root / "agent.toml"

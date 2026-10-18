@@ -8,11 +8,12 @@
   interview asks the four questions a field-leading professional would answer,
   after Felix Rieseberg's
   [How to be more ambitious](https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/).
-- **Shared guide:** rules every persona shares live once in the personas
-  root `AGENTS.md`, created from `assets/personas-guide.md`.
+- **Shared rules:** rules every persona shares live once in the plugin's
+  `assets/PERSONAS.md`. The sync helper writes an identical `PERSONAS.md`
+  into each persona, which its `AGENTS.md` imports, and reports drift.
 - **Breaking:** personas no longer use `CLAUDE.md`. Claude Code 2.1.281 or
   later reads `AGENTS.md` directly; delete each persona's `CLAUDE.md` and add
-  the shared-guide line. The fleet verifier flags any that remain.
+  the `@PERSONAS.md` line. The fleet verifier flags any that remain.
 - **Evals:** `persona-native-sync.py --eval-plugin DIR` wraps a persona for
   `claude plugin eval`, compared against plain Claude. `self-improve` turns a
   promoted correction into a private replay case in `user/evals/`.

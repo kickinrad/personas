@@ -44,7 +44,8 @@ def tracked_private_paths(repo: Path) -> list[str]:
     return sorted(set(private))
 
 
-REQUIRED = ("AGENTS.md", ".claude/settings.json")
+REQUIRED = ("AGENTS.md", "PERSONAS.md", ".claude/settings.json")
+SHARED = Path(__file__).resolve().parent.parent / "assets" / "PERSONAS.md"
 # Any of these in a persona or above it stops Claude Code from reading AGENTS.md.
 CLAUDE_FILES = ("CLAUDE.md", ".claude/CLAUDE.md", "CLAUDE.local.md")
 
@@ -88,8 +89,11 @@ def verify_persona(repo: Path) -> list[str]:
             errors.append(f"{name}: AGENTS.md contains procedural bulk (four or more numbered steps)")
         if not re.search(r"^## Craft\b", always_loaded, re.MULTILINE):
             errors.append(f"{name}: AGENTS.md needs a Craft section (Instruments, Crew, Proof)")
-        if "../AGENTS.md" not in always_loaded:
-            errors.append(f"{name}: AGENTS.md must point to the shared guide at ../AGENTS.md for Codex")
+        if "@PERSONAS.md" not in always_loaded:
+            errors.append(f"{name}: AGENTS.md must import the shared rules with @PERSONAS.md")
+    shared = repo / "PERSONAS.md"
+    if shared.is_file() and shared.read_text(encoding="utf-8") != SHARED.read_text(encoding="utf-8"):
+        errors.append(f"{name}: PERSONAS.md drifted from the plugin; run persona-native-sync.py --apply")
 
     errors += [f"{name}: delete {file}; it stops Claude Code from reading AGENTS.md" for file in CLAUDE_FILES if (repo / file).exists()]
 
@@ -124,8 +128,9 @@ def verify(fleet_root: Path) -> list[str]:
     roots = persona_roots(fleet_root)
     if not roots:
         return [f"no persona folders under: {fleet_root}"]
-    errors = [] if (fleet_root / "AGENTS.md").is_file() else [f"shared guide missing: {fleet_root / 'AGENTS.md'}"]
-    errors += [f"delete {fleet_root / file}; it stops Claude Code from reading AGENTS.md" for file in CLAUDE_FILES if (fleet_root / file).exists()]
+    errors = [f"delete {fleet_root / file}; it stops Claude Code from reading AGENTS.md" for file in CLAUDE_FILES if (fleet_root / file).exists()]
+    if (fleet_root / "AGENTS.md").exists():
+        errors.append(f"remove {fleet_root / 'AGENTS.md'}; Claude Code would load it into every persona")
     return errors + [error for root in roots for error in verify_persona(root)]
 
 

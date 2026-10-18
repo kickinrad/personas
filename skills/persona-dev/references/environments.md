@@ -30,7 +30,6 @@ starts at the persona root and loads `AGENTS.md`.
 ## Instruction loading
 
 Claude Code 2.1.281 or later reads `AGENTS.md` directly when no `CLAUDE.md`
-exists in the folder or above it, and also loads the personas root's shared
-guide. Codex reads only from the persona's Git root down, so each persona's
-`AGENTS.md` points to `../AGENTS.md`. Keep `CLAUDE.md` out of persona folders
-and the personas root.
+exists in the folder or above it, and expands its `@PERSONAS.md` import.
+Codex reads the same line and opens the file. Keep `CLAUDE.md` and other
+`AGENTS.md` files out of the personas root; Claude Code would load them too.

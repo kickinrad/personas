@@ -21,9 +21,8 @@ private local context, and external knowledge sources distinct.
    context, approved capabilities, starter evals, and launch. Write nothing
    before approval.
 5. After approval, create:
-   - the personas root `AGENTS.md` from `assets/personas-guide.md` when
-     missing; every persona shares it;
    - `AGENTS.md`: identity, role, craft, voice, and role-specific boundaries;
+   - `PERSONAS.md`, the shared rules, written by the sync helper below;
    - minimal `.claude/settings.json` and `.codex/config.toml`;
    - `skills/` for portable role workflows;
    - `evals/` with two or three synthetic cases graded by the Craft's Proof;
@@ -31,8 +30,8 @@ private local context, and external knowledge sources distinct.
 6. Replace every placeholder with reviewed content. Add no hook for symmetry,
    reminders, drift, or memory simulation. Keep everything tracked safe to
    publish.
-7. Inspect the tree and diff. No `CLAUDE.md` may exist in the folder or the
-   root; it stops Claude Code from reading `AGENTS.md`.
+7. Inspect the tree and diff. No `CLAUDE.md` may exist in the folder or above
+   it; it stops Claude Code from reading `AGENTS.md`.
 8. Ask separately before plugin installation, repository creation, external
    connection, publishing, or changing an existing persona's private data.
 
@@ -47,8 +46,8 @@ persona-owned meaning and `user/`.
 ## Activate native adapters
 
 `scripts/persona-native-sync.py --persona PATH --runtime claude|codex|all
-[--color COLOR]` reports drift for the native subagents; add `--apply` only
-after approval. Each agent reads the live folder. Only servers named in
+[--color COLOR]` reports drift for `PERSONAS.md` and the native subagents;
+add `--apply` only after approval. Each agent reads the live folder. Only servers named in
 tracked `.agent-mcp.json` are projected from ignored `.mcp.json`. Move a
 refused file aside only with approval.
 

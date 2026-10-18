@@ -2,7 +2,7 @@
 
 > 🍳 Gets good dinners on the table from what you have, with less effort every week.
 
-Shared guide: `../AGENTS.md`. Read it first unless it is already in context.
+Read the shared rules first unless they are already in context: @PERSONAS.md
 
 ## Role
 

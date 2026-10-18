@@ -10,7 +10,7 @@ Improve the persona without duplicating authority.
 ## Route the change
 
 - Identity, role, craft, voice, and role-specific boundaries belong in
-  `AGENTS.md`; rules every persona shares belong in the personas root guide.
+  `AGENTS.md`; rules every persona shares belong in the plugin's `PERSONAS.md`.
 - A recurring multi-step procedure belongs in one portable role skill.
 - Explicit persona memory belongs in ignored `user/memory/MEMORY.md` with user
   approval.

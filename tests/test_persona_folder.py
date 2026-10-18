@@ -46,8 +46,8 @@ def render(name: str) -> str:
 
 
 def create_fixture(home: Path, *, private_context: bool = True) -> None:
-    (home.parent / "AGENTS.md").write_text((ASSETS / "personas-guide.md").read_text(encoding="utf-8"), encoding="utf-8")
     destinations = {
+        "PERSONAS.md": "PERSONAS.md",
         "agents-template.md": "AGENTS.md",
         "readme-template.md": "README.md",
         "settings-template.json": ".claude/settings.json",
@@ -74,20 +74,20 @@ def create_fixture(home: Path, *, private_context: bool = True) -> None:
 
 
 class RuntimeAdapterTest(unittest.TestCase):
-    def test_folder_reads_agents_and_the_shared_guide(self) -> None:
+    def test_folder_imports_the_shared_rules(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             home = Path(directory) / "wren"
             create_fixture(home)
             agents = (home / "AGENTS.md").read_text(encoding="utf-8")
-            guide = (Path(directory) / "AGENTS.md").read_text(encoding="utf-8")
+            guide = (home / "PERSONAS.md").read_text(encoding="utf-8")
             self.assertEqual(VERIFIER.verify(Path(directory)), [])
             self.assertFalse((home / "CLAUDE.md").exists())
             for section in ("## Role", "## Craft", "**Instruments:**", "**Crew:**", "**Proof:**"):
                 self.assertIn(section, agents)
-            self.assertIn("../AGENTS.md", agents)
+            self.assertTrue(agents.splitlines()[4].endswith("@PERSONAS.md"))
             for shared in ("skills/", "user/profile.md", "user/memory/MEMORY.md", "Never grade your own work"):
                 self.assertIn(shared, guide)
-            self.assertEqual(guide, (ROOT / "examples/AGENTS.md").read_text(encoding="utf-8"))
+            self.assertEqual(guide, (ROOT / "examples/julia/PERSONAS.md").read_text(encoding="utf-8"))
 
     def test_template_voice_is_a_filled_character_within_budget(self) -> None:
         template = (ASSETS / "agents-template.md").read_text(encoding="utf-8")
@@ -123,17 +123,19 @@ class RuntimeAdapterTest(unittest.TestCase):
             self.assertFalse((cloud / "user").exists())
             self.assertTrue((cloud / "AGENTS.md").is_file())
 
-    def test_claude_md_missing_guide_and_missing_required_file_fail(self):
+    def test_claude_md_root_agents_drift_and_missing_required_file_fail(self):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             home = root / "wren"
             create_fixture(home)
             (home / "CLAUDE.md").write_text("@AGENTS.md\n")
-            (root / "AGENTS.md").unlink()
+            (root / "AGENTS.md").write_text("# Workspace\n")
+            (home / "PERSONAS.md").write_text("# Edited by hand\n")
             (home / ".claude/settings.json").unlink()
             errors = "\n".join(VERIFIER.verify(root))
             self.assertIn("delete CLAUDE.md", errors)
-            self.assertIn("shared guide missing", errors)
+            self.assertIn("Claude Code would load it into every persona", errors)
+            self.assertIn("PERSONAS.md drifted", errors)
             self.assertIn("required tracked file missing", errors)
 
 
@@ -146,11 +148,11 @@ SPEC.loader.exec_module(VERIFIER)
 
 class FleetVerifierTest(unittest.TestCase):
     def create_persona(self, root: Path, name: str = "wren") -> Path:
-        (root / "AGENTS.md").write_text("# Personas\n", encoding="utf-8")
         persona = root / name
         (persona / ".claude").mkdir(parents=True)
         (persona / "skills" / "review").mkdir(parents=True)
-        (persona / "AGENTS.md").write_text("# Wren\n\nShared guide: `../AGENTS.md`.\n\n## Craft\n", encoding="utf-8")
+        (persona / "AGENTS.md").write_text("# Wren\n\nShared rules: @PERSONAS.md\n\n## Craft\n", encoding="utf-8")
+        (persona / "PERSONAS.md").write_text(VERIFIER.SHARED.read_text(encoding="utf-8"), encoding="utf-8")
         (persona / ".claude/settings.json").write_text("{}", encoding="utf-8")
         (persona / "skills/review/SKILL.md").write_text("---\nname: review\n---\n\nReview work.\n", encoding="utf-8")
         return persona
@@ -163,7 +165,7 @@ class FleetVerifierTest(unittest.TestCase):
             (persona / "skills/review/SKILL.md").write_text("word " * 501, encoding="utf-8")
             (persona / ".claude/settings.json").write_text("{", encoding="utf-8")
             errors = "\n".join(VERIFIER.verify(root))
-            for expected in ("exceeds 300", "always-loaded tool/procedure", "needs a Craft section", "shared guide at ../AGENTS.md", "exceeds 500", "invalid JSON"):
+            for expected in ("exceeds 300", "always-loaded tool/procedure", "needs a Craft section", "must import the shared rules", "exceeds 500", "invalid JSON"):
                 self.assertIn(expected, errors)
 
     def test_persona_missing_agents_is_reported_not_skipped(self) -> None:

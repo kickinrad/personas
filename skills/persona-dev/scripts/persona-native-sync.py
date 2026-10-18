@@ -23,6 +23,7 @@ NOT_SECRET = re.compile(r"\$\{[A-Za-z_][A-Za-z0-9_]*\}|true|false", re.I)
 ALLOWLIST = ".agent-mcp.json"
 # Codex `-c mcp_servers.<name>.*` overrides need a bare TOML key.
 SERVER_NAME = re.compile(r"[A-Za-z0-9_-]+")
+SHARED = Path(__file__).resolve().parent.parent / "assets" / "PERSONAS.md"
 LITERAL = re.compile(r"(?:sk-[A-Za-z0-9_-]{12,}|eyJ[A-Za-z0-9_-]{12,}|gh[pousr]_[A-Za-z0-9_-]{12,})")
 
 
@@ -118,9 +119,9 @@ def rendered(persona: Path, description: str, color: str | None, mcps: dict[str,
 def eval_plugin(persona: Path, description: str, out: Path) -> None:
     """Wrap the persona as a plugin whose main-thread agent it is, for `claude plugin eval`."""
     if out.exists() and any(out.iterdir()): fail(f"eval plugin directory must be empty: {out}")
-    slug, guide = persona_slug(persona), persona.parent / "AGENTS.md"
+    slug = persona_slug(persona)
     # The sandbox cannot read the folder, so private user/ context the persona would read is inlined.
-    sources = (guide, persona / "AGENTS.md", persona / "user/profile.md", *sorted((persona / "user/memory").glob("*.md")))
+    sources = (persona / "PERSONAS.md", persona / "AGENTS.md", persona / "user/profile.md", *sorted((persona / "user/memory").glob("*.md")))
     body = "\n\n".join(path.read_text(encoding="utf-8") for path in sources if path.is_file())
     write(out / ".claude-plugin" / "plugin.json", json.dumps({"name": "persona"}) + "\n")
     write(out / "agents" / f"{slug}.md", f"---\nname: {json.dumps(slug)}\ndescription: {json.dumps(description)}\n---\n\n{body}")
@@ -180,6 +181,11 @@ def main() -> int:
         color = args.color or (preserved.group(1) if preserved and preserved.group(1) in COLORS else None)
         mcps = agent_mcps(persona)
         content = dict(zip(("claude", "codex"), rendered(persona, description, color, mcps)))
+        # PERSONAS.md is a generated copy in every persona, so it is always overwritten.
+        shared = persona / "PERSONAS.md"
+        targets = {"shared": shared, **targets}
+        content["shared"] = SHARED.read_text(encoding="utf-8")
+        existing["shared"] = shared.read_text(encoding="utf-8") if shared.is_file() else None
         if "codex" in targets:
             for name, server in mcps.items():
                 if reason := codex_gap(server): print(f"skipped {name} for codex: {reason}")

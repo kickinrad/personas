@@ -3,10 +3,11 @@
 Start Claude Code or Codex from your persona's folder. Ask for help with the
 job you made it for; you don't need to repeat its whole role in every prompt.
 
-Both runtimes read the persona's `AGENTS.md` and the shared guide in the
-personas root `AGENTS.md`. Claude Code finds the guide on its own; Codex
-follows the persona's `../AGENTS.md` line. Don't add a `CLAUDE.md`: Claude
-Code reads `AGENTS.md` only when none exists in the folder or above it. The
+Both runtimes read the persona's `AGENTS.md`, which pulls in the shared rules
+in `PERSONAS.md`: Claude Code expands the `@PERSONAS.md` import and Codex
+follows the line. `PERSONAS.md` is generated; refresh it with the sync helper.
+Don't add a `CLAUDE.md`: Claude Code reads `AGENTS.md` only when none exists
+in the folder or above it. The
 persona reads the matching workflow under `skills/` when a task needs it.
 [Julia](../examples/julia/README.md) shows how these files fit together.
 

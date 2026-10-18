@@ -45,7 +45,7 @@ or ask her to help you edit either. Here's where everything lives:
 
 - `AGENTS.md` says what Julia is for, the craft she practices, how she talks,
   and when she needs your approval.
-- `../AGENTS.md` is the shared guide every persona follows.
+- `PERSONAS.md` holds the rules every persona shares.
 - `evals/` holds test cases; see [evaluate a persona](../../README.md#evaluate-a-persona).
 - `.claude/settings.json` and `.codex/config.toml` hold each runtime's settings.
 - `skills/julia-meal-plan/SKILL.md` explains how she plans meals.
