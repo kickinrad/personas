@@ -29,8 +29,8 @@ def tracked_files(repo: Path) -> set[Path]:
 def tracked_private_paths(repo: Path) -> list[str]:
     """Return tracked private paths, allowing user/ subpaths the persona re-includes after ignoring user/ by default."""
     result = subprocess.run(["git", "ls-files", "-z", "--", *PRIVATE_PATHS], cwd=repo, capture_output=True)
-    if result.returncode:
-        return []
+    if result.returncode:  # Not a Git checkout, such as a source export: everything present ships.
+        return sorted({str(path.relative_to(repo)) for pattern in PRIVATE_PATHS for path in repo.glob(pattern)})
     names = [name for name in result.stdout.decode().split("\0") if name]
     user = [name for name in names if name.startswith("user/")]
     denies_user = subprocess.run(["git", "check-ignore", "-q", "--no-index", "user/.verify-fleet-probe"], cwd=repo).returncode == 0
@@ -87,10 +87,11 @@ def verify_persona(repo: Path) -> list[str]:
             errors.append(f"{name}: AGENTS.md contains an always-loaded tool/procedure heading")
         if len(re.findall(r"^\s*\d+[.)]\s+", always_loaded, re.MULTILINE)) >= 4:
             errors.append(f"{name}: AGENTS.md contains procedural bulk (four or more numbered steps)")
-        if not re.search(r"^## Craft\b", always_loaded, re.MULTILINE):
-            errors.append(f"{name}: AGENTS.md needs a Craft section (Instruments, Crew, Proof)")
-        if "@PERSONAS.md" not in always_loaded:
-            errors.append(f"{name}: AGENTS.md must import the shared rules with @PERSONAS.md")
+        craft = re.search(r"^## Craft\b(.*?)(?=^## |\Z)", always_loaded, re.MULTILINE | re.DOTALL)
+        if not craft or not all(f"**{entry}:**" in craft.group(1) for entry in ("Instruments", "Crew", "Proof")):
+            errors.append(f"{name}: AGENTS.md needs a Craft section with Instruments, Crew, and Proof")
+        if not re.search(r"@PERSONAS\.md\s*$", always_loaded, re.MULTILINE):
+            errors.append(f"{name}: AGENTS.md must import the shared rules with a line ending in @PERSONAS.md")
     shared = repo / "PERSONAS.md"
     if shared.is_file() and shared.read_text(encoding="utf-8") != SHARED.read_text(encoding="utf-8"):
         errors.append(f"{name}: PERSONAS.md drifted from the plugin; run persona-native-sync.py --apply")
@@ -128,7 +129,10 @@ def verify(fleet_root: Path) -> list[str]:
     roots = persona_roots(fleet_root)
     if not roots:
         return [f"no persona folders under: {fleet_root}"]
-    errors = [f"delete {fleet_root / file}; it stops Claude Code from reading AGENTS.md" for file in CLAUDE_FILES if (fleet_root / file).exists()]
+    # Claude Code checks the persona's ancestors too; only the user-level ~/.claude/CLAUDE.md is exempt.
+    blocking = [directory / file for directory in (fleet_root, *fleet_root.parents) for file in CLAUDE_FILES]
+    errors = [f"delete {path}; it stops Claude Code from reading AGENTS.md" for path in blocking
+              if path.exists() and path != Path.home() / ".claude/CLAUDE.md"]
     if (fleet_root / "AGENTS.md").exists():
         errors.append(f"remove {fleet_root / 'AGENTS.md'}; Claude Code would load it into every persona")
     return errors + [error for root in roots for error in verify_persona(root)]

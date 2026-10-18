@@ -116,12 +116,16 @@ def rendered(persona: Path, description: str, color: str | None, mcps: dict[str,
     return claude, codex
 
 
-def eval_plugin(persona: Path, description: str, out: Path) -> None:
-    """Wrap the persona as a plugin whose main-thread agent it is, for `claude plugin eval`."""
-    if out.exists() and any(out.iterdir()): fail(f"eval plugin directory must be empty: {out}")
-    slug = persona_slug(persona)
+def eval_plugin(persona: Path, description: str) -> Path:
+    """Wrap the persona as a plugin whose main-thread agent it is, for `claude plugin eval`.
+
+    The wrapper holds private user/ context, so it goes in a fresh owner-only temporary directory."""
+    shared = persona / "PERSONAS.md"
+    if not shared.is_file() or shared.read_text(encoding="utf-8") != SHARED.read_text(encoding="utf-8"):
+        fail("PERSONAS.md is missing or drifted; run without --eval-plugin and --apply first")
+    out, slug = Path(tempfile.mkdtemp(prefix=f"persona-eval-{persona_slug(persona)}-")), persona_slug(persona)
     # The sandbox cannot read the folder, so private user/ context the persona would read is inlined.
-    sources = (persona / "PERSONAS.md", persona / "AGENTS.md", persona / "user/profile.md", *sorted((persona / "user/memory").glob("*.md")))
+    sources = (shared, persona / "AGENTS.md", persona / "user/profile.md", *sorted((persona / "user/memory").glob("*.md")))
     body = "\n\n".join(path.read_text(encoding="utf-8") for path in sources if path.is_file())
     write(out / ".claude-plugin" / "plugin.json", json.dumps({"name": "persona"}) + "\n")
     write(out / "agents" / f"{slug}.md", f"---\nname: {json.dumps(slug)}\ndescription: {json.dumps(description)}\n---\n\n{body}")
@@ -130,7 +134,7 @@ def eval_plugin(persona: Path, description: str, out: Path) -> None:
     if mcps := agent_mcps(persona): write(out / ".mcp.json", json.dumps({"mcpServers": mcps}, indent=2) + "\n")
     for source, target in (("skills", "skills"), ("evals", "evals"), ("user/evals", "evals/private")):
         if (persona / source).is_dir(): shutil.copytree(persona / source, out / target, ignore=shutil.ignore_patterns("results"))
-    print(f"eval plugin {out}")
+    return out
 
 
 def owned(path: Path, agents: Path) -> str | None:
@@ -163,7 +167,7 @@ def main() -> int:
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--claude-home", type=Path, default=Path.home() / ".claude")
     parser.add_argument("--codex-home", type=Path, default=Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")))
-    parser.add_argument("--eval-plugin", type=Path, metavar="DIR", help="write a plugin that runs the persona as the main agent, for claude plugin eval")
+    parser.add_argument("--eval-plugin", action="store_true", help="print a private temporary plugin that runs the persona as the main agent, for claude plugin eval")
     args = parser.parse_args()
     try:
         persona = args.persona.resolve()
@@ -171,7 +175,7 @@ def main() -> int:
         lines = agents.read_text(encoding="utf-8").splitlines() if agents.is_file() else fail(f"missing {agents}")
         description = next((line[1:].strip() for line in lines if line.startswith(">")), None) or fail("AGENTS.md needs an opening blockquote")
         if args.eval_plugin:
-            eval_plugin(persona, description, args.eval_plugin.resolve())
+            print(eval_plugin(persona, description))
             return 0
         slug = persona_slug(persona)
         targets = {"claude": args.claude_home / "agents" / f"{slug}.md", "codex": args.codex_home / "agents" / f"{slug}.toml"}

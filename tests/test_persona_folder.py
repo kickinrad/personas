@@ -77,7 +77,7 @@ class RuntimeAdapterTest(unittest.TestCase):
     def test_folder_imports_the_shared_rules(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             home = Path(directory) / "wren"
-            create_fixture(home)
+            create_fixture(home, private_context=False)
             agents = (home / "AGENTS.md").read_text(encoding="utf-8")
             guide = (home / "PERSONAS.md").read_text(encoding="utf-8")
             self.assertEqual(VERIFIER.verify(Path(directory)), [])
@@ -151,7 +151,7 @@ class FleetVerifierTest(unittest.TestCase):
         persona = root / name
         (persona / ".claude").mkdir(parents=True)
         (persona / "skills" / "review").mkdir(parents=True)
-        (persona / "AGENTS.md").write_text("# Wren\n\nShared rules: @PERSONAS.md\n\n## Craft\n", encoding="utf-8")
+        (persona / "AGENTS.md").write_text("# Wren\n\nShared rules: @PERSONAS.md\n\n## Craft\n\n- **Instruments:** diffs\n- **Crew:** testing\n- **Proof:** CI\n", encoding="utf-8")
         (persona / "PERSONAS.md").write_text(VERIFIER.SHARED.read_text(encoding="utf-8"), encoding="utf-8")
         (persona / ".claude/settings.json").write_text("{}", encoding="utf-8")
         (persona / "skills/review/SKILL.md").write_text("---\nname: review\n---\n\nReview work.\n", encoding="utf-8")
@@ -183,6 +183,16 @@ class FleetVerifierTest(unittest.TestCase):
             self.assertEqual(VERIFIER.verify(root), [])
             (persona / ".agent-mcp.json").write_text('["recipes", "recipes"]', encoding="utf-8")
             self.assertIn("unique server names", "\n".join(VERIFIER.verify(root)))
+
+    def test_export_without_git_reports_private_files_and_ancestor_claude_md(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "fleet"
+            persona = self.create_persona(root)
+            (persona / ".mcp.json").write_text("{}", encoding="utf-8")
+            (root.parent / "CLAUDE.md").write_text("# Above the fleet\n", encoding="utf-8")
+            errors = "\n".join(VERIFIER.verify(root))
+            self.assertIn("private local context is tracked: .mcp.json", errors)
+            self.assertIn(f"delete {root.parent / 'CLAUDE.md'}", errors)
 
     def test_tracked_private_context_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

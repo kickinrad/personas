@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import shutil
 import subprocess
 import tempfile
 import tomllib
@@ -129,7 +130,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
 
     def test_eval_plugin_runs_the_persona_as_main_agent_with_its_guide(self) -> None:
         persona = self.persona(mcp={"mcpServers": {"local": {"command": "tool"}}, "agentMcpServers": ["local"]})
-        (persona / "PERSONAS.md").write_text("# Shared guide\n", encoding="utf-8")
+        (persona / "PERSONAS.md").write_text("# Hand-edited copy\n", encoding="utf-8")
         (persona / "user/memory").mkdir(parents=True)
         (persona / "user/memory/MEMORY.md").write_text("Prefers one-pan dinners.\n", encoding="utf-8")
         (persona / "skills/review").mkdir(parents=True)
@@ -137,12 +138,17 @@ class PersonaNativeSyncTest(unittest.TestCase):
         for case in ("evals/public-case", "user/evals/replay-case", "evals/results/old-run"):
             (persona / case).mkdir(parents=True)
             (persona / case / "prompt.md").write_text("Hi\n", encoding="utf-8")
-        out = self.root / "eval"
-        self.assertEqual(self.invoke(persona, "--eval-plugin", str(out)).returncode, 0)
+        self.assertIn("drifted", self.invoke(persona, "--eval-plugin").stderr)
+        (persona / "PERSONAS.md").write_text(SYNC.SHARED.read_text(encoding="utf-8"), encoding="utf-8")
+        result = self.invoke(persona, "--eval-plugin")
+        out = Path(result.stdout.strip())
+        self.addCleanup(shutil.rmtree, out)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(out.stat().st_mode & 0o777, 0o700)
         agent = (out / "agents/wren-review.md").read_text(encoding="utf-8")
         self.assertEqual(json.loads((out / "settings.json").read_text()), {"agent": "persona:wren-review"})
         self.assertEqual(json.loads((out / ".claude-plugin/plugin.json").read_text())["name"], "persona")
-        self.assertLess(agent.index("# Shared guide"), agent.index("# Wren Review"))
+        self.assertLess(agent.index("# Shared persona rules"), agent.index("# Wren Review"))
         self.assertIn("Prefers one-pan dinners.", agent)
         self.assertNotIn("mcpServers", agent)
         self.assertEqual(json.loads((out / ".mcp.json").read_text()), {"mcpServers": {"local": {"type": "stdio", "command": "tool"}}})
@@ -151,7 +157,6 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertTrue((out / "evals/private/replay-case/prompt.md").is_file())
         self.assertFalse((out / "evals/results").exists())
         self.assertFalse(self.claude.exists() or self.codex.exists())
-        self.assertEqual(self.invoke(persona, "--eval-plugin", str(out)).returncode, 2)
 
     def test_allowlist_without_mcp_json_fails(self) -> None:
         persona = self.persona()

@@ -59,8 +59,8 @@ Grade checkable facts with deterministic graders (`regex`, `tool_used`); keep
 Wrap it as a plugin whose main agent it is, then compare it with plain Claude:
 
 ```bash
-python3 scripts/persona-native-sync.py --persona PATH --eval-plugin DIR
-claude plugin eval DIR
+plugin=$(python3 scripts/persona-native-sync.py --persona PATH --eval-plugin)
+claude plugin eval "$plugin" --no-publish
 ```
 
 Tracked `evals/` hold synthetic cases only. Cases from real conversations,

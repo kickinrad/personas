@@ -86,14 +86,15 @@ later, which reads `AGENTS.md` directly.
 ## Evaluate a persona
 
 ```bash
-python3 skills/persona-dev/scripts/persona-native-sync.py --persona ~/.personas/julia --eval-plugin /tmp/julia-eval
-claude plugin eval /tmp/julia-eval
+plugin=$(python3 skills/persona-dev/scripts/persona-native-sync.py --persona ~/.personas/julia --eval-plugin)
+claude plugin eval "$plugin" --no-publish
 ```
 
 The persona runs as the main agent in Claude Code's
 [plugin eval](https://code.claude.com/docs/en/plugin-evals) sandbox and is
-compared with plain Claude. Cases from your real conversations go in ignored
-`user/evals/`. When you keep correcting a persona, `personas:self-improve`
+compared with plain Claude. The wrapper lives in a private temporary folder,
+and `--no-publish` keeps the report local. Cases from your real conversations
+go in ignored `user/evals/`. When you keep correcting a persona, `personas:self-improve`
 turns that correction into a case, and the fix counts only once it passes.
 
 ## Call a persona from anywhere

@@ -14,7 +14,7 @@
 - **Breaking:** personas no longer use `CLAUDE.md`. Claude Code 2.1.281 or
   later reads `AGENTS.md` directly; delete each persona's `CLAUDE.md` and add
   the `@PERSONAS.md` line. The fleet verifier flags any that remain.
-- **Evals:** `persona-native-sync.py --eval-plugin DIR` wraps a persona for
+- **Evals:** `persona-native-sync.py --eval-plugin` wraps a persona for
   `claude plugin eval`, compared against plain Claude. `self-improve` turns a
   promoted correction into a private replay case in `user/evals/`.
 - Remove the pre-0.9 `.mcp.json` migration, the unread capability
