@@ -88,8 +88,10 @@ def verify_persona(repo: Path) -> list[str]:
         if len(re.findall(r"^\s*\d+[.)]\s+", always_loaded, re.MULTILINE)) >= 4:
             errors.append(f"{name}: AGENTS.md contains procedural bulk (four or more numbered steps)")
         craft = re.search(r"^## Craft\b(.*?)(?=^## |\Z)", always_loaded, re.MULTILINE | re.DOTALL)
-        if not craft or not all(re.search(rf"\*\*{entry}:\*\*[ \t]*\S", craft.group(1)) for entry in ("Instruments", "Crew", "Proof")):
+        if not craft or not all(re.search(rf"\*\*{entry}:\*\*[^\n]*\w", craft.group(1)) for entry in ("Instruments", "Crew", "Proof")):
             errors.append(f"{name}: AGENTS.md needs a Craft section with Instruments, Crew, and Proof")
+        if re.search(r"\{[^{}\n]+\}", always_loaded):
+            errors.append(f"{name}: AGENTS.md still contains a template placeholder")
         if not re.search(r"@PERSONAS\.md\s*$", always_loaded, re.MULTILINE):
             errors.append(f"{name}: AGENTS.md must import the shared rules with a line ending in @PERSONAS.md")
     shared = repo / "PERSONAS.md"

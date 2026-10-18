@@ -161,11 +161,11 @@ class FleetVerifierTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             persona = self.create_persona(root, "lumen")
-            (persona / "AGENTS.md").write_text("# Lumen\n\n## Craft\n\n- **Instruments:**\n- **Crew:**\n- **Proof:**\n\n## Tools\n\n" + "word " * 301, encoding="utf-8")
+            (persona / "AGENTS.md").write_text("# Lumen\n\n## Craft\n\n- **Instruments:** .\n- **Crew:** {fields}.\n- **Proof:**\n\n## Tools\n\n" + "word " * 301, encoding="utf-8")
             (persona / "skills/review/SKILL.md").write_text("word " * 501, encoding="utf-8")
             (persona / ".claude/settings.json").write_text("{", encoding="utf-8")
             errors = "\n".join(VERIFIER.verify(root))
-            for expected in ("exceeds 300", "always-loaded tool/procedure", "needs a Craft section", "must import the shared rules", "exceeds 500", "invalid JSON"):
+            for expected in ("exceeds 300", "always-loaded tool/procedure", "needs a Craft section", "template placeholder", "must import the shared rules", "exceeds 500", "invalid JSON"):
                 self.assertIn(expected, errors)
 
     def test_persona_missing_agents_is_reported_not_skipped(self) -> None:
