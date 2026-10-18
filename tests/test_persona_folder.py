@@ -17,10 +17,17 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "skills/persona-dev/assets"
 REPLACEMENTS = {
-    "{PersonaName}": "Atlas",
-    "{name}": "atlas",
+    "{PersonaName}": "Wren",
+    "{name}": "wren",
     "{emoji}": "🧭",
-    "{role description without personal facts}": "review small software changes",
+    "{Outcome the persona produces, as a verb phrase without personal facts}": "Keeps small software changes safe to merge",
+    "{role description without personal facts}": "reviewing small software changes",
+    "{verb phrase: the outcome, and the goal beyond the task}": "keeps changes small, tested, and safe to merge",
+    "{Authority or autonomy that differs from the shared defaults, if any.}": "",
+    "{raw inputs and systems of record it starts from; the\n  methods and tools the field's best practitioners use}": "the diff, the test run, and the linter",
+    "{two to four adjacent fields, each with the method borrowed from\n  it}": "a safety engineer's failure-mode review",
+    "{outside evidence that shows the work is right}": "tests pass and the reviewer finds no blocker",
+    "{Hard stop specific to this role; shared defaults live in the guide.}": "Never approve a change without running its tests.",
     "{Character concept in one sentence.}": "A retired ship's navigator who charts every change like a voyage and hates unmarked reefs.",
     "{voice trait}, {voice trait}, and\n{voice trait}": "calm, exacting, and\nquietly encouraging",
     "{humor level and style}": "light and dry, with the occasional nautical pun",
@@ -39,8 +46,8 @@ def render(name: str) -> str:
 
 
 def create_fixture(home: Path, *, private_context: bool = True) -> None:
+    (home.parent / "AGENTS.md").write_text((ASSETS / "personas-guide.md").read_text(encoding="utf-8"), encoding="utf-8")
     destinations = {
-        "claude-md-template.md": "CLAUDE.md",
         "agents-template.md": "AGENTS.md",
         "readme-template.md": "README.md",
         "settings-template.json": ".claude/settings.json",
@@ -51,10 +58,10 @@ def create_fixture(home: Path, *, private_context: bool = True) -> None:
         path = home / destination
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(render(source), encoding="utf-8")
-    skill = home / "skills/atlas-review/SKILL.md"
+    skill = home / "skills/wren-review/SKILL.md"
     skill.parent.mkdir(parents=True)
     skill.write_text(
-        "---\nname: atlas-review\ndescription: Review a small software change.\n---\n\n# Atlas review\n",
+        "---\nname: wren-review\ndescription: Review a small software change.\n---\n\n# Wren review\n",
         encoding="utf-8",
     )
     if private_context:
@@ -67,20 +74,20 @@ def create_fixture(home: Path, *, private_context: bool = True) -> None:
 
 
 class RuntimeAdapterTest(unittest.TestCase):
-    def test_folder_has_one_portable_authority_and_one_native_import(self) -> None:
+    def test_folder_reads_agents_and_the_shared_guide(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            home = Path(directory) / "atlas"
+            home = Path(directory) / "wren"
             create_fixture(home)
-            claude = (home / "CLAUDE.md").read_text(encoding="utf-8")
             agents = (home / "AGENTS.md").read_text(encoding="utf-8")
+            guide = (Path(directory) / "AGENTS.md").read_text(encoding="utf-8")
             self.assertEqual(VERIFIER.verify(Path(directory)), [])
-            self.assertEqual(claude.splitlines()[-1], "@AGENTS.md")
-            self.assertIn("## Role and authority", agents)
-            self.assertIn("skills/", agents)
-            self.assertIn("user/profile.md", agents)
-            self.assertIn("user/memory/MEMORY.md", agents)
-            for forbidden in ("Before acting:", "## Working approach", "1. "):
-                self.assertNotIn(forbidden, agents)
+            self.assertFalse((home / "CLAUDE.md").exists())
+            for section in ("## Role", "## Craft", "**Instruments:**", "**Crew:**", "**Proof:**"):
+                self.assertIn(section, agents)
+            self.assertIn("../AGENTS.md", agents)
+            for shared in ("skills/", "user/profile.md", "user/memory/MEMORY.md", "Never grade your own work"):
+                self.assertIn(shared, guide)
+            self.assertEqual(guide, (ROOT / "examples/AGENTS.md").read_text(encoding="utf-8"))
 
     def test_template_voice_is_a_filled_character_within_budget(self) -> None:
         template = (ASSETS / "agents-template.md").read_text(encoding="utf-8")
@@ -93,7 +100,7 @@ class RuntimeAdapterTest(unittest.TestCase):
 
     def test_native_settings_are_minimal_parseable_and_hook_free(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            home = Path(directory) / "atlas"
+            home = Path(directory) / "wren"
             create_fixture(home)
             claude = json.loads((home / ".claude/settings.json").read_text(encoding="utf-8"))
             codex = tomllib.loads((home / ".codex/config.toml").read_text(encoding="utf-8"))
@@ -103,16 +110,6 @@ class RuntimeAdapterTest(unittest.TestCase):
             self.assertEqual(codex["sandbox_mode"], "workspace-write")
             self.assertFalse(codex["sandbox_workspace_write"]["network_access"])
             self.assertFalse((home / ".codex/hooks.json").exists())
-
-    def test_creation_offers_claude_focused_launch_and_keeps_codex_integrated(self) -> None:
-        skill = (ROOT / "skills/persona-dev/SKILL.md").read_text(encoding="utf-8")
-        environments = (ROOT / "skills/persona-dev/references/environments.md").read_text(encoding="utf-8")
-        usage = (ROOT / "docs/usage.md").read_text(encoding="utf-8")
-        self.assertIn("integrated use is the default", skill)
-        self.assertIn("--setting-sources project,local", environments)
-        self.assertIn("Codex has no supported equivalent", environments)
-        self.assertIn("Codex has no supported equivalent", usage)
-        self.assertNotIn("--ignore-user-config", "\n".join((skill, environments, usage)))
 
     def test_private_folder_context_is_optional_and_ignored(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -126,19 +123,21 @@ class RuntimeAdapterTest(unittest.TestCase):
             self.assertFalse((cloud / "user").exists())
             self.assertTrue((cloud / "AGENTS.md").is_file())
 
-    def test_broken_import_and_missing_required_file_fail(self):
+    def test_claude_md_missing_guide_and_missing_required_file_fail(self):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
-            home = root / "atlas"
+            home = root / "wren"
             create_fixture(home)
-            (home / "CLAUDE.md").write_text("@missing.md\n")
+            (home / "CLAUDE.md").write_text("@AGENTS.md\n")
+            (root / "AGENTS.md").unlink()
             (home / ".claude/settings.json").unlink()
             errors = "\n".join(VERIFIER.verify(root))
-            self.assertIn("may contain only", errors)
+            self.assertIn("delete CLAUDE.md", errors)
+            self.assertIn("shared guide missing", errors)
             self.assertIn("required tracked file missing", errors)
 
 
-SCRIPT = Path(__file__).with_name("verify-fleet.py")
+SCRIPT = ROOT / "skills/persona-dev/scripts/verify-fleet.py"
 SPEC = importlib.util.spec_from_file_location("verify_fleet", SCRIPT)
 assert SPEC and SPEC.loader
 VERIFIER = importlib.util.module_from_spec(SPEC)
@@ -146,12 +145,12 @@ SPEC.loader.exec_module(VERIFIER)
 
 
 class FleetVerifierTest(unittest.TestCase):
-    def create_persona(self, root: Path, name: str = "atlas") -> Path:
+    def create_persona(self, root: Path, name: str = "wren") -> Path:
+        (root / "AGENTS.md").write_text("# Personas\n", encoding="utf-8")
         persona = root / name
         (persona / ".claude").mkdir(parents=True)
         (persona / "skills" / "review").mkdir(parents=True)
-        (persona / "AGENTS.md").write_text("# Atlas\n\nFind procedures in `skills/`.\n", encoding="utf-8")
-        (persona / "CLAUDE.md").write_text("@AGENTS.md\n", encoding="utf-8")
+        (persona / "AGENTS.md").write_text("# Wren\n\nShared guide: `../AGENTS.md`.\n\n## Craft\n", encoding="utf-8")
         (persona / ".claude/settings.json").write_text("{}", encoding="utf-8")
         (persona / "skills/review/SKILL.md").write_text("---\nname: review\n---\n\nReview work.\n", encoding="utf-8")
         return persona
@@ -161,11 +160,10 @@ class FleetVerifierTest(unittest.TestCase):
             root = Path(directory)
             persona = self.create_persona(root, "lumen")
             (persona / "AGENTS.md").write_text("# Lumen\n\n## Tools\n\n" + "word " * 301, encoding="utf-8")
-            (persona / "CLAUDE.md").write_text("@AGENTS.md\nExtra adapter text\n", encoding="utf-8")
             (persona / "skills/review/SKILL.md").write_text("word " * 501, encoding="utf-8")
             (persona / ".claude/settings.json").write_text("{", encoding="utf-8")
             errors = "\n".join(VERIFIER.verify(root))
-            for expected in ("exceeds 300", "always-loaded tool/procedure", "may contain only", "exceeds 500", "invalid JSON"):
+            for expected in ("exceeds 300", "always-loaded tool/procedure", "needs a Craft section", "shared guide at ../AGENTS.md", "exceeds 500", "invalid JSON"):
                 self.assertIn(expected, errors)
 
     def test_persona_missing_agents_is_reported_not_skipped(self) -> None:
@@ -175,17 +173,14 @@ class FleetVerifierTest(unittest.TestCase):
             (self.create_persona(root, "lumen") / "AGENTS.md").unlink()
             self.assertEqual(VERIFIER.verify(root), ["lumen: required tracked file missing: AGENTS.md"])
 
-    def test_agent_mcp_allowlist_is_validated_and_legacy_list_flagged(self) -> None:
+    def test_agent_mcp_allowlist_is_validated(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             persona = self.create_persona(root)
-            (persona / ".agent-mcp.json").write_text('["ob"]', encoding="utf-8")
+            (persona / ".agent-mcp.json").write_text('["recipes"]', encoding="utf-8")
             self.assertEqual(VERIFIER.verify(root), [])
-            (persona / ".agent-mcp.json").write_text('["ob", "ob"]', encoding="utf-8")
-            (persona / ".mcp.json").write_text('{"mcpServers": {}, "agentMcpServers": []}', encoding="utf-8")
-            errors = "\n".join(VERIFIER.verify(root))
-            self.assertIn("unique server names", errors)
-            self.assertIn("still holds agentMcpServers", errors)
+            (persona / ".agent-mcp.json").write_text('["recipes", "recipes"]', encoding="utf-8")
+            self.assertIn("unique server names", "\n".join(VERIFIER.verify(root)))
 
     def test_tracked_private_context_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -211,7 +206,7 @@ class FleetVerifierTest(unittest.TestCase):
             subprocess.run(["git", "add", "."], cwd=persona, check=True)
             self.assertEqual(VERIFIER.verify(root), [])
             subprocess.run(["git", "add", "-f", "user/profile.md"], cwd=persona, check=True)
-            self.assertEqual(VERIFIER.verify(root), ["atlas: private local context is tracked: user/profile.md"])
+            self.assertEqual(VERIFIER.verify(root), ["wren: private local context is tracked: user/profile.md"])
 
     def test_tracked_but_deleted_file_does_not_crash_verification(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

@@ -4,7 +4,6 @@ user/
 # Local runtime configuration and connections
 .claude/settings.local.json
 .codex/*.local.toml
-.codex/agents/
 .mcp.json
 .mcp.json.lock
 
@@ -13,3 +12,6 @@ user/
 .env.*
 *.key
 *.pem
+
+# Eval run output
+evals/results/

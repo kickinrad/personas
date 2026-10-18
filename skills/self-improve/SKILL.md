@@ -9,7 +9,8 @@ Improve the persona without duplicating authority.
 
 ## Route the change
 
-- Identity, voice, role, and boundaries belong in `AGENTS.md`.
+- Identity, role, craft, voice, and role-specific boundaries belong in
+  `AGENTS.md`; rules every persona shares belong in the personas root guide.
 - A recurring multi-step procedure belongs in one portable role skill.
 - Explicit persona memory belongs in ignored `user/memory/MEMORY.md` with user
   approval.
@@ -23,7 +24,10 @@ Improve the persona without duplicating authority.
 After repeated real friction, cite the persona-local evidence and propose one
 concise rule, one reusable skill, an existing integration, or removal of stale
 material. Promote the smallest rule that changes the observed behavior; do not
-generalize one correction into fleet-wide policy. Wait for approval before
+generalize one correction into fleet-wide policy. Capture the correction as a
+private eval case in `user/evals/`: replay the conversation up to the missed
+turn and grade with a rubric written from the correction. The change is done
+when that case passes, measured by `persona-dev`'s Evaluate step. Wait for approval before
 changing identity, rules, tools, skills, connections, or external services.
 
 ## Audit

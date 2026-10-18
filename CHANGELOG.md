@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.11.0 — 2026-10-18
+
+- **Craft:** every persona states its outcome as a verb and gains a Craft
+  section naming its instruments and raw inputs, the adjacent fields it
+  borrows methods from, and the outside proof that its work is right. The
+  interview asks the four questions a field-leading professional would answer,
+  after Felix Rieseberg's
+  [How to be more ambitious](https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/).
+- **Shared guide:** rules every persona shares live once in the personas
+  root `AGENTS.md`, created from `assets/personas-guide.md`.
+- **Breaking:** personas no longer use `CLAUDE.md`. Claude Code 2.1.281 or
+  later reads `AGENTS.md` directly; delete each persona's `CLAUDE.md` and add
+  the shared-guide line. The fleet verifier flags any that remain.
+- **Evals:** `persona-native-sync.py --eval-plugin DIR` wraps a persona for
+  `claude plugin eval`, compared against plain Claude. `self-improve` turns a
+  promoted correction into a private replay case in `user/evals/`.
+- Remove the pre-0.9 `.mcp.json` migration, the unread capability
+  declaration, and tests that asserted documentation wording. The fleet
+  verifier moves to `skills/persona-dev/scripts/`.
+
 ## 0.10.0 — 2026-10-05
 
 - Use the root plugin directory for both Claude Code and Codex, with
@@ -79,87 +99,4 @@
 - Reject HTTP MCP URLs with embedded credentials before projecting them to a
   Codex profile.
 
-## 6.2.2 — 2026-09-09
-
-- Ask during persona creation whether normal user configuration should remain
-  integrated or be excluded with each runtime's native focused-launch option.
-- Introduce Personas through practical chef, market-research, and code-review
-  workflows, with a compact map of skills, private context, and optional tools.
-
-## 6.2.1 — 2026-09-09
-
-- Prevent generated adapters from replacing another persona's files and check
-  all selected destinations before applying changes.
-- Correct MCP key and description quoting; isolate Claude generation from
-  Codex configuration and preserve independent profile and agent modes.
-- Replace content-hash drift with explicit source ownership. Legacy profiles
-  without ownership need reviewed regeneration.
-- Inherit runtime model choices for new personas and preserve existing
-  persona settings.
-- Simplify offline testing, support source exports, and remove the `jq`
-  requirement and personal fleet policy from public validation.
-- Consolidate usage documentation and retain completed task records in Git
-  history.
-
-## 6.2.0 — 2026-09-01
-
-### Changed
-
-- Added independent Codex profile and native-agent generation.
-- Limited Codex MCP validation and projection to explicitly selected bindings,
-  preserving Claude-only transports without weakening profile validation.
-
-## 6.0.0 — 2026-08-20
-
-### Changed
-
-- Folded persona creation, evolution, reconciliation, and optional native
-  activation into `persona-dev`; retired `persona-update`.
-- Added on-demand, marked and collision-safe Claude/Codex native-agent sync
-  from the live `AGENTS.md`, including narrow local MCP translation.
-- Removed public host-specific identity, credential-manager, and local-path
-  coupling.
-
-## 5.0.0 — 2026-08-17
-
-### Changed
-
-- Made `AGENTS.md` the single portable persona definition.
-- Reduced `CLAUDE.md` to a native import of that definition.
-
-## 4.0.0 — 2026-08-06
-
-### Changed
-
-- Renamed the public plugin from `persona-manager` to `personas`, matching the
-  project and marketplace name.
-- Kept the folder contract and its original portable workflows unchanged.
-
-## 3.0.0 — 2026-07-31
-
-### Changed
-
-- Restored the core model: a persona is a readable folder, not a managed
-  runtime application.
-- Added `PERSONA.md` as the portable authority with thin native `CLAUDE.md` and
-  `AGENTS.md` entry points.
-- Added minimal `.claude/settings.json` and `.codex/config.toml` project
-  adapters around the same persona definition.
-- Defined explicit ignored folder memory that both runtimes can read while
-  keeping native auto-memory runtime-owned and unsynchronized.
-- Made behavioral canaries—not file presence—the gate for runtime support.
-
-### Removed
-
-- The public creation and verification CLI.
-- GitHub visibility checks, Cloud repository markers, generated private-only
-  CI, publishing guards, and special Cloud profiles.
-- Default persona lifecycle hooks for reminders, drift, crash markers,
-  compaction, and repository binding.
-- Framework version stamps and committed output-style duplication.
-
-### Repository
-
-- The persona plugin remains the single root plugin under Apache-2.0.
-- Dashboard remains retired, and Mesh remains preserved separately for its own
-  future review.
+Earlier releases are recorded in Git history.

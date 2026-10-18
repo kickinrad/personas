@@ -44,7 +44,9 @@ def tracked_private_paths(repo: Path) -> list[str]:
     return sorted(set(private))
 
 
-REQUIRED = ("AGENTS.md", "CLAUDE.md", ".claude/settings.json")
+REQUIRED = ("AGENTS.md", ".claude/settings.json")
+# Any of these in a persona or above it stops Claude Code from reading AGENTS.md.
+CLAUDE_FILES = ("CLAUDE.md", ".claude/CLAUDE.md", "CLAUDE.local.md")
 
 
 def persona_roots(fleet_root: Path) -> list[Path]:
@@ -66,7 +68,7 @@ def verify_persona(repo: Path) -> list[str]:
     errors: list[str] = []
     name = repo.name
     tracked = tracked_files(repo)
-    agents, claude = repo / "AGENTS.md", repo / "CLAUDE.md"
+    agents = repo / "AGENTS.md"
 
     for required in (repo / file for file in REQUIRED):
         if required not in tracked or not required.is_file():
@@ -84,13 +86,12 @@ def verify_persona(repo: Path) -> list[str]:
             errors.append(f"{name}: AGENTS.md contains an always-loaded tool/procedure heading")
         if len(re.findall(r"^\s*\d+[.)]\s+", always_loaded, re.MULTILINE)) >= 4:
             errors.append(f"{name}: AGENTS.md contains procedural bulk (four or more numbered steps)")
+        if not re.search(r"^## Craft\b", always_loaded, re.MULTILINE):
+            errors.append(f"{name}: AGENTS.md needs a Craft section (Instruments, Crew, Proof)")
+        if "../AGENTS.md" not in always_loaded:
+            errors.append(f"{name}: AGENTS.md must point to the shared guide at ../AGENTS.md for Codex")
 
-    if claude.is_file():
-        if words(claude) > 80:
-            errors.append(f"{name}: CLAUDE.md exceeds 80 words")
-        nonempty = [line.strip() for line in claude.read_text(encoding="utf-8").splitlines() if line.strip()]
-        if nonempty[-1:] != ["@AGENTS.md"] or any(not line.startswith("#") for line in nonempty[:-1]):
-            errors.append(f"{name}: CLAUDE.md may contain only an optional title and the @AGENTS.md import")
+    errors += [f"{name}: delete {file}; it stops Claude Code from reading AGENTS.md" for file in CLAUDE_FILES if (repo / file).exists()]
 
     for skill in repo.glob("skills/**/SKILL.md"):
         if skill in tracked and words(skill) > 500:
@@ -101,13 +102,11 @@ def verify_persona(repo: Path) -> list[str]:
             json.loads(settings.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
             errors.append(f"{name}: invalid JSON in {settings.relative_to(repo)}: {exc.msg}")
-    allowlist, mcp = repo / ".agent-mcp.json", repo / ".mcp.json"
+    allowlist = repo / ".agent-mcp.json"
     try:
         names = json.loads(allowlist.read_text(encoding="utf-8")) if allowlist.is_file() else []
         if not (isinstance(names, list) and all(isinstance(n, str) and re.fullmatch(r"[A-Za-z0-9_-]+", n) for n in names) and len(names) == len(set(names))):
             errors.append(f"{name}: .agent-mcp.json must be a list of unique server names")
-        if mcp.is_file() and "agentMcpServers" in json.loads(mcp.read_text(encoding="utf-8")):
-            errors.append(f"{name}: .mcp.json still holds agentMcpServers; run persona-native-sync.py --apply to move it to .agent-mcp.json")
     except json.JSONDecodeError as exc:
         errors.append(f"{name}: invalid JSON in agent MCP config: {exc.msg}")
     codex = repo / ".codex/config.toml"
@@ -125,7 +124,9 @@ def verify(fleet_root: Path) -> list[str]:
     roots = persona_roots(fleet_root)
     if not roots:
         return [f"no persona folders under: {fleet_root}"]
-    return [error for root in roots for error in verify_persona(root)]
+    errors = [] if (fleet_root / "AGENTS.md").is_file() else [f"shared guide missing: {fleet_root / 'AGENTS.md'}"]
+    errors += [f"delete {fleet_root / file}; it stops Claude Code from reading AGENTS.md" for file in CLAUDE_FILES if (fleet_root / file).exists()]
+    return errors + [error for root in roots for error in verify_persona(root)]
 
 
 def main() -> int:

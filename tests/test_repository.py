@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHES = {"__pycache__", ".pytest_cache"}
-PRIVATE = {"user", ".mcp.json", ".env"}
+PRIVATE = {"user", ".mcp.json", ".env", "CLAUDE.md"}
 SECRET = re.compile(r"eyJ[A-Za-z0-9_-]{20,}|GOCSPX-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|BEGIN PRIVATE KEY")
 
 
@@ -36,6 +36,8 @@ def package_errors(root):
                     errors.append(f"invalid skill frontmatter: {relative}")
                 if len(text.split()) > 500:
                     errors.append(f"skill exceeds 500 words: {relative}")
+        if path.suffix == ".jsonl" and "evals" in relative.parts:
+            errors.append(f"transcript in tracked evals: {relative}")
         if path.suffix == ".json":
             json.loads(path.read_text(encoding="utf-8"))
     return errors
@@ -48,9 +50,8 @@ class RepositoryTest(unittest.TestCase):
         claude = read(".claude-plugin/plugin.json")
         market = read(".claude-plugin/marketplace.json")
         agents = read(".agents/plugins/marketplace.json")
-        capabilities = read("interop/capabilities.json")
         self.assertRegex(claude["version"], r"^\d+\.\d+\.\d+$")
-        self.assertEqual({market["metadata"]["version"], capabilities["version"]}, {claude["version"]})
+        self.assertEqual(market["metadata"]["version"], claude["version"])
         self.assertEqual({claude["name"], market["plugins"][0]["name"], agents["plugins"][0]["name"]}, {"personas"})
         self.assertEqual(claude["license"], "Apache-2.0")
         self.assertFalse((ROOT / ".codex-plugin/plugin.json").exists())
@@ -60,12 +61,6 @@ class RepositoryTest(unittest.TestCase):
         self.assertEqual(agents["plugins"][0]["source"]["path"], "./")
         self.assertTrue((ROOT / "skills/persona-dev/SKILL.md").is_file())
         self.assertTrue(all("version" not in entry for entry in market["plugins"]))
-        self.assertEqual(capabilities["portableAuthority"], "AGENTS.md")
-        self.assertEqual(capabilities["runtimes"]["claude-code"]["imports"], ["AGENTS.md"])
-        declaration = capabilities["runtimes"]["claude-code"]
-        self.assertEqual(declaration["status"], "native")
-        self.assertTrue((ROOT / declaration["personaNativeSync"]).is_file())
-        self.assertEqual(capabilities["runtimes"]["codex"], {"status": "native"})
 
     def test_source_package_is_clean(self):
         self.assertEqual(package_errors(ROOT), [])
