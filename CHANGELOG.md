@@ -17,8 +17,9 @@
 - **Evals:** `persona-native-sync.py --eval-plugin` wraps a persona for
   `claude plugin eval`, compared against plain Claude. `self-improve` turns a
   promoted correction into a private replay case in `user/evals/`.
-- Remove the pre-0.9 `.mcp.json` migration, the unread capability
-  declaration, and tests that asserted documentation wording. The fleet
+- Remove the pre-0.9 `.mcp.json` migration and tests that asserted
+  documentation wording. The capability contract (`interop/capabilities.json`)
+  now declares `AGENTS.md` and `PERSONAS.md` for Claude Code. The fleet
   verifier moves to `skills/persona-dev/scripts/`.
 
 ## 0.10.0 — 2026-10-05

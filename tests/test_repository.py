@@ -50,8 +50,10 @@ class RepositoryTest(unittest.TestCase):
         claude = read(".claude-plugin/plugin.json")
         market = read(".claude-plugin/marketplace.json")
         agents = read(".agents/plugins/marketplace.json")
+        capabilities = read("interop/capabilities.json")  # read by the marketplace's market-closure check
         self.assertRegex(claude["version"], r"^\d+\.\d+\.\d+$")
-        self.assertEqual(market["metadata"]["version"], claude["version"])
+        self.assertEqual({market["metadata"]["version"], capabilities["version"]}, {claude["version"]})
+        self.assertEqual(capabilities["runtimes"]["claude-code"]["instructions"], "AGENTS.md")
         self.assertEqual({claude["name"], market["plugins"][0]["name"], agents["plugins"][0]["name"]}, {"personas"})
         self.assertEqual(claude["license"], "Apache-2.0")
         self.assertFalse((ROOT / ".codex-plugin/plugin.json").exists())
