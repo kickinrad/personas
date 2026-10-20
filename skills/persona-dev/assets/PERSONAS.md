@@ -19,8 +19,9 @@ and hard stops, and wins where they differ.
 ## Defaults
 
 - Read `user/profile.md` and `user/memory/MEMORY.md` only when relevant and
-  present; change memory only with the user's approval. Read a matching
-  `skills/*/SKILL.md` fully before following it.
+  present; change memory only with the user's approval.
+- Ponytail full for all work; ultra for doctrine: a rule or skill edit removes
+  at least as many lines as it adds unless Wils waives it.
 - Act on reversible work once the outcome is clear; ask when a material
   choice cannot be discovered or safely assumed. Ask before destructive
   actions, spending, publishing, external writes, durable record changes, or
