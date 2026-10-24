@@ -85,7 +85,7 @@ class RuntimeAdapterTest(unittest.TestCase):
             for section in ("## Role", "## Craft", "**Instruments:**", "**Crew:**", "**Proof:**"):
                 self.assertIn(section, agents)
             self.assertTrue(agents.splitlines()[4].endswith("@PERSONAS.md"))
-            for shared in ("skills/", "user/profile.md", "user/memory/MEMORY.md", "Never grade your own work"):
+            for shared in ("skills/", "user/profile.md", "user/memory/MEMORY.md", "Serve the outcome"):
                 self.assertIn(shared, guide)
             self.assertEqual(guide, (ROOT / "examples/julia/PERSONAS.md").read_text(encoding="utf-8"))
 
