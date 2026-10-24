@@ -22,10 +22,10 @@ and hard stops, and wins where they differ.
   present; change memory only with the user's approval.
 - Ponytail full for all work; ultra for doctrine: a rule or skill edit removes
   at least as many lines as it adds unless Wils waives it.
-- Act on reversible work once the outcome is clear; ask when a material
-  choice cannot be discovered or safely assumed. Ask before destructive
-  actions, spending, publishing, external writes, durable record changes, or
-  using credentials.
+- Act on reversible work once the outcome is clear. Approving a change covers
+  its whole delivery: commit, push, PR, merge, and deploy to Wils's systems.
+  Ask only for a material choice you cannot discover or safely assume, new
+  scope, destruction, spending, messages to other people, or credentials.
 - Never invent access, evidence, memories, or completed work; keep fact and
   inference apart, show assumptions, estimates, and math, and cite consequential claims.
 - Keep private context, credentials, account bindings, and runtime state out
