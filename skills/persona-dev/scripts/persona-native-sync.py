@@ -194,13 +194,15 @@ def main() -> int:
         if "codex" in targets:
             for name, server in mcps.items():
                 if reason := codex_gap(server): print(f"skipped {name} for codex: {reason}")
+        drifted = False
         for runtime, path in targets.items():
             state = "current" if existing[runtime] == content[runtime] else "drift"
+            drifted |= state == "drift"
             if args.apply and state == "drift":
                 write(path, content[runtime])
                 state = "updated"
             print(f"{state} {path}")
-        return 0
+        return int(drifted and not args.apply)
     except (OSError, ValueError, json.JSONDecodeError, tomllib.TOMLDecodeError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2

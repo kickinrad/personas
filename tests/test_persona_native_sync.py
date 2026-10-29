@@ -60,7 +60,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
     def test_reports_then_writes_one_agent_per_runtime(self) -> None:
         persona = self.persona()
         report = self.invoke(persona)
-        self.assertEqual(report.returncode, 0, report.stderr)
+        self.assertEqual(report.returncode, 1, report.stderr)
         self.assertEqual(report.stdout.count("drift"), 3)
         self.assertFalse(self.claude.exists() or self.codex.exists() or (persona / "PERSONAS.md").exists())
         self.assertEqual(self.invoke(persona, "--apply").returncode, 0)
@@ -73,7 +73,9 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertEqual(claude.split("---\n", 2)[2], f"\n{SYNC.MARKER}\n{SYNC.SOURCE}{json.dumps(str(persona / 'AGENTS.md'))}\n\n{body}\n")
         self.assertEqual(codex, {"name": "wren-review", "description": "🧭 Reviews small changes carefully.", "developer_instructions": body})
         self.assertTrue((self.codex / "agents/wren-review.toml").read_text().startswith(f"{SYNC.MARKER}\n{SYNC.SOURCE}"))
-        self.assertEqual(self.invoke(persona).stdout.count("current"), 3)
+        clean = self.invoke(persona)
+        self.assertEqual(clean.returncode, 0, clean.stderr)
+        self.assertEqual(clean.stdout.count("current"), 3)
 
     def test_body_edits_stay_current_and_description_edits_drift(self) -> None:
         persona = self.persona()
@@ -81,7 +83,9 @@ class PersonaNativeSyncTest(unittest.TestCase):
         (persona / "AGENTS.md").write_text("# Wren Review\n\n> 🧭 Reviews small changes carefully.\n\nFresh body prose.\n", encoding="utf-8")
         self.assertEqual(self.invoke(persona).stdout.count("current"), 3)
         (persona / "AGENTS.md").write_text("# Wren Review\n\n> 🧭 A revised description.\n", encoding="utf-8")
-        self.assertEqual(self.invoke(persona).stdout.count("drift"), 2)
+        drift = self.invoke(persona)
+        self.assertEqual(drift.returncode, 1, drift.stderr)
+        self.assertEqual(drift.stdout.count("drift"), 2)
 
     def test_color_is_validated_set_and_preserved(self) -> None:
         persona = self.persona()
