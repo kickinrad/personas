@@ -12,7 +12,7 @@ One fleet-wide check covers every persona folder, replacing 20 per-repo stack ad
 ## Approach
 
 - `verify-fleet.py` stays the persona folder contract. Run it against `~/.personas` from the plugin's checks, not only `examples/`.
-- Tools stay plain scripts in `tools/`. Where a persona has tests, the fleet check runs them (today: julia `tools/recipe-import`).
+- Tools stay plain scripts in `tools/`. Where a persona has tests, the fleet check runs them (today: julia `tools/recipe-import` and `tools/meal-spinner`).
 - A tool that outgrows a script (its own package, deploys, CI) moves to `~/projects/<area>/<name>` and adopts the `python` or `bun-lib` stack there, as Otto's dashboards did with Porchlight.
 - This repo adopts no stack; its CI already runs its tests and the fleet check.
 
