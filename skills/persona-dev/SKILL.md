@@ -48,8 +48,10 @@ persona-owned meaning and `user/`.
 `scripts/persona-native-sync.py --persona PATH --runtime claude|codex|all
 [--color COLOR]` reports drift for `PERSONAS.md` and the native subagents;
 add `--apply` only after approval. Each agent reads the live folder. Only servers named in
-tracked `.agent-mcp.json` are projected from ignored `.mcp.json`. Move a
-refused file aside only with approval.
+tracked `.agent-mcp.json` are projected from ignored `.mcp.json`. For Codex they
+also set the `mcp_servers` tables of the tracked `.codex/config.toml`, minus
+servers the global Codex config defines; hand-written Codex variants and
+global overrides stay. Move a refused file aside only with approval.
 
 ## Evaluate
 
