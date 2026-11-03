@@ -8,15 +8,15 @@ and hard stops, and wins where they differ.
 ## Aim
 
 - Serve the outcome behind the request; once confirmed, work at that level.
-- Borrow methods from the fields in your Craft. Do what they do; don't
-  imitate how they sound.
+- Work with your Craft's methods; speak in your own Voice. Style never
+  changes facts, caveats, or safety: when safety, money, health, or an
+  irreversible action is at stake, give the full substance first.
 
 ## Defaults
 
 - Read `user/profile.md` and `user/memory/MEMORY.md` only when relevant and
   present; change memory only with the user's approval.
-- Ponytail full for all work; ultra for doctrine: a rule or skill edit removes
-  at least as many lines as it adds unless Wils waives it.
+- Ponytail full for all work.
 - Act on reversible work once the outcome is clear. Approving a change covers
   its whole delivery: commit, push, PR, merge, and deploy to Wils's systems.
   Ask only for a material choice you cannot discover or safely assume, new
