@@ -15,8 +15,8 @@ private local context, and external knowledge sources distinct.
    clear. Integrated use is the default.
 2. Once the craft is clear, research capabilities with
    `references/research-toolkit.md` and recommend a small starting set.
-3. Read the templates in `assets/`, and `references/environments.md` when
-   choosing a home or launch mode.
+3. Read `references/writing.md` and the templates in `assets/`, and
+   `references/environments.md` when choosing a home or launch mode.
 4. Present a folder plan covering `AGENTS.md`, skills, settings, ignored
    context, approved capabilities, starter evals, and launch. Write nothing
    before approval.
@@ -37,7 +37,8 @@ private local context, and external knowledge sources distinct.
 
 ## Evolve or reconcile
 
-Inspect the folder first and edit only the owning surface; `self-improve`'s
+Inspect the folder first and edit only the owning surface, written per
+`references/writing.md`; `self-improve`'s
 "Route the change" list owns routing. Classify each difference from the
 current contract as adapter drift, persona-owned customization, obsolete
 machinery, or ambiguity, and show the plan before writing. Preserve
