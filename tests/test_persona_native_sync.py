@@ -228,7 +228,11 @@ class PersonaNativeSyncTest(unittest.TestCase):
             "query token": ({"type": "http", "url": "https://example.test/mcp?token=value"}, "credential parameters"),
             "encoded query key": ({"type": "http", "url": "https://example.test/mcp?api%5Fkey=value"}, "credential parameters"),
             "fragment secret": ({"type": "http", "url": "https://example.test/mcp#secret=value"}, "credential parameters"),
-            "path token": ({"type": "http", "url": "https://example.test/hooks/550e8400-e29b-41d4-a716-446655440000"}, "token-like path segment"),
+            "telegram bot token": ({"type": "http", "url": "https://api.example.test/bot123456:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw/mcp"}, "token-like path segment"),
+            "letters-only token": ({"type": "http", "url": "https://example.test/mcp/AbCdEfGhIjKlMnOpQrSt"}, "token-like path segment"),
+            "private path": ({"type": "http", "url": "http://192.0.2.10:9584/private_AbCdEfGhIjKlMnOp"}, "token-like path segment"),
+            "lowercase token": ({"type": "http", "url": "https://example.test/s/k3j9x2m8q7w1z5v4n6b0p2r8/mcp"}, "token-like path segment"),
+            "encoded path": ({"type": "http", "url": "https://example.test/mcp%2Fsecret"}, "token-like path segment"),
             "base64url path token": ({"type": "http", "url": "https://example.test/mcp/Ab1cD2eF_Gh3iJ4kL_Mn5oP6qR_St7uV8wX"}, "token-like path segment"),
             "path token in arg": ({"command": "npx", "args": ["mcp-remote", "https://example.test/s/bXpHk2LqW9vNrT4sYcZaDeFg/mcp"]}, "token-like path segment"),
             "oauth client secret": ({"type": "sse", "url": "https://example.test/sse", "oauth": {"clientId": "id", "clientSecret": "literal"}}, "clientSecret"),
@@ -239,6 +243,12 @@ class PersonaNativeSyncTest(unittest.TestCase):
                 result = self.invoke(self.persona(f"wren-{index}", {"mcpServers": {"a": server}, "agentMcpServers": ["a"]}))
                 self.assertEqual(result.returncode, 2)
                 self.assertIn(message, result.stderr)
+
+    def test_readable_url_paths_are_accepted(self) -> None:
+        paths = ("/streamable-http-2025-03-26", "/mcp-server-google-workspace-v2", "/sentry-mcp-2024-v2-eu1", "/mcp", "/mcp/vault", "/sse", "/", "")
+        servers = {f"s{index}": {"type": "http", "url": f"https://example.test{path}"} for index, path in enumerate(paths)}
+        result = self.invoke(self.persona(mcp={"mcpServers": servers, "agentMcpServers": list(servers)}), "--apply")
+        self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_settings_that_mention_credentials_are_not_credentials(self) -> None:
         server = {"command": "tool", "env": {"REDACT_SECRETS": "true", "API_TOKEN": "${API_TOKEN}"}}
@@ -353,7 +363,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertEqual(path.read_text(encoding="utf-8"), text)
 
     def test_folder_codex_config_refuses_url_path_secrets(self) -> None:
-        tokens = ("bXpHk2LqW9vNrT4sYcZaDeFg", "Ab1cD2eF_Gh3iJ4kL_Mn5oP6qR_St7uV8wX")
+        tokens = ("bot123456:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw", "Ab1cD2eF_Gh3iJ4kL_Mn5oP6qR_St7uV8wX")
         for index, secret in enumerate(tokens):
             with self.subTest(secret):
                 url = f"https://hooks.example.test/services/T0001/{secret}"

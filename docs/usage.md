@@ -132,9 +132,11 @@ skips servers your global `$CODEX_HOME/config.toml` already defines. It keeps
 two kinds of table you write yourself: a Codex version of a server it cannot
 project (for example one that uses `headersHelper`), and a table that only
 adjusts a global server, such as `enabled = false`. It removes every other
-`mcp_servers` table. Formatting-only differences count as current. Because this
-file is committed, a URL with a credential in it, including a long token in
-its path, is refused and never written.
+`mcp_servers` table, including a hand-written table for a server that is not
+in `.mcp.json`. Formatting-only differences count as current. Because this
+file is committed, a URL with a credential in it is refused and never written.
+Each segment of a URL path must be short lowercase words joined by `-` or `.`,
+so a token in the path is refused.
 
 ## Runtime support
 
