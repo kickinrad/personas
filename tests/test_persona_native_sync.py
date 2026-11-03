@@ -228,7 +228,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
             "query token": ({"type": "http", "url": "https://example.test/mcp?token=value"}, "credential parameters"),
             "encoded query key": ({"type": "http", "url": "https://example.test/mcp?api%5Fkey=value"}, "credential parameters"),
             "fragment secret": ({"type": "http", "url": "https://example.test/mcp#secret=value"}, "credential parameters"),
-            "telegram bot token": ({"type": "http", "url": "https://api.example.test/bot123456:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw/mcp"}, "token-like path segment"),
+            "telegram bot token": ({"type": "http", "url": "https://api.example.test/bot123456:" + "A" * 2 + "HdqTcvCH1vGWJxfSeofSAs0K5PALDsaw" + "/mcp"}, "token-like path segment"),
             "letters-only token": ({"type": "http", "url": "https://example.test/mcp/AbCdEfGhIjKlMnOpQrSt"}, "token-like path segment"),
             "private path": ({"type": "http", "url": "http://192.0.2.10:9584/private_AbCdEfGhIjKlMnOp"}, "token-like path segment"),
             "lowercase token": ({"type": "http", "url": "https://example.test/s/k3j9x2m8q7w1z5v4n6b0p2r8/mcp"}, "token-like path segment"),
@@ -382,7 +382,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertEqual(path.read_text(encoding="utf-8"), text)
 
     def test_folder_codex_config_refuses_url_path_secrets(self) -> None:
-        tokens = ("bot123456:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw", "Ab1cD2eF_Gh3iJ4kL_Mn5oP6qR_St7uV8wX")
+        tokens = ("bot123456:" + "AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw", "Ab1cD2eF_Gh3iJ4kL_Mn5oP6qR_St7uV8wX")
         for index, secret in enumerate(tokens):
             with self.subTest(secret):
                 url = f"https://hooks.example.test/services/T0001/{secret}"
