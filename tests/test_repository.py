@@ -51,8 +51,8 @@ class RepositoryTest(unittest.TestCase):
         market = read(".claude-plugin/marketplace.json")
         agents = read(".agents/plugins/marketplace.json")
         capabilities = read("interop/capabilities.json")  # read by the marketplace's market-closure check
-        self.assertRegex(claude["version"], r"^\d+\.\d+\.\d+$")
-        self.assertEqual({market["metadata"]["version"], capabilities["version"]}, {claude["version"]})
+        # A plugin carries no version; the commit is the release.
+        self.assertFalse({"version"} & (claude.keys() | market["metadata"].keys() | capabilities.keys()))
         self.assertEqual(capabilities["runtimes"]["claude-code"]["instructions"], "AGENTS.md")
         self.assertEqual({claude["name"], market["plugins"][0]["name"], agents["plugins"][0]["name"]}, {"personas"})
         self.assertEqual(claude["license"], "Apache-2.0")
