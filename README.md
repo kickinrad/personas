@@ -72,7 +72,7 @@ anything.
     ├── PERSONAS.md        # rules every persona shares (generated)
     ├── skills/            # repeatable workflows
     ├── evals/             # test cases for the persona
-    ├── user/              # private profile, memory, and evals (ignored)
+    ├── user/              # private profile, memory, and evals (ignored by default)
     ├── .mcp.json          # tool connections (ignored)
     ├── .agent-mcp.json    # connections its subagent gets
     ├── .claude/settings.json
@@ -80,7 +80,8 @@ anything.
 ```
 
 Share the useful parts without sharing your life: `user/`, local settings,
-credentials, and connections stay out of Git. Needs Claude Code 2.1.281 or
+credentials, and connections stay out of Git by default. A private persona
+repo may track `user/` by ignoring `user/*` and re-including what it keeps. Needs Claude Code 2.1.281 or
 later, which reads `AGENTS.md` directly.
 
 ## Evaluate a persona

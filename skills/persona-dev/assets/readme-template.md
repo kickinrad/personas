@@ -15,7 +15,7 @@ pulls in the shared rules in `PERSONAS.md`.
 - `.codex/config.toml` — native Codex project settings.
 - `skills/` — portable role workflows.
 - `evals/` — synthetic eval cases.
-- `user/` — optional ignored profile, memory, and private evals.
+- `user/` — optional private profile, memory, and evals.
 
 ## Privacy
 

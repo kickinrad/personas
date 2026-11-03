@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- **Private `user/`:** the docs and skills now describe tracking `user/` in a
+  private persona repo (ignore `user/*`, re-include paths) as a supported,
+  persona-owned choice rather than drift. Ignored stays the default.
 - **Codex folder config:** `persona-native-sync.py` now also reconciles the
   `mcp_servers` tables of each persona's tracked `.codex/config.toml` from
   `.agent-mcp.json`, so the folder session matches the Codex subagent. It

@@ -12,8 +12,8 @@ Improve the persona without duplicating authority.
 - Identity, role, craft, voice, and role-specific boundaries belong in
   `AGENTS.md`; rules every persona shares belong in the plugin's `PERSONAS.md`.
 - A recurring multi-step procedure belongs in one portable role skill.
-- Explicit persona memory belongs in ignored `user/memory/MEMORY.md` with user
-  approval.
+- Explicit persona memory belongs in `user/memory/MEMORY.md` with user
+  approval; commit it only where the persona tracks `user/`.
 - Stable knowledge belongs in its owning external system, with only the minimum
   useful persona-local pointer.
 - Claude- or Codex-only mechanics belong in the matching runtime adapter.
