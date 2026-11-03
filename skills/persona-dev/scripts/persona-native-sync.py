@@ -70,8 +70,12 @@ def agent_mcps(persona: Path) -> dict[str, dict[str, object]]:
                     or not (isinstance(env, dict) and strings(list(env.values()))):
                 fail(f"MCP {name} needs only a string command, string args, and string env")
         elif kind in ("http", "streamable-http", "sse"):
-            if set(raw) - {"type", "url", "oauth"} or not isinstance(raw.get("url"), str) or not raw["url"].startswith(("https://", "http://")):
-                fail(f"MCP {name} needs only type, an HTTP url, and optional oauth")
+            if set(raw) - {"type", "url", "oauth", "headersHelper"} or not isinstance(raw.get("url"), str) or not raw["url"].startswith(("https://", "http://")):
+                fail(f"MCP {name} needs only type, an HTTP url, and optional oauth or headersHelper")
+            # A headers helper is a script that prints auth headers at connect time, so no secret lives here.
+            helper = raw.get("headersHelper", "/")
+            if not isinstance(helper, str) or not Path(helper).is_absolute() or any(c.isspace() for c in helper):
+                fail(f"MCP {name} headersHelper must be an absolute path to a script, with no arguments")
             oauth = raw.get("oauth", {})
             if not isinstance(oauth, dict): fail(f"MCP {name} oauth must be an object")
             if extra := sorted(set(oauth) - {"clientId", "callbackPort"}):
@@ -97,6 +101,7 @@ def codex_gap(server: dict[str, object]) -> str | None:
     """Name why Codex cannot run a server Claude can, or None when it can."""
     if server["type"] == "sse": return "sse transport is unsupported"
     if "oauth" in server: return "oauth config is Claude-only"
+    if "headersHelper" in server: return "headersHelper is Claude-only"
     return None
 
 

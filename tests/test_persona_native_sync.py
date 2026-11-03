@@ -120,6 +120,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
         servers = {
             "events": {"type": "sse", "url": "https://example.test/sse", "oauth": {"clientId": "public-client", "callbackPort": 8080}},
             "portal": {"type": "http", "url": "https://example.test/mcp", "oauth": {"clientId": "public-client"}},
+            "home": {"type": "http", "url": "https://example.test/home", "headersHelper": "/usr/local/bin/home-auth"},
             "plain": {"type": "http", "url": "https://example.test/plain"},
         }
         persona = self.persona(mcp={"mcpServers": servers, "agentMcpServers": list(servers)})
@@ -127,6 +128,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("skipped events for codex: sse transport is unsupported\n", result.stdout)
         self.assertIn("skipped portal for codex: oauth config is Claude-only\n", result.stdout)
+        self.assertIn("skipped home for codex: headersHelper is Claude-only\n", result.stdout)
         claude, codex = self.adapters()
         self.assertEqual(frontmatter(claude)["mcpServers"], [{name: server} for name, server in servers.items()])
         self.assertEqual(codex["mcp_servers"], {"plain": {"url": "https://example.test/plain"}})
@@ -199,6 +201,8 @@ class PersonaNativeSyncTest(unittest.TestCase):
             "unsupported transport": {"mcpServers": {"a": {"type": "ws", "url": "https://example.test"}}, "agentMcpServers": ["a"]},
             "unknown oauth key": {"mcpServers": {"a": {"type": "sse", "url": "https://example.test", "oauth": {"scope": "read"}}}, "agentMcpServers": ["a"]},
             "string callback port": {"mcpServers": {"a": {"type": "http", "url": "https://example.test", "oauth": {"callbackPort": "8080"}}}, "agentMcpServers": ["a"]},
+            "relative headers helper": {"mcpServers": {"a": {"type": "http", "url": "https://example.test", "headersHelper": "auth.sh"}}, "agentMcpServers": ["a"]},
+            "headers helper with args": {"mcpServers": {"a": {"type": "http", "url": "https://example.test", "headersHelper": "/bin/auth --token x"}}, "agentMcpServers": ["a"]},
             "non-string env": {"mcpServers": {"a": {"command": "tool", "env": {"COUNT": 3}}}, "agentMcpServers": ["a"]},
             "extra field": {"mcpServers": {"a": {"command": "tool", "cwd": "/tmp"}}, "agentMcpServers": ["a"]},
             "not an object": [],
