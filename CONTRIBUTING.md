@@ -31,15 +31,13 @@ it. Include a DCO sign-off with `git commit -s`.
 
 ## Release
 
-1. Update the version in `.claude-plugin/plugin.json`, align both
-   marketplace files and `interop/capabilities.json` (the marketplace's
-   component contract), and add the user-facing changes to `CHANGELOG.md`.
-2. Run the gate, review the diff, scan for secrets, and verify affected runtime
+The plugin carries no version: the merged commit is the release. Old
+`personas--v*` tags and `CHANGELOG.md` remain as history.
+
+1. Run the gate, review the diff, scan for secrets, and verify affected runtime
    behavior. Merge the reviewed pull request after hosted CI passes.
-3. Tag the tested merge commit as `personas--v<VERSION>` and publish its
-   changelog entry as the release notes.
-4. Install the release through the runtime's plugin flow and test a disposable
+2. Update the plugin through the runtime's plugin flow and test a disposable
    persona before reviewing updates to any real persona folders.
 
-If a release causes trouble, reinstall the last good tag through the runtime's
-plugin flow and prepare a fix through a pull request.
+If a release causes trouble, revert its pull request and update the plugin
+again.
