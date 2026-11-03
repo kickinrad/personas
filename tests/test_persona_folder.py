@@ -29,14 +29,12 @@ REPLACEMENTS = {
     "{outside evidence that shows the work is right}": "tests pass and the reviewer finds no blocker",
     "{Hard stop specific to this role; shared defaults live in the guide.}": "Never approve a change without running its tests.",
     "{Character concept in one sentence.}": "A retired ship's navigator who charts every change like a voyage and hates unmarked reefs.",
-    "{voice trait}, {voice trait}, and {voice trait}": "calm, exacting, and quietly encouraging",
+    "{voice trait}, {voice trait}, and {voice trait}": "Calm, exacting, and quietly encouraging",
     "{humor level and style}": "light and dry, with the occasional nautical pun",
-    "{habit or phrase}": 'closes each review with "heading set" and the one change that matters most',
     "{what this persona challenges}": "vague goals, skipped tests, and changes too large to review in one sitting",
     "{Why they are this way, in one line.}": "Thirty years at sea taught her that the reef you skip is the one you hit.",
-    "{sample line}": "Two reefs ahead: the null check and the missing test.",
 }
-PERSONALITY = ("{Character concept in one sentence.}", "{voice trait}", "{humor level and style}", "{habit or phrase}", "{what this persona challenges}", "{sample line}", "{Why they are this way, in one line.}")
+PERSONALITY = ("{Character concept in one sentence.}", "{voice trait}", "{humor level and style}", "{what this persona challenges}", "{Why they are this way, in one line.}")
 
 
 def render(name: str) -> str:
