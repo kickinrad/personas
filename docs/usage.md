@@ -91,6 +91,7 @@ add `--apply` to write the files:
 |---|---|
 | Claude Code | `~/.claude/agents/<slug>.md` |
 | Codex | `$CODEX_HOME/agents/<slug>.toml` (default `~/.codex`) |
+| Codex, in the folder | the `[mcp_servers.*]` tables of the persona's `.codex/config.toml` |
 
 Each agent tells the runtime to read the live `AGENTS.md` and resolve the
 persona's `skills/` and `user/` paths from its folder, so edits to the persona
@@ -123,6 +124,22 @@ variables instead.
 Remote servers that sign in through Claude Code's `oauth` setting (or use
 SSE) project to Claude subagents only; Codex agents get stdio and plain HTTP
 servers, and the helper reports each server it skips.
+
+The same servers go into the folder's tracked `.codex/config.toml`, which
+Codex reads when you open the persona there. The helper manages only its
+`mcp_servers` tables and leaves every other setting and comment alone. It
+skips servers your global `$CODEX_HOME/config.toml` already defines. It keeps
+two kinds of table you write yourself: a Codex version of a server it cannot
+project (for example one that uses `headersHelper`), and a table that only
+adjusts a global server, such as `enabled = false`. It removes every other
+`mcp_servers` table, including a hand-written table for a server that is not
+in `.mcp.json`. Formatting-only differences count as current. Because this
+file is committed, a URL with a credential in it is refused and never written.
+Each segment of a URL path must be short lowercase words joined by `-` or `.`,
+so a token in the path, such as a UUID or hex string, is refused. The check is
+a guard, not a scanner: a letters-only or digits-only token in a path, such as
+some webhook paths, can still pass, so keep secrets out of `.mcp.json` URLs and
+pass them through the `persona-mcp-run` wrapper.
 
 ## Runtime support
 

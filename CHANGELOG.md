@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- **Codex folder config:** `persona-native-sync.py` now also reconciles the
+  `mcp_servers` tables of each persona's tracked `.codex/config.toml` from
+  `.agent-mcp.json`, so the folder session matches the Codex subagent. It
+  skips servers the global Codex config defines, keeps hand-written Codex
+  variants and global overrides, leaves other settings untouched, and treats
+  formatting-only differences as current. `--runtime claude` leaves it alone.
+- **Credentials:** the sync helper also refuses MCP URLs with a token-like
+  path segment, such as a webhook or hosted-MCP secret.
+
 ## 0.11.0 — 2026-10-18
 
 - **Craft:** every persona states its outcome as a verb and gains a Craft
