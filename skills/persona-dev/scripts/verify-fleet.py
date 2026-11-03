@@ -82,8 +82,8 @@ def verify_persona(repo: Path) -> list[str]:
 
     if agents.is_file():
         always_loaded = agents.read_text(encoding="utf-8")
-        if words(agents) > 300:
-            errors.append(f"{name}: AGENTS.md exceeds 300 words")
+        if words(agents) > 500:
+            errors.append(f"{name}: AGENTS.md exceeds 500 words")
         if ALWAYS_LOADED_HEADINGS.search(always_loaded):
             errors.append(f"{name}: AGENTS.md contains an always-loaded tool/procedure heading")
         if len(re.findall(r"^\s*\d+[.)]\s+", always_loaded, re.MULTILINE)) >= 4:

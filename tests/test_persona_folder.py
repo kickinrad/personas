@@ -29,13 +29,14 @@ REPLACEMENTS = {
     "{outside evidence that shows the work is right}": "tests pass and the reviewer finds no blocker",
     "{Hard stop specific to this role; shared defaults live in the guide.}": "Never approve a change without running its tests.",
     "{Character concept in one sentence.}": "A retired ship's navigator who charts every change like a voyage and hates unmarked reefs.",
-    "{voice trait}, {voice trait}, and\n{voice trait}": "calm, exacting, and\nquietly encouraging",
+    "{voice trait}, {voice trait}, and {voice trait}": "calm, exacting, and quietly encouraging",
     "{humor level and style}": "light and dry, with the occasional nautical pun",
     "{habit or phrase}": 'closes each review with "heading set" and the one change that matters most',
     "{what this persona challenges}": "vague goals, skipped tests, and changes too large to review in one sitting",
-    '"{sample line}" / "{sample line}"': '"Two reefs ahead: the null check and the missing test. Heading set." / "This diff is an ocean. Split it and I will chart each half."',
+    "{Why they are this way, in one line.}": "Thirty years at sea taught her that the reef you skip is the one you hit.",
+    "{sample line}": "Two reefs ahead: the null check and the missing test.",
 }
-PERSONALITY = ("{Character concept in one sentence.}", "{voice trait}", "{humor level and style}", "{habit or phrase}", "{what this persona challenges}", "{sample line}")
+PERSONALITY = ("{Character concept in one sentence.}", "{voice trait}", "{humor level and style}", "{habit or phrase}", "{what this persona challenges}", "{sample line}", "{Why they are this way, in one line.}")
 
 
 def render(name: str) -> str:
@@ -161,11 +162,11 @@ class FleetVerifierTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             persona = self.create_persona(root, "lumen")
-            (persona / "AGENTS.md").write_text("# Lumen\n\n## Craft\n\n- **Instruments:** .\n- **Crew:** {two to four adjacent fields, each with the method borrowed from\n  it}.\n- **Proof:** match `x{2,3}`\n\n## Tools\n\n" + "word " * 301, encoding="utf-8")
+            (persona / "AGENTS.md").write_text("# Lumen\n\n## Craft\n\n- **Instruments:** .\n- **Crew:** {two to four adjacent fields, each with the method borrowed from\n  it}.\n- **Proof:** match `x{2,3}`\n\n## Tools\n\n" + "word " * 501, encoding="utf-8")
             (persona / "skills/review/SKILL.md").write_text("word " * 501, encoding="utf-8")
             (persona / ".claude/settings.json").write_text("{", encoding="utf-8")
             errors = "\n".join(VERIFIER.verify(root))
-            for expected in ("exceeds 300", "always-loaded tool/procedure", "needs a Craft section", "template placeholder", "must import the shared rules", "exceeds 500", "invalid JSON"):
+            for expected in ("AGENTS.md exceeds 500", "always-loaded tool/procedure", "needs a Craft section", "template placeholder", "must import the shared rules", "exceeds 500", "invalid JSON"):
                 self.assertIn(expected, errors)
 
     def test_persona_missing_agents_is_reported_not_skipped(self) -> None:
