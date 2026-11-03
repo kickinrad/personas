@@ -136,7 +136,10 @@ adjusts a global server, such as `enabled = false`. It removes every other
 in `.mcp.json`. Formatting-only differences count as current. Because this
 file is committed, a URL with a credential in it is refused and never written.
 Each segment of a URL path must be short lowercase words joined by `-` or `.`,
-so a token in the path, such as a UUID or hex string, is refused.
+so a token in the path, such as a UUID or hex string, is refused. The check is
+a guard, not a scanner: a letters-only or digits-only token in a path, such as
+some webhook paths, can still pass, so keep secrets out of `.mcp.json` URLs and
+pass them through the `persona-mcp-run` wrapper.
 
 ## Runtime support
 

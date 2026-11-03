@@ -234,6 +234,15 @@ class PersonaNativeSyncTest(unittest.TestCase):
             "lowercase token": ({"type": "http", "url": "https://example.test/s/k3j9x2m8q7w1z5v4n6b0p2r8/mcp"}, "token-like path segment"),
             "uuid path": ({"type": "http", "url": "https://example.test/hooks/550e8400-e29b-41d4-a716-446655440000"}, "token-like path segment"),
             "hex part": ({"type": "http", "url": "https://example.test/mcp/a3f9c0d17b2e"}, "token-like path segment"),
+            "mixed parts": ({"type": "http", "url": "https://example.test/ab12-cd34-ef56-gh78"}, "token-like path segment"),
+            "long mixed parts": ({"type": "http", "url": "https://example.test/ab12cd-ef56gh-ij78kl"}, "token-like path segment"),
+            "api key flag": ({"command": "tool", "args": ["--api-key=literal"]}, "flag or header"),
+            "token flag pair": ({"command": "tool", "args": ["--token", "literal"]}, "flag or header"),
+            "header arg": ({"command": "tool", "args": ["--header", "Authorization: Bearer abc"]}, "flag or header"),
+            "password flag": ({"command": "tool", "args": ["-p", "--password=hunter2"]}, "flag or header"),
+            "flag in command": ({"command": "tool --token literal"}, "flag or header"),
+            "wss userinfo": ({"command": "tool", "args": ["wss://user:pass@x.example.test/mcp"]}, "must not contain credentials"),
+            "wss path token": ({"command": "tool", "args": ["--url=wss://x.example.test/Ab1cD2eF3gH4"]}, "token-like path segment"),
             "encoded path": ({"type": "http", "url": "https://example.test/mcp%2Fsecret"}, "token-like path segment"),
             "base64url path token": ({"type": "http", "url": "https://example.test/mcp/Ab1cD2eF_Gh3iJ4kL_Mn5oP6qR_St7uV8wX"}, "token-like path segment"),
             "path token in arg": ({"command": "npx", "args": ["mcp-remote", "https://example.test/s/bXpHk2LqW9vNrT4sYcZaDeFg/mcp"]}, "token-like path segment"),
@@ -249,6 +258,14 @@ class PersonaNativeSyncTest(unittest.TestCase):
     def test_readable_url_paths_are_accepted(self) -> None:
         paths = ("/streamable-http-2025-03-26", "/mcp-server-google-workspace-v2", "/sentry-mcp-2024-v2-eu1", "/mcp", "/mcp/vault", "/sse", "/", "")
         servers = {f"s{index}": {"type": "http", "url": f"https://example.test{path}"} for index, path in enumerate(paths)}
+        result = self.invoke(self.persona(mcp={"mcpServers": servers, "agentMcpServers": list(servers)}), "--apply")
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_wrapped_servers_and_referenced_flags_are_accepted(self) -> None:
+        servers = {
+            "wrapped": {"command": "persona-mcp-run", "args": ["otto", "homeassistant", "--", "uvx", "ha-mcp@latest"]},
+            "referenced": {"command": "tool", "args": ["--token", "${TOOL_TOKEN}", "--api-key=${TOOL_KEY}", "--verbose", "--url=https://example.test/authentication/v2"]},
+        }
         result = self.invoke(self.persona(mcp={"mcpServers": servers, "agentMcpServers": list(servers)}), "--apply")
         self.assertEqual(result.returncode, 0, result.stderr)
 
@@ -374,7 +391,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
                 path = self.folder(persona, text)
                 result = self.invoke(persona, "--apply")
                 self.assertEqual(result.returncode, 2)
-                self.assertIn("MCP hook: HTTP url must not contain a token-like path segment", result.stderr)
+                self.assertIn("MCP hook: url must not contain a token-like path segment", result.stderr)
                 self.assertEqual(path.read_text(encoding="utf-8"), text)
                 self.assertFalse(self.claude.exists() or self.codex.exists())
                 # A hand-written Codex variant with a secret in its URL path is dropped, never written back.
@@ -382,7 +399,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
                 path = self.folder(variant, f'[mcp_servers.home]\nurl = "{url}"\n')
                 result = self.invoke(variant, "--runtime", "codex", "--apply")
                 self.assertEqual(result.returncode, 0, result.stderr)
-                self.assertIn(f"skipped home for {path}: HTTP url must not contain a token-like path segment", result.stdout)
+                self.assertIn(f"skipped home for {path}: url must not contain a token-like path segment", result.stdout)
                 self.assertNotIn(secret, path.read_text(encoding="utf-8"))
                 shutil.rmtree(self.codex)
 
