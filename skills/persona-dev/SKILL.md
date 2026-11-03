@@ -25,7 +25,7 @@ private local context, and external knowledge sources distinct.
    - `PERSONAS.md`, the shared rules, written by the sync helper below;
    - minimal `.claude/settings.json` and `.codex/config.toml`;
    - `skills/` for portable role workflows;
-   - `evals/` with two or three synthetic cases graded by the Craft's Proof;
+   - `evals/` with one synthetic case graded by the Craft's Proof;
    - ignored `user/` for profile, memory, and private evals.
 6. Replace every placeholder with reviewed content. Add no hook for symmetry,
    reminders, drift, or memory simulation. Keep everything tracked safe to
@@ -53,22 +53,19 @@ refused file aside only with approval.
 
 ## Evaluate
 
-The Craft's Proof is the outside judge; never grade the persona yourself.
-Grade checkable facts with deterministic graders (`regex`, `tool_used`); keep
-`llm` rubrics for judgment, where they are noisy.
-Wrap it as a plugin whose main agent it is, then compare it with plain Claude:
+Evals are optional; run them when Wils asks or a change is risky. The Craft's
+Proof is the outside judge; never grade the persona yourself. Prefer
+deterministic graders (`regex`, `tool_used`) over noisy `llm` rubrics. Run
+once, without a plain-Claude arm:
 
 ```bash
 plugin=$(python3 scripts/persona-native-sync.py --persona PATH --eval-plugin)
-claude plugin eval "$plugin" --no-publish
+claude plugin eval "$plugin" --no-publish --runs 1 --ablation none
 ```
 
-Tracked `evals/` hold synthetic cases only. Cases from real conversations,
-including `context.history_file` replays, go in ignored `user/evals/`; the
-wrapper copies them to `evals/private/`. Mock the persona's allowlisted tools in
-`evals/mocks/<server>/<tool>.md`; real servers never start. Run
-evals before changing a persona; afterward it must match or beat the old
-version on cases tagged `holdout`.
+Tracked `evals/` hold synthetic cases; mock allowlisted tools in
+`evals/mocks/<server>/<tool>.md`. Replays of real conversations live in ignored
+`user/evals/` and are costly; include them only on request with `--with-private`.
 
 ## Verify
 

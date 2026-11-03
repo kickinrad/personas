@@ -158,8 +158,11 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertEqual(json.loads((out / ".mcp.json").read_text()), {"mcpServers": {"local": {"type": "stdio", "command": "tool"}}})
         self.assertTrue((out / "skills/review/SKILL.md").is_file())
         self.assertTrue((out / "evals/public-case/prompt.md").is_file())
-        self.assertTrue((out / "evals/private/replay-case/prompt.md").is_file())
+        self.assertFalse((out / "evals/private").exists())
         self.assertFalse((out / "evals/results").exists())
+        private = Path(self.invoke(persona, "--eval-plugin", "--with-private").stdout.strip())
+        self.addCleanup(shutil.rmtree, private)
+        self.assertTrue((private / "evals/private/replay-case/prompt.md").is_file())
         self.assertFalse(self.claude.exists() or self.codex.exists())
 
     def test_allowlist_without_mcp_json_fails(self) -> None:

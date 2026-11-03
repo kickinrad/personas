@@ -116,7 +116,7 @@ def rendered(persona: Path, description: str, color: str | None, mcps: dict[str,
     return claude, codex
 
 
-def eval_plugin(persona: Path, description: str) -> Path:
+def eval_plugin(persona: Path, description: str, with_private: bool = False) -> Path:
     """Wrap the persona as a plugin whose main-thread agent it is, for `claude plugin eval`.
 
     The wrapper holds private user/ context, so it goes in a fresh owner-only temporary directory."""
@@ -133,7 +133,9 @@ def eval_plugin(persona: Path, description: str) -> Path:
     write(out / "settings.json", json.dumps({"agent": f"persona:{slug}"}) + "\n")
     # Evals answer these from evals/mocks/<server>/; real servers start only with --allow-real-servers.
     if mcps := agent_mcps(persona): write(out / ".mcp.json", json.dumps({"mcpServers": mcps}, indent=2) + "\n")
-    for source, target in (("skills", "skills"), ("evals", "evals"), ("user/evals", "evals/private")):
+    # Private replays are long and costly, so they run only on request.
+    pairs = (("skills", "skills"), ("evals", "evals")) + ((("user/evals", "evals/private"),) if with_private else ())
+    for source, target in pairs:
         if (persona / source).is_dir(): shutil.copytree(persona / source, out / target, ignore=shutil.ignore_patterns("results"))
     return out
 
@@ -169,6 +171,7 @@ def main() -> int:
     parser.add_argument("--claude-home", type=Path, default=Path.home() / ".claude")
     parser.add_argument("--codex-home", type=Path, default=Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")))
     parser.add_argument("--eval-plugin", action="store_true", help="print a private temporary plugin that runs the persona as the main agent, for claude plugin eval")
+    parser.add_argument("--with-private", action="store_true", help="with --eval-plugin, also include the private user/evals replays")
     args = parser.parse_args()
     try:
         persona = args.persona.resolve()
@@ -176,7 +179,7 @@ def main() -> int:
         lines = agents.read_text(encoding="utf-8").splitlines() if agents.is_file() else fail(f"missing {agents}")
         description = next((line[1:].strip() for line in lines if line.startswith(">")), None) or fail("AGENTS.md needs an opening blockquote")
         if args.eval_plugin:
-            print(eval_plugin(persona, description))
+            print(eval_plugin(persona, description, args.with_private))
             return 0
         slug = persona_slug(persona)
         targets = {"claude": args.claude_home / "agents" / f"{slug}.md", "codex": args.codex_home / "agents" / f"{slug}.toml"}

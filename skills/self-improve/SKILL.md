@@ -24,10 +24,7 @@ Improve the persona without duplicating authority.
 After repeated real friction, cite the persona-local evidence and propose one
 concise rule, one reusable skill, an existing integration, or removal of stale
 material. Promote the smallest rule that changes the observed behavior; do not
-generalize one correction into fleet-wide policy. Capture the correction as a
-private eval case in `user/evals/`: replay the conversation up to the missed
-turn and grade with a rubric written from the correction. The change is done
-when that case passes, measured by `persona-dev`'s Evaluate step. Wait for approval before
+generalize one correction into fleet-wide policy. Wait for approval before
 changing identity, rules, tools, skills, connections, or external services.
 
 ## Audit
