@@ -25,8 +25,6 @@ ALLOWLIST = ".agent-mcp.json"
 SERVER_NAME = re.compile(r"[A-Za-z0-9_-]+")
 SHARED = Path(__file__).resolve().parent.parent / "assets" / "PERSONAS.md"
 LITERAL = re.compile(r"(?:sk-[A-Za-z0-9_-]{12,}|eyJ[A-Za-z0-9_-]{12,}|gh[pousr]_[A-Za-z0-9_-]{12,})")
-# A random-looking URL path segment, such as a webhook or hosted-MCP token: a long letter-and-digit run, or a UUID.
-PATH_TOKEN = re.compile(r".*(?=[A-Za-z0-9]*[0-9])(?=[A-Za-z0-9]*[A-Za-z])[A-Za-z0-9]{16,}.*|(?:[0-9a-fA-F]-?){32,}")
 
 
 def fail(message: str) -> None:
@@ -41,6 +39,17 @@ def persona_slug(persona: Path) -> str:
     return re.sub(r"[^a-z0-9]+", "-", persona.name.lower()).strip("-") or fail("persona directory does not produce a slug")
 
 
+def path_token(segment: str) -> bool:
+    """Whether a URL path segment looks like a webhook or hosted-MCP token rather than a readable name.
+
+    Tokens are long, mix letters and digits, and either mix case or switch between letters and digits often
+    (hex, UUIDs, base64url); slugs such as streamable-http-2025-03-26 do neither."""
+    if len(segment) < 16 or not re.fullmatch(r"[A-Za-z0-9_.~+=-]+", segment): return False
+    runs = re.findall(r"[A-Za-z]+|[0-9]+", re.sub(r"[^A-Za-z0-9]", "", segment))
+    if not (re.search(r"[0-9]", segment) and re.search(r"[A-Za-z]", segment)): return False
+    return len(runs) >= 5 or bool(re.search(r"[a-z]", segment) and re.search(r"[A-Z]", segment))
+
+
 def credential_free(value: object, key: str = "") -> None:
     if SENSITIVE.search(key) and not (isinstance(value, str) and NOT_SECRET.fullmatch(value)):
         fail(f"credential literal is unsupported: {key}")
@@ -50,7 +59,7 @@ def credential_free(value: object, key: str = "") -> None:
         if url.username is not None or url.password is not None: fail("HTTP url must not contain credentials")
         if any(SENSITIVE.search(key) for part in (url.query, url.fragment) for key, _ in parse_qsl(part, keep_blank_values=True)):
             fail("HTTP url must not contain credential parameters")
-        if any(PATH_TOKEN.fullmatch(segment) for segment in unquote(url.path).split("/")):
+        if any(map(path_token, unquote(url.path).split("/"))):
             fail("HTTP url must not contain a token-like path segment")
     if isinstance(value, dict):
         for nested_key, nested in value.items(): credential_free(nested, str(nested_key))
@@ -134,21 +143,46 @@ def codex_tables(mcps: dict[str, dict[str, object]]) -> str:
     return text
 
 
-def mcp_header(line: str) -> tuple[bool, str | None] | None:
-    """Classify a TOML table header line: (is an mcp_servers table, server name), or None when not a header."""
-    if not line.lstrip().startswith("["): return None
-    try: header = tomllib.loads(line.strip())
-    except tomllib.TOMLDecodeError: return None
-    top = next(iter(header), None)
-    if top != "mcp_servers": return False, None
-    servers = header[top]
-    return True, next(iter(servers), None) if isinstance(servers, dict) else None
+def mcp_names(document: str) -> tuple[bool, set[str]]:
+    """Whether a TOML fragment sets mcp_servers, and which servers it names."""
+    servers = tomllib.loads(document).get("mcp_servers")
+    return servers is not None, set(servers) if isinstance(servers, dict) else set()
+
+
+def toml_units(text: str) -> list[tuple[str, str, bool, set[str]]]:
+    """Split TOML into (kind, source, sets mcp_servers, server names) units whose sources join back to the text.
+
+    A statement takes lines until it parses under its table header, so multi-line strings and arrays stay whole."""
+    lines, units, header, index = text.splitlines(keepends=True), [], "", 0
+    while index < len(lines):
+        stripped = lines[index].strip()
+        if not stripped or stripped.startswith("#"):
+            units.append(("trivia", lines[index], False, set()))
+            index += 1
+            continue
+        if stripped.startswith("["):
+            header = lines[index]
+            units.append(("header", header, *mcp_names(header)))
+            index += 1
+            continue
+        end = index + 1
+        while True:
+            source = "".join(lines[index:end])
+            try:
+                units.append(("statement", source, *mcp_names(header.rstrip("\n") + "\n" + source)))
+                break
+            except tomllib.TOMLDecodeError:
+                if end == len(lines): raise
+                end += 1
+        index = end
+    return units
 
 
 def folder_config(persona: Path, codex_home: Path, mcps: dict[str, dict[str, object]]) -> tuple[Path, str | None, str] | None:
-    """Reconcile only the mcp_servers tables of the persona's tracked .codex/config.toml.
+    """Reconcile only the mcp_servers entries of the persona's tracked .codex/config.toml.
 
-    Returns (path, existing text, desired text), or None when the persona has neither the file nor servers for it."""
+    Returns (path, existing text, desired text), or None when the persona has neither the file nor servers for it.
+    Every byte outside the removed MCP entries is kept; regenerated tables are appended."""
     path, home = persona / ".codex" / "config.toml", codex_home / "config.toml"
     shared = tomllib.loads(home.read_text(encoding="utf-8")).get("mcp_servers", {}) if home.is_file() else {}
     wanted = {name: server for name, server in mcps.items() if name not in shared}
@@ -157,7 +191,7 @@ def folder_config(persona: Path, codex_home: Path, mcps: dict[str, dict[str, obj
     existing = path.read_text(encoding="utf-8") if path.is_file() else None
     parsed = tomllib.loads(existing or "")
     declared = json.loads((persona / ".mcp.json").read_text(encoding="utf-8")).get("mcpServers", {}) if (persona / ".mcp.json").is_file() else {}
-    # Persona-owned tables: Codex variants of servers Codex cannot take from .mcp.json, and overrides of global servers.
+    # Persona-owned entries: Codex variants of servers Codex cannot take from .mcp.json, and overrides of global servers.
     keep = set()
     for name, table in parsed.get("mcp_servers", {}).items():
         raw = declared.get(name)
@@ -168,29 +202,25 @@ def folder_config(persona: Path, codex_home: Path, mcps: dict[str, dict[str, obj
             credential_free(table)
             keep.add(name)
         except ValueError as error: print(f"skipped {name} for {path}: {error}")
-    rest, tables, current = [], [], None
-    for line in (existing or "").splitlines(keepends=True):
-        header = mcp_header(line)
-        if header and header[0]:
-            current = (header[1], [])
-            tables.append(current)
-        elif header is not None and current:
-            # Comments and blank lines just above the next table belong to it, not to the MCP table being removed.
-            moved = []
-            while current[1] and (not current[1][-1].strip() or current[1][-1].lstrip().startswith("#")):
-                moved.insert(0, current[1].pop())
-            rest += moved
-            current = None
-        (current[1] if current else rest).append(line)
-    kept = "".join(line for name, lines in tables if name in keep for line in lines).strip("\n")
-    content = "".join(rest).rstrip("\n") + ("\n\n" + kept + "\n" if kept else "\n") + codex_tables(wanted)
-    content = content.lstrip("\n")
+    units = toml_units(existing or "")
+    kept = []
+    for index, (kind, source, mcp, names) in enumerate(units):
+        if names and names & keep and not names <= keep: fail(f"{path} sets kept and removed MCP servers in one entry; give each server its own table")
+        if not mcp: kept.append(source)
+        elif names: kept += [source] if names <= keep else []
+        else:
+            # A bare [mcp_servers] header stays while any entry under it is kept.
+            following = next((i for i in range(index + 1, len(units)) if units[i][0] == "header"), len(units))
+            kept += [source] if any(unit[3] and unit[3] <= keep for unit in units[index + 1:following]) else []
+    content = "".join(kept)
+    if tables := codex_tables(wanted):
+        content = content + tables if content.endswith("\n") else (content + "\n" + tables if content else tables.lstrip("\n"))
     result = tomllib.loads(content)
     expected = {name: parsed["mcp_servers"][name] for name in keep}
-    expected |= tomllib.loads(codex_tables(wanted) or "").get("mcp_servers", {})
+    expected |= tomllib.loads(tables or "").get("mcp_servers", {})
     others = lambda config: {key: value for key, value in config.items() if key != "mcp_servers"}
     if others(result) != others(parsed) or result.get("mcp_servers", {}) != expected:
-        fail(f"cannot edit the mcp_servers tables of {path} without changing other settings; move them into [mcp_servers.<name>] tables")
+        fail(f"cannot edit the mcp_servers entries of {path} without changing other settings")
     # Formatting-only differences are current, so the file is not rewritten for them.
     return path, existing, existing if existing is not None and tomllib.loads(existing) == result else content
 

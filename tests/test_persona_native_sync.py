@@ -229,6 +229,7 @@ class PersonaNativeSyncTest(unittest.TestCase):
             "encoded query key": ({"type": "http", "url": "https://example.test/mcp?api%5Fkey=value"}, "credential parameters"),
             "fragment secret": ({"type": "http", "url": "https://example.test/mcp#secret=value"}, "credential parameters"),
             "path token": ({"type": "http", "url": "https://example.test/hooks/550e8400-e29b-41d4-a716-446655440000"}, "token-like path segment"),
+            "base64url path token": ({"type": "http", "url": "https://example.test/mcp/Ab1cD2eF_Gh3iJ4kL_Mn5oP6qR_St7uV8wX"}, "token-like path segment"),
             "path token in arg": ({"command": "npx", "args": ["mcp-remote", "https://example.test/s/bXpHk2LqW9vNrT4sYcZaDeFg/mcp"]}, "token-like path segment"),
             "oauth client secret": ({"type": "sse", "url": "https://example.test/sse", "oauth": {"clientId": "id", "clientSecret": "literal"}}, "clientSecret"),
             "referenced client secret": ({"type": "sse", "url": "https://example.test/sse", "oauth": {"clientSecret": "${CLIENT_SECRET}"}}, "clientSecret"),
@@ -352,22 +353,59 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertEqual(path.read_text(encoding="utf-8"), text)
 
     def test_folder_codex_config_refuses_url_path_secrets(self) -> None:
-        token = "https://hooks.example.test/services/T0001/bXpHk2LqW9vNrT4sYcZaDeFg"
-        persona = self.persona(mcp={"mcpServers": {"hook": {"type": "http", "url": token}}, "agentMcpServers": ["hook"]})
-        text = '[mcp_servers.stale]\ncommand = "old"\n'
-        path = self.folder(persona, text)
-        result = self.invoke(persona, "--apply")
-        self.assertEqual(result.returncode, 2)
-        self.assertIn("MCP hook: HTTP url must not contain a token-like path segment", result.stderr)
-        self.assertEqual(path.read_text(encoding="utf-8"), text)
-        self.assertFalse(self.claude.exists() or self.codex.exists())
-        # A hand-written Codex variant with a secret in its URL path is dropped, never written back.
-        variant = self.persona("wren-variant", {"mcpServers": {"home": {"type": "http", "url": "https://example.test/home", "headersHelper": "/bin/auth"}}})
-        path = self.folder(variant, f'[mcp_servers.home]\nurl = "{token}"\n')
-        result = self.invoke(variant, "--runtime", "codex", "--apply")
+        tokens = ("bXpHk2LqW9vNrT4sYcZaDeFg", "Ab1cD2eF_Gh3iJ4kL_Mn5oP6qR_St7uV8wX")
+        for index, secret in enumerate(tokens):
+            with self.subTest(secret):
+                url = f"https://hooks.example.test/services/T0001/{secret}"
+                persona = self.persona(f"wren-hook-{index}", {"mcpServers": {"hook": {"type": "http", "url": url}}, "agentMcpServers": ["hook"]})
+                text = '[mcp_servers.stale]\ncommand = "old"\n'
+                path = self.folder(persona, text)
+                result = self.invoke(persona, "--apply")
+                self.assertEqual(result.returncode, 2)
+                self.assertIn("MCP hook: HTTP url must not contain a token-like path segment", result.stderr)
+                self.assertEqual(path.read_text(encoding="utf-8"), text)
+                self.assertFalse(self.claude.exists() or self.codex.exists())
+                # A hand-written Codex variant with a secret in its URL path is dropped, never written back.
+                variant = self.persona(f"wren-variant-{index}", {"mcpServers": {"home": {"type": "http", "url": "https://example.test/home", "headersHelper": "/bin/auth"}}})
+                path = self.folder(variant, f'[mcp_servers.home]\nurl = "{url}"\n')
+                result = self.invoke(variant, "--runtime", "codex", "--apply")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn(f"skipped home for {path}: HTTP url must not contain a token-like path segment", result.stdout)
+                self.assertNotIn(secret, path.read_text(encoding="utf-8"))
+                shutil.rmtree(self.codex)
+
+    def test_folder_codex_config_keeps_every_non_mcp_byte(self) -> None:
+        persona = self.persona(mcp={"mcpServers": {"local": {"command": "tool"}}, "agentMcpServers": ["local"]})
+        prefix = '# Top comment\n\nsandbox_mode = "workspace-write"\n\n\n'
+        mcp = '[mcp_servers.stale]\ncommand = "old"\n# Between MCP tables.\n\n[mcp_servers.local]\ncommand = "older"\n'
+        suffix = '\n# Plugins stay.\n\n[plugins."kit@market"]\nenabled = true # inline\n\n# Trailing comment.\n'
+        path = self.folder(persona, prefix + mcp + suffix)
+        self.assertEqual(self.invoke(persona, "--runtime", "codex", "--apply").returncode, 0)
+        tables = SYNC.codex_tables({"local": {"type": "stdio", "command": "tool"}})
+        self.assertEqual(path.read_text(encoding="utf-8"), prefix + "# Between MCP tables.\n\n" + suffix + tables)
+
+    def test_folder_codex_config_keeps_inline_global_overrides(self) -> None:
+        persona = self.persona(mcp={"mcpServers": {"local": {"command": "tool"}}, "agentMcpServers": ["local"]})
+        path = self.folder(persona, '[mcp_servers]\nmise = { enabled = false }\nstale = { command = "old" }\n',
+                           shared='[mcp_servers.mise]\ncommand = "mise"\n')
+        result = self.invoke(persona, "--runtime", "codex", "--apply")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn(f"skipped home for {path}: HTTP url must not contain a token-like path segment", result.stdout)
-        self.assertNotIn("bXpHk2", path.read_text(encoding="utf-8"))
+        text = path.read_text(encoding="utf-8")
+        self.assertTrue(text.startswith("[mcp_servers]\nmise = { enabled = false }\n"))
+        self.assertEqual(tomllib.loads(text)["mcp_servers"], {"mise": {"enabled": False}, "local": {"command": "tool"}})
+        self.assertIn(f"current {path}", self.invoke(persona, "--runtime", "codex").stdout)
+
+    def test_folder_codex_config_ignores_headers_inside_multiline_strings(self) -> None:
+        persona = self.persona(mcp={"mcpServers": {"local": {"command": "tool"}}, "agentMcpServers": ["local"]})
+        note = 'note = """\n[mcp_servers.fake]\ncommand = "x"\n"""\nliteral = \'\'\'\n[mcp_servers.other]\n\'\'\'\n'
+        path = self.folder(persona, note + '[mcp_servers.stale]\ncommand = "old"\n')
+        result = self.invoke(persona, "--runtime", "codex", "--apply")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        text = path.read_text(encoding="utf-8")
+        self.assertTrue(text.startswith(note))
+        config = tomllib.loads(text)
+        self.assertEqual(config["note"], '[mcp_servers.fake]\ncommand = "x"\n')
+        self.assertEqual(config["mcp_servers"], {"local": {"command": "tool"}})
 
     def test_failed_replace_preserves_destination_and_cleans_temporary_file(self) -> None:
         target = self.root / "agent.toml"
