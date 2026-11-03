@@ -136,7 +136,7 @@ adjusts a global server, such as `enabled = false`. It removes every other
 in `.mcp.json`. Formatting-only differences count as current. Because this
 file is committed, a URL with a credential in it is refused and never written.
 Each segment of a URL path must be short lowercase words joined by `-` or `.`,
-so a token in the path is refused.
+so a token in the path, such as a UUID or hex string, is refused.
 
 ## Runtime support
 

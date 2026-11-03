@@ -25,7 +25,9 @@ ALLOWLIST = ".agent-mcp.json"
 SERVER_NAME = re.compile(r"[A-Za-z0-9_-]+")
 SHARED = Path(__file__).resolve().parent.parent / "assets" / "PERSONAS.md"
 # URL path segments must read as short lowercase words, so a token in the path is refused rather than guessed at.
-PATH_SEGMENT = re.compile(r"[a-z0-9]{1,12}(?:[-.][a-z0-9]{1,12})*")
+# Each -/. part is at most 12 characters, and one of 8 or more is all letters or all digits (no UUID or hex parts).
+PATH_PART = r"(?:[a-z0-9]{1,7}|[a-z]{8,12}|[0-9]{8,12})"
+PATH_SEGMENT = re.compile(rf"{PATH_PART}(?:[-.]{PATH_PART})*")
 LITERAL = re.compile(r"(?:sk-[A-Za-z0-9_-]{12,}|eyJ[A-Za-z0-9_-]{12,}|gh[pousr]_[A-Za-z0-9_-]{12,})")
 
 

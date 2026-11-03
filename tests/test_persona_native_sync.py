@@ -232,6 +232,8 @@ class PersonaNativeSyncTest(unittest.TestCase):
             "letters-only token": ({"type": "http", "url": "https://example.test/mcp/AbCdEfGhIjKlMnOpQrSt"}, "token-like path segment"),
             "private path": ({"type": "http", "url": "http://192.0.2.10:9584/private_AbCdEfGhIjKlMnOp"}, "token-like path segment"),
             "lowercase token": ({"type": "http", "url": "https://example.test/s/k3j9x2m8q7w1z5v4n6b0p2r8/mcp"}, "token-like path segment"),
+            "uuid path": ({"type": "http", "url": "https://example.test/hooks/550e8400-e29b-41d4-a716-446655440000"}, "token-like path segment"),
+            "hex part": ({"type": "http", "url": "https://example.test/mcp/a3f9c0d17b2e"}, "token-like path segment"),
             "encoded path": ({"type": "http", "url": "https://example.test/mcp%2Fsecret"}, "token-like path segment"),
             "base64url path token": ({"type": "http", "url": "https://example.test/mcp/Ab1cD2eF_Gh3iJ4kL_Mn5oP6qR_St7uV8wX"}, "token-like path segment"),
             "path token in arg": ({"command": "npx", "args": ["mcp-remote", "https://example.test/s/bXpHk2LqW9vNrT4sYcZaDeFg/mcp"]}, "token-like path segment"),
