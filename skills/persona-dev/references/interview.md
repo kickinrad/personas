@@ -22,7 +22,7 @@ Cover, in roughly this order:
   Instruments, Crew, and Proof in `AGENTS.md`.
 - **Boundaries:** what it must never do, and what always needs a yes first.
 - **Context:** the user's situation and preferences worth knowing; private
-  facts go to ignored `user/profile.md`, not tracked files.
+  facts go to `user/profile.md`, not shared tracked files.
 - **Workflows:** recurring jobs that deserve a skill.
 - **Runtimes:** Claude Code, Codex, or both.
 - **Color:** a Claude agent color (red, blue, green, yellow, purple, orange,

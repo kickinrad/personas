@@ -26,7 +26,7 @@ private local context, and external knowledge sources distinct.
    - minimal `.claude/settings.json` and `.codex/config.toml`;
    - `skills/` for portable role workflows;
    - `evals/` with one synthetic case graded by the Craft's Proof;
-   - ignored `user/` for profile, memory, and private evals.
+   - `user/` for profile, memory, and private evals, ignored by default.
 6. Replace every placeholder with reviewed content. Add no hook for symmetry,
    reminders, drift, or memory simulation. Keep everything tracked safe to
    publish.
@@ -41,7 +41,7 @@ Inspect the folder first and edit only the owning surface; `self-improve`'s
 "Route the change" list owns routing. Classify each difference from the
 current contract as adapter drift, persona-owned customization, obsolete
 machinery, or ambiguity, and show the plan before writing. Preserve
-persona-owned meaning and `user/`.
+persona-owned meaning and `user/`; a re-included `user/` is persona-owned.
 
 ## Activate native adapters
 
