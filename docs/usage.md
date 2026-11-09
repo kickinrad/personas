@@ -99,7 +99,10 @@ persona's `skills/` and `user/` paths from its folder, so edits to the persona
 apply immediately. Regenerate only when its description or subagent tools
 change. Claude shows the
 agent in the chosen color (red, blue, green, yellow, purple, orange, pink, or
-cyan); a later run without `--color` keeps it. Codex has no agent color. The
+cyan); a later run without `--color` keeps it. Codex has no agent color.
+`--skill NAME`, repeatable, makes the Claude agent preload a skill such as
+`prose:write`; a later run without it keeps the list. The Codex agent gets no
+preload from this helper. The
 runtime needs permission to read the persona folder from wherever you call it.
 
 The helper only overwrites files it generated for the same persona. It

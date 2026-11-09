@@ -10,7 +10,7 @@ way every run. Adapted from Matt Pocock's
 
 - `AGENTS.md` loads at every session start and stays loaded. It is the
   identity kernel: role, craft, voice, and role-specific boundaries, in the
-  template's order. At most 400 words.
+  template's order.
 - `PERSONAS.md` holds the shared rules, imported by `AGENTS.md`. Never restate
   a shared rule in `AGENTS.md`; add only where this persona differs.
 - `skills/` hold procedures, loaded when their description fires. A workflow
@@ -21,6 +21,10 @@ Every line of `AGENTS.md` costs attention on every turn, so a line earns its
 place only when it changes behaviour in most sessions.
 
 ## Rules
+
+`AGENTS.md` and skills are the `agents/instructions` prose type. Its note in
+the vault (`Vault/Governance/Prose/Agents/Agent Instructions.md`) sets their
+structure and word budget, and `prose check` runs its rules.
 
 - **Earn each line.** Write from an observed failure or a real interview
   answer, never from what a persona "should" say. Delete any sentence the

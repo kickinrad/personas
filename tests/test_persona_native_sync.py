@@ -97,6 +97,13 @@ class PersonaNativeSyncTest(unittest.TestCase):
         self.assertEqual(self.invoke(persona, "--color", "pink", "--apply").returncode, 0)
         self.assertEqual(frontmatter(self.adapters()[0])["color"], "pink")
 
+    def test_claude_skills_are_set_and_preserved(self) -> None:
+        persona = self.persona()
+        self.assertEqual(self.invoke(persona, "--skill", "prose:write", "--apply").returncode, 0)
+        self.assertEqual(frontmatter(self.adapters()[0])["skills"], ["prose:write"])
+        self.assertNotIn("skills", self.adapters()[1])
+        self.assertEqual(self.invoke(persona).stdout.count("current"), 3)
+
     def test_selected_mcp_servers_project_to_both_runtimes(self) -> None:
         servers = {
             "local": {"command": "tool", "args": ["serve"], "env": {"TOKEN": "${LOCAL_TOKEN}"}},

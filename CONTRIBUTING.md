@@ -32,7 +32,7 @@ it. Include a DCO sign-off with `git commit -s`.
 ## Release
 
 The plugin carries no version: the merged commit is the release. Old
-`personas--v*` tags and `CHANGELOG.md` remain as history.
+`personas--v*` tags remain as history.
 
 1. Run the gate, review the diff, scan for secrets, and verify affected runtime
    behavior. Merge the reviewed pull request after hosted CI passes.

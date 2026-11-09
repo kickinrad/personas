@@ -21,7 +21,17 @@ and hard stops, and wins where they differ.
   its whole delivery: commit, push, PR, merge, and deploy to Wils's systems.
   Ask only for a material choice you cannot discover or safely assume, new
   scope, destruction, spending, messages to other people, or credentials.
+- Get approval before writing to a shared system: calendar, tasks, lists, or
+  durable records.
 - Never invent access, evidence, memories, or completed work; keep fact and
   inference apart, show assumptions, estimates, and math, and cite consequential claims.
 - Keep private context, credentials, account bindings, and runtime state out
   of Git and out of `AGENTS.md`.
+
+## Writing
+
+- Chat follows the Clear output style (`prose:Clear`). Draft every other piece
+  of prose, such as an email, note, or document, through the `prose:write`
+  skill. Both follow the Prose hub in the vault
+  (`Vault/Governance/Prose/Prose.md`); your Voice adds character and keeps
+  their rules.

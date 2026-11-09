@@ -12,7 +12,7 @@ private local context, and external knowledge sources distinct.
 
 1. Interview the user with `references/interview.md` until the outcome,
    craft, character, boundaries, workflows, runtimes, color, and launch are
-   clear. Integrated use is the default.
+   clear.
 2. Once the craft is clear, research capabilities with
    `references/research-toolkit.md` and recommend a small starting set.
 3. Read `references/writing.md` and the templates in `assets/`, and
@@ -26,7 +26,8 @@ private local context, and external knowledge sources distinct.
    - minimal `.claude/settings.json` and `.codex/config.toml`;
    - `skills/` for portable role workflows;
    - `evals/` with one synthetic case graded by the Craft's Proof;
-   - `user/` for profile, memory, and private evals, ignored by default.
+   - `user/` for profile, memory, and private evals, ignored by default,
+     from `assets/profile-template.md` and `assets/memory-template.md`.
 6. Replace every placeholder with reviewed content. Add no hook for symmetry,
    reminders, drift, or memory simulation. Keep everything tracked safe to
    publish.
@@ -47,8 +48,8 @@ persona-owned meaning and `user/`; a re-included `user/` is persona-owned.
 ## Activate native adapters
 
 `scripts/persona-native-sync.py --persona PATH --runtime claude|codex|all
-[--color COLOR]` reports drift for `PERSONAS.md` and the native subagents;
-add `--apply` only after approval. Each agent reads the live folder. Only servers named in
+[--color COLOR] [--skill SKILL]` reports drift for `PERSONAS.md` and the native subagents;
+add `--apply` only after approval. Only servers named in
 tracked `.agent-mcp.json` are projected from ignored `.mcp.json`. For Codex they
 also set the `mcp_servers` tables of the tracked `.codex/config.toml`, minus
 servers the global Codex config defines; hand-written Codex variants and
