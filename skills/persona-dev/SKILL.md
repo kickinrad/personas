@@ -11,16 +11,16 @@ private local context, and external knowledge sources distinct.
 ## Create
 
 1. Interview the user with `references/interview.md` until the outcome,
-   craft, character, boundaries, workflows, runtimes, color, and launch are
-   clear.
-2. Once the craft is clear, research capabilities with
-   `references/research-toolkit.md` and recommend a small starting set.
-3. Read `references/writing.md` and the templates in `assets/`, and
+   craft, character, and boundaries are clear.
+2. Research capabilities with `references/research-toolkit.md`; recommend a
+   starting set.
+3. Then ask about workflows, runtimes, color, and launch.
+4. Read `references/writing.md` and the templates in `assets/`, and
    `references/environments.md` when choosing a home or launch mode.
-4. Present a folder plan covering `AGENTS.md`, skills, settings, ignored
+5. Present a folder plan covering `AGENTS.md`, skills, settings, ignored
    context, approved capabilities, starter evals, and launch. Write nothing
    before approval.
-5. After approval, create:
+6. After approval, create:
    - `AGENTS.md`: identity, role, craft, voice, and role-specific boundaries;
    - `PERSONAS.md`, the shared rules, written by the sync helper below;
    - minimal `.claude/settings.json` and `.codex/config.toml`;
@@ -28,12 +28,12 @@ private local context, and external knowledge sources distinct.
    - `evals/` with one synthetic case graded by the Craft's Proof;
    - `user/` for profile, memory, and private evals, ignored by default,
      from `assets/profile-template.md` and `assets/memory-template.md`.
-6. Replace every placeholder with reviewed content. Add no hook for symmetry,
+7. Replace every placeholder with reviewed content. Add no hook for symmetry,
    reminders, drift, or memory simulation. Keep everything tracked safe to
    publish.
-7. Inspect the tree and diff. No `CLAUDE.md` may exist in the folder or above
+8. Inspect the tree and diff. No `CLAUDE.md` may exist in the folder or above
    it; it stops Claude Code from reading `AGENTS.md`.
-8. Ask separately before plugin installation, repository creation, external
+9. Ask separately before plugin installation, repository creation, external
    connection, publishing, or changing an existing persona's private data.
 
 ## Evolve or reconcile
