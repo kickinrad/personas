@@ -132,11 +132,12 @@ def codex_gap(server: dict[str, object]) -> str | None:
     return None
 
 
-def rendered(persona: Path, description: str, color: str | None, mcps: dict[str, dict[str, object]]) -> tuple[str, str]:
+def rendered(persona: Path, description: str, color: str | None, mcps: dict[str, dict[str, object]], skills: list[str] = ()) -> tuple[str, str]:
     agents, quote = persona / "AGENTS.md", lambda value: json.dumps(value, ensure_ascii=False)
     meta = f"{MARKER}\n{SOURCE}{quote(str(agents))}\n"
     body = f"You are the persona defined in {agents}. Read and follow it. Resolve its relative paths (skills/, user/, tools/) from {persona}."
     front = [f"name: {quote(persona_slug(persona))}", f"description: {quote(description)}", *([f"color: {quote(color)}"] if color else [])]
+    front += [f"skills: {quote(list(skills))}"] if skills else []
     front += ["mcpServers:", *(f"  - {quote(name)}: {quote(server)}" for name, server in mcps.items())] if mcps else []
     claude = "---\n" + "\n".join(front) + f"\n---\n\n{meta}\n{body}\n"
     codex = meta + "".join(f"{key} = {quote(value)}\n" for key, value in (("name", persona_slug(persona)), ("description", description), ("developer_instructions", body)))
@@ -288,6 +289,7 @@ def main() -> int:
     parser.add_argument("--persona", required=True, type=Path)
     parser.add_argument("--runtime", choices=("claude", "codex", "all"), default="all")
     parser.add_argument("--color", choices=COLORS, help="Claude agent color; preserved from the existing adapter when omitted")
+    parser.add_argument("--skill", action="append", help="Claude skill the agent preloads, such as prose:write; repeatable; preserved from the existing adapter when omitted")
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--claude-home", type=Path, default=Path.home() / ".claude")
     parser.add_argument("--codex-home", type=Path, default=Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")))
@@ -306,10 +308,13 @@ def main() -> int:
         targets = {"claude": args.claude_home / "agents" / f"{slug}.md", "codex": args.codex_home / "agents" / f"{slug}.toml"}
         targets = {runtime: path for runtime, path in targets.items() if args.runtime in (runtime, "all")}
         existing = {runtime: owned(path, agents) for runtime, path in targets.items()}
-        preserved = re.search(r'^color: "?([a-z]+)"?$', (existing.get("claude") or "").split("\n---", 1)[0], re.M)
+        head = (existing.get("claude") or "").split("\n---", 1)[0]
+        preserved = re.search(r'^color: "?([a-z]+)"?$', head, re.M)
         color = args.color or (preserved.group(1) if preserved and preserved.group(1) in COLORS else None)
+        kept = re.search(r"^skills: (\[.*\])$", head, re.M)
+        skills = args.skill or (json.loads(kept.group(1)) if kept else [])
         mcps = agent_mcps(persona)
-        content = dict(zip(("claude", "codex"), rendered(persona, description, color, mcps)))
+        content = dict(zip(("claude", "codex"), rendered(persona, description, color, mcps, skills)))
         # PERSONAS.md is a generated copy in every persona, so it is always overwritten.
         shared = persona / "PERSONAS.md"
         targets = {"shared": shared, **targets}

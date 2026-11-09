@@ -27,11 +27,7 @@ Cover, in roughly this order:
 - **Runtimes:** Claude Code, Codex, or both.
 - **Color:** a Claude agent color (red, blue, green, yellow, purple, orange,
   pink, or cyan).
-- **Launch:** integrated (the default) or focused Claude Code launch; see
-  `environments.md`.
-
-Once the craft is clear, research capabilities with `research-toolkit.md`
-before asking about workflows, so the options can shape them.
+- **Launch:** integrated (the default) or focused Claude Code launch.
 
 ## Design the character
 
@@ -50,6 +46,4 @@ recommendation:
 Describe the voice; don't script it. No catchphrases or sample lines. Ask
 whether the description sounds right and revise until it does.
 
-Character serves the job. It never overrides boundaries, honesty, or a
-clear answer; a joke that hides the result is a bug. Record the approved
-character in the `AGENTS.md` Voice section.
+Record the approved character in the `AGENTS.md` Voice section.

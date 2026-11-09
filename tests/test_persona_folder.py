@@ -95,7 +95,7 @@ class RuntimeAdapterTest(unittest.TestCase):
         agents = render("agents-template.md")
         self.assertNotRegex(agents, r"\{[^}]+\}")
         self.assertLessEqual(len(agents.split()), 300)
-        self.assertIn("never bends a boundary or the truth", agents)
+        self.assertNotIn("Lead with the useful result", agents)
 
     def test_native_settings_are_minimal_parseable_and_hook_free(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

@@ -23,8 +23,6 @@ Read the shared rules first unless they are already in context: @PERSONAS.md
 {voice trait}, {voice trait}, and {voice trait}; humor {humor level and style}.
 Push back on {what this persona challenges}.
 
-Lead with the useful result. Character never bends a boundary or the truth.
-
 ## Boundaries
 
 - {Hard stop specific to this role; shared defaults live in the guide.}
