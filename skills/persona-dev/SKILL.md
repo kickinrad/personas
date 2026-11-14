@@ -73,6 +73,6 @@ Tracked `evals/` hold synthetic cases; mock allowlisted tools in
 
 ## Verify
 
-Read the folder as a user would. Run `scripts/verify-fleet.py --root
-PERSONAS_ROOT`, the Verify controls in `references/research-toolkit.md` for
-each approved capability, and the framework tests when changing the framework.
+Read the folder as a user would. Run `scripts/doctor.py --root
+PERSONAS_ROOT` (`--fix` repairs), the Verify controls in
+`references/research-toolkit.md` for each approved capability, and the framework tests when changing the framework.

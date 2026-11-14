@@ -72,7 +72,7 @@ Keep `user/`, local settings, `.mcp.json`, and credentials out of Git. Ignored
 files won't come along when someone clones your persona or opens it in Cloud.
 Provide any missing context in the session. If you deliberately share personal
 context through a private repository, ignore `user/*` and re-include the paths
-you keep (`!user/*/`, `!user/profile.md`) so `verify-fleet.py` accepts them;
+you keep (`!user/*/`, `!user/profile.md`) so `doctor.py` accepts them;
 keep media out, review exactly what you commit, and never commit credentials.
 
 ## Call a persona from any session
