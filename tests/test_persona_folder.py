@@ -325,6 +325,17 @@ class DoctorHostTest(unittest.TestCase):
         self.assertIn("otto: ask rule overrides a shared deny", report)
         self.assertIn("otto: sandbox allowRead overrides a shared denyRead: ~/.google_workspace_mcp", report)
 
+    def test_narrower_rule_under_a_shared_deny_is_an_override(self) -> None:
+        self.write_shared({"enabledPlugins": {"safety@core": True}, "permissions": {"deny": ["Read(~/.ssh/**)", "Bash(sudo *)"]},
+                           "sandbox": {"filesystem": {"denyRead": ["~/.ssh"]}}})
+        self.write_settings({"permissions": {"allow": ["Read(~/.ssh/id_rsa)", "Bash(sudo apt update)", "Read(~/.sshkeys/a)"]},
+                             "sandbox": {"filesystem": {"allowRead": ["~/.ssh/config", "~/.sshkeys"]}}})
+        report = self.doctor().stdout
+        self.assertIn("allow rule overrides a shared deny: Read(~/.ssh/id_rsa)", report)
+        self.assertIn("allow rule overrides a shared deny: Bash(sudo apt update)", report)
+        self.assertIn("sandbox allowRead overrides a shared denyRead: ~/.ssh/config", report)
+        self.assertNotIn("~/.sshkeys", report)
+
     def test_user_scope_mcp_does_not_create_allow_rule(self) -> None:
         self.write_home(".claude.json", {"mcpServers": {"new-user-server": {}}})
         self.write_settings({"permissions": {"allow": ["Read"]}})
@@ -482,6 +493,12 @@ class DoctorHostTest(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         self.assertIn("plugin metadata is invalid", result.stdout)
         self.assertEqual(self.settings(), original)
+
+    def test_invalid_registry_shape_is_reported_without_enabled_plugins(self) -> None:
+        self.write_home(".claude/plugins/installed_plugins.json", '{"plugins": []}')
+        result = self.doctor()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("plugins must be an object", result.stdout)
 
     def test_plugin_mcp_metadata_path_and_array_are_supported(self) -> None:
         manifest = self.install_plugin("discord@claude-plugins-official", "placeholder")

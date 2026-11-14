@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import copy
 import difflib
+import fnmatch
 import importlib.util
 import json
 import os
@@ -364,6 +365,23 @@ def mcp_widening(persona: Path, before: dict, after: dict) -> bool:
     return bool(added_rules or added_servers or activated)
 
 
+RULE = re.compile(r"^(\w+)\((.*)\)$")
+
+
+def covered(rule: str, deny: str) -> bool:
+    """Whether a rule targets something a deny already covers: the same rule, or a narrower one for the same tool."""
+    if rule == deny:
+        return True
+    ours, theirs = RULE.match(rule), RULE.match(deny)
+    if ours and theirs and ours.group(1) == theirs.group(1):
+        return fnmatch.fnmatchcase(ours.group(2), theirs.group(2))
+    return bool(theirs is None and ours and ours.group(1) == deny)
+
+
+def under(path: str, denied: str) -> bool:
+    return path.rstrip("/") == denied.rstrip("/") or path.startswith(denied.rstrip("/") + "/")
+
+
 def deny_overrides(persona: Path, settings: dict) -> list[str]:
     """Shared denies a persona tries to undo with its own allow, ask, or sandbox read rule."""
     shared = shared_settings(persona)
@@ -371,8 +389,10 @@ def deny_overrides(persona: Path, settings: dict) -> list[str]:
     deny_read = (shared.get("sandbox") or {}).get("filesystem", {}).get("denyRead", [])
     perms = settings.get("permissions", {})
     allow_read = (settings.get("sandbox") or {}).get("filesystem", {}).get("allowRead", [])
-    found = [f"{kind} rule overrides a shared deny: {rule}" for kind in ("allow", "ask") for rule in perms.get(kind, []) if rule in denies]
-    return found + [f"sandbox allowRead overrides a shared denyRead: {path}" for path in allow_read if path in deny_read]
+    found = [f"{kind} rule overrides a shared deny: {rule}" for kind in ("allow", "ask")
+             for rule in perms.get(kind, []) if any(covered(rule, deny) for deny in denies)]
+    return found + [f"sandbox allowRead overrides a shared denyRead: {path}" for path in allow_read
+                    if any(under(path, denied) for denied in deny_read)]
 
 
 def settings_gaps(persona: Path, settings: dict) -> list[str]:
@@ -515,7 +535,7 @@ def shadowing_installs(root: Path, fix: bool) -> list[str]:
         return [str(error)]
     plugins = registry.get("plugins", {})
     if not isinstance(plugins, dict):
-        return []  # Reported per persona by plugin_servers.
+        return [f"plugin metadata is invalid: {path}: plugins must be an object"]
     prefix = str(root.resolve()) + os.sep
     gaps = []
     for plugin, installs in plugins.items():
