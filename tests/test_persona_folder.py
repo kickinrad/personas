@@ -326,14 +326,17 @@ class DoctorHostTest(unittest.TestCase):
         self.assertIn("otto: sandbox allowRead overrides a shared denyRead: ~/.google_workspace_mcp", report)
 
     def test_narrower_rule_under_a_shared_deny_is_an_override(self) -> None:
-        self.write_shared({"enabledPlugins": {"safety@core": True}, "permissions": {"deny": ["Read(~/.ssh/**)", "Bash(sudo *)"]},
+        self.write_shared({"enabledPlugins": {"safety@core": True}, "permissions": {"deny": ["Read(~/.ssh/**)", "Bash(sudo *)", "mcp__plugin_vale_vale-cms__*"]},
                            "sandbox": {"filesystem": {"denyRead": ["~/.ssh"]}}})
-        self.write_settings({"permissions": {"allow": ["Read(~/.ssh/id_rsa)", "Bash(sudo apt update)", "Read(~/.sshkeys/a)"]},
-                             "sandbox": {"filesystem": {"allowRead": ["~/.ssh/config", "~/.sshkeys"]}}})
+        self.write_settings({"permissions": {"allow": ["Read(~/.ssh/id_rsa)", "Read(~/.ssh)", "Bash(sudo apt update)", "Read(~/.sshkeys/a)",
+                                                       "mcp__plugin_vale_vale-cms__search"]},
+                             "sandbox": {"filesystem": {"allowRead": [str(self.home / ".ssh/config"), "~/.sshkeys"]}}})
         report = self.doctor().stdout
         self.assertIn("allow rule overrides a shared deny: Read(~/.ssh/id_rsa)", report)
         self.assertIn("allow rule overrides a shared deny: Bash(sudo apt update)", report)
-        self.assertIn("sandbox allowRead overrides a shared denyRead: ~/.ssh/config", report)
+        self.assertIn("allow rule overrides a shared deny: Read(~/.ssh)", report)
+        self.assertIn("allow rule overrides a shared deny: mcp__plugin_vale_vale-cms__search", report)
+        self.assertIn(f"sandbox allowRead overrides a shared denyRead: {self.home}/.ssh/config", report)
         self.assertNotIn("~/.sshkeys", report)
 
     def test_user_scope_mcp_does_not_create_allow_rule(self) -> None:

@@ -370,16 +370,19 @@ RULE = re.compile(r"^(\w+)\((.*)\)$")
 
 def covered(rule: str, deny: str) -> bool:
     """Whether a rule targets something a deny already covers: the same rule, or a narrower one for the same tool."""
-    if rule == deny:
-        return True
     ours, theirs = RULE.match(rule), RULE.match(deny)
-    if ours and theirs and ours.group(1) == theirs.group(1):
-        return fnmatch.fnmatchcase(ours.group(2), theirs.group(2))
-    return bool(theirs is None and ours and ours.group(1) == deny)
+    if ours and theirs:
+        pattern = theirs.group(2)
+        return ours.group(1) == theirs.group(1) and (fnmatch.fnmatchcase(ours.group(2), pattern)
+                                                     or (pattern.endswith("/**") and ours.group(2) == pattern[:-3]))
+    if theirs is None:
+        return fnmatch.fnmatchcase(ours.group(1) if ours else rule, deny)
+    return False
 
 
 def under(path: str, denied: str) -> bool:
-    return path.rstrip("/") == denied.rstrip("/") or path.startswith(denied.rstrip("/") + "/")
+    path, denied = (os.path.expanduser(p).rstrip("/") for p in (path, denied))
+    return path == denied or path.startswith(denied + "/")
 
 
 def deny_overrides(persona: Path, settings: dict) -> list[str]:
