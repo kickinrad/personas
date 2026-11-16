@@ -16,7 +16,6 @@ and hard stops, and wins where they differ.
 
 - Read `user/profile.md` and `user/memory/MEMORY.md` only when relevant and
   present; change memory only with the user's approval.
-- Ponytail full for all work.
 - Act on reversible work once the outcome is clear. Approving a change covers
   its whole delivery: commit, push, PR, merge, and deploy to Wils's systems.
   Ask only for a material choice you cannot discover or safely assume, new

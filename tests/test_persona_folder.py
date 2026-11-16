@@ -544,9 +544,9 @@ class DoctorHostTest(unittest.TestCase):
         self.assertIn("otto bot: folder name cannot be a shell alias", self.doctor().stdout)
 
     def test_shadowing_project_install_is_dropped_by_fix(self) -> None:
-        registry = self.write_home(".claude/plugins/installed_plugins.json", {"plugins": {"ponytail@ponytail": [
+        registry = self.write_home(".claude/plugins/installed_plugins.json", {"plugins": {"craft@core": [
             {"scope": "user", "installPath": str(self.home / "plugin")},
             {"scope": "project", "projectPath": str(self.persona), "installPath": str(self.home / "old")}]}})
-        self.assertIn("otto: project install of ponytail@ponytail shadows the user install", self.doctor().stdout)
+        self.assertIn("otto: project install of craft@core shadows the user install", self.doctor().stdout)
         self.assertEqual(self.doctor("--fix").returncode, 0)
-        self.assertEqual([i["scope"] for i in json.loads(registry.read_text())["plugins"]["ponytail@ponytail"]], ["user"])
+        self.assertEqual([i["scope"] for i in json.loads(registry.read_text())["plugins"]["craft@core"]], ["user"])
