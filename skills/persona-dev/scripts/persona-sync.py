@@ -43,7 +43,9 @@ def strings(value: object) -> bool:
 
 
 def persona_slug(persona: Path) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", persona.name.lower()).strip("-") or fail("persona directory does not produce a slug")
+    """The persona's name, also from a worktree of its folder at <persona>/.worktrees/<branch>."""
+    name = persona.parent.parent.name if persona.parent.name == ".worktrees" else persona.name
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-") or fail("persona directory does not produce a slug")
 
 
 def secret_flag(items: list[object]) -> bool:
@@ -196,12 +198,10 @@ def folder_config(persona: Path, codex_home: Path, mcps: dict[str, dict[str, obj
     for name in (name for name in mcps if name in shared): print(f"skipped {name} for {path}: defined in {home}")
     existing = path.read_text(encoding="utf-8") if path.is_file() else None
     parsed = tomllib.loads(existing or "")
-    declared = json.loads((persona / ".mcp.json").read_text(encoding="utf-8")).get("mcpServers", {}) if (persona / ".mcp.json").is_file() else {}
-    # Persona-owned entries: Codex variants of servers Codex cannot take from .mcp.json, and overrides of global servers.
+    # Persona-owned entries: Codex variants of the agent's servers Codex cannot run as listed, and overrides of global servers.
     keep = set()
     for name, table in parsed.get("mcp_servers", {}).items():
-        raw = declared.get(name)
-        variant = isinstance(raw, dict) and codex_gap({"type": raw.get("type", "stdio")} | raw)
+        variant = name in mcps and codex_gap(mcps[name])
         override = name in shared and isinstance(table, dict) and not {"command", "url"} & set(table)
         if not (variant or override): continue
         try:

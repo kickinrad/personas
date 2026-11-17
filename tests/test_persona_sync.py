@@ -134,6 +134,16 @@ class PersonaSyncTest(unittest.TestCase):
         self.assertEqual(self.invoke(persona, "--apply").returncode, 0)
         self.assertEqual(self.config(persona)["mcp_servers"], {"local": {"command": "tool"}})
 
+    def test_worktree_of_a_persona_reads_its_agent_file(self) -> None:
+        persona = self.root / "wren/.worktrees/change"
+        persona.parent.mkdir(parents=True)
+        persona = self.persona("wren/.worktrees/change")
+        agents = persona / ".claude/agents"
+        agents.mkdir(parents=True)
+        (agents / "wren.md").write_text('---\nname: wren\nmcpServers:\n  - "local": {"command": "tool"}\n---\n', encoding="utf-8")
+        self.assertEqual(self.invoke(persona, "--apply").returncode, 0)
+        self.assertEqual(self.config(persona)["mcp_servers"], {"local": {"command": "tool"}})
+
     def test_agent_mcp_servers_must_be_one_json_line_each(self) -> None:
         cases = {
             "block mapping": ("  - local:", "      command: tool"),
@@ -295,7 +305,7 @@ class PersonaSyncTest(unittest.TestCase):
             "home": {"type": "http", "url": "https://example.test/home", "headersHelper": "/usr/local/bin/home-auth"},
             "music": {"type": "http", "url": "https://example.test/music", "headersHelper": "/usr/local/bin/music-auth"},
         }
-        persona = self.persona(mcp={"mcpServers": servers, "agentMcpServers": ["home"]})
+        persona = self.persona(mcp={"mcpServers": servers, "agentMcpServers": ["home", "music"]})
         path = self.folder(persona, (
             '[mcp_servers.home]\nurl = "https://example.test/home"\nhttp_headers_helper = "/usr/local/bin/home-auth"\n'
             '[mcp_servers.home.env]\nMODE = "read"\n'
@@ -332,7 +342,7 @@ class PersonaSyncTest(unittest.TestCase):
                 self.assertIn("MCP hook: url must not contain a token-like path segment", result.stderr)
                 self.assertEqual(path.read_text(encoding="utf-8"), text)
                 # A hand-written Codex variant with a secret in its URL path is dropped, never written back.
-                variant = self.persona(f"wren-variant-{index}", {"mcpServers": {"home": {"type": "http", "url": "https://example.test/home", "headersHelper": "/bin/auth"}}})
+                variant = self.persona(f"wren-variant-{index}", {"mcpServers": {"home": {"type": "http", "url": "https://example.test/home", "headersHelper": "/bin/auth"}}, "agentMcpServers": ["home"]})
                 path = self.folder(variant, f'[mcp_servers.home]\nurl = "{url}"\n')
                 result = self.invoke(variant, "--apply")
                 self.assertEqual(result.returncode, 0, result.stderr)
