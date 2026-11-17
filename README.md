@@ -74,8 +74,7 @@ anything.
     ├── evals/             # test cases for the persona
     ├── user/              # private profile, memory, and evals (ignored by default)
     ├── .mcp.json          # tool connections (ignored)
-    ├── .agent-mcp.json    # connections its Codex config gets
-    ├── .claude/agents/julia.md  # its native agent
+    ├── .claude/agents/julia.md  # its native agent and its MCP servers
     ├── .claude/settings.json
     └── .codex/config.toml
 ```

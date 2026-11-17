@@ -131,13 +131,8 @@ def verify_persona(repo: Path) -> list[str]:
             json.loads(settings.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
             errors.append(f"{name}: invalid JSON in {settings.relative_to(repo)}: {exc.msg}")
-    allowlist = repo / ".agent-mcp.json"
-    try:
-        names = json.loads(allowlist.read_text(encoding="utf-8")) if allowlist.is_file() else []
-        if not (isinstance(names, list) and all(isinstance(n, str) and re.fullmatch(r"[A-Za-z0-9_-]+", n) for n in names) and len(names) == len(set(names))):
-            errors.append(f"{name}: .agent-mcp.json must be a list of unique server names")
-    except json.JSONDecodeError as exc:
-        errors.append(f"{name}: invalid JSON in agent MCP config: {exc.msg}")
+    if (repo / ".agent-mcp.json").exists():
+        errors.append(f"{name}: delete .agent-mcp.json; the native agent file's mcpServers is the one MCP list")
     codex = repo / ".codex/config.toml"
     if codex.is_file():
         try:
@@ -332,7 +327,8 @@ def plugin_rules(persona: Path, plugin: str) -> list[str]:
 
 def mcp_policy(persona: Path, settings: dict) -> tuple[list[str], list[str]]:
     """Project servers to enable, and rules from declared persona sources."""
-    project = list(read_json(persona / ".mcp.json").get("mcpServers", {}))
+    servers = read_json(persona / ".mcp.json").get("mcpServers")
+    project = list(servers) if isinstance(servers, dict) else []  # host_gaps reports any other shape
     explicit = explicit_mcp_servers(persona)
     rules = [f"mcp__{canonical_mcp_name(name)}__*" for name in project + explicit]
     for plugin, enabled in {**shared_plugins(persona), **settings.get("enabledPlugins", {})}.items():
@@ -482,20 +478,46 @@ def agent_gaps(persona: Path) -> list[str]:
     name = re.search(r'^name: "?([^"\n]+)"?$', head, re.M)
     if not name or name.group(1) != slug or not re.search(r"^description: \S", head, re.M) or not parts[-1].strip():
         return [f"native agent needs frontmatter with name {slug} and a description, then a body: {agent}"]
+    try:
+        SYNC.agent_mcps(persona)
+    except ValueError as error:
+        return [f"native agent MCP servers are invalid: {error}"]
     return []
+
+
+def mcp_json_drift(listed: dict, agent: dict) -> list[str]:
+    """Each server or setting where .mcp.json and the agent file's mcpServers disagree; a missing type means stdio."""
+    gaps = [f".mcp.json lists {name}, which the native agent file's mcpServers does not" for name in sorted(set(listed) - set(agent))]
+    gaps += [f"the native agent file lists {name}, which .mcp.json does not" for name in sorted(set(agent) - set(listed))]
+    for name in sorted(set(listed) & set(agent)):
+        folder, own = (({"type": "stdio"} | server) if isinstance(server, dict) else {"": server} for server in (listed[name], agent[name]))
+        gaps += [f"MCP {name} {field or 'settings'} differs: .mcp.json {json.dumps(folder.get(field))}, agent file {json.dumps(own.get(field))}"
+                 for field in sorted(set(folder) | set(own)) if folder.get(field) != own.get(field)]
+    return gaps
 
 
 def host_gaps(persona: Path, fix: bool, allow_mcp_widening: bool) -> list[str]:
     gaps = [] if ALIAS_NAME.match(persona.name) else ["folder name cannot be a shell alias"]
-    gaps += agent_gaps(persona)
+    agent_problems = agent_gaps(persona)
+    gaps += agent_problems
 
     mcp = persona / ".mcp.json"
     if mcp.is_file():
+        parsed = True
         try:
-            if {"agentMcpServers", "codexMcpServers"} & set(json.loads(mcp.read_text())):
-                gaps.append(".mcp.json holds a legacy agent MCP list; move it to .agent-mcp.json")
+            folder = json.loads(mcp.read_text())
         except json.JSONDecodeError as error:
+            parsed = False
             gaps.append(f".mcp.json is invalid: {error}")
+        if parsed and not (isinstance(folder, dict) and isinstance(folder.get("mcpServers", {}), dict)):
+            gaps.append(".mcp.json must be an object whose mcpServers is an object")
+        elif parsed:
+            if {"agentMcpServers", "codexMcpServers"} & set(folder):
+                gaps.append(".mcp.json holds a legacy agent MCP list; move it to the native agent file's mcpServers")
+            # .mcp.json serves Claude sessions run in the folder; it must hold the same servers and settings
+            # as the one list. An unreadable agent file is already reported by agent_gaps.
+            if not agent_problems:
+                gaps += mcp_json_drift(folder.get("mcpServers", {}), SYNC.agent_servers(persona))
 
     path = persona / ".claude/settings.json"
     try:

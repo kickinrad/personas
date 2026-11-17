@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
+# /// script
+# dependencies = ["pyyaml"]
+# ///
 """Report or apply a persona folder's generated files, or wrap the folder as an eval plugin.
 
 The generated files are PERSONAS.md, copied from the shared rules, and the mcp_servers
-tables of .codex/config.toml, projected from the servers .agent-mcp.json names in .mcp.json."""
+tables of .codex/config.toml, projected from the mcpServers of the native agent file."""
 from __future__ import annotations
 
 import argparse
@@ -16,13 +19,14 @@ import tomllib
 from pathlib import Path
 from urllib.parse import parse_qsl, urlsplit
 
+import yaml
+
 SENSITIVE = re.compile(r"(?:api[_-]?key|token|secret|password|authorization|bearer|cookie)", re.I)
 # Values under a credential-like key that cannot hold a secret: an env reference or a boolean flag.
 NOT_SECRET = re.compile(r"\$\{[A-Za-z_][A-Za-z0-9_]*\}|true|false", re.I)
-# claude mcp add rewrites .mcp.json, so the allowlist of projected servers lives beside it.
-ALLOWLIST = ".agent-mcp.json"
-# Codex `-c mcp_servers.<name>.*` overrides need a bare TOML key.
+# Codex `-c mcp_servers.<name>.*` overrides need a server name that is a bare TOML key.
 SERVER_NAME = re.compile(r"[A-Za-z0-9_-]+")
+FRONTMATTER = re.compile(r"---[ \t]*\n(.*?)^---[ \t]*$", re.S | re.M)
 SHARED = Path(__file__).resolve().parent.parent / "assets" / "PERSONAS.md"
 # URL path segments must read as short lowercase words, so a token in the path is refused rather than guessed at.
 # Each -/. part is letters (up to 24), digits (up to 12), or a short mix such as v2 or eu1.
@@ -44,7 +48,9 @@ def strings(value: object) -> bool:
 
 
 def persona_slug(persona: Path) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", persona.name.lower()).strip("-") or fail("persona directory does not produce a slug")
+    """The persona's name, also from a worktree of its folder at <persona>/.worktrees/<branch>."""
+    name = persona.parent.parent.name if persona.parent.name == ".worktrees" else persona.name
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-") or fail("persona directory does not produce a slug")
 
 
 def secret_flag(items: list[object]) -> bool:
@@ -79,19 +85,66 @@ def credential_free(value: object, key: str = "") -> None:
         if secret_flag(value): fail("credential literal is unsupported in a flag or header")
 
 
+class UniqueKeyLoader(yaml.SafeLoader):
+    """A safe YAML loader that refuses a mapping which sets the same key twice."""
+
+    def construct_mapping(self, node: yaml.MappingNode, deep: bool = False) -> dict:
+        seen = set()
+        for key_node, _ in node.value:
+            key = self.construct_object(key_node, deep=deep)
+            try: repeated = key in seen
+            except TypeError: continue  # An unhashable key fails in the base constructor.
+            if repeated: raise yaml.constructor.ConstructorError(None, None, f"duplicate key {key!r}", key_node.start_mark)
+            seen.add(key)
+        return super().construct_mapping(node, deep)
+
+def agent_file(persona: Path) -> Path:
+    return persona / ".claude" / "agents" / f"{persona_slug(persona)}.md"
+
+def agent_servers(persona: Path) -> dict[str, object]:
+    """The mcpServers of the persona's native agent file .claude/agents/<slug>.md, the one home of its MCP list.
+
+    An agent file without an mcpServers key has no servers; a missing file or unreadable list is an error."""
+    agent = agent_file(persona)
+    try: text = agent.read_text(encoding="utf-8").removeprefix("\ufeff").replace("\r\n", "\n")
+    except OSError as error: fail(f"cannot read the native agent {agent}: {error.strerror or error}")
+    head = FRONTMATTER.match(text) or fail(f"{agent} needs frontmatter between --- lines")
+    # The frontmatter starts on line 2 of the file, after the opening ---.
+    at = lambda mark: f" at line {mark.line + 2}" if mark else ""
+    loader = UniqueKeyLoader(head.group(1))
+    try:
+        node = loader.get_single_node()
+        meta = loader.construct_document(node) if node else None
+    except yaml.YAMLError as error:
+        fail(f"{agent} frontmatter is not valid YAML{at(getattr(error, 'problem_mark', None))}: {getattr(error, 'problem', None) or error}")
+    finally: loader.dispose()
+    if meta is None: return {}
+    if not isinstance(meta, dict): fail(f"{agent} frontmatter must be a mapping")
+    if "mcpServers" not in meta: return {}
+    value = next(value for key, value in node.value if key.value == "mcpServers")
+    listed, shape = meta["mcpServers"], "- name: {server settings}"
+    if not isinstance(listed, list): fail(f"{agent} mcpServers{at(value.start_mark)} must be a list of {shape}")
+    servers: dict[str, object] = {}
+    for item, item_node in zip(listed, value.value):
+        if not (isinstance(item, dict) and len(item) == 1):
+            fail(f"{agent} mcpServers{at(item_node.start_mark)} must list each server as {shape}, with its settings inline: {item!r}")
+        ((name, server),) = item.items()
+        if not isinstance(name, str) or not SERVER_NAME.fullmatch(name):
+            fail(f"{agent} MCP server name{at(item_node.start_mark)} must use letters, digits, _ and -: {name!r}")
+        if name in servers: fail(f"{agent} lists MCP server {name} twice{at(item_node.start_mark)}")
+        servers[name] = server
+    return servers
+
 def agent_mcps(persona: Path) -> dict[str, dict[str, object]]:
-    source, allowlist = persona / ".mcp.json", persona / ALLOWLIST
-    payload = json.loads(source.read_text(encoding="utf-8")) if source.exists() else {}
-    if not isinstance(payload, dict) or set(payload) - {"mcpServers"}: fail(".mcp.json must be an object with only mcpServers")
-    servers = payload.get("mcpServers", {})
-    names = json.loads(allowlist.read_text(encoding="utf-8")) if allowlist.exists() else []
-    if not isinstance(servers, dict): fail(".mcp.json mcpServers must be an object")
-    if not strings(names) or not all(map(SERVER_NAME.fullmatch, names)) or len(names) != len(set(names)):
-        fail(f"{ALLOWLIST} must list unique server names of letters, digits, _ and -")
+    servers = agent_servers(persona)
+    try: return checked_servers(servers)
+    except ValueError as error: fail(f"{agent_file(persona)}: {error}")
+
+def checked_servers(servers: dict[str, object]) -> dict[str, dict[str, object]]:
+    """Servers whose settings pass the credential and transport gates, each with an explicit type."""
     selected = {}
-    for name in names:
-        raw = servers.get(name)
-        if not isinstance(raw, dict): fail(f"{ALLOWLIST} names a server missing from .mcp.json: {name}")
+    for name, raw in servers.items():
+        if not isinstance(raw, dict): fail(f"MCP {name} must be an object")
         try: credential_free(raw)
         except ValueError as error: fail(f"MCP {name}: {error}")
         kind = raw.get("type", "stdio")
@@ -110,7 +163,7 @@ def agent_mcps(persona: Path) -> dict[str, dict[str, object]]:
             oauth = raw.get("oauth", {})
             if not isinstance(oauth, dict): fail(f"MCP {name} oauth must be an object")
             if extra := sorted(set(oauth) - {"clientId", "callbackPort"}):
-                fail(f"MCP {name} oauth {', '.join(extra)} is unsupported; only clientId and callbackPort may be set, and credentials stay out of .mcp.json")
+                fail(f"MCP {name} oauth {', '.join(extra)} is unsupported; only clientId and callbackPort may be set, and credentials stay out of the agent file")
             if not isinstance(oauth.get("clientId", ""), str) or type(oauth.get("callbackPort", 0)) is not int:
                 fail(f"MCP {name} oauth needs a string clientId and an integer callbackPort")
         else: fail(f"MCP {name} transport {kind!r} is unsupported")
@@ -140,6 +193,12 @@ def codex_tables(mcps: dict[str, dict[str, object]]) -> str:
         fields = {key: value for key, value in server.items() if key != "type"}
         text += f"\n[mcp_servers.{json.dumps(name, ensure_ascii=False)}]\n" + "".join(f"{key} = {toml_value(value)}\n" for key, value in fields.items())
     return text
+
+
+def codex_overrides(mcps: dict[str, dict[str, object]]) -> list[str]:
+    """The agent's servers as Codex `-c mcp_servers.<name>.<field>=<TOML>` values, for a launch outside the folder."""
+    return [f"mcp_servers.{name}.{key}={toml_value(value)}" for name, server in mcps.items() if not codex_gap(server)
+            for key, value in server.items() if key != "type"]
 
 
 def mcp_names(document: str) -> tuple[bool, set[str]]:
@@ -190,10 +249,11 @@ def folder_config(persona: Path, codex_home: Path, mcps: dict[str, dict[str, obj
     existing = path.read_text(encoding="utf-8") if path.is_file() else None
     parsed = tomllib.loads(existing or "")
     declared = json.loads((persona / ".mcp.json").read_text(encoding="utf-8")).get("mcpServers", {}) if (persona / ".mcp.json").is_file() else {}
-    # Persona-owned entries: Codex variants of servers Codex cannot take from .mcp.json, and overrides of global servers.
+    # Persona-owned entries: Codex variants of servers Codex cannot take as declared (in .mcp.json or the agent file,
+    # which a worktree has without .mcp.json), and overrides of global servers.
     keep = set()
     for name, table in parsed.get("mcp_servers", {}).items():
-        raw = declared.get(name)
+        raw = mcps.get(name) or declared.get(name)
         variant = isinstance(raw, dict) and codex_gap({"type": raw.get("type", "stdio")} | raw)
         override = name in shared and isinstance(table, dict) and not {"command", "url"} & set(table)
         if not (variant or override): continue
@@ -267,6 +327,7 @@ def main() -> int:
     parser.add_argument("--codex-home", type=Path, default=Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")))
     parser.add_argument("--eval-plugin", action="store_true", help="print a private temporary plugin that runs the persona as the main agent, for claude plugin eval")
     parser.add_argument("--with-private", action="store_true", help="with --eval-plugin, also include the private user/evals replays")
+    parser.add_argument("--mcp-overrides", action="store_true", help="print the agent's MCP servers as Codex -c values, one per line, and change nothing")
     args = parser.parse_args()
     try:
         persona = args.persona.resolve()
@@ -277,13 +338,16 @@ def main() -> int:
             print(eval_plugin(persona, description, args.with_private))
             return 0
         mcps = agent_mcps(persona)
+        for name, server in mcps.items():
+            if reason := codex_gap(server): print(f"skipped {name} for codex: {reason}", file=sys.stderr if args.mcp_overrides else sys.stdout)
+        if args.mcp_overrides:
+            if overrides := codex_overrides(mcps): print(*overrides, sep="\n")
+            return 0
         # PERSONAS.md is a generated copy in every persona, so it is always overwritten.
         shared = persona / "PERSONAS.md"
         targets = {"shared": shared}
         content = {"shared": SHARED.read_text(encoding="utf-8")}
         existing = {"shared": shared.read_text(encoding="utf-8") if shared.is_file() else None}
-        for name, server in mcps.items():
-            if reason := codex_gap(server): print(f"skipped {name} for codex: {reason}")
         if folder := folder_config(persona, args.codex_home, mcps):
             targets["folder"], existing["folder"], content["folder"] = folder
         drifted = False
@@ -295,7 +359,7 @@ def main() -> int:
                 state = "updated"
             print(f"{state} {path}")
         return int(drifted and not args.apply)
-    except (OSError, ValueError, json.JSONDecodeError, tomllib.TOMLDecodeError) as error:
+    except (OSError, ValueError, tomllib.TOMLDecodeError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
 

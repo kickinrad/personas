@@ -27,7 +27,7 @@ claude --setting-sources project,local
 Codex has no supported equivalent, so it stays integrated with your normal
 configuration. Focused Claude use does not replace managed organization policy,
 authentication, or command-line options. A persona folder organizes
-configuration—it is not a separate account or security container.
+configuration; it is not a separate account or security container.
 
 ## Maintain a persona
 
@@ -107,26 +107,29 @@ orange, pink, or cyan); Codex has no agent color. A `skills:` list makes the
 Claude agent preload a skill such as `prose:write`. The runtime needs
 permission to read the persona folder from wherever you call it.
 
-To give the persona's folder its tools, define them in the ignored
-`.mcp.json` and name the ones Codex gets in `.agent-mcp.json`, which you can
-commit because it holds only names:
+The agent file's `mcpServers` list is the one place a persona's MCP servers
+live. List each server as a name with its settings, for example on one line:
 
-```json
-{"mcpServers": {"recipes": {"command": "recipes-mcp", "env": {"API_KEY": "${RECIPES_API_KEY}"}}}}
+```yaml
+mcpServers:
+  - "recipes": {"type": "stdio", "command": "recipes-mcp", "env": {"API_KEY": "${RECIPES_API_KEY}"}}
 ```
 
-```json
-["recipes"]
-```
+Names use letters, digits, `_`, and `-`. A bare name without settings is
+refused, because Codex needs the settings to run the server. The sync helper
+reads the file with PyYAML (`python3 -m pip install pyyaml`), and the Codex
+launcher reads the list through it.
 
-Names use letters, digits, `_`, and `-`. From a checkout of this repository,
-preview the sync, then add `--apply` to write it:
+The persona doctor fails when the folder keeps a second list, such as an old
+`.agent-mcp.json`. It also fails when the folder's ignored `.mcp.json`, which
+Claude sessions in the folder use, holds different servers or settings. From a
+checkout of this repository, preview the sync, then add `--apply` to write it:
 
 ```bash
 python3 skills/persona-dev/scripts/persona-sync.py --persona /path/to/julia
 ```
 
-It refreshes `PERSONAS.md` and projects the named servers. It supports stdio
+It refreshes `PERSONAS.md` and projects the agent's servers. It supports stdio
 and HTTP servers and stops on unsupported fields, transports, or embedded
 credentials; reference secrets through environment variables instead. Remote
 servers that sign in through Claude Code's `oauth` setting (or use SSE) stay
@@ -139,13 +142,13 @@ skips servers your global `$CODEX_HOME/config.toml` already defines. It keeps
 two kinds of table you write yourself: a Codex version of a server it cannot
 project (for example one that uses `headersHelper`), and a table that only
 adjusts a global server, such as `enabled = false`. It removes every other
-`mcp_servers` table, including a hand-written table for a server that is not
-in `.mcp.json`. Formatting-only differences count as current. Because this
+`mcp_servers` table, including a hand-written table for a server the agent
+file does not list. Formatting-only differences count as current. Because this
 file is committed, a URL with a credential in it is refused and never written.
 Each segment of a URL path must be short lowercase words joined by `-` or `.`,
 so a token in the path, such as a UUID or hex string, is refused. The check is
 a guard, not a scanner: a letters-only or digits-only token in a path, such as
-some webhook paths, can still pass, so keep secrets out of `.mcp.json` URLs and
+some webhook paths, can still pass, so keep secrets out of the agent file's URLs and
 pass them through the `persona-mcp-run` wrapper.
 
 ## Runtime support
