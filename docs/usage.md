@@ -78,38 +78,37 @@ keep media out, review exactly what you commit, and never commit credentials.
 ## Call a persona from any session
 
 Opening the folder is enough to get started. To also summon the persona as a
-native subagent from any Claude Code or Codex session, generate one small
-agent file per runtime. From a checkout of this repository, preview it:
+native subagent from any Claude Code or Codex session, give the folder its own
+agent file at `.claude/agents/<slug>.md` and commit it:
 
-```bash
-python3 skills/persona-dev/scripts/persona-native-sync.py --persona /path/to/julia --runtime all --color orange
+```markdown
+---
+name: "julia"
+description: "🍳 Personal chef who puts good dinners on the table."
+color: "orange"
+mcpServers:
+  - "recipes": {"type": "stdio", "command": "recipes-mcp"}
+---
+
+You are the persona defined in /path/to/julia/AGENTS.md. Read and follow it. Resolve its relative paths (skills/, user/, tools/) from /path/to/julia.
 ```
 
-Replace `/path/to/julia` with your persona's location. Review the report, then
-add `--apply` to write the files:
+Then make it visible to each runtime:
 
 | Runtime | File |
 |---|---|
-| Claude Code | `~/.claude/agents/<slug>.md` |
-| Codex | `$CODEX_HOME/agents/<slug>.toml` (default `~/.codex`) |
+| Claude Code | `~/.claude/agents/<slug>.md`, a link to the folder's agent file |
+| Codex | `$CODEX_HOME/agents/<slug>.toml` (default `~/.codex`), rendered from the same file |
 | Codex, in the folder | the `[mcp_servers.*]` tables of the persona's `.codex/config.toml` |
 
-Each agent tells the runtime to read the live `AGENTS.md` and resolve the
-persona's `skills/` and `user/` paths from its folder, so edits to the persona
-apply immediately. Regenerate only when its description or subagent tools
-change. Claude shows the
-agent in the chosen color (red, blue, green, yellow, purple, orange, pink, or
-cyan); a later run without `--color` keeps it. Codex has no agent color.
-`--skill NAME`, repeatable, makes the Claude agent preload a skill such as
-`prose:write`; a later run without it keeps the list. The Codex agent gets no
-preload from this helper. The
-runtime needs permission to read the persona folder from wherever you call it.
+The agent reads the live `AGENTS.md`, so edits to the persona apply
+immediately. Claude shows it in its color (red, blue, green, yellow, purple,
+orange, pink, or cyan); Codex has no agent color. A `skills:` list makes the
+Claude agent preload a skill such as `prose:write`. The runtime needs
+permission to read the persona folder from wherever you call it.
 
-The helper only overwrites files it generated for the same persona. It
-refuses a hand-written agent or one generated for another folder.
-
-To give the subagent the persona's tools, define them in the ignored
-`.mcp.json` and name the ones it gets in `.agent-mcp.json`, which you can
+To give the persona's folder its tools, define them in the ignored
+`.mcp.json` and name the ones Codex gets in `.agent-mcp.json`, which you can
 commit because it holds only names:
 
 ```json
@@ -120,16 +119,20 @@ commit because it holds only names:
 ["recipes"]
 ```
 
-Only the servers named in `.agent-mcp.json` are copied into the agents; names
-use letters, digits, `_`, and `-`. The
-helper supports stdio and HTTP servers and stops on unsupported fields,
-transports, or embedded credentials; reference secrets through environment
-variables instead.
-Remote servers that sign in through Claude Code's `oauth` setting (or use
-SSE) project to Claude subagents only; Codex agents get stdio and plain HTTP
-servers, and the helper reports each server it skips.
+Names use letters, digits, `_`, and `-`. From a checkout of this repository,
+preview the sync, then add `--apply` to write it:
 
-The same servers go into the folder's tracked `.codex/config.toml`, which
+```bash
+python3 skills/persona-dev/scripts/persona-sync.py --persona /path/to/julia
+```
+
+It refreshes `PERSONAS.md` and projects the named servers. It supports stdio
+and HTTP servers and stops on unsupported fields, transports, or embedded
+credentials; reference secrets through environment variables instead. Remote
+servers that sign in through Claude Code's `oauth` setting (or use SSE) stay
+Claude-only, and the helper reports each server it skips.
+
+The servers go into the folder's tracked `.codex/config.toml`, which
 Codex reads when you open the persona there. The helper manages only its
 `mcp_servers` tables and leaves every other setting and comment alone. It
 skips servers your global `$CODEX_HOME/config.toml` already defines. It keeps

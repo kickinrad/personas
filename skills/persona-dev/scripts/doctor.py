@@ -5,7 +5,7 @@ Every root gets the portable folder contract. A root with shared settings at
 .claude/settings.json is an installed root and also gets the host checks: the
 shared plugin baseline, MCP allows scoped to declared sources, no pinned model,
 no override of a shared deny, Codex plugin overrides that match the Claude set,
-native adapters for both runtimes, and no project-scope plugin install that
+a native agent file in each persona, and no project-scope plugin install that
 shadows a user-scope one.
 """
 
@@ -25,7 +25,7 @@ import tomllib
 from pathlib import Path
 
 SCRIPTS = Path(__file__).resolve().parent
-_spec = importlib.util.spec_from_file_location("persona_native_sync", SCRIPTS / "persona-native-sync.py")
+_spec = importlib.util.spec_from_file_location("persona_sync", SCRIPTS / "persona-sync.py")
 assert _spec and _spec.loader
 SYNC = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(SYNC)
@@ -118,7 +118,7 @@ def verify_persona(repo: Path) -> list[str]:
             errors.append(f"{name}: AGENTS.md must import the shared rules with a line ending in @PERSONAS.md")
     shared = repo / "PERSONAS.md"
     if shared.is_file() and shared.read_text(encoding="utf-8") != SHARED.read_text(encoding="utf-8"):
-        errors.append(f"{name}: PERSONAS.md drifted from the plugin; run persona-native-sync.py --apply")
+        errors.append(f"{name}: PERSONAS.md drifted from the plugin; run persona-sync.py --apply")
 
     errors += [f"{name}: delete {file}; it stops Claude Code from reading AGENTS.md" for file in CLAUDE_FILES if (repo / file).exists()]
 
@@ -471,22 +471,23 @@ def fix_codex(persona: Path, changes: dict) -> None:
     path.write_text(text)
 
 
-def adapter_gaps(persona: Path) -> list[str]:
-    """Each persona needs a Claude and a Codex adapter that persona-native-sync.py wrote for it."""
-    slug, agents = SYNC.persona_slug(persona), persona / "AGENTS.md"
-    gaps = []
-    for adapter in (home() / ".claude/agents" / f"{slug}.md", codex_home() / "agents" / f"{slug}.toml"):
-        try:
-            if SYNC.owned(adapter, agents) is None:
-                gaps.append(f"missing adapter: {adapter}; run persona-native-sync.py --apply")
-        except (OSError, ValueError) as error:
-            gaps.append(str(error))
-    return gaps
+def agent_gaps(persona: Path) -> list[str]:
+    """Each persona owns its native agent file; dotfiles links it for Claude and renders it for Codex."""
+    slug = SYNC.persona_slug(persona)
+    agent = persona / ".claude/agents" / f"{slug}.md"
+    if agent not in tracked_files(persona) or not agent.is_file():
+        return [f"missing tracked native agent: {agent}"]
+    parts = agent.read_text(encoding="utf-8").split("---\n", 2)
+    head = parts[1] if len(parts) == 3 and not parts[0] else ""
+    name = re.search(r'^name: "?([^"\n]+)"?$', head, re.M)
+    if not name or name.group(1) != slug or not re.search(r"^description: \S", head, re.M) or not parts[-1].strip():
+        return [f"native agent needs frontmatter with name {slug} and a description, then a body: {agent}"]
+    return []
 
 
 def host_gaps(persona: Path, fix: bool, allow_mcp_widening: bool) -> list[str]:
     gaps = [] if ALIAS_NAME.match(persona.name) else ["folder name cannot be a shell alias"]
-    gaps += adapter_gaps(persona)
+    gaps += agent_gaps(persona)
 
     mcp = persona / ".mcp.json"
     if mcp.is_file():
