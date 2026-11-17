@@ -118,8 +118,8 @@ mcpServers:
 Names use letters, digits, `_`, and `-`, quoted or not. A block mapping or a
 bare name is refused, because the sync helper reads the list without a YAML
 parser. The persona doctor fails when the folder keeps a second list, such as
-an old `.agent-mcp.json`, and when the folder's ignored `.mcp.json`, which
-Claude sessions run in the folder use, names different servers. The Codex
+an old `.agent-mcp.json`. It also fails when the folder's ignored `.mcp.json`,
+which Claude sessions in the folder use, names different servers. The Codex
 launcher reads the list through the same helper. From a checkout of this
 repository, preview the sync, then add `--apply` to write it:
 
