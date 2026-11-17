@@ -327,7 +327,8 @@ def plugin_rules(persona: Path, plugin: str) -> list[str]:
 
 def mcp_policy(persona: Path, settings: dict) -> tuple[list[str], list[str]]:
     """Project servers to enable, and rules from declared persona sources."""
-    project = list(read_json(persona / ".mcp.json").get("mcpServers", {}))
+    servers = read_json(persona / ".mcp.json").get("mcpServers")
+    project = list(servers) if isinstance(servers, dict) else []  # host_gaps reports any other shape
     explicit = explicit_mcp_servers(persona)
     rules = [f"mcp__{canonical_mcp_name(name)}__*" for name in project + explicit]
     for plugin, enabled in {**shared_plugins(persona), **settings.get("enabledPlugins", {})}.items():
@@ -491,14 +492,15 @@ def host_gaps(persona: Path, fix: bool, allow_mcp_widening: bool) -> list[str]:
 
     mcp = persona / ".mcp.json"
     if mcp.is_file():
+        parsed = True
         try:
             folder = json.loads(mcp.read_text())
         except json.JSONDecodeError as error:
-            folder = None
+            parsed = False
             gaps.append(f".mcp.json is invalid: {error}")
-        if folder is not None and not (isinstance(folder, dict) and isinstance(folder.get("mcpServers", {}), dict)):
+        if parsed and not (isinstance(folder, dict) and isinstance(folder.get("mcpServers", {}), dict)):
             gaps.append(".mcp.json must be an object whose mcpServers is an object")
-        elif folder is not None:
+        elif parsed:
             if {"agentMcpServers", "codexMcpServers"} & set(folder):
                 gaps.append(".mcp.json holds a legacy agent MCP list; move it to the native agent file's mcpServers")
             # .mcp.json serves Claude sessions run in the folder; it must name the same servers as the one list.

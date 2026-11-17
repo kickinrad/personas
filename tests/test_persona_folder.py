@@ -315,6 +315,14 @@ class DoctorHostTest(unittest.TestCase):
         self.assertNotIn("differ", self.doctor().stdout)
         (self.persona / ".mcp.json").write_text('{"mcpServers": {"monarch": {"command": "monarch"}, "extra": {"command": "x"}}}')
         self.assertIn("otto: .mcp.json and the native agent file's mcpServers differ: only in .mcp.json ['extra'], only in the agent file []", self.doctor().stdout)
+        for text in ("null", "[]", '{"mcpServers": null}'):
+            with self.subTest(text=text):
+                (self.persona / ".mcp.json").write_text(text)
+                result = self.doctor()
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("otto: .mcp.json must be an object whose mcpServers is an object", result.stdout)
+        (self.persona / ".mcp.json").write_text("{")
+        self.assertIn("otto: .mcp.json is invalid", self.doctor().stdout)
 
     def test_report_lists_gaps_without_changing_settings(self) -> None:
         self.write_settings({"model": "claude-opus-4-6[1m]", "enabledPlugins": {"vault@core": True, "safety@core": True}})
