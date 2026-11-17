@@ -23,6 +23,7 @@ private local context, and external knowledge sources distinct.
 6. After approval, create:
    - `AGENTS.md`: identity, role, craft, voice, and role-specific boundaries;
    - `PERSONAS.md`, the shared rules, written by the sync helper below;
+   - `.claude/agents/<name>.md`, the native agent;
    - minimal `.claude/settings.json` and `.codex/config.toml`;
    - `skills/` for portable role workflows;
    - `evals/` with one synthetic case graded by the Craft's Proof;
@@ -47,13 +48,14 @@ persona-owned meaning and `user/`; a re-included `user/` is persona-owned.
 
 ## Activate native adapters
 
-`scripts/persona-native-sync.py --persona PATH --runtime claude|codex|all
-[--color COLOR] [--skill SKILL]` reports drift for `PERSONAS.md` and the native subagents;
-add `--apply` only after approval. Only servers named in
-tracked `.agent-mcp.json` are projected from ignored `.mcp.json`. For Codex they
-also set the `mcp_servers` tables of the tracked `.codex/config.toml`, minus
-servers the global Codex config defines; hand-written Codex variants and
-global overrides stay. Move a refused file aside only with approval.
+`.claude/agents/<name>.md` holds name, description, color, model lines, and
+MCP servers, and points at `AGENTS.md`. Link it into `~/.claude/agents/`;
+render the Codex agent from it.
+
+`scripts/persona-sync.py --persona PATH` reports drift for `PERSONAS.md` and
+the `mcp_servers` tables of the tracked `.codex/config.toml`; add `--apply`
+only after approval. It projects servers `.agent-mcp.json` names from
+`.mcp.json`, minus global ones; hand-written variants and overrides stay.
 
 ## Evaluate
 
@@ -63,7 +65,7 @@ deterministic graders (`regex`, `tool_used`) over noisy `llm` rubrics. Run
 once, without a plain-Claude arm:
 
 ```bash
-plugin=$(python3 scripts/persona-native-sync.py --persona PATH --eval-plugin)
+plugin=$(python3 scripts/persona-sync.py --persona PATH --eval-plugin)
 claude plugin eval "$plugin" --no-publish --runs 1 --ablation none
 ```
 

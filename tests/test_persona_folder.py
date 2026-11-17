@@ -246,10 +246,9 @@ class DoctorHostTest(unittest.TestCase):
         (self.root / ".claude").mkdir()
         self.shared = self.root / ".claude/settings.json"
         self.write_shared({"enabledPlugins": {"safety@core": True, "forge@core": True}})
-        agents = json.dumps(str(self.persona / "AGENTS.md"))
-        for adapter in (self.home / ".claude/agents/otto.md", self.home / ".codex/agents/otto.toml"):
-            adapter.parent.mkdir(parents=True)
-            adapter.write_text(f"{VERIFIER.SYNC.MARKER}\n{VERIFIER.SYNC.SOURCE}{agents}\n")
+        self.agent = self.persona / ".claude/agents/otto.md"
+        self.agent.parent.mkdir(parents=True)
+        self.agent.write_text("---\nname: otto\n---\n")
 
     def tearDown(self) -> None:
         self.tmp.cleanup()
@@ -285,26 +284,22 @@ class DoctorHostTest(unittest.TestCase):
 
     def test_portable_root_skips_host_checks(self) -> None:
         self.shared.unlink()
-        (self.home / ".claude/agents/otto.md").unlink()
+        self.agent.unlink()
         self.assertEqual(self.doctor().returncode, 0)
 
     def test_report_lists_gaps_without_changing_settings(self) -> None:
         self.write_settings({"model": "claude-opus-4-6[1m]", "enabledPlugins": {"vault@core": True, "safety@core": True}})
         (self.persona / ".mcp.json").write_text('{"mcpServers": {}, "codexMcpServers": []}')
-        (self.home / ".codex/agents/otto.toml").unlink()
+        self.agent.unlink()
         result = self.doctor()
         self.assertEqual(result.returncode, 1)
         self.assertIn("otto: plugin duplicates shared settings: safety@core", result.stdout)
         self.assertNotIn("vault@core", result.stdout)
         self.assertIn("otto: pinned model: claude-opus-4-6[1m]", result.stdout)
         self.assertIn("legacy agent MCP list", result.stdout)
-        self.assertIn("missing adapter", result.stdout)
+        self.assertIn("missing native agent", result.stdout)
         self.assertIn("Persona doctor: 1 personas, 4 problems", result.stdout)
         self.assertIn("model", self.settings())
-
-    def test_foreign_adapter_is_reported(self) -> None:
-        (self.home / ".claude/agents/otto.md").write_text("hand written\n")
-        self.assertIn("does not own", self.doctor().stdout)
 
     def test_fix_strips_shared_duplicates_and_removes_model(self) -> None:
         self.write_settings({"model": "pinned", "enabledPlugins": {"discord@claude-plugins-official": True, "forge@core": True, "safety@core": False}})
@@ -451,11 +446,9 @@ class DoctorHostTest(unittest.TestCase):
     def test_codex_home_comes_from_the_environment(self) -> None:
         self.write_home(".claude/plugins/known_marketplaces.json", {"workflows": {"source": {"source": "directory"}}})
         self.write_home("elsewhere/config.toml", '[plugins."stack@workflows"]\nenabled = true\n')
-        (self.home / ".codex/agents/otto.toml").rename(self.write_home("elsewhere/agents/otto.toml", ""))
         env = {"HOME": str(self.home), "PATH": os.environ["PATH"], "CODEX_HOME": str(self.home / "elsewhere")}
         result = subprocess.run([sys.executable, str(SCRIPT), "--root", str(self.root)], env=env, capture_output=True, text=True)
         self.assertIn("otto: Codex plugin stack@workflows should be off", result.stdout)
-        self.assertNotIn("missing adapter", result.stdout)
 
     def test_shared_settings_without_plugins_is_a_gap(self) -> None:
         self.write_shared({})

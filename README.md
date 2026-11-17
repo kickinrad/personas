@@ -74,7 +74,8 @@ anything.
     ├── evals/             # test cases for the persona
     ├── user/              # private profile, memory, and evals (ignored by default)
     ├── .mcp.json          # tool connections (ignored)
-    ├── .agent-mcp.json    # connections its subagent gets
+    ├── .agent-mcp.json    # connections its Codex config gets
+    ├── .claude/agents/julia.md  # its native agent
     ├── .claude/settings.json
     └── .codex/config.toml
 ```
@@ -87,7 +88,7 @@ later, which reads `AGENTS.md` directly.
 ## Evaluate a persona
 
 ```bash
-plugin=$(python3 skills/persona-dev/scripts/persona-native-sync.py --persona ~/.personas/julia --eval-plugin)
+plugin=$(python3 skills/persona-dev/scripts/persona-sync.py --persona ~/.personas/julia --eval-plugin)
 claude plugin eval "$plugin" --no-publish --runs 1 --ablation none
 ```
 
