@@ -122,8 +122,8 @@ launcher reads the list through it.
 
 The persona doctor fails when the folder keeps a second list, such as an old
 `.agent-mcp.json`. It also fails when the folder's ignored `.mcp.json`, which
-Claude sessions in the folder use, names different servers. From a checkout of
-this repository, preview the sync, then add `--apply` to write it:
+Claude sessions in the folder use, holds different servers or settings. From a
+checkout of this repository, preview the sync, then add `--apply` to write it:
 
 ```bash
 python3 skills/persona-dev/scripts/persona-sync.py --persona /path/to/julia

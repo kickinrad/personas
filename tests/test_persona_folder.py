@@ -313,8 +313,16 @@ class DoctorHostTest(unittest.TestCase):
     def test_folder_mcp_json_names_the_agent_servers(self) -> None:
         self.write_servers("monarch")
         self.assertNotIn("differ", self.doctor().stdout)
-        (self.persona / ".mcp.json").write_text('{"mcpServers": {"monarch": {"command": "monarch"}, "extra": {"command": "x"}}}')
-        self.assertIn("otto: .mcp.json and the native agent file's mcpServers differ: only in .mcp.json ['extra'], only in the agent file []", self.doctor().stdout)
+        (self.persona / ".mcp.json").write_text('{"mcpServers": {"monarch": {"type": "stdio", "command": "monarch"}, "extra": {"command": "x"}}}')
+        self.assertNotIn("MCP monarch", self.doctor().stdout)  # a missing type means stdio
+        self.assertIn("otto: .mcp.json lists extra, which the native agent file's mcpServers does not", self.doctor().stdout)
+        (self.persona / ".mcp.json").write_text('{"mcpServers": {"monarch": {"command": "monarch-v2", "args": ["serve"]}}}')
+        result = self.doctor()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn('otto: MCP monarch command differs: .mcp.json "monarch-v2", agent file "monarch"', result.stdout)
+        self.assertIn('otto: MCP monarch args differs: .mcp.json ["serve"], agent file null', result.stdout)
+        (self.persona / ".mcp.json").write_text('{"mcpServers": {}}')
+        self.assertIn("otto: the native agent file lists monarch, which .mcp.json does not", self.doctor().stdout)
         for text in ("null", "[]", '{"mcpServers": null}'):
             with self.subTest(text=text):
                 (self.persona / ".mcp.json").write_text(text)
@@ -498,7 +506,7 @@ class DoctorHostTest(unittest.TestCase):
         self.write_settings({"enabledPlugins": {"discord@claude-plugins-official": True}})
         result = self.doctor("--fix", "--allow-mcp-widening")
         # A dotted name cannot be a Codex key, so the agent file cannot list it and the two lists differ.
-        self.assertIn("only in .mcp.json ['my.server']", result.stdout)
+        self.assertIn(".mcp.json lists my.server, which the native agent file's mcpServers does not", result.stdout)
         self.assertEqual(self.settings()["permissions"]["allow"], ["mcp__my_server__*", "mcp__space_name__*", "mcp__plugin_discord_other_server__*"])
         self.assertEqual(self.settings()["enabledMcpjsonServers"], ["my.server"])
 

@@ -485,6 +485,17 @@ def agent_gaps(persona: Path) -> list[str]:
     return []
 
 
+def mcp_json_drift(listed: dict, agent: dict) -> list[str]:
+    """Each server or setting where .mcp.json and the agent file's mcpServers disagree; a missing type means stdio."""
+    gaps = [f".mcp.json lists {name}, which the native agent file's mcpServers does not" for name in sorted(set(listed) - set(agent))]
+    gaps += [f"the native agent file lists {name}, which .mcp.json does not" for name in sorted(set(agent) - set(listed))]
+    for name in sorted(set(listed) & set(agent)):
+        folder, own = (({"type": "stdio"} | server) if isinstance(server, dict) else {"": server} for server in (listed[name], agent[name]))
+        gaps += [f"MCP {name} {field or 'settings'} differs: .mcp.json {json.dumps(folder.get(field))}, agent file {json.dumps(own.get(field))}"
+                 for field in sorted(set(folder) | set(own)) if folder.get(field) != own.get(field)]
+    return gaps
+
+
 def host_gaps(persona: Path, fix: bool, allow_mcp_widening: bool) -> list[str]:
     gaps = [] if ALIAS_NAME.match(persona.name) else ["folder name cannot be a shell alias"]
     agent_problems = agent_gaps(persona)
@@ -503,12 +514,10 @@ def host_gaps(persona: Path, fix: bool, allow_mcp_widening: bool) -> list[str]:
         elif parsed:
             if {"agentMcpServers", "codexMcpServers"} & set(folder):
                 gaps.append(".mcp.json holds a legacy agent MCP list; move it to the native agent file's mcpServers")
-            # .mcp.json serves Claude sessions run in the folder; it must name the same servers as the one list.
-            # An unreadable agent file is already reported by agent_gaps.
+            # .mcp.json serves Claude sessions run in the folder; it must hold the same servers and settings
+            # as the one list. An unreadable agent file is already reported by agent_gaps.
             if not agent_problems:
-                listed, agent = set(folder.get("mcpServers", {})), set(SYNC.agent_servers(persona))
-                if listed != agent:
-                    gaps.append(f".mcp.json and the native agent file's mcpServers differ: only in .mcp.json {sorted(listed - agent)}, only in the agent file {sorted(agent - listed)}")
+                gaps += mcp_json_drift(folder.get("mcpServers", {}), SYNC.agent_servers(persona))
 
     path = persona / ".claude/settings.json"
     try:
