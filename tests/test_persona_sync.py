@@ -31,10 +31,10 @@ class PersonaSyncTest(unittest.TestCase):
         persona.mkdir()
         (persona / "AGENTS.md").write_text("# Wren Review\n\n> 🧭 Reviews small changes carefully.\n", encoding="utf-8")
         # agentMcpServers names the .mcp.json servers the native agent file lists in its mcpServers.
-        if isinstance(mcp, dict) and "agentMcpServers" in mcp:
-            mcp = dict(mcp)
-            servers = mcp.get("mcpServers", {})
-            self.agent(persona, *(f'  - {json.dumps(name)}: {json.dumps(servers.get(name, {}))}' for name in mcp.pop("agentMcpServers")))
+        mcp = dict(mcp) if isinstance(mcp, dict) else mcp
+        names = mcp.pop("agentMcpServers", []) if isinstance(mcp, dict) else []
+        servers = mcp.get("mcpServers", {}) if isinstance(mcp, dict) else {}
+        self.agent(persona, *(f'  - {json.dumps(name)}: {json.dumps(servers.get(name, {}))}' for name in names))
         if mcp is not None:
             (persona / ".mcp.json").write_text(json.dumps(mcp), encoding="utf-8")
         return persona
@@ -42,7 +42,7 @@ class PersonaSyncTest(unittest.TestCase):
     def agent(self, persona: Path, *lines: str) -> None:
         agents = persona / ".claude/agents"
         agents.mkdir(parents=True, exist_ok=True)
-        head = "\n".join((f"name: {persona.name}", "description: Reviews small changes.", "mcpServers:", *lines))
+        head = "\n".join((f"name: {persona.name}", "description: Reviews small changes.", *(("mcpServers:", *lines) if lines else ())))
         (agents / f"{persona.name}.md").write_text(f"---\n{head}\n---\n\nReview.\n", encoding="utf-8")
 
     def invoke(self, persona: Path, *args: str) -> subprocess.CompletedProcess[str]:
@@ -58,7 +58,7 @@ class PersonaSyncTest(unittest.TestCase):
         self.assertEqual(report.returncode, 1, report.stderr)
         self.assertEqual(report.stdout, f"drift {persona / 'PERSONAS.md'}\n")
         self.assertEqual(self.invoke(persona, "--apply").returncode, 0)
-        self.assertEqual(sorted(p.relative_to(persona).as_posix() for p in persona.rglob("*")), ["AGENTS.md", "PERSONAS.md"])
+        self.assertEqual(sorted(p.relative_to(persona).as_posix() for p in persona.rglob("*") if p.is_file()), [".claude/agents/wren-review.md", "AGENTS.md", "PERSONAS.md"])
         self.assertEqual((persona / "PERSONAS.md").read_text(), SYNC.SHARED.read_text())
         self.assertFalse(self.codex.exists())
         clean = self.invoke(persona)
@@ -135,31 +135,79 @@ class PersonaSyncTest(unittest.TestCase):
         self.assertEqual(self.config(persona)["mcp_servers"], {"local": {"command": "tool"}})
 
     def test_worktree_of_a_persona_reads_its_agent_file(self) -> None:
-        persona = self.root / "wren/.worktrees/change"
-        persona.parent.mkdir(parents=True)
+        (self.root / "wren/.worktrees").mkdir(parents=True)
         persona = self.persona("wren/.worktrees/change")
-        agents = persona / ".claude/agents"
-        agents.mkdir(parents=True)
-        (agents / "wren.md").write_text('---\nname: wren\nmcpServers:\n  - "local": {"command": "tool"}\n---\n', encoding="utf-8")
+        (persona / ".claude/agents/change.md").rename(persona / ".claude/agents/wren.md")
+        self.agent_text(persona / ".claude/agents/wren.md", '---\nname: wren\nmcpServers:\n  - "local": {"command": "tool"}\n---\n')
         self.assertEqual(self.invoke(persona, "--apply").returncode, 0)
         self.assertEqual(self.config(persona)["mcp_servers"], {"local": {"command": "tool"}})
 
+    def agent_text(self, path: Path, text: str) -> None:
+        path.write_bytes(text.encode("utf-8"))
+
+    def test_agent_file_forms_that_read(self) -> None:
+        cases = {
+            "bare names, blank lines, comments": '---\nname: wren\nmcpServers:\n\n- local: {"command": "tool"}\n  # note\n  - "remote": {"type": "http", "url": "https://example.test/mcp"}\ncolor: blue\n---\nBody\n',
+            "byte order mark and CRLF": '\ufeff---\r\nname: wren\r\nmcpServers:\r\n  - "local": {"command": "tool"}\r\n---\r\n',
+            "closing delimiter at end of file": '---\nmcpServers:\n  - "local": {"command": "tool"}\n---',
+            "empty list": '---\nname: wren\nmcpServers: []\n---\n',
+            "no mcpServers key": '---\nname: wren\n---\n',
+        }
+        expected = {"bare names, blank lines, comments": ["local", "remote"], "empty list": [], "no mcpServers key": []}
+        for index, (label, text) in enumerate(cases.items()):
+            with self.subTest(label):
+                persona = self.persona(f"wren-form-{index}")
+                self.agent_text(persona / f".claude/agents/{persona.name}.md", text)
+                self.assertEqual(list(SYNC.agent_servers(persona)), expected.get(label, ["local"]))
+
     def test_agent_mcp_servers_must_be_one_json_line_each(self) -> None:
         cases = {
-            "block mapping": ("  - local:", "      command: tool"),
-            "name reference": ("  - local",),
-            "inline list": None,
+            "block mapping": ('---\nmcpServers:\n  - local:\n      command: tool\n---\n', "one-line JSON"),
+            "name reference": ('---\nmcpServers:\n  - local\n---\n', "one-line JSON"),
+            "inline list": ('---\nmcpServers: [local]\n---\n', "must be a list"),
+            "mapping form": ('---\nmcpServers: {"local": {"command": "tool"}}\n---\n', "must be a list"),
+            "settings not JSON": ('---\nmcpServers:\n  - "local": {command: tool}\n---\n', "not JSON"),
+            "duplicate server": ('---\nmcpServers:\n  - "a": {"command": "t"}\n  - "a": {"command": "t"}\n---\n', "lists MCP server a twice"),
+            "dotted name": ('---\nmcpServers:\n  - "a.b": {"command": "t"}\n---\n', "one-line JSON"),
+            "duplicate key": ('---\nmcpServers:\n  - "a": {"command": "t"}\nmcpServers:\n---\n', "sets mcpServers twice"),
+            "no closing delimiter": ('---\nmcpServers:\n  - "a": {"command": "t"}\n', "needs frontmatter"),
+            "no frontmatter": ('# Wren\n', "needs frontmatter"),
         }
-        for index, (label, lines) in enumerate(cases.items()):
+        for index, (label, (text, message)) in enumerate(cases.items()):
             with self.subTest(label):
                 persona = self.persona(f"wren-{index}")
-                self.agent(persona, *(lines or ()))
-                if lines is None:
-                    agent = persona / f".claude/agents/{persona.name}.md"
-                    agent.write_text(agent.read_text().replace("mcpServers:", "mcpServers: [local]"), encoding="utf-8")
+                self.agent_text(persona / f".claude/agents/{persona.name}.md", text)
                 result = self.invoke(persona)
                 self.assertEqual(result.returncode, 2, result.stdout)
-                self.assertIn("mcpServers must", result.stderr)
+                self.assertIn(message, result.stderr)
+                self.assertIn(f"{persona.name}.md", result.stderr)
+
+    def test_missing_agent_file_is_an_error_not_an_empty_list(self) -> None:
+        persona = self.persona()
+        (persona / ".claude/agents/wren-review.md").unlink()
+        result = self.invoke(persona)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("cannot read the native agent", result.stderr)
+
+    def test_mcp_overrides_print_codex_values_and_change_nothing(self) -> None:
+        servers = {
+            "local": {"command": "tool", "args": ["serve"], "env": {"MODE": 'a "b"'}},
+            "remote": {"type": "http", "url": "https://example.test/mcp"},
+            "home": {"type": "http", "url": "https://example.test/home", "headersHelper": "/bin/auth"},
+        }
+        persona = self.persona(mcp={"mcpServers": servers, "agentMcpServers": list(servers)})
+        result = self.invoke(persona, "--mcp-overrides")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.splitlines(), [
+            'mcp_servers.local.command="tool"', 'mcp_servers.local.args=["serve"]', 'mcp_servers.local.env={"MODE" = "a \\"b\\""}',
+            'mcp_servers.remote.url="https://example.test/mcp"',
+        ])
+        self.assertIn("skipped home for codex: headersHelper is Claude-only", result.stderr)
+        self.assertEqual(sorted(p.name for p in persona.iterdir()), [".claude", ".mcp.json", "AGENTS.md"])
+        literal = self.persona("wren-secret", {"mcpServers": {"a": {"command": "t", "env": {"TOKEN": "literal"}}}, "agentMcpServers": ["a"]})
+        refused = self.invoke(literal, "--mcp-overrides")
+        self.assertEqual((refused.returncode, refused.stdout), (2, ""))
+        self.assertIn("credential literal", refused.stderr)
 
     def test_unselected_servers_are_not_projected(self) -> None:
         persona = self.persona(mcp={"mcpServers": {"private": {"command": "tool"}}})
@@ -305,7 +353,7 @@ class PersonaSyncTest(unittest.TestCase):
             "home": {"type": "http", "url": "https://example.test/home", "headersHelper": "/usr/local/bin/home-auth"},
             "music": {"type": "http", "url": "https://example.test/music", "headersHelper": "/usr/local/bin/music-auth"},
         }
-        persona = self.persona(mcp={"mcpServers": servers, "agentMcpServers": ["home", "music"]})
+        persona = self.persona(mcp={"mcpServers": servers, "agentMcpServers": ["home"]})
         path = self.folder(persona, (
             '[mcp_servers.home]\nurl = "https://example.test/home"\nhttp_headers_helper = "/usr/local/bin/home-auth"\n'
             '[mcp_servers.home.env]\nMODE = "read"\n'
@@ -342,7 +390,7 @@ class PersonaSyncTest(unittest.TestCase):
                 self.assertIn("MCP hook: url must not contain a token-like path segment", result.stderr)
                 self.assertEqual(path.read_text(encoding="utf-8"), text)
                 # A hand-written Codex variant with a secret in its URL path is dropped, never written back.
-                variant = self.persona(f"wren-variant-{index}", {"mcpServers": {"home": {"type": "http", "url": "https://example.test/home", "headersHelper": "/bin/auth"}}, "agentMcpServers": ["home"]})
+                variant = self.persona(f"wren-variant-{index}", {"mcpServers": {"home": {"type": "http", "url": "https://example.test/home", "headersHelper": "/bin/auth"}}})
                 path = self.folder(variant, f'[mcp_servers.home]\nurl = "{url}"\n')
                 result = self.invoke(variant, "--apply")
                 self.assertEqual(result.returncode, 0, result.stderr)

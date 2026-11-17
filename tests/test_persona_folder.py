@@ -259,6 +259,12 @@ class DoctorHostTest(unittest.TestCase):
     def write_shared(self, settings: dict) -> None:
         self.shared.write_text(json.dumps(settings))
 
+    def write_servers(self, *names: str) -> None:
+        """Declare servers in both of the folder's lists: .mcp.json for Claude in the folder, and the agent file."""
+        (self.persona / ".mcp.json").write_text(json.dumps({"mcpServers": {name: {"command": name} for name in names}}))
+        lines = "".join(f'  - "{name}": {{"command": "{name}"}}\n' for name in names)
+        self.agent.write_text(self.agent.read_text().replace("---\n\n", f"mcpServers:\n{lines}---\n\n", 1))
+
     def write_settings(self, settings: dict) -> None:
         (self.persona / ".claude/settings.json").write_text(json.dumps(settings))
 
@@ -303,6 +309,12 @@ class DoctorHostTest(unittest.TestCase):
         (self.persona / ".agent-mcp.json").unlink()
         self.agent.write_text(self.agent.read_text().replace("---\n\n", "mcpServers:\n  - ob\n---\n\n", 1))
         self.assertIn("otto: native agent MCP servers are invalid", self.doctor().stdout)
+
+    def test_folder_mcp_json_names_the_agent_servers(self) -> None:
+        self.write_servers("monarch")
+        self.assertNotIn("differ", self.doctor().stdout)
+        (self.persona / ".mcp.json").write_text('{"mcpServers": {"monarch": {"command": "monarch"}, "extra": {"command": "x"}}}')
+        self.assertIn("otto: .mcp.json and the native agent file's mcpServers differ: only in .mcp.json ['extra'], only in the agent file []", self.doctor().stdout)
 
     def test_report_lists_gaps_without_changing_settings(self) -> None:
         self.write_settings({"model": "claude-opus-4-6[1m]", "enabledPlugins": {"vault@core": True, "safety@core": True}})
@@ -360,7 +372,7 @@ class DoctorHostTest(unittest.TestCase):
         self.assertNotIn("mcp__new-user-server__*", result.stdout)
 
     def test_declared_servers_need_explicit_widening_flag(self) -> None:
-        (self.persona / ".mcp.json").write_text('{"mcpServers": {"monarch": {}}}')
+        self.write_servers("monarch")
         self.write_home(".claude.json", {"mcpServers": {"ob": {}, "monarch": {}}})
         self.install_plugin("discord@claude-plugins-official", "discord")
         self.write_settings({"enabledPlugins": {"discord@claude-plugins-official": True}, "permissions": {"allow": ["Read"]}})
@@ -388,7 +400,7 @@ class DoctorHostTest(unittest.TestCase):
         self.assertEqual(self.settings()["permissions"]["allow"], ["mcp__ob__*"])
 
     def test_enabling_declared_server_also_needs_widening_flag(self) -> None:
-        (self.persona / ".mcp.json").write_text('{"mcpServers": {"monarch": {}}}')
+        self.write_servers("monarch")
         self.write_settings({"permissions": {"allow": ["mcp__monarch__*"]}})
         blocked = self.doctor("--fix")
         self.assertEqual(blocked.returncode, 1)
@@ -477,7 +489,8 @@ class DoctorHostTest(unittest.TestCase):
         self.install_plugin("discord@claude-plugins-official", "other.server")
         self.write_settings({"enabledPlugins": {"discord@claude-plugins-official": True}})
         result = self.doctor("--fix", "--allow-mcp-widening")
-        self.assertEqual(result.returncode, 0, result.stdout)
+        # A dotted name cannot be a Codex key, so the agent file cannot list it and the two lists differ.
+        self.assertIn("only in .mcp.json ['my.server']", result.stdout)
         self.assertEqual(self.settings()["permissions"]["allow"], ["mcp__my_server__*", "mcp__space_name__*", "mcp__plugin_discord_other_server__*"])
         self.assertEqual(self.settings()["enabledMcpjsonServers"], ["my.server"])
 

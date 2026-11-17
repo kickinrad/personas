@@ -19,9 +19,12 @@ from urllib.parse import parse_qsl, urlsplit
 SENSITIVE = re.compile(r"(?:api[_-]?key|token|secret|password|authorization|bearer|cookie)", re.I)
 # Values under a credential-like key that cannot hold a secret: an env reference or a boolean flag.
 NOT_SECRET = re.compile(r"\$\{[A-Za-z_][A-Za-z0-9_]*\}|true|false", re.I)
-# The native agent file lists each server on one line as `  - "name": {JSON}`; Codex
-# `-c mcp_servers.<name>.*` overrides need the name to be a bare TOML key.
-AGENT_SERVER = re.compile(r'  - ("[A-Za-z0-9_-]+": \{.*\})')
+# The native agent file lists each server on one line, `- "name": {JSON}` or `- name: {JSON}`, so
+# no YAML parser is needed. Codex `-c mcp_servers.<name>.*` overrides need the name to be a bare TOML key.
+SERVER_NAME = r"[A-Za-z0-9_-]+"
+AGENT_SERVER = re.compile(rf'\s*- (?:"({SERVER_NAME})"|({SERVER_NAME})): (\{{.*\}})\s*')
+FRONTMATTER = re.compile(r"---[ \t]*\n(.*?)^---[ \t]*$", re.S | re.M)
+TOP_KEY = re.compile(r"([A-Za-z_][A-Za-z0-9_-]*):(?:[ \t]|$)")
 SHARED = Path(__file__).resolve().parent.parent / "assets" / "PERSONAS.md"
 # URL path segments must read as short lowercase words, so a token in the path is refused rather than guessed at.
 # Each -/. part is letters (up to 24), digits (up to 12), or a short mix such as v2 or eu1.
@@ -81,18 +84,31 @@ def credential_free(value: object, key: str = "") -> None:
 
 
 def agent_servers(persona: Path) -> dict[str, object]:
-    """The mcpServers of the persona's native agent file .claude/agents/<slug>.md, the one home of its MCP list."""
+    """The mcpServers of the persona's native agent file .claude/agents/<slug>.md, the one home of its MCP list.
+
+    An agent file without an mcpServers key has no servers; a missing file or unreadable list is an error."""
     agent = persona / ".claude" / "agents" / f"{persona_slug(persona)}.md"
-    parts = agent.read_text(encoding="utf-8").split("---\n", 2) if agent.is_file() else []
-    head = parts[1].splitlines() if len(parts) == 3 and not parts[0] else []
-    start = next((index for index, line in enumerate(head) if line.startswith("mcpServers:")), None)
-    if start is None: return {}
-    if head[start] != "mcpServers:": fail(f"{agent} mcpServers must be a list, one server per line")
-    servers: dict[str, object] = {}
-    for line in head[start + 1:]:
-        if not line.startswith(" "): break
-        match = AGENT_SERVER.fullmatch(line) or fail(f'{agent} mcpServers must list each server on one line as - "name": {{JSON}}')
-        ((name, server),) = json.loads("{" + match.group(1) + "}").items()
+    try: text = agent.read_text(encoding="utf-8").removeprefix("\ufeff").replace("\r\n", "\n")
+    except OSError as error: fail(f"cannot read the native agent {agent}: {error.strerror or error}")
+    head = FRONTMATTER.match(text) or fail(f"{agent} needs frontmatter between --- lines")
+    lines, keys, servers, listing = head.group(1).splitlines(), set(), {}, False
+    for line in lines:
+        if not line.strip() or line.lstrip().startswith("#"): continue
+        if key := TOP_KEY.match(line):
+            if key.group(1) in keys: fail(f"{agent} sets {key.group(1)} twice")
+            keys.add(key.group(1))
+            listing = key.group(1) == "mcpServers"
+            rest = line[key.end():].strip()
+            if listing and rest not in ("", "[]"):
+                fail(f'{agent} mcpServers must be a list with one server per line, - "name": {{JSON}}')
+            continue
+        if not listing: continue
+        item = AGENT_SERVER.fullmatch(line)
+        if not item:
+            fail(f'{agent} mcpServers must give each server its settings as one-line JSON, - "name": {{JSON}}: {line.strip()}')
+        name = item.group(1) or item.group(2)
+        try: server = json.loads(item.group(3))
+        except json.JSONDecodeError as error: fail(f"{agent} MCP {name} settings are not JSON: {error.msg}")
         if name in servers: fail(f"{agent} lists MCP server {name} twice")
         servers[name] = server
     return servers
@@ -151,6 +167,12 @@ def codex_tables(mcps: dict[str, dict[str, object]]) -> str:
     return text
 
 
+def codex_overrides(mcps: dict[str, dict[str, object]]) -> list[str]:
+    """The agent's servers as Codex `-c mcp_servers.<name>.<field>=<TOML>` values, for a launch outside the folder."""
+    return [f"mcp_servers.{name}.{key}={toml_value(value)}" for name, server in mcps.items() if not codex_gap(server)
+            for key, value in server.items() if key != "type"]
+
+
 def mcp_names(document: str) -> tuple[bool, set[str]]:
     """Whether a TOML fragment sets mcp_servers, and which servers it names."""
     servers = tomllib.loads(document).get("mcp_servers")
@@ -198,10 +220,13 @@ def folder_config(persona: Path, codex_home: Path, mcps: dict[str, dict[str, obj
     for name in (name for name in mcps if name in shared): print(f"skipped {name} for {path}: defined in {home}")
     existing = path.read_text(encoding="utf-8") if path.is_file() else None
     parsed = tomllib.loads(existing or "")
-    # Persona-owned entries: Codex variants of the agent's servers Codex cannot run as listed, and overrides of global servers.
+    declared = json.loads((persona / ".mcp.json").read_text(encoding="utf-8")).get("mcpServers", {}) if (persona / ".mcp.json").is_file() else {}
+    # Persona-owned entries: Codex variants of servers Codex cannot take as declared (in .mcp.json or the agent file,
+    # which a worktree has without .mcp.json), and overrides of global servers.
     keep = set()
     for name, table in parsed.get("mcp_servers", {}).items():
-        variant = name in mcps and codex_gap(mcps[name])
+        raw = mcps.get(name) or declared.get(name)
+        variant = isinstance(raw, dict) and codex_gap({"type": raw.get("type", "stdio")} | raw)
         override = name in shared and isinstance(table, dict) and not {"command", "url"} & set(table)
         if not (variant or override): continue
         try:
@@ -274,6 +299,7 @@ def main() -> int:
     parser.add_argument("--codex-home", type=Path, default=Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")))
     parser.add_argument("--eval-plugin", action="store_true", help="print a private temporary plugin that runs the persona as the main agent, for claude plugin eval")
     parser.add_argument("--with-private", action="store_true", help="with --eval-plugin, also include the private user/evals replays")
+    parser.add_argument("--mcp-overrides", action="store_true", help="print the agent's MCP servers as Codex -c values, one per line, and change nothing")
     args = parser.parse_args()
     try:
         persona = args.persona.resolve()
@@ -284,13 +310,16 @@ def main() -> int:
             print(eval_plugin(persona, description, args.with_private))
             return 0
         mcps = agent_mcps(persona)
+        for name, server in mcps.items():
+            if reason := codex_gap(server): print(f"skipped {name} for codex: {reason}", file=sys.stderr if args.mcp_overrides else sys.stdout)
+        if args.mcp_overrides:
+            if overrides := codex_overrides(mcps): print(*overrides, sep="\n")
+            return 0
         # PERSONAS.md is a generated copy in every persona, so it is always overwritten.
         shared = persona / "PERSONAS.md"
         targets = {"shared": shared}
         content = {"shared": SHARED.read_text(encoding="utf-8")}
         existing = {"shared": shared.read_text(encoding="utf-8") if shared.is_file() else None}
-        for name, server in mcps.items():
-            if reason := codex_gap(server): print(f"skipped {name} for codex: {reason}")
         if folder := folder_config(persona, args.codex_home, mcps):
             targets["folder"], existing["folder"], content["folder"] = folder
         drifted = False
@@ -302,7 +331,7 @@ def main() -> int:
                 state = "updated"
             print(f"{state} {path}")
         return int(drifted and not args.apply)
-    except (OSError, ValueError, json.JSONDecodeError, tomllib.TOMLDecodeError) as error:
+    except (OSError, ValueError, tomllib.TOMLDecodeError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
 

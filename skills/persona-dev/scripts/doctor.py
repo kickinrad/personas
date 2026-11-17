@@ -486,15 +486,27 @@ def agent_gaps(persona: Path) -> list[str]:
 
 def host_gaps(persona: Path, fix: bool, allow_mcp_widening: bool) -> list[str]:
     gaps = [] if ALIAS_NAME.match(persona.name) else ["folder name cannot be a shell alias"]
-    gaps += agent_gaps(persona)
+    agent_problems = agent_gaps(persona)
+    gaps += agent_problems
 
     mcp = persona / ".mcp.json"
     if mcp.is_file():
         try:
-            if {"agentMcpServers", "codexMcpServers"} & set(json.loads(mcp.read_text())):
-                gaps.append(".mcp.json holds a legacy agent MCP list; move it to the native agent file's mcpServers")
+            folder = json.loads(mcp.read_text())
         except json.JSONDecodeError as error:
+            folder = None
             gaps.append(f".mcp.json is invalid: {error}")
+        if folder is not None and not (isinstance(folder, dict) and isinstance(folder.get("mcpServers", {}), dict)):
+            gaps.append(".mcp.json must be an object whose mcpServers is an object")
+        elif folder is not None:
+            if {"agentMcpServers", "codexMcpServers"} & set(folder):
+                gaps.append(".mcp.json holds a legacy agent MCP list; move it to the native agent file's mcpServers")
+            # .mcp.json serves Claude sessions run in the folder; it must name the same servers as the one list.
+            # An unreadable agent file is already reported by agent_gaps.
+            if not agent_problems:
+                listed, agent = set(folder.get("mcpServers", {})), set(SYNC.agent_servers(persona))
+                if listed != agent:
+                    gaps.append(f".mcp.json and the native agent file's mcpServers differ: only in .mcp.json {sorted(listed - agent)}, only in the agent file {sorted(agent - listed)}")
 
     path = persona / ".claude/settings.json"
     try:
