@@ -25,6 +25,7 @@ SERVER_NAME = r"[A-Za-z0-9_-]+"
 AGENT_SERVER = re.compile(rf'\s*- (?:"({SERVER_NAME})"|({SERVER_NAME})): (\{{.*\}})\s*')
 FRONTMATTER = re.compile(r"---[ \t]*\n(.*?)^---[ \t]*$", re.S | re.M)
 TOP_KEY = re.compile(r"([A-Za-z_][A-Za-z0-9_-]*):(?:[ \t]|$)")
+MCP_KEY = re.compile(r"\s*mcpServers\s*:")
 SHARED = Path(__file__).resolve().parent.parent / "assets" / "PERSONAS.md"
 # URL path segments must read as short lowercase words, so a token in the path is refused rather than guessed at.
 # Each -/. part is letters (up to 24), digits (up to 12), or a short mix such as v2 or eu1.
@@ -92,20 +93,26 @@ def agent_servers(persona: Path) -> dict[str, object]:
     except OSError as error: fail(f"cannot read the native agent {agent}: {error.strerror or error}")
     head = FRONTMATTER.match(text) or fail(f"{agent} needs frontmatter between --- lines")
     lines, keys, servers, listing = head.group(1).splitlines(), set(), {}, False
+    expected = '- "name": {JSON}'
     for line in lines:
         if not line.strip() or line.lstrip().startswith("#"): continue
         if key := TOP_KEY.match(line):
             if key.group(1) in keys: fail(f"{agent} sets {key.group(1)} twice")
             keys.add(key.group(1))
             listing = key.group(1) == "mcpServers"
-            rest = line[key.end():].strip()
-            if listing and rest not in ("", "[]"):
-                fail(f'{agent} mcpServers must be a list with one server per line, - "name": {{JSON}}')
+            if listing and line[key.end():].strip() not in ("", "[]"):
+                fail(f"{agent} mcpServers must be a list with one server per line as {expected}: {line.strip()}")
             continue
-        if not listing: continue
+        if MCP_KEY.match(line):
+            fail(f"{agent} must write mcpServers: at the start of a line, with no space before the colon: {line.strip()}")
         item = AGENT_SERVER.fullmatch(line)
-        if not item:
-            fail(f'{agent} mcpServers must give each server its settings as one-line JSON, - "name": {{JSON}}: {line.strip()}')
+        if listing and not item:
+            fail(f"{agent} mcpServers must give each server its settings as one-line JSON, {expected}: {line.strip()}")
+        if not listing and item:
+            fail(f"{agent} lists an MCP server outside mcpServers; put it under mcpServers: as {expected}: {line.strip()}")
+        if not listing and not line[0].isspace() and not line.startswith("- "):
+            fail(f"{agent} frontmatter line is neither a key nor part of one: {line.strip()}")
+        if not listing: continue
         name = item.group(1) or item.group(2)
         try: server = json.loads(item.group(3))
         except json.JSONDecodeError as error: fail(f"{agent} MCP {name} settings are not JSON: {error.msg}")

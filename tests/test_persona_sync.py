@@ -172,6 +172,10 @@ class PersonaSyncTest(unittest.TestCase):
             "duplicate key": ('---\nmcpServers:\n  - "a": {"command": "t"}\nmcpServers:\n---\n', "sets mcpServers twice"),
             "no closing delimiter": ('---\nmcpServers:\n  - "a": {"command": "t"}\n', "needs frontmatter"),
             "no frontmatter": ('# Wren\n', "needs frontmatter"),
+            "space before colon": ('---\nmcpServers :\n  - "a": {"command": "t"}\n---\n', "no space before the colon"),
+            "indented key": ('---\nname: wren\n  mcpServers:\n  - "a": {"command": "t"}\n---\n', "no space before the colon"),
+            "server after another key": ('---\nmcpServers:\n  - "a": {"command": "t"}\ncolor: blue\n  - "b": {"command": "t"}\n---\n', "outside mcpServers"),
+            "stray top-level line": ('---\nname: wren\nmcpServers\n---\n', "neither a key nor part of one"),
         }
         for index, (label, (text, message)) in enumerate(cases.items()):
             with self.subTest(label):
