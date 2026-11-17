@@ -240,15 +240,15 @@ class DoctorHostTest(unittest.TestCase):
         self.home = Path(self.tmp.name).resolve()
         self.root = self.home / ".personas"
         self.persona = FolderContractTest.create_persona(self.root, "otto")
+        self.agent = self.persona / ".claude/agents/otto.md"
+        self.agent.parent.mkdir(parents=True)
+        self.agent.write_text('---\nname: "otto"\ndescription: "Keeps the house running."\n---\n\nRead AGENTS.md.\n')
         subprocess.run(["git", "init", "-q"], cwd=self.persona, check=True)
         subprocess.run(["git", "add", "."], cwd=self.persona, check=True)
         (self.root / "notes").mkdir()
         (self.root / ".claude").mkdir()
         self.shared = self.root / ".claude/settings.json"
         self.write_shared({"enabledPlugins": {"safety@core": True, "forge@core": True}})
-        self.agent = self.persona / ".claude/agents/otto.md"
-        self.agent.parent.mkdir(parents=True)
-        self.agent.write_text("---\nname: otto\n---\n")
 
     def tearDown(self) -> None:
         self.tmp.cleanup()
@@ -287,6 +287,15 @@ class DoctorHostTest(unittest.TestCase):
         self.agent.unlink()
         self.assertEqual(self.doctor().returncode, 0)
 
+    def test_native_agent_must_be_tracked_and_usable(self) -> None:
+        self.assertNotIn("native agent", self.doctor().stdout)
+        for text in ("---\nname: otto\n---\n", '---\nname: "otto"\ndescription: "x"\n---\n', '---\nname: "wren"\ndescription: "x"\n---\nbody\n'):
+            with self.subTest(text=text):
+                self.agent.write_text(text)
+                self.assertIn("native agent needs frontmatter", self.doctor().stdout)
+        subprocess.run(["git", "rm", "-qf", "--cached", str(self.agent)], cwd=self.persona, check=True)
+        self.assertIn("missing tracked native agent", self.doctor().stdout)
+
     def test_report_lists_gaps_without_changing_settings(self) -> None:
         self.write_settings({"model": "claude-opus-4-6[1m]", "enabledPlugins": {"vault@core": True, "safety@core": True}})
         (self.persona / ".mcp.json").write_text('{"mcpServers": {}, "codexMcpServers": []}')
@@ -297,7 +306,7 @@ class DoctorHostTest(unittest.TestCase):
         self.assertNotIn("vault@core", result.stdout)
         self.assertIn("otto: pinned model: claude-opus-4-6[1m]", result.stdout)
         self.assertIn("legacy agent MCP list", result.stdout)
-        self.assertIn("missing native agent", result.stdout)
+        self.assertIn("missing tracked native agent", result.stdout)
         self.assertIn("Persona doctor: 1 personas, 4 problems", result.stdout)
         self.assertIn("model", self.settings())
 

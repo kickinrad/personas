@@ -473,8 +473,16 @@ def fix_codex(persona: Path, changes: dict) -> None:
 
 def agent_gaps(persona: Path) -> list[str]:
     """Each persona owns its native agent file; dotfiles links it for Claude and renders it for Codex."""
-    agent = persona / ".claude/agents" / f"{SYNC.persona_slug(persona)}.md"
-    return [] if agent.is_file() else [f"missing native agent: {agent}"]
+    slug = SYNC.persona_slug(persona)
+    agent = persona / ".claude/agents" / f"{slug}.md"
+    if agent not in tracked_files(persona) or not agent.is_file():
+        return [f"missing tracked native agent: {agent}"]
+    parts = agent.read_text(encoding="utf-8").split("---\n", 2)
+    head = parts[1] if len(parts) == 3 and not parts[0] else ""
+    name = re.search(r'^name: "?([^"\n]+)"?$', head, re.M)
+    if not name or name.group(1) != slug or not re.search(r"^description: \S", head, re.M) or not parts[-1].strip():
+        return [f"native agent needs frontmatter with name {slug} and a description, then a body: {agent}"]
+    return []
 
 
 def host_gaps(persona: Path, fix: bool, allow_mcp_widening: bool) -> list[str]:
