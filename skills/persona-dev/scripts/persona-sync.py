@@ -92,45 +92,58 @@ class UniqueKeyLoader(yaml.SafeLoader):
         seen = set()
         for key_node, _ in node.value:
             key = self.construct_object(key_node, deep=deep)
-            if isinstance(key, str) and key in seen:
-                raise yaml.constructor.ConstructorError(None, None, f"duplicate key {key}", key_node.start_mark)
-            seen.add(key if isinstance(key, str) else id(key_node))
+            try: repeated = key in seen
+            except TypeError: continue  # An unhashable key fails in the base constructor.
+            if repeated: raise yaml.constructor.ConstructorError(None, None, f"duplicate key {key!r}", key_node.start_mark)
+            seen.add(key)
         return super().construct_mapping(node, deep)
+
+def agent_file(persona: Path) -> Path:
+    return persona / ".claude" / "agents" / f"{persona_slug(persona)}.md"
 
 def agent_servers(persona: Path) -> dict[str, object]:
     """The mcpServers of the persona's native agent file .claude/agents/<slug>.md, the one home of its MCP list.
 
     An agent file without an mcpServers key has no servers; a missing file or unreadable list is an error."""
-    agent = persona / ".claude" / "agents" / f"{persona_slug(persona)}.md"
+    agent = agent_file(persona)
     try: text = agent.read_text(encoding="utf-8").removeprefix("\ufeff").replace("\r\n", "\n")
     except OSError as error: fail(f"cannot read the native agent {agent}: {error.strerror or error}")
     head = FRONTMATTER.match(text) or fail(f"{agent} needs frontmatter between --- lines")
-    try: meta = yaml.load(head.group(1), Loader=UniqueKeyLoader)
+    # The frontmatter starts on line 2 of the file, after the opening ---.
+    at = lambda mark: f" at line {mark.line + 2}" if mark else ""
+    loader = UniqueKeyLoader(head.group(1))
+    try:
+        node = loader.get_single_node()
+        meta = loader.construct_document(node) if node else None
     except yaml.YAMLError as error:
-        mark = getattr(error, "problem_mark", None)
-        # The frontmatter starts on line 2 of the file, after the opening ---.
-        where = f" at line {mark.line + 2}" if mark else ""
-        fail(f"{agent} frontmatter is not valid YAML{where}: {getattr(error, 'problem', None) or error}")
+        fail(f"{agent} frontmatter is not valid YAML{at(getattr(error, 'problem_mark', None))}: {getattr(error, 'problem', None) or error}")
+    finally: loader.dispose()
     if meta is None: return {}
     if not isinstance(meta, dict): fail(f"{agent} frontmatter must be a mapping")
-    listed = meta.get("mcpServers")
-    if listed is None: return {}
-    shape = '- name: {server settings}'
-    if not isinstance(listed, list): fail(f"{agent} mcpServers must be a list of {shape}")
+    if "mcpServers" not in meta: return {}
+    value = next(value for key, value in node.value if key.value == "mcpServers")
+    listed, shape = meta["mcpServers"], "- name: {server settings}"
+    if not isinstance(listed, list): fail(f"{agent} mcpServers{at(value.start_mark)} must be a list of {shape}")
     servers: dict[str, object] = {}
-    for item in listed:
+    for item, item_node in zip(listed, value.value):
         if not (isinstance(item, dict) and len(item) == 1):
-            fail(f"{agent} mcpServers must list each server as {shape}, with its settings inline: {item!r}")
+            fail(f"{agent} mcpServers{at(item_node.start_mark)} must list each server as {shape}, with its settings inline: {item!r}")
         ((name, server),) = item.items()
         if not isinstance(name, str) or not SERVER_NAME.fullmatch(name):
-            fail(f"{agent} MCP server name must use letters, digits, _ and -: {name!r}")
-        if name in servers: fail(f"{agent} lists MCP server {name} twice")
+            fail(f"{agent} MCP server name{at(item_node.start_mark)} must use letters, digits, _ and -: {name!r}")
+        if name in servers: fail(f"{agent} lists MCP server {name} twice{at(item_node.start_mark)}")
         servers[name] = server
     return servers
 
 def agent_mcps(persona: Path) -> dict[str, dict[str, object]]:
+    servers = agent_servers(persona)
+    try: return checked_servers(servers)
+    except ValueError as error: fail(f"{agent_file(persona)}: {error}")
+
+def checked_servers(servers: dict[str, object]) -> dict[str, dict[str, object]]:
+    """Servers whose settings pass the credential and transport gates, each with an explicit type."""
     selected = {}
-    for name, raw in agent_servers(persona).items():
+    for name, raw in servers.items():
         if not isinstance(raw, dict): fail(f"MCP {name} must be an object")
         try: credential_free(raw)
         except ValueError as error: fail(f"MCP {name}: {error}")
