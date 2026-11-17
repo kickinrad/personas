@@ -2,7 +2,7 @@
 """Report or apply a persona folder's generated files, or wrap the folder as an eval plugin.
 
 The generated files are PERSONAS.md, copied from the shared rules, and the mcp_servers
-tables of .codex/config.toml, projected from the servers .agent-mcp.json names in .mcp.json."""
+tables of .codex/config.toml, projected from the mcpServers of the native agent file."""
 from __future__ import annotations
 
 import argparse
@@ -19,10 +19,9 @@ from urllib.parse import parse_qsl, urlsplit
 SENSITIVE = re.compile(r"(?:api[_-]?key|token|secret|password|authorization|bearer|cookie)", re.I)
 # Values under a credential-like key that cannot hold a secret: an env reference or a boolean flag.
 NOT_SECRET = re.compile(r"\$\{[A-Za-z_][A-Za-z0-9_]*\}|true|false", re.I)
-# claude mcp add rewrites .mcp.json, so the allowlist of projected servers lives beside it.
-ALLOWLIST = ".agent-mcp.json"
-# Codex `-c mcp_servers.<name>.*` overrides need a bare TOML key.
-SERVER_NAME = re.compile(r"[A-Za-z0-9_-]+")
+# The native agent file lists each server on one line as `  - "name": {JSON}`; Codex
+# `-c mcp_servers.<name>.*` overrides need the name to be a bare TOML key.
+AGENT_SERVER = re.compile(r'  - ("[A-Za-z0-9_-]+": \{.*\})')
 SHARED = Path(__file__).resolve().parent.parent / "assets" / "PERSONAS.md"
 # URL path segments must read as short lowercase words, so a token in the path is refused rather than guessed at.
 # Each -/. part is letters (up to 24), digits (up to 12), or a short mix such as v2 or eu1.
@@ -79,19 +78,27 @@ def credential_free(value: object, key: str = "") -> None:
         if secret_flag(value): fail("credential literal is unsupported in a flag or header")
 
 
+def agent_servers(persona: Path) -> dict[str, object]:
+    """The mcpServers of the persona's native agent file .claude/agents/<slug>.md, the one home of its MCP list."""
+    agent = persona / ".claude" / "agents" / f"{persona_slug(persona)}.md"
+    parts = agent.read_text(encoding="utf-8").split("---\n", 2) if agent.is_file() else []
+    head = parts[1].splitlines() if len(parts) == 3 and not parts[0] else []
+    start = next((index for index, line in enumerate(head) if line.startswith("mcpServers:")), None)
+    if start is None: return {}
+    if head[start] != "mcpServers:": fail(f"{agent} mcpServers must be a list, one server per line")
+    servers: dict[str, object] = {}
+    for line in head[start + 1:]:
+        if not line.startswith(" "): break
+        match = AGENT_SERVER.fullmatch(line) or fail(f'{agent} mcpServers must list each server on one line as - "name": {{JSON}}')
+        ((name, server),) = json.loads("{" + match.group(1) + "}").items()
+        if name in servers: fail(f"{agent} lists MCP server {name} twice")
+        servers[name] = server
+    return servers
+
 def agent_mcps(persona: Path) -> dict[str, dict[str, object]]:
-    source, allowlist = persona / ".mcp.json", persona / ALLOWLIST
-    payload = json.loads(source.read_text(encoding="utf-8")) if source.exists() else {}
-    if not isinstance(payload, dict) or set(payload) - {"mcpServers"}: fail(".mcp.json must be an object with only mcpServers")
-    servers = payload.get("mcpServers", {})
-    names = json.loads(allowlist.read_text(encoding="utf-8")) if allowlist.exists() else []
-    if not isinstance(servers, dict): fail(".mcp.json mcpServers must be an object")
-    if not strings(names) or not all(map(SERVER_NAME.fullmatch, names)) or len(names) != len(set(names)):
-        fail(f"{ALLOWLIST} must list unique server names of letters, digits, _ and -")
     selected = {}
-    for name in names:
-        raw = servers.get(name)
-        if not isinstance(raw, dict): fail(f"{ALLOWLIST} names a server missing from .mcp.json: {name}")
+    for name, raw in agent_servers(persona).items():
+        if not isinstance(raw, dict): fail(f"MCP {name} must be an object")
         try: credential_free(raw)
         except ValueError as error: fail(f"MCP {name}: {error}")
         kind = raw.get("type", "stdio")
@@ -110,7 +117,7 @@ def agent_mcps(persona: Path) -> dict[str, dict[str, object]]:
             oauth = raw.get("oauth", {})
             if not isinstance(oauth, dict): fail(f"MCP {name} oauth must be an object")
             if extra := sorted(set(oauth) - {"clientId", "callbackPort"}):
-                fail(f"MCP {name} oauth {', '.join(extra)} is unsupported; only clientId and callbackPort may be set, and credentials stay out of .mcp.json")
+                fail(f"MCP {name} oauth {', '.join(extra)} is unsupported; only clientId and callbackPort may be set, and credentials stay out of the agent file")
             if not isinstance(oauth.get("clientId", ""), str) or type(oauth.get("callbackPort", 0)) is not int:
                 fail(f"MCP {name} oauth needs a string clientId and an integer callbackPort")
         else: fail(f"MCP {name} transport {kind!r} is unsupported")

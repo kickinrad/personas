@@ -54,8 +54,8 @@ render the Codex agent from it.
 
 `scripts/persona-sync.py --persona PATH` reports drift for `PERSONAS.md` and
 the `mcp_servers` tables of the tracked `.codex/config.toml`; add `--apply`
-only after approval. It projects servers `.agent-mcp.json` names from
-`.mcp.json`, minus global ones; hand-written variants and overrides stay.
+only after approval. It projects the native agent's `mcpServers`, the one
+MCP list, minus global ones; hand-written variants and overrides stay.
 
 ## Evaluate
 

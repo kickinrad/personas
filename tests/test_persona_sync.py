@@ -30,12 +30,20 @@ class PersonaSyncTest(unittest.TestCase):
         persona = self.root / name
         persona.mkdir()
         (persona / "AGENTS.md").write_text("# Wren Review\n\n> 🧭 Reviews small changes carefully.\n", encoding="utf-8")
+        # agentMcpServers names the .mcp.json servers the native agent file lists in its mcpServers.
         if isinstance(mcp, dict) and "agentMcpServers" in mcp:
             mcp = dict(mcp)
-            (persona / ".agent-mcp.json").write_text(json.dumps(mcp.pop("agentMcpServers")), encoding="utf-8")
+            servers = mcp.get("mcpServers", {})
+            self.agent(persona, *(f'  - {json.dumps(name)}: {json.dumps(servers.get(name, {}))}' for name in mcp.pop("agentMcpServers")))
         if mcp is not None:
             (persona / ".mcp.json").write_text(json.dumps(mcp), encoding="utf-8")
         return persona
+
+    def agent(self, persona: Path, *lines: str) -> None:
+        agents = persona / ".claude/agents"
+        agents.mkdir(parents=True, exist_ok=True)
+        head = "\n".join((f"name: {persona.name}", "description: Reviews small changes.", "mcpServers:", *lines))
+        (agents / f"{persona.name}.md").write_text(f"---\n{head}\n---\n\nReview.\n", encoding="utf-8")
 
     def invoke(self, persona: Path, *args: str) -> subprocess.CompletedProcess[str]:
         command = ("python3", str(SCRIPT), "--persona", str(persona), "--codex-home", str(self.codex), *args)
@@ -119,12 +127,29 @@ class PersonaSyncTest(unittest.TestCase):
         self.assertTrue((private / "evals/private/replay-case/prompt.md").is_file())
         self.assertFalse(self.codex.exists())
 
-    def test_allowlist_without_mcp_json_fails(self) -> None:
+    def test_agent_file_alone_projects_its_servers(self) -> None:
         persona = self.persona()
-        (persona / ".agent-mcp.json").write_text('["local"]', encoding="utf-8")
-        result = self.invoke(persona)
-        self.assertEqual(result.returncode, 2)
-        self.assertIn("missing from .mcp.json: local", result.stderr)
+        self.agent(persona, '  - "local": {"command": "tool"}')
+        (persona / ".agent-mcp.json").write_text('["other"]', encoding="utf-8")
+        self.assertEqual(self.invoke(persona, "--apply").returncode, 0)
+        self.assertEqual(self.config(persona)["mcp_servers"], {"local": {"command": "tool"}})
+
+    def test_agent_mcp_servers_must_be_one_json_line_each(self) -> None:
+        cases = {
+            "block mapping": ("  - local:", "      command: tool"),
+            "name reference": ("  - local",),
+            "inline list": None,
+        }
+        for index, (label, lines) in enumerate(cases.items()):
+            with self.subTest(label):
+                persona = self.persona(f"wren-{index}")
+                self.agent(persona, *(lines or ()))
+                if lines is None:
+                    agent = persona / f".claude/agents/{persona.name}.md"
+                    agent.write_text(agent.read_text().replace("mcpServers:", "mcpServers: [local]"), encoding="utf-8")
+                result = self.invoke(persona)
+                self.assertEqual(result.returncode, 2, result.stdout)
+                self.assertIn("mcpServers must", result.stderr)
 
     def test_unselected_servers_are_not_projected(self) -> None:
         persona = self.persona(mcp={"mcpServers": {"private": {"command": "tool"}}})
@@ -140,8 +165,6 @@ class PersonaSyncTest(unittest.TestCase):
 
     def test_rejects_invalid_mcp_declarations(self) -> None:
         cases = {
-            "unknown key": {"mcpServers": {"a": {"command": "tool"}}, "codexMcpServers": ["a"]},
-            "missing server": {"mcpServers": {}, "agentMcpServers": ["missing"]},
             "duplicate name": {"mcpServers": {"a": {"command": "tool"}}, "agentMcpServers": ["a", "a"]},
             "dotted name": {"mcpServers": {"a.b": {"command": "tool"}}, "agentMcpServers": ["a.b"]},
             "unsupported transport": {"mcpServers": {"a": {"type": "ws", "url": "https://example.test"}}, "agentMcpServers": ["a"]},
@@ -151,7 +174,7 @@ class PersonaSyncTest(unittest.TestCase):
             "headers helper with args": {"mcpServers": {"a": {"type": "http", "url": "https://example.test", "headersHelper": "/bin/auth --token x"}}, "agentMcpServers": ["a"]},
             "non-string env": {"mcpServers": {"a": {"command": "tool", "env": {"COUNT": 3}}}, "agentMcpServers": ["a"]},
             "extra field": {"mcpServers": {"a": {"command": "tool", "cwd": "/tmp"}}, "agentMcpServers": ["a"]},
-            "not an object": [],
+            "not an object": {"mcpServers": {"a": []}, "agentMcpServers": ["a"]},
         }
         for index, (label, payload) in enumerate(cases.items()):
             with self.subTest(label):

@@ -131,13 +131,8 @@ def verify_persona(repo: Path) -> list[str]:
             json.loads(settings.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
             errors.append(f"{name}: invalid JSON in {settings.relative_to(repo)}: {exc.msg}")
-    allowlist = repo / ".agent-mcp.json"
-    try:
-        names = json.loads(allowlist.read_text(encoding="utf-8")) if allowlist.is_file() else []
-        if not (isinstance(names, list) and all(isinstance(n, str) and re.fullmatch(r"[A-Za-z0-9_-]+", n) for n in names) and len(names) == len(set(names))):
-            errors.append(f"{name}: .agent-mcp.json must be a list of unique server names")
-    except json.JSONDecodeError as exc:
-        errors.append(f"{name}: invalid JSON in agent MCP config: {exc.msg}")
+    if (repo / ".agent-mcp.json").exists():
+        errors.append(f"{name}: delete .agent-mcp.json; the native agent file's mcpServers is the one MCP list")
     codex = repo / ".codex/config.toml"
     if codex.is_file():
         try:
@@ -482,6 +477,10 @@ def agent_gaps(persona: Path) -> list[str]:
     name = re.search(r'^name: "?([^"\n]+)"?$', head, re.M)
     if not name or name.group(1) != slug or not re.search(r"^description: \S", head, re.M) or not parts[-1].strip():
         return [f"native agent needs frontmatter with name {slug} and a description, then a body: {agent}"]
+    try:
+        SYNC.agent_mcps(persona)
+    except ValueError as error:
+        return [f"native agent MCP servers are invalid: {error}"]
     return []
 
 
@@ -493,7 +492,7 @@ def host_gaps(persona: Path, fix: bool, allow_mcp_widening: bool) -> list[str]:
     if mcp.is_file():
         try:
             if {"agentMcpServers", "codexMcpServers"} & set(json.loads(mcp.read_text())):
-                gaps.append(".mcp.json holds a legacy agent MCP list; move it to .agent-mcp.json")
+                gaps.append(".mcp.json holds a legacy agent MCP list; move it to the native agent file's mcpServers")
         except json.JSONDecodeError as error:
             gaps.append(f".mcp.json is invalid: {error}")
 

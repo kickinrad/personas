@@ -20,9 +20,10 @@ or settings are also being loaded. See [settings and tools](usage.md#settings-an
 
 ## A new server is missing from the agents
 
-Add it to the `mcpServers` list in the persona's `.claude/agents/<slug>.md`.
-For Codex in the folder, also name it in `.agent-mcp.json` and rerun the
-[sync helper](usage.md#call-a-persona-from-any-session). A remote server that
+Add it to the `mcpServers` list in the persona's `.claude/agents/<slug>.md`,
+the one place its servers live, then rerun the
+[sync helper](usage.md#call-a-persona-from-any-session) for Codex in the
+folder. A remote server that
 uses OAuth signs in once through `/mcp` inside the runtime; its client ID and
 callback port are the only OAuth settings the helper accepts.
 

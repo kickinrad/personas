@@ -27,7 +27,7 @@ claude --setting-sources project,local
 Codex has no supported equivalent, so it stays integrated with your normal
 configuration. Focused Claude use does not replace managed organization policy,
 authentication, or command-line options. A persona folder organizes
-configuration—it is not a separate account or security container.
+configuration; it is not a separate account or security container.
 
 ## Maintain a persona
 
@@ -107,26 +107,23 @@ orange, pink, or cyan); Codex has no agent color. A `skills:` list makes the
 Claude agent preload a skill such as `prose:write`. The runtime needs
 permission to read the persona folder from wherever you call it.
 
-To give the persona's folder its tools, define them in the ignored
-`.mcp.json` and name the ones Codex gets in `.agent-mcp.json`, which you can
-commit because it holds only names:
+The agent file's `mcpServers` list is the one place a persona's MCP servers
+live. Write each server on one line as a name and its settings in JSON:
 
-```json
-{"mcpServers": {"recipes": {"command": "recipes-mcp", "env": {"API_KEY": "${RECIPES_API_KEY}"}}}}
+```yaml
+mcpServers:
+  - "recipes": {"type": "stdio", "command": "recipes-mcp", "env": {"API_KEY": "${RECIPES_API_KEY}"}}
 ```
 
-```json
-["recipes"]
-```
-
-Names use letters, digits, `_`, and `-`. From a checkout of this repository,
-preview the sync, then add `--apply` to write it:
+Names use letters, digits, `_`, and `-`. The persona doctor fails when the
+folder keeps a second list, such as an old `.agent-mcp.json`. From a checkout
+of this repository, preview the sync, then add `--apply` to write it:
 
 ```bash
 python3 skills/persona-dev/scripts/persona-sync.py --persona /path/to/julia
 ```
 
-It refreshes `PERSONAS.md` and projects the named servers. It supports stdio
+It refreshes `PERSONAS.md` and projects the agent's servers. It supports stdio
 and HTTP servers and stops on unsupported fields, transports, or embedded
 credentials; reference secrets through environment variables instead. Remote
 servers that sign in through Claude Code's `oauth` setting (or use SSE) stay

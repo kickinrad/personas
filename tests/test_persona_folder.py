@@ -177,14 +177,13 @@ class FolderContractTest(unittest.TestCase):
             (self.create_persona(root, "lumen") / "AGENTS.md").unlink()
             self.assertEqual(VERIFIER.verify(root), ["lumen: required tracked file missing: AGENTS.md"])
 
-    def test_agent_mcp_allowlist_is_validated(self) -> None:
+    def test_second_agent_mcp_list_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             persona = self.create_persona(root)
-            (persona / ".agent-mcp.json").write_text('["recipes"]', encoding="utf-8")
             self.assertEqual(VERIFIER.verify(root), [])
-            (persona / ".agent-mcp.json").write_text('["recipes", "recipes"]', encoding="utf-8")
-            self.assertIn("unique server names", "\n".join(VERIFIER.verify(root)))
+            (persona / ".agent-mcp.json").write_text('["recipes"]', encoding="utf-8")
+            self.assertEqual(VERIFIER.verify(root), ["wren: delete .agent-mcp.json; the native agent file's mcpServers is the one MCP list"])
 
     def test_export_without_git_reports_private_files_and_ancestor_claude_md(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -295,6 +294,15 @@ class DoctorHostTest(unittest.TestCase):
                 self.assertIn("native agent needs frontmatter", self.doctor().stdout)
         subprocess.run(["git", "rm", "-qf", "--cached", str(self.agent)], cwd=self.persona, check=True)
         self.assertIn("missing tracked native agent", self.doctor().stdout)
+
+    def test_agent_file_is_the_one_mcp_list(self) -> None:
+        (self.persona / ".agent-mcp.json").write_text('["ob"]')
+        result = self.doctor()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("otto: delete .agent-mcp.json; the native agent file's mcpServers is the one MCP list", result.stdout)
+        (self.persona / ".agent-mcp.json").unlink()
+        self.agent.write_text(self.agent.read_text().replace("---\n\n", "mcpServers:\n  - ob\n---\n\n", 1))
+        self.assertIn("otto: native agent MCP servers are invalid", self.doctor().stdout)
 
     def test_report_lists_gaps_without_changing_settings(self) -> None:
         self.write_settings({"model": "claude-opus-4-6[1m]", "enabledPlugins": {"vault@core": True, "safety@core": True}})
