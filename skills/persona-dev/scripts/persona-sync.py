@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# /// script
+# dependencies = ["pyyaml"]
+# ///
 """Report or apply a persona folder's generated files, or wrap the folder as an eval plugin.
 
 The generated files are PERSONAS.md, copied from the shared rules, and the mcp_servers
@@ -16,16 +19,14 @@ import tomllib
 from pathlib import Path
 from urllib.parse import parse_qsl, urlsplit
 
+import yaml
+
 SENSITIVE = re.compile(r"(?:api[_-]?key|token|secret|password|authorization|bearer|cookie)", re.I)
 # Values under a credential-like key that cannot hold a secret: an env reference or a boolean flag.
 NOT_SECRET = re.compile(r"\$\{[A-Za-z_][A-Za-z0-9_]*\}|true|false", re.I)
-# The native agent file lists each server on one line, `- "name": {JSON}` or `- name: {JSON}`, so
-# no YAML parser is needed. Codex `-c mcp_servers.<name>.*` overrides need the name to be a bare TOML key.
-SERVER_NAME = r"[A-Za-z0-9_-]+"
-AGENT_SERVER = re.compile(rf'\s*- (?:"({SERVER_NAME})"|({SERVER_NAME})): (\{{.*\}})\s*')
+# Codex `-c mcp_servers.<name>.*` overrides need a server name that is a bare TOML key.
+SERVER_NAME = re.compile(r"[A-Za-z0-9_-]+")
 FRONTMATTER = re.compile(r"---[ \t]*\n(.*?)^---[ \t]*$", re.S | re.M)
-TOP_KEY = re.compile(r"([A-Za-z_][A-Za-z0-9_-]*):(?:[ \t]|$)")
-MCP_KEY = re.compile(r"\s*mcpServers\s*:")
 SHARED = Path(__file__).resolve().parent.parent / "assets" / "PERSONAS.md"
 # URL path segments must read as short lowercase words, so a token in the path is refused rather than guessed at.
 # Each -/. part is letters (up to 24), digits (up to 12), or a short mix such as v2 or eu1.
@@ -84,6 +85,18 @@ def credential_free(value: object, key: str = "") -> None:
         if secret_flag(value): fail("credential literal is unsupported in a flag or header")
 
 
+class UniqueKeyLoader(yaml.SafeLoader):
+    """A safe YAML loader that refuses a mapping which sets the same key twice."""
+
+    def construct_mapping(self, node: yaml.MappingNode, deep: bool = False) -> dict:
+        seen = set()
+        for key_node, _ in node.value:
+            key = self.construct_object(key_node, deep=deep)
+            if isinstance(key, str) and key in seen:
+                raise yaml.constructor.ConstructorError(None, None, f"duplicate key {key}", key_node.start_mark)
+            seen.add(key if isinstance(key, str) else id(key_node))
+        return super().construct_mapping(node, deep)
+
 def agent_servers(persona: Path) -> dict[str, object]:
     """The mcpServers of the persona's native agent file .claude/agents/<slug>.md, the one home of its MCP list.
 
@@ -92,30 +105,25 @@ def agent_servers(persona: Path) -> dict[str, object]:
     try: text = agent.read_text(encoding="utf-8").removeprefix("\ufeff").replace("\r\n", "\n")
     except OSError as error: fail(f"cannot read the native agent {agent}: {error.strerror or error}")
     head = FRONTMATTER.match(text) or fail(f"{agent} needs frontmatter between --- lines")
-    lines, keys, servers, listing = head.group(1).splitlines(), set(), {}, False
-    expected = '- "name": {JSON}'
-    for line in lines:
-        if not line.strip() or line.lstrip().startswith("#"): continue
-        if key := TOP_KEY.match(line):
-            if key.group(1) in keys: fail(f"{agent} sets {key.group(1)} twice")
-            keys.add(key.group(1))
-            listing = key.group(1) == "mcpServers"
-            if listing and line[key.end():].strip() not in ("", "[]"):
-                fail(f"{agent} mcpServers must be a list with one server per line as {expected}: {line.strip()}")
-            continue
-        if MCP_KEY.match(line):
-            fail(f"{agent} must write mcpServers: at the start of a line, with no space before the colon: {line.strip()}")
-        item = AGENT_SERVER.fullmatch(line)
-        if listing and not item:
-            fail(f"{agent} mcpServers must give each server its settings as one-line JSON, {expected}: {line.strip()}")
-        if not listing and item:
-            fail(f"{agent} lists an MCP server outside mcpServers; put it under mcpServers: as {expected}: {line.strip()}")
-        if not listing and not line[0].isspace() and not line.startswith("- "):
-            fail(f"{agent} frontmatter line is neither a key nor part of one: {line.strip()}")
-        if not listing: continue
-        name = item.group(1) or item.group(2)
-        try: server = json.loads(item.group(3))
-        except json.JSONDecodeError as error: fail(f"{agent} MCP {name} settings are not JSON: {error.msg}")
+    try: meta = yaml.load(head.group(1), Loader=UniqueKeyLoader)
+    except yaml.YAMLError as error:
+        mark = getattr(error, "problem_mark", None)
+        # The frontmatter starts on line 2 of the file, after the opening ---.
+        where = f" at line {mark.line + 2}" if mark else ""
+        fail(f"{agent} frontmatter is not valid YAML{where}: {getattr(error, 'problem', None) or error}")
+    if meta is None: return {}
+    if not isinstance(meta, dict): fail(f"{agent} frontmatter must be a mapping")
+    listed = meta.get("mcpServers")
+    if listed is None: return {}
+    shape = '- name: {server settings}'
+    if not isinstance(listed, list): fail(f"{agent} mcpServers must be a list of {shape}")
+    servers: dict[str, object] = {}
+    for item in listed:
+        if not (isinstance(item, dict) and len(item) == 1):
+            fail(f"{agent} mcpServers must list each server as {shape}, with its settings inline: {item!r}")
+        ((name, server),) = item.items()
+        if not isinstance(name, str) or not SERVER_NAME.fullmatch(name):
+            fail(f"{agent} MCP server name must use letters, digits, _ and -: {name!r}")
         if name in servers: fail(f"{agent} lists MCP server {name} twice")
         servers[name] = server
     return servers

@@ -147,37 +147,38 @@ class PersonaSyncTest(unittest.TestCase):
 
     def test_agent_file_forms_that_read(self) -> None:
         cases = {
-            "bare names, blank lines, comments": '---\nname: wren\nmcpServers:\n\n- local: {"command": "tool"}\n  # note\n  - "remote": {"type": "http", "url": "https://example.test/mcp"}\ncolor: blue\n---\nBody\n',
+            "one-line JSON, bare name, blank line, comment": '---\nname: wren\nmcpServers:\n  - "local": {"command": "tool"}\n\n  # note\n  - remote: {"type": "http", "url": "https://example.test/mcp"}\ncolor: blue\n---\nBody\n',
+            "block mapping": '---\nmcpServers:\n- local:\n    command: tool\n    args: [serve]\n---\n',
             "byte order mark and CRLF": '\ufeff---\r\nname: wren\r\nmcpServers:\r\n  - "local": {"command": "tool"}\r\n---\r\n',
             "closing delimiter at end of file": '---\nmcpServers:\n  - "local": {"command": "tool"}\n---',
             "empty list": '---\nname: wren\nmcpServers: []\n---\n',
             "no mcpServers key": '---\nname: wren\n---\n',
         }
-        expected = {"bare names, blank lines, comments": ["local", "remote"], "empty list": [], "no mcpServers key": []}
+        expected = {"one-line JSON, bare name, blank line, comment": ["local", "remote"], "empty list": [], "no mcpServers key": []}
         for index, (label, text) in enumerate(cases.items()):
             with self.subTest(label):
                 persona = self.persona(f"wren-form-{index}")
                 self.agent_text(persona / f".claude/agents/{persona.name}.md", text)
                 self.assertEqual(list(SYNC.agent_servers(persona)), expected.get(label, ["local"]))
 
-    def test_agent_mcp_servers_must_be_one_json_line_each(self) -> None:
+    def test_bad_agent_mcp_lists_fail_with_file_and_line(self) -> None:
         cases = {
-            "block mapping": ('---\nmcpServers:\n  - local:\n      command: tool\n---\n', "one-line JSON"),
-            "name reference": ('---\nmcpServers:\n  - local\n---\n', "one-line JSON"),
-            "inline list": ('---\nmcpServers: [local]\n---\n', "must be a list"),
-            "mapping form": ('---\nmcpServers: {"local": {"command": "tool"}}\n---\n', "must be a list"),
-            "settings not JSON": ('---\nmcpServers:\n  - "local": {command: tool}\n---\n', "not JSON"),
-            "duplicate server": ('---\nmcpServers:\n  - "a": {"command": "t"}\n  - "a": {"command": "t"}\n---\n', "lists MCP server a twice"),
-            "dotted name": ('---\nmcpServers:\n  - "a.b": {"command": "t"}\n---\n', "one-line JSON"),
-            "duplicate key": ('---\nmcpServers:\n  - "a": {"command": "t"}\nmcpServers:\n---\n', "sets mcpServers twice"),
-            "no closing delimiter": ('---\nmcpServers:\n  - "a": {"command": "t"}\n', "needs frontmatter"),
-            "no frontmatter": ('# Wren\n', "needs frontmatter"),
-            "space before colon": ('---\nmcpServers :\n  - "a": {"command": "t"}\n---\n', "no space before the colon"),
-            "indented key": ('---\nname: wren\n  mcpServers:\n  - "a": {"command": "t"}\n---\n', "no space before the colon"),
-            "server after another key": ('---\nmcpServers:\n  - "a": {"command": "t"}\ncolor: blue\n  - "b": {"command": "t"}\n---\n', "outside mcpServers"),
-            "stray top-level line": ('---\nname: wren\nmcpServers\n---\n', "neither a key nor part of one"),
+            "name reference": ('---\nmcpServers:\n  - local\n---\n', "settings inline", None),
+            "inline name list": ('---\nmcpServers: [local]\n---\n', "settings inline", None),
+            "mapping form": ('---\nmcpServers: {"local": {"command": "tool"}}\n---\n', "must be a list", None),
+            "two servers in one item": ('---\nmcpServers:\n  - {"a": {"command": "t"}, "b": {"command": "t"}}\n---\n', "settings inline", None),
+            "dotted name": ('---\nmcpServers:\n  - "a.b": {"command": "t"}\n---\n', "letters, digits", None),
+            "duplicate server": ('---\nmcpServers:\n  - "a": {"command": "t"}\n  - "a": {"command": "t"}\n---\n', "lists MCP server a twice", None),
+            "duplicate key": ('---\nmcpServers:\n  - "a": {"command": "t"}\nmcpServers: []\n---\n', "duplicate key mcpServers", 4),
+            "indented key": ('---\nname: wren\n  mcpServers:\n  - "a": {"command": "t"}\n---\n', "not valid YAML", 3),
+            "server after another key": ('---\nmcpServers:\n  - "a": {"command": "t"}\ncolor: blue\n  - "b": {"command": "t"}\n---\n', "not valid YAML", 5),
+            "items under a scalar key": ('---\ncolor: blue\n- "a": {"command": "t"}\n---\n', "not valid YAML", 3),
+            "items after an empty list": ('---\nmcpServers: []\n  - "a": {"command": "t"}\n---\n', "not valid YAML", 3),
+            "frontmatter not a mapping": ('---\n- a\n---\n', "must be a mapping", None),
+            "no closing delimiter": ('---\nmcpServers:\n  - "a": {"command": "t"}\n', "needs frontmatter", None),
+            "no frontmatter": ('# Wren\n', "needs frontmatter", None),
         }
-        for index, (label, (text, message)) in enumerate(cases.items()):
+        for index, (label, (text, message, line)) in enumerate(cases.items()):
             with self.subTest(label):
                 persona = self.persona(f"wren-{index}")
                 self.agent_text(persona / f".claude/agents/{persona.name}.md", text)
@@ -185,6 +186,7 @@ class PersonaSyncTest(unittest.TestCase):
                 self.assertEqual(result.returncode, 2, result.stdout)
                 self.assertIn(message, result.stderr)
                 self.assertIn(f"{persona.name}.md", result.stderr)
+                if line: self.assertIn(f"at line {line}", result.stderr)
 
     def test_missing_agent_file_is_an_error_not_an_empty_list(self) -> None:
         persona = self.persona()

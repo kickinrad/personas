@@ -108,20 +108,22 @@ Claude agent preload a skill such as `prose:write`. The runtime needs
 permission to read the persona folder from wherever you call it.
 
 The agent file's `mcpServers` list is the one place a persona's MCP servers
-live. Write each server on one line as a name and its settings in JSON:
+live. List each server as a name with its settings, for example on one line:
 
 ```yaml
 mcpServers:
   - "recipes": {"type": "stdio", "command": "recipes-mcp", "env": {"API_KEY": "${RECIPES_API_KEY}"}}
 ```
 
-Names use letters, digits, `_`, and `-`, quoted or not. A block mapping or a
-bare name is refused, because the sync helper reads the list without a YAML
-parser. The persona doctor fails when the folder keeps a second list, such as
-an old `.agent-mcp.json`. It also fails when the folder's ignored `.mcp.json`,
-which Claude sessions in the folder use, names different servers. The Codex
-launcher reads the list through the same helper. From a checkout of this
-repository, preview the sync, then add `--apply` to write it:
+Names use letters, digits, `_`, and `-`. A bare name without settings is
+refused, because Codex needs the settings to run the server. The sync helper
+reads the file with PyYAML (`python3 -m pip install pyyaml`), and the Codex
+launcher reads the list through it.
+
+The persona doctor fails when the folder keeps a second list, such as an old
+`.agent-mcp.json`. It also fails when the folder's ignored `.mcp.json`, which
+Claude sessions in the folder use, names different servers. From a checkout of
+this repository, preview the sync, then add `--apply` to write it:
 
 ```bash
 python3 skills/persona-dev/scripts/persona-sync.py --persona /path/to/julia
